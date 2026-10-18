@@ -1,103 +1,521 @@
-<!-- SECTION 2: INDIAN ECONOMY -->
-    <div class="section-header">
-      <h2>2. भारतीय अर्थव्यवस्था (Indian Economy - टॉपिक टेस्ट्स)</h2>
-      <span class="section-pill pill-eco">13 टेस्ट्स</span>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPSSSC PET Online CBT Portal</title>
+  <style>
+    :root {
+      --bg-dark: #0f1115;
+      --card-bg: #181b21;
+      --card-hover: #222631;
+      --border: #2b303c;
+      --accent: #38bdf8;
+      --btn-blue: #2563eb;
+      --btn-blue-hover: #1d4ed8;
+      --green: #10b981;
+      --purple: #a855f7;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px 16px 60px;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .badge-top {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    header h1 {
+      font-size: 1.55rem;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* Search & Filter Toolbar */
+    .toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .search-box {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box:focus {
+      border-color: var(--accent);
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--card-hover);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Section Headings */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 28px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .pill-pyq { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
+    .pill-eco { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+    .pill-hindi { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
+
+    /* Test Cards */
+    .test-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .test-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .test-card:hover {
+      background: var(--card-hover);
+      border-color: #3b4252;
+      transform: translateY(-1px);
+    }
+
+    .test-meta h3 {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #f3f4f6;
+      margin-bottom: 4px;
+    }
+
+    .test-meta span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .start-btn {
+      background: var(--btn-blue);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background 0.2s ease;
+    }
+
+    .start-btn:hover { background: var(--btn-blue-hover); }
+    .btn-eco { background: #059669; }
+    .btn-eco:hover { background: #047857; }
+    .btn-hindi { background: #7c3aed; }
+    .btn-hindi:hover { background: #6d28d9; }
+
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <span class="badge-top">UPSSSC PET EXAM PORTAL</span>
+      <h1>ऑनलाइन कंप्यूटर आधारित टेस्ट (CBT) सिम्युलेटर</h1>
+      <p>पूर्ण व्याख्या, तत्काल स्कोरिंग एवं नेगेटिव मार्किंग (-0.25) सहित परीक्षा प्रारूप</p>
+    </header>
+
+    <!-- Search & Filter Controls -->
+    <div class="toolbar">
+      <input type="text" id="searchInput" class="search-box" placeholder="🔍 टेस्ट या विषय का नाम खोजें...">
+      <div class="filter-tabs">
+        <button class="tab-btn active" onclick="filterTests('all')">सभी टेस्ट (All)</button>
+        <button class="tab-btn" onclick="filterTests('pyq')">फुल मॉक पेपर्स</button>
+        <button class="tab-btn" onclick="filterTests('eco')">भारतीय अर्थव्यवस्था</button>
+        <button class="tab-btn" onclick="filterTests('hindi')">सामान्य हिन्दी</button>
+      </div>
     </div>
 
-    <div class="test-list">
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>Economics All Topics Mock Test (संपूर्ण अर्थशास्त्र)</h3>
-          <span>सभी अध्यायों का संयुक्त टेस्ट</span>
-        </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/Economics_All_Topics_Mock_Test.html">टेस्ट शुरू करें ➔</a>
+    <!-- 1. FULL MOCK PAPERS -->
+    <div class="group-section" data-cat="pyq">
+      <div class="section-title">
+        <h2>1. फुल मॉक टेस्ट व पिछले वर्षों के प्रश्न-पत्र</h2>
+        <span class="pill pill-pyq">5 पेपर्स</span>
       </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>1. योजना आयोग तथा पंचवर्षीय योजनाएँ</h3>
-          <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+      <div class="test-list">
+        <div class="test-card" data-title="UPSSSC PET 7-SEP-2025 1st Shift 7 सितंबर 2025 प्रथम पाली">
+          <div class="test-meta">
+            <h3>UPSSSC PET 7-SEP-2025 (1st Shift)</h3>
+            <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
+          </div>
+          <a class="start-btn" href="./PET_MOCKS_CBT/Previous Year Papers/UPSSSC PET 7-SEP-2025 1st shift.html">शुरू करें ➔</a>
         </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/1-योजना आयोग तथा पंचवर्षीय योजनाएँ.html">टेस्ट शुरू करें ➔</a>
-      </div>
 
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>2. मिश्रित अर्थव्यवस्था का विकास: निजी एवं सार्वजनिक क्षेत्र</h3>
-          <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+        <div class="test-card" data-title="UPSSSC PET 7-SEP-2025 2nd Shift Paper 7 सितंबर 2025 द्वितीय पाली">
+          <div class="test-meta">
+            <h3>UPSSSC PET 7-SEP-2025 (2nd Shift Paper)</h3>
+            <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
+          </div>
+          <a class="start-btn" href="./PET_MOCKS_CBT/Previous Year Papers/UPSSSC PET 7-SEP-2025 2nd shift Paper.html">शुरू करें ➔</a>
         </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/02- मिश्रित अर्थव्यवस्था का विकास निजी एवं सार्वजनिक क्षेत्र.html">टेस्ट शुरू करें ➔</a>
-      </div>
 
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>3. हरित क्रांति (Green Revolution)</h3>
-          <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+        <div class="test-card" data-title="UPSSSC PET 6-SEP-2025 1st Shift 6 सितंबर 2025 प्रथम पाली">
+          <div class="test-meta">
+            <h3>UPSSSC PET 6-SEP-2025 (1st Shift)</h3>
+            <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
+          </div>
+          <a class="start-btn" href="./PET_MOCKS_CBT/Previous Year Papers/UPSSSC PET 6-SEP-2025 1st shift.html">शुरू करें ➔</a>
         </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/3-हरित क्रांति.html">टेस्ट शुरू करें ➔</a>
-      </div>
 
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>4. दुग्ध विकास एवं ऑपरेशन फ्लड (White Revolution)</h3>
-          <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+        <div class="test-card" data-title="UPSSSC PET 6-SEP-2025 2nd Shift 6 सितंबर 2025 द्वितीय पाली">
+          <div class="test-meta">
+            <h3>UPSSSC PET 6-SEP-2025 (2nd Shift)</h3>
+            <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
+          </div>
+          <a class="start-btn" href="./PET_MOCKS_CBT/Previous Year Papers/UPSSSC PET 6-SEP-2025 2nd shift.html">शुरू करें ➔</a>
         </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/4-दुग्ध विकास एवं ऑपरेशन फ्लड.html">टेस्ट शुरू करें ➔</a>
-      </div>
 
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>5. बैंकों का राष्ट्रीयकरण तथा सुधार</h3>
-          <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+        <div class="test-card" data-title="UPSSSC PET 29-OCT-2023 2nd Shift 29 अक्टूबर 2023 द्वितीय पाली">
+          <div class="test-meta">
+            <h3>UPSSSC PET 29-OCT-2023 (2nd Shift)</h3>
+            <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
+          </div>
+          <a class="start-btn" href="./PET_MOCKS_CBT/Previous Year Papers/UPSSSC PET 29-OCT-2023 2nd shift.html">शुरू करें ➔</a>
         </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/5-बैंकों का राष्ट्रीयकरण तथा सुधार.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>6. वर्ष 1991 में आर्थिक सुधार तथा उसके बाद की अर्थव्यवस्था</h3>
-          <span>LPG सुधार नीति व आर्थिक विकास</span>
-        </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/6-वर्ष 1991 में आर्थिक सुधार तथा उसके बाद की अर्थव्यवस्था.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>7. वर्ष 2014 के पश्चात के कृषि सुधार</h3>
-          <span>कृषि योजनाएं एवं सुधार</span>
-        </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/7-वर्ष 2014 के पश्चात के कृषि सुधार.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>8. वर्ष 2014 के पश्चात के ढाँचागत सुधार</h3>
-          <span>इन्फ्रास्ट्रक्चर सुधार</span>
-        </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/8-वर्ष 2014 के पश्चात के ढांचागत सुधार.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>9. वर्ष 2014 के पश्चात के श्रम-सुधार</h3>
-          <span>लेबर कोड व श्रम नियम</span>
-        </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/9-वर्ष 2014 के पश्चात के श्रम-सुधार.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>10. वर्ष 2014 के पश्चात के आर्थिक सुधार</h3>
-          <span>वित्तीय सुधार एवं नीतियां</span>
-        </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/10-वर्ष 2014 के पश्चात के आर्थिक सुधार.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>11. वर्ष 2014 के पश्चात के आर्थिक सुधार (जीएसटी GST)</h3>
-          <span>GST एवं अप्रत्यक्ष कर सुधार</span>
-        </div>
-        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/11-वर्ष 2014 के पश्चात के आर्थिक सुधार (जीएसटी GST).html">टेस्ट शुरू करें ➔</a>
       </div>
     </div>
+
+    <!-- 2. INDIAN ECONOMY -->
+    <div class="group-section" data-cat="eco">
+      <div class="section-title">
+        <h2>2. भारतीय अर्थव्यवस्था (Indian Economy)</h2>
+        <span class="pill pill-eco">13 टेस्ट्स</span>
+      </div>
+      <div class="test-list">
+        <div class="test-card" data-title="Economics All Topics Mock Test संपूर्ण अर्थशास्त्र mock test">
+          <div class="test-meta">
+            <h3>Economics All Topics Mock Test (संपूर्ण अर्थशास्त्र)</h3>
+            <span>सभी अध्यायों का संयुक्त मॉक टेस्ट</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/Economics_All_Topics_Mock_Test.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="योजना आयोग तथा पंचवर्षीय योजनाएँ planning commission five year plans">
+          <div class="test-meta">
+            <h3>1. योजना आयोग तथा पंचवर्षीय योजनाएँ</h3>
+            <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/1-योजना आयोग तथा पंचवर्षीय योजनाएँ.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="मिश्रित अर्थव्यवस्था का विकास निजी एवं सार्वजनिक क्षेत्र mixed economy">
+          <div class="test-meta">
+            <h3>2. मिश्रित अर्थव्यवस्था का विकास: निजी एवं सार्वजनिक क्षेत्र</h3>
+            <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/02- मिश्रित अर्थव्यवस्था का विकास निजी एवं सार्वजनिक क्षेत्र.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="हरित क्रांति green revolution kranti">
+          <div class="test-meta">
+            <h3>3. हरित क्रांति (Green Revolution)</h3>
+            <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/3-हरित क्रांति.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="दुग्ध विकास एवं ऑपरेशन फ्लड white revolution operation flood milk">
+          <div class="test-meta">
+            <h3>4. दुग्ध विकास एवं ऑपरेशन फ्लड (White Revolution)</h3>
+            <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/4-दुग्ध विकास एवं ऑपरेशन फ्लड.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="बैंकों का राष्ट्रीयकरण तथा सुधार nationalisation of banks">
+          <div class="test-meta">
+            <h3>5. बैंकों का राष्ट्रीयकरण तथा सुधार</h3>
+            <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/5-बैंकों का राष्ट्रीयकरण तथा सुधार.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="वर्ष 1991 में आर्थिक सुधार तथा उसके बाद की अर्थव्यवस्था 1991 economic reforms lpg">
+          <div class="test-meta">
+            <h3>6. वर्ष 1991 में आर्थिक सुधार तथा उसके बाद की अर्थव्यवस्था</h3>
+            <span>LPG सुधार नीति व विकास</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/6-वर्ष 1991 में आर्थिक सुधार तथा उसके बाद की अर्थव्यवस्था.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="वर्ष 2014 के पश्चात के कृषि सुधार agriculture reforms">
+          <div class="test-meta">
+            <h3>7. वर्ष 2014 के पश्चात के कृषि सुधार</h3>
+            <span>कृषि योजनाएं एवं सुधार</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/7-वर्ष 2014 के पश्चात के कृषि सुधार.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="वर्ष 2014 के पश्चात के ढाँचागत सुधार infrastructure reforms">
+          <div class="test-meta">
+            <h3>8. वर्ष 2014 के पश्चात के ढाँचागत सुधार</h3>
+            <span>इन्फ्रास्ट्रक्चर सुधार</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/8-वर्ष 2014 के पश्चात के ढांचागत सुधार.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="वर्ष 2014 के पश्चात के श्रम-सुधार labour reforms">
+          <div class="test-meta">
+            <h3>9. वर्ष 2014 के पश्चात के श्रम-सुधार</h3>
+            <span>लेबर कोड व श्रम नियम</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/9-वर्ष 2014 के पश्चात के श्रम-सुधार.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="वर्ष 2014 के पश्चात के आर्थिक सुधार economic reforms">
+          <div class="test-meta">
+            <h3>10. वर्ष 2014 के पश्चात के आर्थिक सुधार</h3>
+            <span>वित्तीय सुधार एवं नीतियां</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/10-वर्ष 2014 के पश्चात के आर्थिक सुधार.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="वर्ष 2014 के पश्चात के आर्थिक सुधार जीएसटी GST reforms">
+          <div class="test-meta">
+            <h3>11. वर्ष 2014 के पश्चात के आर्थिक सुधार (जीएसटी GST)</h3>
+            <span>GST एवं अप्रत्यक्ष कर सुधार</span>
+          </div>
+          <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/11-वर्ष 2014 के पश्चात के आर्थिक सुधार (जीएसटी GST).html">शुरू करें ➔</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. GENERAL HINDI -->
+    <div class="group-section" data-cat="hindi">
+      <div class="section-title">
+        <h2>3. सामान्य हिन्दी (General Hindi)</h2>
+        <span class="pill pill-hindi">9 टेस्ट्स</span>
+      </div>
+      <div class="test-list">
+        <div class="test-card" data-title="संधि sandhi">
+          <div class="test-meta">
+            <h3>1. संधि</h3>
+            <span>स्वर, व्यंजन एवं विसर्ग संधि</span>
+          </div>
+          <a class="start-btn btn-hindi" href="./PET_MOCKS_CBT/Hindi/1-संधि.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="विलोम शब्द vilom shabd antonyms">
+          <div class="test-meta">
+            <h3>2. विलोम शब्द</h3>
+            <span>100 महत्वपूर्ण विलोम शब्द</span>
+          </div>
+          <a class="start-btn btn-hindi" href="./PET_MOCKS_CBT/Hindi/2-विलोम शब्द.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="पर्यायवाची शब्द paryayvachi shabd synonyms">
+          <div class="test-meta">
+            <h3>3. पर्यायवाची शब्द</h3>
+            <span>100 महत्वपूर्ण पर्यायवाची शब्द</span>
+          </div>
+          <a class="start-btn btn-hindi" href="./PET_MOCKS_CBT/Hindi/3-पर्यायवाची शब्द.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="वाक्यांशों के लिए एक शब्द vakyansh one word substitution">
+          <div class="test-meta">
+            <h3>4. वाक्यांशों के लिए एक शब्द</h3>
+            <span>100 महत्वपूर्ण अनेक शब्दों के लिए एक शब्द</span>
+          </div>
+          <a class="start-btn btn-hindi" href="./PET_MOCKS_CBT/Hindi/4-वाक्यांशों के लिए एक शब्द.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="लिंग ling gender">
+          <div class="test-meta">
+            <h3>5. लिंग</h3>
+            <span>100 महत्वपूर्ण प्रश्न</span>
+          </div>
+          <a class="start-btn btn-hindi" href="./PET_MOCKS_CBT/Hindi/5-लिंग.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="समश्रुत भिन्नार्थक शब्द samshrut shabd">
+          <div class="test-meta">
+            <h3>6. समश्रुत भिन्नार्थक शब्द</h3>
+            <span>100 महत्वपूर्ण समरूपी भिन्नार्थक शब्द</span>
+          </div>
+          <a class="start-btn btn-hindi" href="./PET_MOCKS_CBT/Hindi/6-समश्रुत भिन्नार्थक शब्द.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="मुहावरे लोकोक्तियाँ muhavare lokoktiyan idioms">
+          <div class="test-meta">
+            <h3>7. मुहावरे-लोकोक्तियाँ</h3>
+            <span>महत्वपूर्ण मुहावरे एवं कहावतें</span>
+          </div>
+          <a class="start-btn btn-hindi" href="./PET_MOCKS_CBT/Hindi/7-मुहावरे-लोकोक्तियाँ.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="सामान्य अशुद्धियाँ samanya ashuddhiyan spelling error correction">
+          <div class="test-meta">
+            <h3>8. सामान्य अशुद्धियाँ</h3>
+            <span>वर्तनी व वाक्य शुद्धि अभ्यास</span>
+          </div>
+          <a class="start-btn btn-hindi" href="./PET_MOCKS_CBT/Hindi/8-सामान्य अशुद्धियाँ.html">शुरू करें ➔</a>
+        </div>
+
+        <div class="test-card" data-title="लेखक और रचनाएँ lekhak aur rachnaye books authors">
+          <div class="test-meta">
+            <h3>9. लेखक और रचनाएँ (गद्य एवं पद्य)</h3>
+            <span>रचनाकार एवं उनकी प्रमुख कृतियाँ</span>
+          </div>
+          <a class="start-btn btn-hindi" href="./PET_MOCKS_CBT/Hindi/9-लेखक और रचनाएँ (गद्य एवं पद्य).html">शुरू करें ➔</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="emptyState" class="empty-state">
+      कोई टेस्ट नहीं मिला। कृपया दूसरा शब्द खोजें।
+    </div>
+  </div>
+
+  <script>
+    // Live Search Filter
+    const searchInput = document.getElementById('searchInput');
+    const cards = document.querySelectorAll('.test-card');
+    const sections = document.querySelectorAll('.group-section');
+    const emptyState = document.getElementById('emptyState');
+
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      let matchCount = 0;
+
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        if (title.includes(q)) {
+          card.style.display = 'flex';
+          matchCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      sections.forEach(sec => {
+        const visibleCards = sec.querySelectorAll('.test-card[style="display: flex;"]');
+        sec.style.display = (visibleCards.length > 0 || q === '') ? 'block' : 'none';
+      });
+
+      emptyState.style.display = (matchCount === 0 && q !== '') ? 'block' : 'none';
+    });
+
+    // Category Tab Filter
+    function filterTests(cat) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      searchInput.value = '';
+
+      sections.forEach(sec => {
+        if (cat === 'all' || sec.getAttribute('data-cat') === cat) {
+          sec.style.display = 'block';
+          sec.querySelectorAll('.test-card').forEach(card => card.style.display = 'flex');
+        } else {
+          sec.style.display = 'none';
+        }
+      });
+
+      emptyState.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
