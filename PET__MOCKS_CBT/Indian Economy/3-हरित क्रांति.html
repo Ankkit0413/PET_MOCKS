@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSSSC PET CBT Simulator - Indian Economy</title>
+    <style>
+        :root {
+            --bg-main: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --primary: #0056b3;
+            --correct-bg: #d4edda;
+            --correct-border: #28a745;
+            --incorrect-bg: #f8d7da;
+            --incorrect-border: #dc3545;
+            --c-green: #28a745;
+            --c-red: #dc3545;
+            --c-orange: #fd7e14;
+            --c-slate: #6c757d;
+            --c-purple: #6f42c1;
+            --c-darkgray: #343a40;
+            --border-radius: 8px;
+        }
+        
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; background: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* Header */
+        header { background: #fff; padding: 15px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        .header-title h1 { margin: 0; font-size: 1.2rem; color: var(--primary); }
+        .header-title p { margin: 2px 0 0; font-size: 0.9rem; color: #555; }
+        .live-score { font-size: 1.2rem; font-weight: bold; background: #e9ecef; padding: 8px 15px; border-radius: 20px; border: 1px solid #ced4da; }
+        
+        /* Layout container */
+        .container { display: flex; flex: 1; overflow: hidden; }
+        
+        /* Main Question Panel */
+        .main-panel { flex: 3; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .question-card { background: var(--card-bg); padding: 25px; border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.05); flex: 1; display: flex; flex-direction: column; }
+        .q-number { font-weight: bold; font-size: 1.1rem; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .q-text { font-size: 1.1rem; margin-bottom: 20px; line-height: 1.5; }
+        .q-text .hindi { color: #555; margin-top: 5px; }
+        
+        .options-container { display: flex; flex-direction: column; gap: 12px; }
+        .option { padding: 12px 15px; border: 2px solid #dee2e6; border-radius: var(--border-radius); cursor: pointer; transition: all 0.2s; background: #fff; display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+        .option:hover:not(.locked) { border-color: var(--primary); background: #f8f9fa; }
+        .option .opt-label { font-weight: bold; width: 25px; height: 25px; background: #e9ecef; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+        
+        /* Evaluation States */
+        .option.locked { cursor: default; }
+        .option.user-correct { background: var(--correct-bg); border-color: var(--correct-border); }
+        .option.user-incorrect { background: var(--incorrect-bg); border-color: var(--incorrect-border); }
+        .option.true-correct { border-color: var(--correct-border); border-width: 3px; box-shadow: 0 0 5px rgba(40,167,69,0.5); }
+        
+        /* Explanation */
+        .explanation { margin-top: 25px; padding: 20px; background: #f8f9fa; border-left: 5px solid var(--primary); border-radius: 4px; display: none; animation: fadeIn 0.3s; }
+        .explanation.visible { display: block; }
+        .exp-title { font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+        .exp-text { font-size: 0.95rem; margin-bottom: 8px; line-height: 1.5; }
+        .fact-box { margin-top: 15px; padding: 10px; background: #e2e3e5; border-radius: 4px; font-size: 0.9rem; font-weight: bold; }
+        
+        /* Controls */
+        .controls { display: flex; justify-content: space-between; margin-top: 25px; gap: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .btn-review { background: var(--c-purple); color: white; }
+        .btn-skip { background: var(--c-slate); color: white; }
+        .btn-next { background: var(--primary); color: white; margin-left: auto; display: flex; align-items: center; gap: 8px; }
+        .btn-submit { background: var(--c-green); color: white; width: 100%; margin-top: 20px; padding: 15px; font-size: 1.1rem; }
+        
+        /* Side Palette */
+        .side-panel { flex: 1; min-width: 300px; max-width: 350px; background: #fff; border-left: 1px solid #dee2e6; display: flex; flex-direction: column; overflow-y: auto; }
+        .palette-header { padding: 15px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; font-weight: bold; }
+        .legend { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8rem; border-bottom: 1px solid #dee2e6; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .grid-container { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .q-btn { aspect-ratio: 1; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #333; transition: transform 0.1s; }
+        .q-btn:hover { transform: scale(1.05); }
+        .q-btn.active { outline: 2px solid var(--primary); outline-offset: 2px; }
+        
+        /* Palette Colors */
+        .c-green { background: var(--c-green) !important; color: white !important; border-color: var(--c-green) !important; }
+        .c-red { background: var(--c-red) !important; color: white !important; border-color: var(--c-red) !important; }
+        .c-orange { background: var(--c-orange) !important; color: white !important; border-color: var(--c-orange) !important; }
+        .c-slate { background: var(--c-slate) !important; color: white !important; border-color: var(--c-slate) !important; }
+        .c-purple { background: var(--c-purple) !important; color: white !important; border-color: var(--c-purple) !important; }
+        .c-darkgray { background: var(--c-darkgray) !important; color: white !important; border-color: var(--c-darkgray) !important; }
+        
+        /* Dashboard Overlay */
+        .dashboard-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: flex; justify-content: center; align-items: center; color: white; display: none; overflow-y: auto; padding: 20px;}
+        .dash-card { background: #fff; color: #333; padding: 40px; border-radius: var(--border-radius); width: 90%; max-width: 600px; text-align: center; }
+        .dash-title { font-size: 2rem; color: var(--primary); margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-box { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; }
+        .stat-val { font-size: 2rem; font-weight: bold; margin-bottom: 5px; }
+        .stat-box.score .stat-val { color: var(--primary); }
+        .stat-box.acc .stat-val { color: var(--c-green); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <h1>UPSSSC PET CBT Simulator</h1>
+            <p>Section: Indian Economy | Topic: हरित क्रांति (Green Revolution)</p>
+        </div>
+        <div class="live-score">Net Score: <span id="ui-score">0.00</span></div>
+    </header>
+
+    <div class="container">
+        <!-- Main Panel -->
+        <div class="main-panel">
+            <div class="question-card">
+                <div class="q-number" id="q-number">Question 1 of 100</div>
+                <div class="q-text">
+                    <div id="q-eng"></div>
+                    <div class="hindi" id="q-hin"></div>
+                </div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Options injected via JS -->
+                </div>
+
+                <div class="explanation" id="explanation">
+                    <div class="exp-title">Detailed Explanation / विस्तृत व्याख्या</div>
+                    <div class="exp-text" id="exp-eng"></div>
+                    <div class="exp-text hindi" id="exp-hin"></div>
+                    <div class="fact-box">📌 Key Exam Fact: <span id="exp-fact"></span></div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-review" onclick="markReview()">🟣 Mark for Review</button>
+                    <button class="btn btn-skip" onclick="skipQuestion()">⚪ Skip</button>
+                    <button class="btn btn-next" onclick="nextQuestion()">Next Question ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Side Panel -->
+        <div class="side-panel">
+            <div class="palette-header">Question Palette</div>
+            <div class="legend">
+                <div class="legend-item"><div class="dot c-green"></div> Correct (+1)</div>
+                <div class="legend-item"><div class="dot c-red"></div> Incorrect (-0.25)</div>
+                <div class="legend-item"><div class="dot c-orange"></div> Unanswered</div>
+                <div class="legend-item"><div class="dot c-slate"></div> Skipped</div>
+                <div class="legend-item"><div class="dot c-purple"></div> Review</div>
+                <div class="legend-item"><div class="dot c-darkgray"></div> Not Visited</div>
+            </div>
+            <div class="grid-container" id="palette-grid">
+                <!-- Grid injected via JS -->
+            </div>
+            <div style="padding: 15px;">
+                <button class="btn btn-submit" onclick="showDashboard()">Submit Exam</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard-overlay" id="dashboard">
+        <div class="dash-card">
+            <div class="dash-title">Exam Result Summary</div>
+            <div class="stats-grid">
+                <div class="stat-box score">
+                    <div class="stat-val" id="d-score">0.00</div>
+                    <div>Total Net Score</div>
+                </div>
+                <div class="stat-box acc">
+                    <div class="stat-val" id="d-acc">0%</div>
+                    <div>Accuracy</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="d-att" style="color:var(--primary)">0</div>
+                    <div>Attempted</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="d-cor" style="color:var(--c-green)">0</div>
+                    <div>Correct (+1.0)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="d-inc" style="color:var(--c-red)">0</div>
+                    <div>Incorrect (-0.25)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="d-skip" style="color:var(--c-slate)">0</div>
+                    <div>Skipped / Unanswered</div>
+                </div>
+            </div>
+            <button class="btn btn-next" style="width:100%; justify-content:center;" onclick="closeDashboard()">Review All Questions</button>
+        </div>
+    </div>
+
+<script>
+// Data structure containing all 100 generated questions securely packed.
+const db = [
+{q:"Who is known as the 'Father of the Green Revolution' in India?", h:"भारत में 'हरित क्रांति का जनक' किसे कहा जाता है?", o:["Norman Borlaug / नॉर्मन बोरलॉग","M. S. Swaminathan / एम. एस. स्वामीनाथन","Verghese Kurien / वर्गीज कुरियन","C. Subramaniam / सी. सुब्रमण्यम"], a:1, e:"Dr. M. S. Swaminathan is known as the Father of the Green Revolution in India for his leadership in introducing high-yielding varieties of wheat and rice.", eh:"डॉ. एम. एस. स्वामीनाथन को उच्च उपज वाले गेहूं और चावल की किस्मों को पेश करने में उनके नेतृत्व के लिए भारत में हरित क्रांति के जनक के रूप में जाना जाता है।", f:"Norman Borlaug is the father of the Green Revolution in the world, whereas Swaminathan led it in India."},
+{q:"The Green Revolution in India was primarily associated with the production of which of the following crops?", h:"भारत में हरित क्रांति मुख्य रूप से निम्नलिखित में से किस फसल के उत्पादन से जुड़ी थी?", o:["Pulses and Oilseeds / दालें और तिलहन","Wheat and Rice / गेहूं और चावल","Sugarcane and Cotton / गन्ना और कपास","Tea and Coffee / चाय और कॉफी"], a:1, e:"The most significant success of the Green Revolution was experienced in wheat and, subsequently, rice production.", eh:"हरित क्रांति की सबसे महत्वपूर्ण सफलता गेहूं और उसके बाद चावल के उत्पादन में देखी गई।", f:"Wheat was the very first crop to see a massive surge in production, sometimes referred to as the 'Wheat Revolution'."},
+{q:"In which decade was the Green Revolution introduced in India?", h:"भारत में हरित क्रांति की शुरुआत किस दशक में हुई थी?", o:["1950s / 1950 के दशक में","1960s / 1960 के दशक में","1970s / 1970 के दशक में","1980s / 1980 के दशक में"], a:1, e:"The Green Revolution was introduced in India in the mid-1960s (specifically 1965-1968) to combat food shortages.", eh:"भोजन की कमी से निपटने के लिए 1960 के दशक के मध्य (विशेष रूप से 1965-1968) में भारत में हरित क्रांति की शुरुआत की गई थी।", f:"It was launched during the Annual Plans (1966-1969), sometimes called the 'Plan Holiday' period."},
+{q:"Which Indian state benefited the most from the Green Revolution in its initial phase?", h:"अपने प्रारंभिक चरण में किस भारतीय राज्य को हरित क्रांति से सबसे अधिक लाभ हुआ?", o:["Bihar / बिहार","Odisha / ओडिशा","Punjab / पंजाब","Kerala / केरल"], a:2, e:"Punjab, along with Haryana and western Uttar Pradesh, were the primary beneficiaries of the Green Revolution due to better irrigation facilities.", eh:"बेहतर सिंचाई सुविधाओं के कारण पंजाब, हरियाणा और पश्चिमी उत्तर प्रदेश के साथ हरित क्रांति के प्राथमिक लाभार्थी थे।", f:"The success in these states was largely due to the pre-existing assured irrigation network."},
+{q:"What is the full form of 'HYV' seeds, which played a crucial role in the Green Revolution?", h:"हरित क्रांति में महत्वपूर्ण भूमिका निभाने वाले 'HYV' बीजों का पूर्ण रूप क्या है?", o:["High Yielding Variety / हाई यील्डिंग वैरायटी","Heavy Yielding Vegetation / हैवी यील्डिंग वेजिटेशन","Hybrid Yielding Variety / हाइब्रिड यील्डिंग वैरायटी","High Yielding Value / हाई यील्डिंग वैल्यू"], a:0, e:"HYV stands for High Yielding Variety. These seeds require reliable irrigation and chemical fertilizers to produce greater yields.", eh:"HYV का अर्थ हाई यील्डिंग वैरायटी (उच्च उपज वाली किस्म) है। अधिक उपज देने के लिए इन बीजों को विश्वसनीय सिंचाई और रासायनिक उर्वरकों की आवश्यकता होती है।", f:"The HYV seeds of wheat were originally developed in Mexico by Norman Borlaug."},
+{q:"Who was the Union Minister for Agriculture during the initial phase of the Green Revolution in India?", h:"भारत में हरित क्रांति के प्रारंभिक चरण के दौरान केंद्रीय कृषि मंत्री कौन थे?", o:["Lal Bahadur Shastri / लाल बहादुर शास्त्री","C. Subramaniam / सी. सुब्रमण्यम","Jagjivan Ram / जगजीवन राम","Indira Gandhi / इंदिरा गांधी"], a:1, e:"C. Subramaniam was the Minister of Food and Agriculture who played a pivotal political role in introducing HYV seeds and modern farming techniques.", eh:"सी. सुब्रमण्यम खाद्य और कृषि मंत्री थे जिन्होंने उच्च उपज वाले बीजों (HYV) और आधुनिक खेती तकनीकों को पेश करने में महत्वपूर्ण राजनीतिक भूमिका निभाई।", f:"He was awarded the Bharat Ratna in 1998 for his contribution to India's self-reliance in food production."},
+{q:"Who coined the term 'Green Revolution'?", h:"'हरित क्रांति' शब्द किसने गढ़ा था?", o:["Norman Borlaug / नॉर्मन बोरलॉग","M.S. Swaminathan / एम.एस. स्वामीनाथन","William S. Gaud / विलियम एस. गौड","Paul Ehrlich / पॉल एर्लिच"], a:2, e:"The term 'Green Revolution' was first used in 1968 by William S. Gaud, the former director of USAID.", eh:"'हरित क्रांति' शब्द का प्रयोग पहली बार 1968 में यूनाइटेड स्टेट्स एजेंसी फॉर इंटरनेशनल डेवलपमेंट (USAID) के पूर्व निदेशक विलियम एस. गौड ने किया था।", f:"William S. Gaud used the term to describe the phenomenal growth in agriculture occurring at the time, contrasting it with violent 'Red' or 'White' revolutions."},
+{q:"From which country were the High Yielding Varieties (HYV) of wheat seeds initially imported to India?", h:"शुरुआत में भारत में गेहूं के बीजों की उच्च उपज वाली किस्में (HYV) किस देश से आयात की गई थीं?", o:["USA / संयुक्त राज्य अमेरिका","Australia / ऑस्ट्रेलिया","Mexico / मैक्सिको","Japan / जापान"], a:2, e:"India imported HYV seeds of semi-dwarf wheat from Mexico, which were originally developed by Dr. Norman Borlaug.", eh:"भारत ने मैक्सिको से अर्ध-बौने गेहूं के HYV बीजों का आयात किया, जिन्हें मूल रूप से डॉ. नॉर्मन बोरलॉग द्वारा विकसित किया गया था।", f:"Kalyan Sona and Sonalika were the famous Mexican wheat varieties introduced in India."},
+{q:"Which of the following was NOT a key component of the Green Revolution strategy?", h:"निम्नलिखित में से कौन हरित क्रांति रणनीति का प्रमुख घटक नहीं था?", o:["High Yielding Variety Seeds / उच्च उपज वाले बीज","Chemical Fertilizers and Pesticides / रासायनिक उर्वरक और कीटनाशक","Expansion of Irrigation Infrastructure / सिंचाई के बुनियादी ढांचे का विस्तार","Promotion of Organic Farming / जैविक खेती को बढ़ावा देना"], a:3, e:"The Green Revolution heavily relied on chemical fertilizers, pesticides, and intensive irrigation, not organic farming.", eh:"हरित क्रांति मुख्य रूप से रासायनिक उर्वरकों, कीटनाशकों और गहन सिंचाई पर निर्भर थी, न कि जैविक खेती पर।", f:"The excessive use of chemicals during the Green Revolution later led to soil degradation, prompting the need for an 'Evergreen Revolution'."},
+{q:"The 'IR8' variety of rice, which significantly boosted rice production during the Green Revolution, was developed in which country?", h:"चावल की 'IR8' किस्म, जिसने हरित क्रांति के दौरान चावल के उत्पादन को काफी बढ़ाया, किस देश में विकसित की गई थी?", o:["China / चीन","Philippines / फिलीपींस","Indonesia / इंडोनेशिया","Thailand / थाईलैंड"], a:1, e:"IR8 was a high-yielding semi-dwarf rice variety developed by the International Rice Research Institute (IRRI) located in the Philippines.", eh:"IR8 उच्च उपज वाली अर्ध-बौनी चावल की किस्म थी जिसे फिलीपींस में स्थित अंतर्राष्ट्रीय चावल अनुसंधान संस्थान (IRRI) द्वारा विकसित किया गया था।", f:"IR8 was dubbed 'Miracle Rice' because it produced unprecedented yields when given adequate fertilizer and water."},
+{q:"Which agricultural sector suffered or did not see significant growth during the first phase of the Green Revolution?", h:"हरित क्रांति के पहले चरण के दौरान किस कृषि क्षेत्र को नुकसान हुआ या कोई महत्वपूर्ण वृद्धि नहीं देखी गई?", o:["Pulses and Coarse Grains / दलहन और मोटे अनाज","Wheat and Rice / गेहूं और चावल","Commercial Crops (Sugarcane) / वाणिज्यिक फसलें (गन्ना)","Dairy Products / डेयरी उत्पाद"], a:0, e:"The first phase of the Green Revolution was highly cereal-centric (wheat and rice), leading to a relative neglect and decline in the acreage of pulses and coarse grains.", eh:"हरित क्रांति का पहला चरण अत्यधिक अनाज-केंद्रित (गेहूं और चावल) था, जिसके कारण दलहन और मोटे अनाज के रकबे में सापेक्ष उपेक्षा और गिरावट आई।", f:"This led to a skewed cropping pattern in states like Punjab, reducing crop diversity and affecting soil nutrients."},
+{q:"What was the primary objective of introducing the Green Revolution in India?", h:"भारत में हरित क्रांति शुरू करने का प्राथमिक उद्देश्य क्या था?", o:["To increase export of agricultural goods / कृषि वस्तुओं के निर्यात को बढ़ाना","To achieve self-sufficiency in food grain production / खाद्यान्न उत्पादन में आत्मनिर्भरता प्राप्त करना","To promote cash crops over food crops / खाद्य फसलों के ऊपर नकदी फसलों को बढ़ावा देना","To distribute land equally among farmers / किसानों के बीच भूमि समान रूप से वितरित करना"], a:1, e:"Facing severe food shortages and reliance on imports, India introduced the Green Revolution to achieve self-sufficiency in food grains.", eh:"भोजन की भारी कमी और आयात पर निर्भरता का सामना करते हुए, भारत ने खाद्यान्न में आत्मनिर्भरता प्राप्त करने के लिए हरित क्रांति की शुरुआत की।", f:"India transitioned from a food-deficit nation to a food-surplus nation by the late 1970s."},
+{q:"Which institution in India is the apex body for coordinating, guiding, and managing agricultural research and education?", h:"भारत में कौन सा संस्थान कृषि अनुसंधान और शिक्षा के समन्वय, मार्गदर्शन और प्रबंधन के लिए सर्वोच्च निकाय है?", o:["NITI Aayog / नीति आयोग","NABARD / नाबार्ड","ICAR / आईसीएआर","FCI / एफसीआई"], a:2, e:"The Indian Council of Agricultural Research (ICAR) played a vital role in localizing and testing HYV seeds for Indian conditions during the Green Revolution.", eh:"भारतीय कृषि अनुसंधान परिषद (ICAR) ने हरित क्रांति के दौरान भारतीय परिस्थितियों के लिए HYV बीजों के स्थानीयकरण और परीक्षण में महत्वपूर्ण भूमिका निभाई।", f:"ICAR is an autonomous organisation under the Department of Agricultural Research and Education (DARE)."},
+{q:"The concept of 'Evergreen Revolution' in India aims at?", h:"भारत में 'सदाबहार क्रांति' की अवधारणा का उद्देश्य क्या है?", o:["Increasing forest cover / वन क्षेत्र बढ़ाना","Sustainable agriculture development without ecological harm / पारिस्थितिक नुकसान के बिना सतत कृषि विकास","Year-round production of fruits / फलों का साल भर उत्पादन","Maximizing chemical fertilizer use / रासायनिक उर्वरक के उपयोग को अधिकतम करना"], a:1, e:"Coined by M.S. Swaminathan, the Evergreen Revolution emphasizes increasing agricultural productivity while ensuring ecological and social sustainability.", eh:"एम.एस. स्वामीनाथन द्वारा गढ़ी गई, सदाबहार क्रांति पारिस्थितिक और सामाजिक स्थिरता सुनिश्चित करते हुए कृषि उत्पादकता बढ़ाने पर जोर देती है।", f:"It acts as a corrective measure to the environmental degradation caused by intensive farming practices."},
+{q:"Which region of India is the primary focus of the 'Bringing Green Revolution to Eastern India' (BGREI) program?", h:"'पूर्वी भारत में हरित क्रांति लाना' (BGREI) कार्यक्रम का प्राथमिक फोकस भारत का कौन सा क्षेत्र है?", o:["Punjab, Haryana, Western UP / पंजाब, हरियाणा, पश्चिमी यूपी","Gujarat, Maharashtra, Rajasthan / गुजरात, महाराष्ट्र, राजस्थान","Assam, Bihar, Chhattisgarh, Jharkhand, Odisha, Eastern UP, West Bengal / असम, बिहार, छत्तीसगढ़, झारखंड, ओडिशा, पूर्वी यूपी, पश्चिम बंगाल","Kerala, Tamil Nadu, Karnataka / केरल, तमिलनाडु, कर्नाटक"], a:2, e:"BGREI is a sub-scheme launched in 2010-11 to harness the water potential of eastern states for enhancing agricultural production.", eh:"बीजीआरईआई 2010-11 में कृषि उत्पादन बढ़ाने के लिए पूर्वी राज्यों की जल क्षमता का उपयोग करने के लिए शुरू की गई एक उप-योजना है।", f:"Eastern India was largely left out of the benefits during the first phase of the Green Revolution."},
+{q:"Sonalika and Kalyan Sona, which were introduced in India during the Green Revolution, are high-yielding varieties of which crop?", h:"हरित क्रांति के दौरान भारत में पेश की गई सोनालिका और कल्याण सोना, किस फसल की उच्च उपज वाली किस्में हैं?", o:["Rice / चावल","Wheat / गेहूं","Maize / मक्का","Sugarcane / गन्ना"], a:1, e:"Sonalika and Kalyan Sona were semi-dwarf, high-yielding, and rust-resistant varieties of wheat that transformed India's agricultural output.", eh:"सोनालिका और कल्याण सोना गेहूं की अर्ध-बौनी, उच्च उपज वाली और जंग प्रतिरोधी किस्में थीं जिन्होंने भारत के कृषि उत्पादन को बदल दिया।", f:"These varieties were adapted from the Mexican dwarf wheat varieties developed by Norman Borlaug."},
+{q:"Jaya and Ratna, developed in India during the Green Revolution, are high-yielding varieties of which crop?", h:"हरित क्रांति के दौरान भारत में विकसित 'जया' और 'रत्ना', किस फसल की उच्च उपज वाली किस्में हैं?", o:["Cotton / कपास","Pulses / दालें","Rice / चावल","Mustard / सरसों"], a:2, e:"Jaya and Ratna were the first indigenous high-yielding dwarf rice varieties developed in India to boost rice production.", eh:"जया और रत्ना चावल उत्पादन को बढ़ावा देने के लिए भारत में विकसित पहली स्वदेशी उच्च उपज वाली बौनी चावल की किस्में थीं।", f:"Dr. Shastry was instrumental in developing the 'Jaya' variety, which even outyielded the famous IR8 variety."},
+{q:"What was a major negative socio-economic impact of the Green Revolution in its early phase?", h:"अपने प्रारंभिक चरण में हरित क्रांति का एक प्रमुख नकारात्मक सामाजिक-आर्थिक प्रभाव क्या था?", o:["Complete elimination of small farms / छोटे खेतों का पूर्ण उन्मूलन","Increase in regional and inter-personal inequalities / क्षेत्रीय और पारस्परिक असमानताओं में वृद्धि","Decline in total agricultural employment / कुल कृषि रोजगार में गिरावट","Shift towards completely organic farming / पूर्णतः जैविक खेती की ओर झुकाव"], a:1, e:"The Green Revolution initially benefited wealthy farmers in irrigated regions, widening the wealth gap between rich and poor farmers, and creating regional disparities.", eh:"हरित क्रांति ने शुरू में सिंचित क्षेत्रों में धनी किसानों को लाभान्वित किया, जिससे अमीर और गरीब किसानों के बीच धन का अंतर बढ़ गया, और क्षेत्रीय असमानताएं पैदा हुईं।", f:"Small and marginal farmers could not afford the expensive inputs required for the new farming techniques."},
+{q:"Which institution was established in 1965 to procure food grains and ensure buffer stocks for food security during the Green Revolution?", h:"हरित क्रांति के दौरान खाद्यान्न की खरीद और खाद्य सुरक्षा के लिए बफर स्टॉक सुनिश्चित करने के लिए 1965 में किस संस्था की स्थापना की गई थी?", o:["NABARD / नाबार्ड","NAFED / नेफेड","Food Corporation of India (FCI) / भारतीय खाद्य निगम (FCI)","CACP / सीएसीपी"], a:2, e:"The Food Corporation of India (FCI) was set up in 1965 under the Food Corporations Act, 1964, primarily to implement the objectives of the National Food Policy.", eh:"राष्ट्रीय खाद्य नीति के उद्देश्यों को लागू करने के लिए 1965 में भारतीय खाद्य निगम (FCI) की स्थापना की गई थी।", f:"FCI handles the procurement, storage, transportation, and distribution of food grains to support the PDS."},
+{q:"The Agricultural Prices Commission, established in 1965 to advise on pricing policy for agricultural commodities, is now known as:", h:"कृषि वस्तुओं के लिए मूल्य निर्धारण नीति पर सलाह देने के लिए 1965 में स्थापित कृषि मूल्य आयोग को अब किस नाम से जाना जाता है?", o:["Commission for Agricultural Costs and Prices (CACP) / कृषि लागत और मूल्य आयोग (CACP)","National Agricultural Cooperative Federation / राष्ट्रीय कृषि सहकारी संघ","Indian Agricultural Price Board / भारतीय कृषि मूल्य बोर्ड","Farmers Welfare Commission / किसान कल्याण आयोग"], a:0, e:"The Agricultural Prices Commission was renamed as the Commission for Agricultural Costs and Prices (CACP) in 1985. It recommends Minimum Support Prices (MSP).", eh:"1985 में कृषि मूल्य आयोग का नाम बदलकर कृषि लागत और मूल्य आयोग (CACP) कर दिया गया। यह MSP की सिफारिश करता है।", f:"The CACP recommends MSPs for 22 mandated crops and FRP for sugarcane."},
+{q:"Which global award was given to Dr. Norman Borlaug in 1970 for his work on the Green Revolution?", h:"हरित क्रांति पर उनके काम के लिए 1970 में डॉ. नॉर्मन बोरलॉग को कौन सा वैश्विक पुरस्कार दिया गया था?", o:["Nobel Prize in Economics / अर्थशास्त्र में नोबेल पुरस्कार","Nobel Peace Prize / नोबेल शांति पुरस्कार","World Food Prize / विश्व खाद्य पुरस्कार","Ramon Magsaysay Award / रेमन मैग्सेसे पुरस्कार"], a:1, e:"Norman Borlaug was awarded the Nobel Peace Prize in 1970 for his contributions to the world food supply, which helped avert mass famines.", eh:"नॉर्मन बोरलॉग को विश्व खाद्य आपूर्ति में उनके योगदान के लिए 1970 में नोबेल शांति पुरस्कार से सम्मानित किया गया था।", f:"Borlaug later established the World Food Prize in 1986 as there is no Nobel Prize specifically for agriculture."},
+{q:"In which year was the High Yielding Varieties Programme (HYVP) officially launched in India?", h:"भारत में उच्च उपज किस्म कार्यक्रम (HYVP) आधिकारिक तौर पर किस वर्ष शुरू किया गया था?", o:["1960 / 1960","1966 / 1966","1972 / 1972","1980 / 1980"], a:1, e:"The High Yielding Varieties Programme (HYVP) was launched in the Kharif season of 1966, marking the formal beginning of the Green Revolution in India.", eh:"उच्च उपज किस्म कार्यक्रम (HYVP) 1966 के खरीफ मौसम में शुरू किया गया था, जो भारत में हरित क्रांति की औपचारिक शुरुआत थी।", f:"The HYVP was launched initially for five crops: Wheat, Rice, Jowar, Bajra, and Maize."},
+{q:"Which environmental issue became heavily prominent in Punjab and Haryana as a direct consequence of the intensive irrigation practices of the Green Revolution?", h:"हरित क्रांति की गहन सिंचाई प्रथाओं के प्रत्यक्ष परिणाम के रूप में पंजाब और हरियाणा में कौन सा पर्यावरणीय मुद्दा अत्यधिक प्रमुख हो गया?", o:["Deforestation / वनों की कटाई","Soil Salinization and Groundwater Depletion / मृदा लवणता और भूजल की कमी","Acid Rain / अम्लीय वर्षा","Air Pollution from stubble burning only / केवल पराली जलाने से वायु प्रदूषण"], a:1, e:"Over-irrigation led to severe groundwater depletion and waterlogging, which caused salt to accumulate on the soil surface (salinization).", eh:"अधिक सिंचाई के कारण भूजल की भारी कमी और जलभराव हो गया, जिससे मिट्टी की सतह पर नमक जमा हो गया (लवणता)।", f:"Soil alkalinity and salinization severely reduce the long-term natural fertility of the land."},
+{q:"The Green Revolution caused a structural shift in Indian agriculture from ________ to ________.", h:"हरित क्रांति ने भारतीय कृषि में ________ से ________ की ओर एक संरचनात्मक बदलाव किया।", o:["Commercial farming to Subsistence farming / वाणिज्यिक खेती से निर्वाह खेती","Subsistence farming to Commercial farming / निर्वाह खेती से वाणिज्यिक खेती","Mixed farming to Plantation agriculture / मिश्रित खेती से बागान कृषि","Intensive farming to Extensive farming / गहन खेती से व्यापक खेती"], a:1, e:"The Green Revolution allowed farmers to produce surplus crops for the market rather than just for their own family's consumption, transitioning agriculture to a commercial enterprise.", eh:"हरित क्रांति ने किसानों को केवल अपने परिवार के उपभोग के बजाय बाजार के लिए अधिशेष फसलों का उत्पादन करने की अनुमति दी, जिससे कृषि एक व्यावसायिक उद्यम में बदल गई।", f:"This commercialization increased market dependency for agricultural inputs."},
+{q:"Which element of fertilizer usage saw the maximum imbalance in India during and post-Green Revolution?", h:"हरित क्रांति के दौरान और उसके बाद भारत में उर्वरक उपयोग के किस तत्व में अधिकतम असंतुलन देखा गया?", o:["Nitrogen (N) / नाइट्रोजन (N)","Phosphorus (P) / फास्फोरस (P)","Potassium (K) / पोटैशियम (K)","Zinc (Zn) / जिंक (Zn)"], a:0, e:"Due to heavy subsidies on Urea, Indian farmers excessively used Nitrogen fertilizers, severely distorting the ideal NPK ratio of 4:2:1.", eh:"यूरिया पर भारी सब्सिडी के कारण, भारतीय किसानों ने नाइट्रोजन उर्वरकों का अत्यधिक उपयोग किया, जिससे 4:2:1 का आदर्श NPK अनुपात गंभीर रूप से बिगड़ गया।", f:"The excessive use of Nitrogen has led to deteriorating soil health."},
+{q:"What was the main reason for the limited success of the Green Revolution in the production of pulses and oilseeds?", h:"दलहन और तिलहन के उत्पादन में हरित क्रांति की सीमित सफलता का मुख्य कारण क्या था?", o:["They are not consumed in India / उनका भारत में सेवन नहीं किया जाता है","Lack of high-yielding varieties and focus solely on cereals / उच्च उपज वाली किस्मों की कमी और केवल अनाज पर ध्यान केंद्रित करना","Government completely banned their cultivation / सरकार ने उनकी खेती पर पूरी तरह से प्रतिबंध लगा दिया","They require extremely cold climates / उन्हें अत्यधिक ठंडी जलवायु की आवश्यकता होती है"], a:1, e:"Agricultural research, MSP support, and HYV seed development were highly skewed in favor of wheat and rice, leaving pulses and oilseeds technologically lagging.", eh:"कृषि अनुसंधान, एमएसपी समर्थन और HYV बीज विकास का झुकाव गेहूं और चावल के पक्ष में अत्यधिक था, जिससे दलहन और तिलहन पिछड़ गए।", f:"To combat this, missions like the Technology Mission on Oilseeds (1986) were launched."},
+{q:"The term 'Rainbow Revolution' in the context of the Indian economy refers to:", h:"भारतीय अर्थव्यवस्था के संदर्भ में 'इंद्रधनुषी क्रांति' शब्द का तात्पर्य है:", o:["Development of the paint manufacturing industry / पेंट निर्माण उद्योग का विकास","Integrated development of all sectors of agriculture / कृषि के सभी क्षेत्रों का एकीकृत विकास","Focus purely on floriculture / विशुद्ध रूप से फूलों की खेती पर ध्यान दें","Development of the handloom sector / हथकरघा क्षेत्र का विकास"], a:1, e:"Rainbow Revolution implies a holistic approach, combining various agricultural revolutions to achieve comprehensive agricultural growth.", eh:"इंद्रधनुषी क्रांति का तात्पर्य एक समग्र दृष्टिकोण से है, जिसमें व्यापक कृषि विकास प्राप्त करने के लिए विभिन्न कृषि क्रांतियों का संयोजन किया जाता है।", f:"The National Agricultural Policy of 2000 envisaged the concept of the Rainbow Revolution."},
+{q:"The initiation of the Green Revolution coincided with which planning phase in India?", h:"हरित क्रांति की शुरुआत भारत में किस नियोजन चरण के साथ हुई?", o:["First Five Year Plan / प्रथम पंचवर्षीय योजना","Second Five Year Plan / द्वितीय पंचवर्षीय योजना","Annual Plans (Plan Holiday) / वार्षिक योजनाएँ (योजना अवकाश)","Fifth Five Year Plan / पाँचवीं पंचवर्षीय योजना"], a:2, e:"The Green Revolution started during the Annual Plans (1966-1969), also known as the 'Plan Holiday,' following the failure of the Third Five Year Plan.", eh:"हरित क्रांति वार्षिक योजनाओं (1966-1969) के दौरान शुरू हुई, जिसे 'योजना अवकाश' के रूप में भी जाना जाता है।", f:"The benefits were deeply consolidated during the Fourth Five-Year Plan (1969-1974)."},
+{q:"What is the primary focus of the 'Second Green Revolution' currently emphasized by the Indian Government?", h:"भारत सरकार द्वारा वर्तमान में जोर दी जा रही 'द्वितीय हरित क्रांति' का प्राथमिक फोकस क्या है?", o:["Shifting completely to Genetically Modified (GM) food crops / पूरी तरह से आनुवंशिक रूप से संशोधित (GM) खाद्य फसलों में स्थानांतरित होना","Focusing on dryland farming, sustainable agriculture, and eastern regions / शुष्क भूमि की खेती, सतत कृषि और पूर्वी क्षेत्रों पर ध्यान केंद्रित करना","Deforesting central India for agriculture / कृषि के लिए मध्य भारत के जंगलों को काटना","Abolishing the MSP system completely / एमएसपी प्रणाली को पूरी तरह से समाप्त करना"], a:1, e:"The Second Green Revolution aims to increase agricultural productivity in dry, rain-fed areas using sustainable technologies and crop diversification.", eh:"दूसरी हरित क्रांति का उद्देश्य टिकाऊ तकनीकों का उपयोग करके शुष्क, वर्षा आधारित क्षेत्रों में कृषि उत्पादकता बढ़ाना है।", f:"It heavily focuses on horticulture, animal husbandry, and reducing chemical dependency."},
+{q:"Under the Green Revolution, minimum support prices (MSP) were used primarily as a tool to:", h:"हरित क्रांति के तहत, न्यूनतम समर्थन मूल्य (MSP) का मुख्य रूप से किस उपकरण के रूप में उपयोग किया गया था?", o:["Tax the rich farmers / अमीर किसानों पर कर लगाना","Subsidize agricultural exports / कृषि निर्यात पर सब्सिडी देना","Guarantee a remunerative price to farmers to adopt new technologies / नई तकनीकों को अपनाने के लिए किसानों को लाभकारी मूल्य की गारंटी देना","Provide cheap food only to urban elites / केवल शहरी अभिजात वर्ग को सस्ता भोजन उपलब्ध कराना"], a:2, e:"MSP acts as a financial safety net, assuring farmers that the government will buy their produce at a fixed price, encouraging investment in GR technologies.", eh:"एमएसपी एक वित्तीय सुरक्षा जाल के रूप में कार्य करता है, जो किसानों को आश्वस्त करता है कि सरकार एक निश्चित लाभकारी मूल्य पर उनकी उपज खरीदेगी।", f:"The announcement of MSP is made before the sowing season to influence farmers' cropping decisions."},
+{q:"Which major economic event in 1969 significantly helped in the success of the Green Revolution by expanding institutional credit to farmers?", h:"1969 में किस प्रमुख आर्थिक घटना ने किसानों को संस्थागत ऋण का विस्तार करके हरित क्रांति की सफलता में महत्वपूर्ण मदद की?", o:["Establishment of RBI / आरबीआई की स्थापना","Nationalisation of 14 major commercial banks / 14 प्रमुख वाणिज्यिक बैंकों का राष्ट्रीयकरण","Introduction of GST / जीएसटी की शुरूआत","Establishment of NABARD / नाबार्ड की स्थापना"], a:1, e:"The nationalisation of 14 major commercial banks in 1969 mandated banks to expand branch networks into rural areas and provide credit to agriculture.", eh:"1969 में 14 प्रमुख वाणिज्यिक बैंकों के राष्ट्रीयकरण ने बैंकों को ग्रामीण क्षेत्रों में कृषि सहित प्राथमिकता वाले क्षेत्रों को ऋण प्रदान करने के लिए अनिवार्य कर दिया।", f:"Priority Sector Lending (PSL) norms ensure that a specific portion of bank lending goes to agriculture."},
+{q:"Before the Green Revolution, India was heavily dependent on food aid from the United States under which specific program?", h:"हरित क्रांति से पहले, भारत किस विशिष्ट कार्यक्रम के तहत संयुक्त राज्य अमेरिका से खाद्य सहायता पर अत्यधिक निर्भर था?", o:["Marshall Plan / मार्शल योजना","PL-480 (Public Law 480) / पीएल-480 (पब्लिक लॉ 480)","USAID Food Grant / यूएसएआईडी खाद्य अनुदान","Global Hunger Initiative / ग्लोबल हंगर इनिशिएटिव"], a:1, e:"India imported millions of tons of wheat from the USA under the PL-480 (Food for Peace) program during the droughts of the mid-1960s.", eh:"1960 के दशक के मध्य में गंभीर सूखे के दौरान भुखमरी से बचने के लिए भारत ने PL-480 कार्यक्रम के तहत अमेरिका से गेहूं का आयात किया था।", f:"This reliance compromised foreign policy autonomy, pushing India to prioritize self-sufficiency."},
+{q:"Which of the following wheat varieties were imported from Mexico during the initial phase of the Green Revolution in India?", h:"भारत में हरित क्रांति के प्रारंभिक चरण के दौरान मैक्सिको से निम्नलिखित में से कौन सी गेहूं की किस्में आयात की गई थीं?", o:["Lerma Rojo and Sonora-64 / लेर्मा रोजो और सोनोरा-64","IR8 and Taichung Native-1 / आईआर8 और ताइचुंग नेटिव-1","Pusa Basmati and Sharbati / पूसा बासमती और शरबती","Jaya and Ratna / जया और रत्ना"], a:0, e:"Lerma Rojo and Sonora-64 were the initial semi-dwarf, high-yielding Mexican wheat varieties imported and tested in India.", eh:"लेर्मा रोजो और सोनोरा-64 प्रारंभिक अर्ध-बौनी, उच्च उपज वाली मैक्सिकन गेहूं की किस्में थीं जिनका भारत में आयात और परीक्षण किया गया था।", f:"These were later cross-bred by Indian scientists to develop indigenous varieties like Kalyan Sona."},
+{q:"The High Yielding Varieties (HYV) of wheat introduced had a 'dwarf' characteristic. What was the primary advantage of this dwarfism?", h:"पेश की गई गेहूं की उच्च उपज वाली किस्मों (HYV) में 'बौनापन' की विशेषता थी। इस बौनेपन का प्राथमिक लाभ क्या था?", o:["It made harvesting by hand difficult / इससे हाथ से कटाई करना मुश्किल हो गया","It prevented the plant from falling over (lodging) when heavily fertilized / यह पौधे को अत्यधिक उर्वरक दिए जाने पर गिरने (लॉजिंग) से रोकता था","It required less sunlight / इसे कम धूप की आवश्यकता होती थी","It made the grain smaller / इसने अनाज को छोटा बना दिया"], a:1, e:"Dwarf genes created shorter, sturdier stems capable of holding heavier grain yields without falling over (lodging) under heavy fertilizer use.", eh:"बौने जीन ने छोटे, मजबूत तने बनाए जो भारी रासायनिक उर्वरकों के प्रयोग पर भारी अनाज की पैदावार को बिना गिरे संभालने में सक्षम थे।", f:"The 'Norin 10' dwarfing gene from Japan was used to develop these semi-dwarf wheat varieties."},
+{q:"In the context of India's Green Revolution, what does 'Multiple Cropping' mean?", h:"भारत की हरित क्रांति के संदर्भ में, 'बहु-फसली' (Multiple Cropping) का क्या अर्थ है?", o:["Growing different crops on the same land in sequential seasons within a year / एक वर्ष के भीतर क्रमिक मौसमों में एक ही भूमि पर विभिन्न फसलें उगाना","Mixing different seeds together in one field / एक खेत में विभिन्न बीजों को एक साथ मिलाना","Growing crops only in the Kharif season / केवल खरीफ मौसम में फसलें उगाना","Growing non-food crops along with trees / पेड़ों के साथ गैर-खाद्य फसलें उगाना"], a:0, e:"Because HYV seeds matured faster (short duration), farmers could grow two or more crops in the same field in a single year.", eh:"चूँकि HYV बीज तेजी से पकते हैं, इसलिए किसान एक ही वर्ष में एक ही खेत में क्रमिक रूप से दो या अधिक फसलें उगा सकते थे।", f:"Assured irrigation from tubewells and canals made multiple cropping highly successful."},
+{q:"Who among the following Prime Ministers of India gave the slogan 'Jai Jawan, Jai Kisan', aligning with the goals of the Green Revolution?", h:"निम्नलिखित में से भारत के किस प्रधान मंत्री ने हरित क्रांति के लक्ष्यों के साथ तालमेल बिठाते हुए 'जय जवान, जय किसान' का नारा दिया था?", o:["Jawaharlal Nehru / जवाहरलाल नेहरू","Indira Gandhi / इंदिरा गांधी","Lal Bahadur Shastri / लाल बहादुर शास्त्री","Morarji Desai / मोरारजी देसाई"], a:2, e:"Prime Minister Lal Bahadur Shastri gave this slogan in 1965 to motivate farmers to increase agricultural production alongside soldiers fighting the Indo-Pak war.", eh:"प्रधान मंत्री लाल बहादुर शास्त्री ने 1965 में भारत-पाक युद्ध लड़ रहे सैनिकों के साथ-साथ कृषि उत्पादन बढ़ाने के लिए किसानों को प्रेरित करने के लिए यह नारा दिया था।", f:"Atal Bihari Vajpayee later added 'Jai Vigyan', and Narendra Modi added 'Jai Anusandhan'."},
+{q:"Which state in India is frequently referred to as the 'Granary of India' largely due to the Green Revolution?", h:"हरित क्रांति के कारण भारत के किस राज्य को अक्सर 'भारत का अन्न भंडार' कहा जाता है?", o:["Uttar Pradesh / उत्तर प्रदेश","Madhya Pradesh / मध्य प्रदेश","Punjab / पंजाब","West Bengal / पश्चिम बंगाल"], a:2, e:"Punjab is called the Granary of India because it produces a massive surplus of wheat and rice, contributing highly to the central pool of food grains.", eh:"पंजाब को भारत का अन्न भंडार कहा जाता है क्योंकि यह गेहूं और चावल का भारी अधिशेष पैदा करता है, जो केंद्रीय पूल में बड़ा हिस्सा देता है।", f:"Despite covering less than 2% of India's area, Punjab is a leading contributor to the FCI."},
+{q:"The success of the Green Revolution was heavily dependent on farm mechanisation. Which of the following is an example of such mechanisation?", h:"हरित क्रांति की सफलता काफी हद तक कृषि यंत्रीकरण पर निर्भर थी। निम्नलिखित में से कौन ऐसे यंत्रीकरण का उदाहरण है?", o:["Use of bullock carts / बैलगाड़ियों का उपयोग","Persian wheel (Rahat) for irrigation / सिंचाई के लिए रहट","Use of tractors and combined harvesters / ट्रैक्टर और कंबाइन हार्वेस्टर का उपयोग","Hand weeding / हाथ से निराई"], a:2, e:"The Green Revolution led to the widespread adoption of modern agricultural machinery like tractors and combine harvesters to manage commercial farming efficiently.", eh:"हरित क्रांति के कारण व्यावसायिक खेती को कुशलतापूर्वक प्रबंधित करने के लिए ट्रैक्टर और कंबाइन हार्वेस्टर जैसी आधुनिक मशीनरी को व्यापक रूप से अपनाया गया।", f:"Mechanisation increased productivity but displaced some agricultural manual labor."},
+{q:"What is CIMMYT, an institution closely related to the origin of the Green Revolution?", h:"सिम्मिट (CIMMYT) क्या है, जो हरित क्रांति की उत्पत्ति से निकटता से संबंधित संस्था है?", o:["An agricultural bank in India / भारत में एक कृषि बैंक","The International Maize and Wheat Improvement Center in Mexico / मैक्सिको में अंतर्राष्ट्रीय मक्का और गेहूं सुधार केंद्र","A fertilizer company in the USA / संयुक्त राज्य अमेरिका में एक उर्वरक कंपनी","The Indian nodal agency for seed distribution / बीज वितरण के लिए भारतीय नोडल एजेंसी"], a:1, e:"CIMMYT is the research center in Mexico where Dr. Norman Borlaug developed the HYV wheat seeds.", eh:"CIMMYT मैक्सिको का वह अनुसंधान केंद्र है जहाँ डॉ. नॉर्मन बोरलॉग ने HYV गेहूँ के बीज विकसित किए थे।", f:"India partnered with CIMMYT for wheat and with IRRI (Philippines) for rice varieties."},
+{q:"Which of the following agricultural practices is viewed as a remedy to the soil degradation caused by the Green Revolution?", h:"हरित क्रांति के कारण होने वाले मिट्टी के क्षरण के उपाय के रूप में निम्नलिखित में से किस कृषि पद्धति को देखा जाता है?", o:["Monoculture / मोनोकल्चर","Intensive chemical farming / गहन रासायनिक खेती","Organic farming and Crop Rotation / जैविक खेती और फसल चक्र","Deforestation / वनों की कटाई"], a:2, e:"Crop rotation and organic farming restore soil health naturally, mitigating the damage caused by heavy chemicals and continuous cereal cultivation.", eh:"फसल चक्र और जैविक खेती प्राकृतिक रूप से मिट्टी के स्वास्थ्य को बहाल करते हैं, भारी रसायनों से होने वाले नुकसान को कम करते हैं।", f:"The government's 'Paramparagat Krishi Vikas Yojana' (PKVY) aims to promote organic farming."},
+{q:"A direct positive outcome of the Green Revolution was the strengthening of which system to ensure affordable food reaches the poor?", h:"गरीबों तक सस्ता भोजन पहुंचना सुनिश्चित करने के लिए किस प्रणाली को मजबूत करना हरित क्रांति का प्रत्यक्ष सकारात्मक परिणाम था?", o:["Minimum Support Price (MSP) / न्यूनतम समर्थन मूल्य","Public Distribution System (PDS) / सार्वजनिक वितरण प्रणाली","Priority Sector Lending (PSL) / प्राथमिकता क्षेत्र ऋण","Foreign Direct Investment (FDI) / प्रत्यक्ष विदेशी निवेश"], a:1, e:"The massive food grain surpluses allowed the government to build buffer stocks and distribute affordable food through the Public Distribution System (ration shops).", eh:"भारी खाद्यान्न अधिशेष ने सरकार को बफर स्टॉक बनाने और सार्वजनिक वितरण प्रणाली (राशन की दुकानों) के माध्यम से किफायती भोजन वितरित करने की अनुमति दी।", f:"PDS later evolved into the Targeted Public Distribution System (TPDS) in 1997."},
+{q:"How did the Green Revolution impact the relationship between industry and agriculture in India?", h:"हरित क्रांति ने भारत में उद्योग और कृषि के बीच संबंधों को कैसे प्रभावित किया?", o:["It isolated agriculture from the industrial sector / इसने कृषि को औद्योगिक क्षेत्र से अलग कर दिया","It created strong forward and backward linkages / इसने मजबूत फॉरवर्ड और बैकवर्ड लिंकेज बनाए","It caused industries to shut down / इसके कारण उद्योग बंद हो गए","It eliminated the need for agro-based industries / इसने कृषि आधारित उद्योगों की आवश्यकता को समाप्त कर दिया"], a:1, e:"It created strong backward linkages (demand for tractors, fertilizers) and forward linkages (supplying raw materials to agro-industries).", eh:"इसने मजबूत 'बैकवर्ड लिंकेज' (ट्रैक्टर, उर्वरकों की मांग) और 'फॉरवर्ड लिंकेज' (कृषि-उद्योगों को कच्चा माल) का निर्माण किया।", f:"This interdependence boosted the manufacturing sector, particularly in fertilizers and machinery."},
+{q:"The 'Gene Revolution', often discussed as the next step after the Green Revolution, focuses primarily on:", h:"'जीन क्रांति', जिसे अक्सर हरित क्रांति के बाद के अगले कदम के रूप में चर्चा की जाती है, मुख्य रूप से किस पर केंद्रित है?", o:["Traditional breeding methods / पारंपरिक प्रजनन विधियों पर","Genetically Modified (GM) crops / आनुवंशिक रूप से संशोधित (GM) फसलों पर","Organic manure production / जैविक खाद उत्पादन पर","Water conservation techniques / जल संरक्षण तकनीकों पर"], a:1, e:"The Gene Revolution focuses on agricultural biotechnology, specifically Genetically Modified (GM) crops, to impart resistance to pests and diseases.", eh:"जीन क्रांति कीटों और बीमारियों के प्रतिरोध प्रदान करने के लिए आनुवंशिक रूप से संशोधित (GM) फसलों पर केंद्रित है।", f:"Bt Cotton is currently the only GM crop officially approved for commercial cultivation in India."},
+{q:"What happens to the marginal productivity of agricultural labor during the intensive mechanisation phase of the Green Revolution?", h:"हरित क्रांति के गहन मशीनीकरण चरण के दौरान कृषि श्रम की सीमांत उत्पादकता का क्या होता है?", o:["It becomes zero / यह शून्य हो जाती है","It decreases / यह घट जाती है","It increases / यह बढ़ जाती है","It remains perfectly constant / यह पूरी तरह से स्थिर रहती है"], a:2, e:"With the aid of modern technology (HYV seeds, machinery), the output produced by each individual agricultural laborer significantly increases.", eh:"आधुनिक तकनीक की सहायता से, प्रत्येक व्यक्तिगत खेतिहर मजदूर द्वारा उत्पादित उत्पादन में काफी वृद्धि होती है।", f:"Although per-worker productivity increases, mechanisation can lead to unemployment for landless laborers."},
+{q:"During the Green Revolution, the government heavily subsidized agricultural inputs. What does this 'subsidy' mean in economic terms?", h:"हरित क्रांति के दौरान, सरकार ने कृषि आदानों पर भारी सब्सिडी दी। आर्थिक दृष्टि से इस 'सब्सिडी' का क्या अर्थ है?", o:["A tax imposed on wealthy farmers / धनी किसानों पर लगाया गया कर","A financial grant provided by the government to keep consumer/producer prices low / उपभोक्ता/उत्पादक कीमतों को कम रखने के लिए सरकार द्वारा प्रदान किया गया वित्तीय अनुदान","A penalty for overuse of fertilizers / उर्वरकों के अधिक उपयोग के लिए जुर्माना","A loan provided by private moneylenders / निजी साहूकारों द्वारा प्रदान किया गया ऋण"], a:1, e:"A subsidy is financial assistance paid by the government to farmers to reduce their cost of cultivation and encourage adoption of modern techniques.", eh:"सब्सिडी सरकार द्वारा किसानों को खेती की लागत को कम करने और आधुनिक तकनीकों को अपनाने को प्रोत्साहित करने के लिए दी जाने वाली वित्तीय सहायता है।", f:"Fertilizer is one of the largest components of the Indian government's subsidy bill."},
+{q:"Which among the following best describes 'scale neutrality' of HYV technology during the Green Revolution?", h:"निम्नलिखित में से कौन हरित क्रांति के दौरान HYV तकनीक की 'स्केल न्यूट्रैलिटी' (पैमाने की तटस्थता) का सबसे अच्छा वर्णन करता है?", o:["It can only be used on large farms / इसका उपयोग केवल बड़े खेतों में किया जा सकता है","It can only be used on small farms / इसका उपयोग केवल छोटे खेतों में किया जा सकता है","The technology itself can yield proportional results on both small and large farms / तकनीक तकनीकी रूप से छोटे और बड़े दोनों खेतों में आनुपातिक परिणाम दे सकती है","It requires zero water / इसके लिए शून्य पानी की आवश्यकता होती है"], a:2, e:"Technically, HYV seeds are scale-neutral. A small farm and a large farm can get the same yield per acre. However, inputs were expensive in practice.", eh:"तकनीकी रूप से, HYV बीज 'स्केल-न्यूट्रल' होते हैं। एक छोटे और बड़े खेत को प्रति एकड़ समान उपज मिल सकती है।", f:"This difference between technological neutrality and practical accessibility led to income inequality."},
+{q:"Which state launched the first dedicated Agricultural University in India in 1960, which played a pivotal role in the Green Revolution?", h:"1960 में किस राज्य ने भारत में पहला समर्पित कृषि विश्वविद्यालय शुरू किया, जिसने हरित क्रांति में महत्वपूर्ण भूमिका निभाई?", o:["Punjab / पंजाब","Uttar Pradesh (now in Uttarakhand) / उत्तर प्रदेश (अब उत्तराखंड में)","Maharashtra / महाराष्ट्र","Tamil Nadu / तमिलनाडु"], a:1, e:"Govind Ballabh Pant University of Agriculture and Technology in Pantnagar (then UP) was India's first agricultural university and a pioneer in GR research.", eh:"पंतनगर (तत्कालीन यूपी) में स्थापित गोविंद बल्लभ पंत कृषि विश्वविद्यालय भारत का पहला कृषि विश्वविद्यालय था।", f:"It was inaugurated by Jawaharlal Nehru and is dubbed the 'Harbinger of Green Revolution'."},
+{q:"How did the Green Revolution influence the cropping pattern in the states of Punjab and Haryana?", h:"हरित क्रांति ने पंजाब और हरियाणा राज्यों में फसल पैटर्न को कैसे प्रभावित किया?", o:["It promoted highly diversified multi-crop farming / इसने अत्यधिक विविध बहु-फसल खेती को बढ़ावा दिया","It led to a strong dominance of a Wheat-Rice monoculture / इसके कारण गेहूं-चावल मोनोकल्चर का मजबूत प्रभुत्व हुआ","It shifted farmers entirely to cash crops like cotton and sugarcane / इसने किसानों को पूरी तरह से कपास और गन्ने की ओर स्थानांतरित कर दिया","It caused a major shift towards millet farming / इसके कारण बाजरे की खेती की ओर एक बड़ा बदलाव आया"], a:1, e:"Assured MSP and irrigation caused farmers to abandon traditional crops, adopting an intense, continuous cycle of Wheat and Rice.", eh:"सुनिश्चित एमएसपी और सिंचाई के कारण किसानों ने पारंपरिक फसलों को छोड़ दिया, और गेहूं-चावल के निरंतर चक्र को अपना लिया।", f:"This monoculture is a leading cause of the current groundwater crisis in North India."},
+{q:"The introduction of high-yielding varieties of wheat and rice fundamentally changed the 'gestation period' (crop duration). Did it:", h:"गेहूं और चावल की उच्च उपज वाली किस्मों की शुरुआत ने मौलिक रूप से 'गर्भधारण अवधि' (फसल की अवधि) को बदल दिया। क्या इसने:", o:["Increase the crop duration / फसल की अवधि बढ़ा दी","Decrease the crop duration / फसल की अवधि घटा दी","Keep it exactly the same / इसे बिल्कुल वैसा ही रखा","Make the crops bloom only once in two years / फसलों को दो साल में केवल एक बार खिलने वाला बना दिया"], a:1, e:"HYV seeds matured faster (shorter duration) than traditional seeds, freeing up land faster for a second crop.", eh:"एचवाईवी बीज पारंपरिक बीजों की तुलना में तेजी से पकते थे (कम अवधि), जिससे दूसरी फसल के लिए भूमि जल्दी खाली हो गई।", f:"This reduced gestation period is the scientific basis that enabled multiple cropping."},
+{q:"Which initiative acts as a secondary support system alongside the Green Revolution to insure farmers against crop failures?", h:"कौन सी पहल हरित क्रांति के साथ एक माध्यमिक सहायता प्रणाली के रूप में कार्य करती है, जो किसानों को फसल की विफलता के खिलाफ बीमा करती है?", o:["PM-KISAN / पीएम-किसान","Pradhan Mantri Fasal Bima Yojana (PMFBY) / प्रधान मंत्री फसल बीमा योजना","National Food Security Act (NFSA) / राष्ट्रीय खाद्य सुरक्षा अधिनियम","MGNREGA / मनरेगा"], a:1, e:"PMFBY provides comprehensive crop insurance against non-preventable natural risks, protecting high investments in GR technologies.", eh:"PMFBY गैर-रोकथाम योग्य प्राकृतिक जोखिमों के खिलाफ व्यापक फसल बीमा प्रदान करता है।", f:"Premium rates are very low: 2% for Kharif, 1.5% for Rabi, and 5% for commercial crops."},
+{q:"The Intensive Agricultural District Programme (IADP), which laid the foundation for the Green Revolution, was launched in which year?", h:"सघन कृषि जिला कार्यक्रम (IADP), जिसने हरित क्रांति की नींव रखी, किस वर्ष शुरू किया गया था?", o:["1950","1960","1970","1980"], a:1, e:"Launched in 1960, the IADP was the first major experiment to provide a 'package' of modern inputs in selected districts.", eh:"1960 में शुरू किया गया IADP चयनित जिलों में आधुनिक इनपुट का 'पैकेज' प्रदान करने का पहला बड़ा प्रयोग था।", f:"IADP was initially implemented in seven selected districts across different states."},
+{q:"To meet the short-term credit requirements of farmers for purchasing Green Revolution inputs, which scheme was introduced in 1998?", h:"हरित क्रांति के इनपुट खरीदने के लिए किसानों की अल्पकालिक ऋण आवश्यकताओं को पूरा करने के लिए, 1998 में कौन सी योजना शुरू की गई थी?", o:["Pradhan Mantri Jan Dhan Yojana","Kisan Credit Card (KCC) Scheme / किसान क्रेडिट कार्ड योजना","Mudra Yojana","PM Fasal Bima Yojana"], a:1, e:"The KCC scheme was introduced in 1998 to provide farmers with timely credit support from the banking system.", eh:"KCC योजना 1998 में शुरू की गई थी ताकि किसानों को बैंकिंग प्रणाली से समय पर ऋण सहायता प्रदान की जा सके।", f:"The KCC scheme was prepared by NABARD based on the R.V. Gupta Committee."},
+{q:"Which scheme was launched in 2015 specifically to address the severe nutrient imbalance in soil caused by excessive fertilizer use?", h:"अत्यधिक उर्वरक उपयोग के कारण मिट्टी में पोषक तत्वों के असंतुलन को दूर करने के लिए 2015 में कौन सी योजना शुरू की गई थी?", o:["PM Krishi Sinchayee Yojana","Soil Health Card Scheme / मृदा स्वास्थ्य कार्ड योजना","Paramparagat Krishi Vikas Yojana","e-NAM"], a:1, e:"The Soil Health Card scheme assesses nutrient status and provides crop-wise fertilizer dosage recommendations.", eh:"मृदा स्वास्थ्य कार्ड योजना पोषक स्थिति का आकलन करती है और उर्वरक खुराक की सिफारिशें प्रदान करती है।", f:"Launched by PM Modi with the slogan 'Swasth Dhar, Khet Hara'."},
+{q:"The technological transition during the Green Revolution is often contrasted with which institutional reform in Indian agriculture?", h:"हरित क्रांति के दौरान तकनीकी परिवर्तन की तुलना अक्सर भारतीय कृषि में किस संस्थागत सुधार के साथ की जाती है?", o:["Industrial Licensing","Land Reforms (Zamindari Abolition) / भूमि सुधार (जमींदारी उन्मूलन)","Bank Nationalisation","Labour Reforms"], a:1, e:"Green Revolution was a 'technological' fix, whereas 'Land Reforms' were 'institutional' fixes for equitable land distribution.", eh:"हरित क्रांति एक 'तकनीकी' उपाय था, जबकि 'भूमि सुधार' समान भूमि वितरण के लिए 'संस्थागत' उपाय थे।", f:"Critics argue that partial failure of land reforms meant GR benefits didn't reach landless laborers equally."},
+{q:"In which Five-Year Plan did India officially announce the goal of achieving 'Self-reliance in agriculture and food grains'?", h:"किस पंचवर्षीय योजना में भारत ने 'कृषि और खाद्यान्न में आत्मनिर्भरता' प्राप्त करने के लक्ष्य की घोषणा की?", o:["First Five-Year Plan","Second Five-Year Plan","Fourth Five-Year Plan / चौथी पंचवर्षीय योजना","Eighth Five-Year Plan"], a:2, e:"The Fourth Five-Year Plan (1969-1974) aimed at progressive achievement of self-reliance, banking on Green Revolution success.", eh:"चौथी पंचवर्षीय योजना (1969-1974) का उद्देश्य हरित क्रांति की सफलता पर निर्भर आत्मनिर्भरता की प्रगतिशील उपलब्धि था।", f:"The First Plan focused on agriculture generally, but the Fourth explicitly targeted self-reliance via GR."},
+{q:"What environmental phenomenon occurs when agricultural runoff, heavily laden with GR fertilizers, flows into lakes and rivers?", h:"वह कौन सी पर्यावरणीय घटना होती है जब कृषि अपवाह, उर्वरकों से भारी होकर, झीलों में बहता है?", o:["Salinization","Eutrophication / सुपोषण","Desertification","Sedimentation"], a:1, e:"Eutrophication is the over-enrichment of water bodies with nutrients, causing algal blooms that kill marine life.", eh:"सुपोषण जल निकायों में पोषक तत्वों का अति-समृद्ध होना है, जिससे शैवाल खिलते हैं जो समुद्री जीवन को मारते हैं।", f:"This creates 'Dead Zones' in water bodies, a major criticism of intensive GR farming."},
+{q:"Which category of farmers initially captured the maximum benefits of the Green Revolution in India?", h:"भारत में हरित क्रांति का अधिकतम लाभ प्रारंभ में किस श्रेणी के किसानों ने प्राप्त किया?", o:["Landless agricultural laborers / भूमिहीन खेतिहर मजदूर","Marginal and small farmers / सीमांत और छोटे किसान","Large and wealthy farmers / बड़े और धनी किसान","Tribal farmers practicing shifting cultivation / झूम खेती करने वाले आदिवासी किसान"], a:2, e:"Large farmers had the capital and credit access to afford expensive HYV seeds, fertilizers, and machinery.", eh:"बड़े किसानों के पास महंगे एचवाईवी बीज, उर्वरक और मशीनरी का खर्च उठाने के लिए पूंजी और ऋण तक पहुंच थी।", f:"Over time, small farmers also adopted the technology due to government subsidies."},
+{q:"To transfer Green Revolution technologies directly to farmers, the ICAR established a network of grassroots institutions called:", h:"हरित क्रांति की तकनीकों को सीधे किसानों तक पहुँचाने के लिए, ICAR ने कौन से संस्थान स्थापित किए?", o:["NITI Aayog","Krishi Vigyan Kendras (KVKs) / कृषि विज्ञान केंद्र","NABARD rural branches","Panchayati Raj Institutes"], a:1, e:"KVKs act as agricultural extension centers, providing training and technology testing to local farmers.", eh:"KVK कृषि विस्तार केंद्र के रूप में कार्य करते हैं, जो किसानों को नए बीजों का प्रशिक्षण और प्रदर्शन प्रदान करते हैं।", f:"The first KVK was established in 1974 in Puducherry."},
+{q:"The National Commission on Farmers (NCF), which made crucial recommendations on MSP post-Green Revolution, was chaired by:", h:"राष्ट्रीय किसान आयोग (NCF), जिसने हरित क्रांति के बाद MSP पर सिफारिशें कीं, की अध्यक्षता किसने की थी?", o:["Verghese Kurien","M.S. Swaminathan / एम.एस. स्वामीनाथन","Ashok Dalwai","C. Rangarajan"], a:1, e:"Constituted in 2004, the Swaminathan Commission recommended MSP should be at least 50% more than the C2 cost of production.", eh:"स्वामीनाथन आयोग ने सिफारिश की कि MSP उत्पादन की C2 लागत से कम से कम 50% अधिक होना चाहिए।", f:"The 'C2 + 50%' formula remains the primary demand of protesting farmers today."},
+{q:"Which of the following best describes the 'Ship-to-Mouth' existence of India before the Green Revolution?", h:"हरित क्रांति से पहले भारत के 'शिप-टू-माउथ' (जहाज से मुँह तक) अस्तित्व का सबसे अच्छा वर्णन कौन करता है?", o:["India was a major exporter of seafood","India consumed only what was imported via ships as soon as it arrived / भारत ने केवल उसी का उपभोग किया जो जहाजों के माध्यम से आयात किया गया था","India had a booming naval industry","Farmers used ships to transport grain within India"], a:1, e:"It was a derogatory phrase implying India survived entirely on foreign food aid arriving on ships, consumed immediately.", eh:"यह एक अपमानजनक वाक्यांश था जिसका अर्थ था कि भारत पूरी तरह से विदेशी खाद्य सहायता पर जीवित था।", f:"The Green Revolution successfully erased this stigma, making India a net-exporter."},
+{q:"Which revolution, inspired by the success of the Green Revolution, aimed to achieve self-reliance in edible oils?", h:"खाद्य तेलों में आत्मनिर्भरता प्राप्त करने के लिए कौन सी क्रांति शुरू की गई थी?", o:["White Revolution","Blue Revolution","Yellow Revolution / पीली क्रांति","Golden Revolution"], a:2, e:"The Yellow Revolution aimed to increase the production of edible oilseeds to reduce import dependence.", eh:"पीली क्रांति का उद्देश्य आयात निर्भरता को कम करने के लिए खाद्य तिलहनों के उत्पादन को बढ़ाना था।", f:"Despite this, India remains one of the world's largest importers of edible oils today."},
+{q:"The shift from traditional farming to Green Revolution farming is economically classified as a shift towards:", h:"पारंपरिक खेती से हरित क्रांति की खेती की ओर बदलाव को आर्थिक रूप से किस रूप में वर्गीकृत किया गया है?", o:["Labor-intensive farming","Capital-intensive farming / पूंजी-गहन खेती","Subsistence farming","Nomadic farming"], a:1, e:"Green Revolution farming requires significant financial capital to purchase commercial seeds, fertilizers, and machinery.", eh:"हरित क्रांति की खेती के लिए वाणिज्यिक बीज, उर्वरक और मशीनरी खरीदने के लिए महत्वपूर्ण वित्तीय पूंजी की आवश्यकता होती है।", f:"This increased the reliance of farmers on institutional and non-institutional credit."},
+{q:"Dr. Norman Borlaug, the father of the global Green Revolution, originally belonged to which scientific discipline?", h:"डॉ. नॉर्मन बोरलॉग मूल रूप से किस वैज्ञानिक अनुशासन से संबंधित थे?", o:["Economics","Plant Pathology and Agronomy / पादप विकृति विज्ञान और सस्य विज्ञान","Climatology","Mechanical Engineering"], a:1, e:"Borlaug was an agronomist and plant pathologist who bred high-yielding, disease-resistant varieties of wheat.", eh:"बोरलॉग एक सस्य विज्ञानी और पादप रोगविज्ञानी थे जिन्होंने उच्च उपज देने वाली, रोग प्रतिरोधी किस्मों का प्रजनन किया।", f:"His research was funded by the Rockefeller and Ford Foundations."},
+{q:"In the context of India's agricultural history, what does 'Inter-crop disparity' caused by the Green Revolution refer to?", h:"हरित क्रांति के कारण 'अंतर-फसल असमानता' शब्द का क्या अर्थ है?", o:["Difference in yields between two states","The massive growth in wheat and rice while pulses and coarse cereals stagnated / गेहूं और चावल के उत्पादन में भारी वृद्धि जबकि दालें स्थिर रहीं","Difference in the prices of fertilizers","Difference in income between farmers"], a:1, e:"The technology and MSPs were overwhelmingly skewed towards wheat and rice, creating disparity in growth rates among crops.", eh:"प्रौद्योगिकी और एमएसपी का झुकाव गेहूं और चावल की ओर था, जिससे अन्य फसलें स्थिर रहीं।", f:"This disparity is a major reason for India's persistent protein malnutrition."},
+{q:"Which prominent Indian environmentalist authored the book 'The Violence of the Green Revolution'?", h:"किस प्रमुख भारतीय पर्यावरणविद् ने 'द वायलेंस ऑफ द ग्रीन रेवोल्यूशन' पुस्तक लिखी?", o:["Medha Patkar","Sunderlal Bahuguna","Vandana Shiva / वंदना शिवा","Salim Ali"], a:2, e:"Vandana Shiva wrote this book criticizing the Green Revolution for destroying ecological diversity and depleting water.", eh:"वंदना शिवा ने यह पुस्तक लिखी थी, जिसमें पारिस्थितिक विविधता को नष्ट करने के लिए हरित क्रांति की आलोचना की गई थी।", f:"She founded 'Navdanya', an NGO promoting organic farming as an alternative."},
+{q:"One of the severe consequences of the Green Revolution in Punjab is the 'Pesticide Treadmill'. What does this term mean?", h:"'पेस्टीसाइड ट्रेडमिल' (कीटनाशक ट्रेडमिल) शब्द का क्या अर्थ है?", o:["A machine used to spray pesticides","Farmers needing to use ever-increasing amounts of pesticides as pests develop resistance / कीटों में प्रतिरोध विकसित होने के कारण कीटनाशकों की बढ़ती मात्रा का उपयोग","Banning of all chemical pesticides","Exporting pesticides to other countries"], a:1, e:"As pests evolve resistance, farmers are forced to buy and apply more potent chemicals, getting trapped in an endless, costly cycle.", eh:"जैसे-जैसे कीट प्रतिरोध विकसित करते हैं, किसानों को अधिक रसायनों का उपयोग करने के लिए मजबूर होना पड़ता है।", f:"This heavy pesticide use is linked to rising cancer rates in certain districts of Punjab."},
+{q:"During the Green Revolution, the government created a system to maintain 'Buffer Stocks'. What is the primary economic purpose?", h:"सरकार ने 'बफर स्टॉक' बनाए। बफर स्टॉक का प्राथमिक आर्थिक उद्देश्य क्या है?", o:["To export to other countries","To stabilize prices during times of crop failure or shortages / फसल खराब होने या कमी के समय कीमतों को स्थिर करना","To sell exclusively to rich industrialists","To use for feeding animals only"], a:1, e:"The government procures excess grains and releases them during shortages to prevent food prices from skyrocketing.", eh:"सरकार अच्छी फसल के दौरान अतिरिक्त अनाज खरीदती है और कमी के दौरान कीमतों को स्थिर करने के लिए उन्हें जारी करती है।", f:"The Food Corporation of India (FCI) manages the buffer stocks."},
+{q:"Which of the following pairs is correctly matched regarding agricultural revolutions in India?", h:"भारत में कृषि क्रांतियों के संबंध में निम्नलिखित में से कौन सा युग्म सही सुमेलित है?", o:["Green Revolution - Milk","White Revolution - Food Grains","Blue Revolution - Fish / नीली क्रांति - मछली","Golden Revolution - Petroleum"], a:2, e:"The Blue Revolution focuses on increasing fisheries and aquaculture production.", eh:"नीली क्रांति मत्स्य पालन और एक्वाकल्चर उत्पादन बढ़ाने पर केंद्रित है।", f:"Green is for food grains, White for milk, and Golden for horticulture/honey."},
+{q:"In which decade did the growth rate of Indian agriculture witness a significant deceleration, prompting calls for a 'Second Green Revolution'?", h:"किस दशक में भारतीय कृषि की विकास दर में मंदी देखी गई, जिससे 'दूसरी हरित क्रांति' का आह्वान किया गया?", o:["1970s","1980s","1990s (Post-liberalization) / 1990 के दशक में (उदारीकरण के बाद)","2010s"], a:2, e:"During the 1990s post-economic reforms, public investment declined, GR technologies hit limits, and growth stagnated.", eh:"1990 के दशक में आर्थिक सुधारों के बाद, कृषि विकास दर स्थिर हो गई और कृषि संकट बढ़ गया।", f:"This agrarian distress led to a sharp increase in farmer suicides during this period."},
+{q:"Which of the following is NOT an objective of the National Food Security Mission (NFSM) launched in 2007?", h:"निम्नलिखित में से कौन 2007 में शुरू किए गए राष्ट्रीय खाद्य सुरक्षा मिशन (NFSM) का उद्देश्य नहीं है?", o:["Increasing production of rice, wheat, and pulses","Restoring soil fertility","Creating employment opportunities","Banning the import of all agricultural goods / सभी कृषि वस्तुओं के आयात पर प्रतिबंध लगाना"], a:3, e:"NFSM aims to increase crop production through area expansion and productivity, not by banning imports.", eh:"NFSM का उद्देश्य उत्पादन बढ़ाना है, न कि आयात पर प्रतिबंध लगाना।", f:"NFSM was launched to bridge the yield gaps left by the original Green Revolution."},
+{q:"'Command Area Development Programme' (CADP) was launched in 1974-75 mainly to support the Green Revolution by:", h:"'कमान क्षेत्र विकास कार्यक्रम' (CADP) मुख्य रूप से हरित क्रांति का समर्थन करने के लिए क्यों शुरू किया गया था?", o:["Distributing free tractors","Improving the utilization of created irrigation potential / निर्मित सिंचाई क्षमता के उपयोग में सुधार करके","Providing free electricity","Abolishing agricultural taxes"], a:1, e:"CADP was launched to bridge the gap between the irrigation potential created (by dams) and actual utilization by farmers at field level.", eh:"CADP को निर्मित सिंचाई क्षमता और खेत स्तर पर इसके वास्तविक उपयोग के बीच की खाई को पाटने के लिए शुरू किया गया था।", f:"It focused on constructing field channels and implementing the warabandi system."},
+{q:"What was the role of the Ford Foundation in India's Green Revolution?", h:"भारत की हरित क्रांति में फोर्ड फाउंडेशन की क्या भूमिका थी?", o:["It provided military support","It funded the Intensive Agricultural District Programme (IADP) and early research / इसने सघन कृषि जिला कार्यक्रम (IADP) और प्रारंभिक अनुसंधान को वित्त पोषित किया","It built all fertilizer plants","It drafted the MSP policy"], a:1, e:"Philanthropic organizations like the Ford Foundation provided crucial initial funding and support for early GR research.", eh:"फोर्ड फाउंडेशन ने IADP और बीज अनुसंधान के लिए महत्वपूर्ण प्रारंभिक धन और सहायता प्रदान की।", f:"A 1959 Ford Foundation report laid the intellectual groundwork for the Green Revolution."},
+{q:"In economic terms, what does 'self-sufficiency in food grains' achieved by the Green Revolution mean?", h:"आर्थिक दृष्टि से हरित क्रांति द्वारा प्राप्त 'खाद्यान्न में आत्मनिर्भरता' का क्या अर्थ है?", o:["India stopped eating foreign food","Domestic production is equal to or greater than consumption, eliminating routine imports / घरेलू उत्पादन खपत के बराबर या उससे अधिक है, जिससे नियमित आयात समाप्त हो जाता है","Every citizen gets free food","India only exports food"], a:1, e:"Self-sufficiency means producing enough food domestically to meet population demands without relying on regular imports.", eh:"आत्मनिर्भरता का अर्थ है नियमित आयात पर निर्भर किए बिना आबादी की पोषण मांगों को पूरा करने के लिए पर्याप्त घरेलू उत्पादन।", f:"Ensuring 'food security' (access for every individual) still remains an ongoing challenge."},
+{q:"Who amongst the following is associated with the concept of 'Zero Budget Natural Farming' (ZBNF)?", h:"निम्नलिखित में से कौन 'जीरो बजट प्राकृतिक खेती' (ZBNF) की अवधारणा से जुड़ा है?", o:["M.S. Swaminathan","Subhash Palekar / सुभाष पालेकर","Verghese Kurien","Anna Hazare"], a:1, e:"Subhash Palekar developed ZBNF, a method of chemical-free agriculture drawing from traditional Indian practices to eliminate credit dependency.", eh:"सुभाष पालेकर ने ZBNF विकसित किया, जो ऋण निर्भरता को खत्म करने के लिए रसायन मुक्त कृषि की एक विधि है।", f:"The Economic Survey highlighted ZBNF as a tool to double farmers' income."},
+{q:"The term 'Green Revolution' is an umbrella term that includes which of the following technological advancements?", h:"शब्द 'हरित क्रांति' एक व्यापक शब्द है जिसमें कौन सी तकनीकी प्रगति शामिल है?", o:["HYV Seeds, Chemical Fertilizers, and Mechanized Irrigation / एचवाईवी बीज, रासायनिक उर्वरक और यंत्रीकृत सिंचाई","Hydroponics and Aeroponics","Genetically modified Bt crops","Artificial Intelligence and Drone mapping"], a:0, e:"The original Green Revolution was based on a specific package: HYV seeds, synthetic fertilizers, pesticides, and assured irrigation.", eh:"मूल हरित क्रांति एक विशिष्ट पैकेज पर आधारित थी: एचवाईवी बीज, सिंथेटिक उर्वरक, कीटनाशक और सुनिश्चित सिंचाई।", f:"Bt crops and AI belong to subsequent, modern phases of agricultural development."},
+{q:"Which state in India records the highest per-hectare consumption of chemical fertilizers, a direct legacy of the Green Revolution?", h:"भारत का कौन सा राज्य रासायनिक उर्वरकों की प्रति हेक्टेयर सर्वाधिक खपत दर्ज करता है?", o:["Maharashtra","Madhya Pradesh","Punjab / पंजाब","Karnataka"], a:2, e:"Punjab has the highest per-hectare consumption of fertilizers in India due to its intensive wheat-rice crop cycle.", eh:"गेहूं-चावल के गहन फसल चक्र के कारण पंजाब में उर्वरकों की प्रति हेक्टेयर खपत सबसे अधिक है।", f:"This excessive fertilizer use has led to declining soil fertility and nitrate toxicity."},
+{q:"The notorious weed 'Parthenium' (Carrot grass) entered India primarily through which channel before the Green Revolution?", h:"कुख्यात खरपतवार 'पार्थेनियम' (गाजर घास) हरित क्रांति से पहले मुख्य रूप से किस चैनल के माध्यम से भारत में प्रवेश कर गया था?", o:["Imported chemical fertilizers","PL-480 wheat imports from the USA / संयुक्त राज्य अमेरिका से PL-480 गेहूं का आयात","HYV seeds from Mexico","Tractors imported from Russia"], a:1, e:"Parthenium seeds came mixed with the subsidized PL-480 wheat imported from the USA during the food crisis.", eh:"पार्थेनियम के बीज खाद्य संकट के दौरान अमेरिका से आयातित पीएल-480 गेहूं के साथ मिश्रित होकर आए थे।", f:"This ecological disaster pushed India to desperately seek self-sufficiency via the GR."},
+{q:"Which form of irrigation saw the most massive and rapid expansion in North India to support HYV seeds?", h:"उत्तर भारत में HYV बीजों का समर्थन करने के लिए किस प्रकार की सिंचाई का सबसे बड़े पैमाने पर विस्तार देखा गया?", o:["Canal irrigation","Tank irrigation","Tubewell (Groundwater) irrigation / ट्यूबवेल (भूजल) सिंचाई","Drip irrigation"], a:2, e:"The Green Revolution was heavily driven by the private extraction of groundwater using electric or diesel tubewells.", eh:"हरित क्रांति काफी हद तक बिजली या डीजल ट्यूबवेल का उपयोग करके भूजल के निजी निष्कर्षण से प्रेरित थी।", f:"Today, India is the world's largest extractor of groundwater."},
+{q:"Which Prime Minister effectively consolidated the Green Revolution policies, leading India to declare self-sufficiency by the 1970s?", h:"किस प्रधान मंत्री ने हरित क्रांति की नीतियों को समेकित किया, जिससे भारत ने 1970 के दशक तक आत्मनिर्भरता की घोषणा की?", o:["Jawaharlal Nehru","Morarji Desai","Indira Gandhi / इंदिरा गांधी","Rajiv Gandhi"], a:2, e:"The Green Revolution was massively scaled up during Indira Gandhi's tenure, creating national buffer stocks.", eh:"इंदिरा गांधी के कार्यकाल के दौरान हरित क्रांति को बड़े पैमाने पर बढ़ाया गया, जिससे बफर स्टॉक का निर्माण हुआ।", f:"In 1968, she released a special stamp titled 'Wheat Revolution'."},
+{q:"The National Seeds Corporation (NSC) was established in 1963 primarily for what purpose?", h:"राष्ट्रीय बीज निगम (NSC) की स्थापना 1963 में मुख्य रूप से किस उद्देश्य के लिए की गई थी?", o:["To export Indian seeds","To undertake production of foundation and certified seeds / आधार और प्रमाणित बीजों का उत्पादन करने के लिए","To ban private seed companies","To distribute free food grains"], a:1, e:"NSC was established to produce, distribute, and ensure the quality of certified seeds, critical for HYV.", eh:"एनएससी की स्थापना प्रमाणित बीजों का उत्पादन और गुणवत्ता सुनिश्चित करने के लिए की गई थी।", f:"'Certified' seeds ensure genetic purity and high germination rates."},
+{q:"The model of State Agricultural Universities (SAUs) in India was heavily inspired by the Land-Grant University system of which country?", h:"भारत में राज्य कृषि विश्वविद्यालयों का मॉडल किस देश के लैंड-ग्रांट यूनिवर्सिटी सिस्टम से प्रेरित था?", o:["USSR","United Kingdom","United States of America / संयुक्त राज्य अमेरिका","Japan"], a:2, e:"India adopted the US Land-Grant university model to establish institutions like Pantnagar University, aided by American experts.", eh:"भारत ने अमेरिकी विशेषज्ञों की सहायता से यूएस लैंड-ग्रांट विश्वविद्यालय मॉडल को अपनाया।", f:"This model integrated teaching, research, and farm extension."},
+{q:"Agricultural subsidies provided by the Indian government are heavily criticized at the WTO under which category?", h:"भारत सरकार द्वारा प्रदान की जाने वाली कृषि सब्सिडी की विश्व व्यापार संगठन में किस श्रेणी के तहत आलोचना की जाती है?", o:["Green Box","Blue Box","Amber Box / एम्बर बॉक्स","Red Box"], a:2, e:"Subsidies like MSP and fertilizer subsidies that distort market prices fall under the 'Amber Box' of the WTO.", eh:"एमएसपी जैसी सब्सिडी, जो बाजार की कीमतों को विकृत करती हैं, विश्व व्यापार संगठन के 'एम्बर बॉक्स' के अंतर्गत आती हैं।", f:"India fights at the WTO using the 'Peace Clause' to protect its MSP program."},
+{q:"Which left-leaning economic critique is most commonly associated with the early phase of the Green Revolution?", h:"हरित क्रांति के प्रारंभिक चरण के साथ कौन सी वामपंथी आर्थिक आलोचना सबसे अधिक जुड़ी हुई है?", o:["It caused a drop in food production","It widened rural income inequality and favored large capitalist farmers / इसने ग्रामीण आय असमानता को बढ़ाया और बड़े किसानों का पक्ष लिया","It forced a shift back to traditional seeds","It made India dependent on imports"], a:1, e:"Marxist economists criticized the GR for exacerbating class divisions, as only wealthy landowners could afford expensive inputs.", eh:"वामपंथी अर्थशास्त्रियों ने आलोचना की कि केवल धनी जमींदार ही महंगे इनपुट का खर्च उठा सकते थे, जिससे असमानता बढ़ी।", f:"Subsidies were later expanded to bring small farmers into the GR fold."},
+{q:"What negative environmental phenomenon in North India is a direct offshoot of mechanized harvesting?", h:"उत्तर भारत में कौन सी नकारात्मक पर्यावरणीय घटना यंत्रीकृत कटाई का एक प्रत्यक्ष परिणाम है?", o:["Acid Rain","Stubble Burning (Parali) / पराली जलाना","Ozone Depletion","Soil erosion"], a:1, e:"Combine harvesters leave behind crop stalks. Farmers burn this residue (stubble) to quickly clear the field, causing severe smog.", eh:"कंबाइन हार्वेस्टर के अवशेषों को किसान अगली फसल के लिए खेत जल्दी साफ करने हेतु जला देते हैं, जिससे स्मॉग होता है।", f:"The short window between Kharif harvesting and Rabi sowing forces this practice."},
+{q:"Despite fertile soil, why did Eastern Indian states initially fail to reap GR benefits in the 1960s?", h:"उपजाऊ मिट्टी के बावजूद, पूर्वी भारतीय राज्य शुरू में 1960 के दशक में हरित क्रांति का लाभ उठाने में विफल क्यों रहे?", o:["Due to barren land","Lack of assured irrigation infrastructure and fragmented landholdings / सुनिश्चित सिंचाई के बुनियादी ढांचे की कमी और खंडित जोत","Farmers strictly refused to grow rice","The climate was too cold"], a:1, e:"Eastern states suffered from fragmented land ownership and a lack of controlled tubewell/canal irrigation mandatory for HYV.", eh:"पूर्वी राज्यों को खंडित भूमि स्वामित्व और नियंत्रित सिंचाई की कमी का सामना करना पड़ा।", f:"The BGREI scheme currently aims to unlock this region's potential."},
+{q:"What is the fundamental difference in crop focus between the First Green Revolution and the proposed Second Green Revolution?", h:"प्रथम और द्वितीय हरित क्रांति के बीच फसल फोकस में क्या मूलभूत अंतर है?", o:["1st cash crops; 2nd fruits","1st wheat & rice; 2nd pulses, oilseeds, and dryland crops / पहली गेहूं-चावल; दूसरी दलहन, तिलहन और शुष्क भूमि फसलें","1st pulses; 2nd rice","1st exports; 2nd imports"], a:1, e:"The original GR was cereal-centric. The Second GR emphasizes crop diversification promoting pulses, oilseeds, and millets.", eh:"मूल हरित क्रांति अनाज-केंद्रित थी। दूसरी हरित क्रांति दलहन, तिलहन और मोटे अनाज (बाजरा) को बढ़ावा देती है।", f:"The year 2023 was declared as the International Year of Millets."},
+{q:"The Norin-10 dwarfing gene, crucial for developing HYV wheat, originated in which country?", h:"नोरिन-10 बौना जीन किस देश में उत्पन्न हुआ था?", o:["Mexico","USA","Japan / जापान","India"], a:2, e:"Norin-10 is a semi-dwarf wheat cultivar developed in Japan. Borlaug used its genes to breed short-statured wheat.", eh:"नोरिन-10 जापान में विकसित एक अर्ध-बौनी गेहूं की किस्म है, जिसके जीन का उपयोग बोरलॉग ने किया।", f:"The short stature prevented heavily fertilized stalks from falling over."},
+{q:"Which movement demanded expansion of Green Revolution benefits and higher MSP in the late 1980s under Mahendra Singh Tikait?", h:"महेंद्र सिंह टिकैत के नेतृत्व में किस आंदोलन ने 1980 के दशक के अंत में उच्च एमएसपी की मांग की थी?", o:["Narmada Bachao Andolan","Bharatiya Kisan Union (BKU) movement / भारतीय किसान यूनियन (BKU) आंदोलन","Chipko Movement","Bhoodan Movement"], a:1, e:"The BKU organized massive protests in UP/Delhi demanding higher MSPs and cheaper electricity stemming from GR commercialization.", eh:"बीकेयू (BKU) ने उच्च एमएसपी और सस्ती बिजली की मांग करते हुए बड़े पैमाने पर किसान विरोध प्रदर्शन आयोजित किए।", f:"This highlighted the rising political power of middle-peasantry who benefited from the GR."},
+{q:"Which economic concept explains when total income of farmers falls despite record GR harvests due to a price drop?", h:"कौन सी अवधारणा उस घटना की व्याख्या करती है जहां रिकॉर्ड फसल के बावजूद, कीमतों में गिरावट के कारण किसानों की आय गिर जाती है?", o:["Paradox of Poverty","Paradox of Plenty (or King Gregory's Law) / प्रचुरता का विरोधाभास","Law of Demand","Economies of Scale"], a:1, e:"The 'Paradox of Plenty' states that a bumper harvest can lead to such a sharp decline in prices that total revenue decreases.", eh:"'प्रचुरता का विरोधाभास' बताता है कि बम्पर फसल से कीमतों में इतनी तेज गिरावट हो सकती है कि कुल राजस्व कम हो जाता है।", f:"MSP was strictly introduced to protect farmers from this Paradox of Plenty."},
+{q:"Which central government agency is primarily responsible for distributing subsidies directly to fertilizer manufacturing companies?", h:"कौन सी एजेंसी भारत में उर्वरक निर्माण कंपनियों को सीधे सब्सिडी वितरित करने के लिए जिम्मेदार है?", o:["Ministry of Agriculture","Department of Fertilizers / उर्वरक विभाग","NITI Aayog","Reserve Bank of India"], a:1, e:"The Department of Fertilizers manages pricing, subsidy, and equitable distribution of fertilizers like Urea.", eh:"उर्वरक विभाग यूरिया जैसे उर्वरकों के मूल्य निर्धारण और सब्सिडी का प्रबंधन करता है।", f:"To stop black marketing, the government introduced 'Neem Coated Urea'."},
+{q:"What was the overarching impact of the Green Revolution on India's industrial sector?", h:"भारत के औद्योगिक क्षेत्र पर हरित क्रांति का व्यापक प्रभाव क्या था?", o:["It caused de-industrialization","It created a massive demand for agro-chemicals, tractors, and processing units / इसने कृषि-रसायन और ट्रैक्टरों के लिए बड़ी मांग पैदा की","It shifted factory workers to farms","It only benefited foreign industries"], a:1, e:"The GR modernized agriculture, creating tremendous backward linkages and demanding industrial goods like fertilizers and tractors.", eh:"हरित क्रांति ने कृषि का आधुनिकीकरण किया, जिससे रासायनिक उर्वरकों और ट्रैक्टरों जैसे औद्योगिक सामानों की मांग बढ़ी।", f:"This is a classic example of inter-sectoral economic growth."},
+{q:"Which element of the rural economy faced the highest risk of displacement due to combine harvesters and tractors?", h:"कंबाइन हार्वेस्टर और ट्रैक्टरों के कारण ग्रामीण अर्थव्यवस्था के किस तत्व को विस्थापन का उच्चतम जोखिम था?", o:["Large landowners","Bank employees","Landless agricultural labourers / भूमिहीन खेतिहर मजदूरों को","Fertilizer salesmen"], a:2, e:"Heavy mechanization reduced the need for manual human labor in field preparation and harvesting, causing structural unemployment.", eh:"भारी मशीनीकरण ने खेत में शारीरिक मानव श्रम की आवश्यकता को कम कर दिया, जिससे भूमिहीन मजदूरों में बेरोजगारी पैदा हुई।", f:"This led to early instances of rural-to-urban migration."},
+{q:"To evaluate production cost accurately for MSP, what does the Swaminathan Committee's 'Cost C2' include?", h:"MSP के लिए उत्पादन लागत का मूल्यांकन करने हेतु, 'लागत C2' में क्या शामिल है?", o:["Only cash expenses","Cash expenses + family labor","Cash expenses + family labor + imputed rent and interest on capital / नकद खर्च + पारिवारिक श्रम + अनुमानित किराया और पूंजी पर ब्याज","Only the cost of seeds"], a:2, e:"Cost C2 includes actual expenses in cash/kind (A2), family labor (FL), plus assumed rent on owned land and interest on capital.", eh:"C2 में नकद खर्च, पारिवारिक श्रम, स्वामित्व वाली भूमि का किराया और पूंजी पर ब्याज शामिल है।", f:"Farmers demand MSP be set at 'C2 + 50%'."},
+{q:"The term 'Golden Rice', an advancement in agricultural biotechnology, is primarily biofortified to fight the deficiency of which vitamin?", h:"'गोल्डन राइस' मुख्य रूप से किस विटामिन की कमी से लड़ने के लिए बायोफोर्टिफाइड है?", o:["Vitamin C","Vitamin D","Vitamin A / विटामिन ए","Vitamin K"], a:2, e:"Golden Rice is genetically engineered to biosynthesize beta-carotene, a precursor of Vitamin A.", eh:"गोल्डन राइस विटामिन ए के अग्रदूत बीटा-कैरोटीन के जैवसंश्लेषण के लिए आनुवंशिक रूप से संशोधित है।", f:"Such GM crops are considered the vanguard of the 'Gene Revolution' against hidden hunger."},
+{q:"The Green Revolution transformed Indian agriculture from a 'way of life' into a:", h:"हरित क्रांति ने भारतीय कृषि को 'जीवन के एक तरीके' से किसमें बदल दिया?", o:["Non-profit activity","Subsistence system","Commercial and Business enterprise / वाणिज्यिक और व्यावसायिक उद्यम","State-owned monopoly"], a:2, e:"By introducing costly inputs and assured returns, agriculture became a profit-oriented commercial business rather than just survival.", eh:"कृषि केवल परिवार के अस्तित्व के साधन के बजाय एक लाभ-उन्मुख, वाणिज्यिक व्यवसाय बन गई।", f:"This commercialization deeply integrated the rural economy with national markets."},
+{q:"Which scheme aims to interlink agricultural markets across India electronically to ensure farmers get better prices?", h:"किस योजना का उद्देश्य किसानों को बेहतर मूल्य सुनिश्चित करने के लिए कृषि बाजारों को इलेक्ट्रॉनिक रूप से जोड़ना है?", o:["e-NAM (National Agriculture Market) / ई-नाम","PM Awas Yojana","Make in India","Ayushman Bharat"], a:0, e:"e-NAM is a pan-India electronic trading portal that networks existing APMC mandis into a unified national market.", eh:"ई-नाम एक इलेक्ट्रॉनिक पोर्टल है जो एक एकीकृत बाजार बनाने के लिए APMC मंडियों को जोड़ता है।", f:"This addresses the marketing bottlenecks that persisted post-GR."},
+{q:"In the context of GR technologies, what does the term 'Crop Lodging' refer to?", h:"'क्रॉप लॉजिंग' (Crop Lodging) शब्द का क्या अर्थ है?", o:["Storing harvested crops","The bending over or falling down of crop stems near the ground / कटाई से पहले जमीन के पास फसल के तनों का झुकना या गिर जाना","Leasing land","Transporting crops"], a:1, e:"Lodging is the displacement of stems. Traditional tall wheat varieties used to 'lodge' (fall over) when fertilizer made grains heavy.", eh:"लॉजिंग तनों का गिरना है। पारंपरिक लंबी किस्में भारी उर्वरकों के उपयोग पर गिर जाती थीं।", f:"The 'dwarf' genes in HYV seeds provided short, strong stems to solve this."},
+{q:"Which of the following is currently India's largest imported agricultural commodity by value?", h:"वर्तमान में मूल्य के हिसाब से भारत की सबसे बड़ी आयातित कृषि वस्तु कौन सी है?", o:["Wheat","Edible Oils / खाद्य तेल","Rice","Sugar"], a:1, e:"Despite success in cereals, India failed to achieve self-sufficiency in oilseeds and is a massive importer of edible oils.", eh:"अनाज में सफलता के बावजूद, भारत तिलहन में आत्मनिर्भर नहीं बन सका और खाद्य तेलों का बड़ा आयातक है।", f:"The government launched NMEO-OP to boost domestic oil palm production."},
+{q:"What was the central strategy of the Intensive Agricultural Area Programme (IAAP) launched in 1964?", h:"हरित क्रांति से पहले 1964 में शुरू किए गए IAAP की केंद्रीय रणनीति क्या थी?", o:["Strictly ban agriculture in drought areas","Concentrate resources and modern inputs in areas with high agricultural potential and assured water supply / उच्च क्षमता और जल आपूर्ति वाले क्षेत्रों में संसाधनों को केंद्रित करना","Distribute land equally","Promote organic farming"], a:1, e:"IAAP aimed to intensively focus government resources only in districts with the best irrigation to rapidly maximize output.", eh:"IAAP का उद्देश्य केवल सर्वोत्तम सिंचाई वाले जिलों में संसाधनों को तीव्रता से केंद्रित करना था।", f:"This 'betting on the strong' laid the geographical foundation for the GR."},
+{q:"Which international institution provided crucial foreign exchange loans for India to import fertilizers and machinery during the late 1960s?", h:"किस अंतर्राष्ट्रीय संस्थान ने 1960 के दशक के अंत में भारत को उर्वरक और मशीनरी आयात करने के लिए विदेशी मुद्रा ऋण प्रदान किया?", o:["The World Bank (and IDA) / विश्व बैंक (और आईडीए)","World Trade Organization (WTO)","International Monetary Fund (IMF)","Asian Development Bank (ADB)"], a:0, e:"The World Bank and the International Development Association (IDA) provided critical credit to finance agricultural imports and irrigation.", eh:"विश्व बैंक और IDA ने कृषि मशीनरी और बीज आयात के वित्तपोषण के लिए महत्वपूर्ण ऋण प्रदान किया।", f:"This was vital as India faced a severe balance of payments crisis after the 1965 war."}
+];
+
+// App State
+let currentQ = 0;
+let userAnswers = new Array(db.length).fill(null);
+let states = new Array(db.length).fill('not-visited'); // not-visited, unanswered, correct, incorrect, skipped, review
+
+// DOM Elements
+const qNumEl = document.getElementById('q-number');
+const qEngEl = document.getElementById('q-eng');
+const qHinEl = document.getElementById('q-hin');
+const optsContainer = document.getElementById('options-container');
+const expContainer = document.getElementById('explanation');
+const expEngEl = document.getElementById('exp-eng');
+const expHinEl = document.getElementById('exp-hin');
+const expFactEl = document.getElementById('exp-fact');
+const paletteGrid = document.getElementById('palette-grid');
+const uiScoreEl = document.getElementById('ui-score');
+
+// Init
+function init() {
+    buildPalette();
+    loadQuestion(0);
+}
+
+// Build Palette
+function buildPalette() {
+    paletteGrid.innerHTML = '';
+    for(let i=0; i<db.length; i++) {
+        let btn = document.createElement('button');
+        btn.className = 'q-btn';
+        btn.innerText = i + 1;
+        btn.onclick = () => loadQuestion(i);
+        btn.id = 'pbtn-' + i;
+        paletteGrid.appendChild(btn);
+    }
+    updatePaletteUI();
+}
+
+// Update Palette Colors
+function updatePaletteUI() {
+    for(let i=0; i<db.length; i++) {
+        let btn = document.getElementById('pbtn-' + i);
+        // Reset classes
+        btn.className = 'q-btn' + (i === currentQ ? ' active' : '');
+        
+        if(states[i] === 'correct') btn.classList.add('c-green');
+        else if(states[i] === 'incorrect') btn.classList.add('c-red');
+        else if(states[i] === 'unanswered') btn.classList.add('c-orange');
+        else if(states[i] === 'skipped') btn.classList.add('c-slate');
+        else if(states[i] === 'review') btn.classList.add('c-purple');
+        else if(states[i] === 'not-visited') btn.classList.add('c-darkgray');
+    }
+}
+
+// Load Question
+function loadQuestion(index) {
+    currentQ = index;
+    const q = db[index];
+    
+    // Status Logic
+    if(states[index] === 'not-visited') {
+        states[index] = 'unanswered';
+    }
+
+    // Update UI Texts
+    qNumEl.innerText = `Question ${index + 1} of 100`;
+    qEngEl.innerText = q.q;
+    qHinEl.innerText = q.h;
+    
+    // Render Options
+    optsContainer.innerHTML = '';
+    const labels = ['A', 'B', 'C', 'D'];
+    
+    for(let i=0; i<q.o.length; i++) {
+        let optDiv = document.createElement('div');
+        optDiv.className = 'option';
+        if(userAnswers[index] !== null) optDiv.classList.add('locked');
+        
+        // Highlight logic if already answered
+        if(userAnswers[index] !== null) {
+            if(i === q.a) optDiv.classList.add('true-correct');
+            if(userAnswers[index] === i && i !== q.a) optDiv.classList.add('user-incorrect');
+            if(userAnswers[index] === i && i === q.a) optDiv.classList.add('user-correct');
+        }
+
+        optDiv.onclick = () => selectOption(i);
+        
+        let labelSpan = document.createElement('span');
+        labelSpan.className = 'opt-label';
+        labelSpan.innerText = labels[i];
+        
+        let textSpan = document.createElement('span');
+        textSpan.innerText = q.o[i];
+        
+        optDiv.appendChild(labelSpan);
+        optDiv.appendChild(textSpan);
+        optsContainer.appendChild(optDiv);
+    }
+
+    // Explanation
+    if(userAnswers[index] !== null) {
+        showExplanation(index);
+    } else {
+        expContainer.classList.remove('visible');
+    }
+
+    updatePaletteUI();
+}
+
+// Select Option
+function selectOption(optIndex) {
+    if(userAnswers[currentQ] !== null) return; // locked
+    
+    userAnswers[currentQ] = optIndex;
+    const isCorrect = (optIndex === db[currentQ].a);
+    
+    if(isCorrect) {
+        states[currentQ] = 'correct';
+    } else {
+        states[currentQ] = 'incorrect';
+    }
+    
+    calculateScore();
+    loadQuestion(currentQ); // Re-render to show highlights and explanation
+}
+
+// Navigation Actions
+function skipQuestion() {
+    if(userAnswers[currentQ] === null) {
+        states[currentQ] = 'skipped';
+    }
+    nextQuestion();
+}
+
+function markReview() {
+    if(userAnswers[currentQ] === null) {
+        states[currentQ] = 'review';
+    }
+    nextQuestion();
+}
+
+function nextQuestion() {
+    if(currentQ < db.length - 1) {
+        loadQuestion(currentQ + 1);
+    } else {
+        showDashboard();
+    }
+}
+
+// Explanation Show
+function showExplanation(index) {
+    expContainer.classList.add('visible');
+    expEngEl.innerText = db[index].e;
+    expHinEl.innerText = db[index].eh;
+    expFactEl.innerText = db[index].f;
+}
+
+// Scoring Logic
+function calculateScore() {
+    let score = 0;
+    for(let i=0; i<states.length; i++) {
+        if(states[i] === 'correct') score += 1.0;
+        if(states[i] === 'incorrect') score -= 0.25;
+    }
+    uiScoreEl.innerText = score.toFixed(2);
+    return score;
+}
+
+// Dashboard
+function showDashboard() {
+    document.getElementById('dashboard').style.display = 'flex';
+    let cor = 0, inc = 0, att = 0, skip = 0;
+    
+    for(let i=0; i<states.length; i++) {
+        if(states[i] === 'correct') { cor++; att++; }
+        else if(states[i] === 'incorrect') { inc++; att++; }
+        else { skip++; }
+    }
+    
+    let score = (cor * 1.0) - (inc * 0.25);
+    let acc = att > 0 ? ((cor / att) * 100).toFixed(1) : 0;
+    
+    document.getElementById('d-score').innerText = score.toFixed(2);
+    document.getElementById('d-acc').innerText = acc + '%';
+    document.getElementById('d-att').innerText = att;
+    document.getElementById('d-cor').innerText = cor;
+    document.getElementById('d-inc').innerText = inc;
+    document.getElementById('d-skip').innerText = skip;
+}
+
+function closeDashboard() {
+    document.getElementById('dashboard').style.display = 'none';
+}
+
+// Run on load
+init();
+</script>
+</body>
+</html>

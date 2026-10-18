@@ -1,0 +1,2516 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPSSSC PET CBT Simulator - ढांचागत सुधार (वर्ष 2014 के पश्चात)</title>
+  <style>
+    :root {
+      --bg-main: #121316;
+      --bg-card: #1e2024;
+      --bg-card-alt: #262930;
+      --border-color: #343842;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --correct: #10b981;
+      --correct-bg: rgba(16, 185, 129, 0.15);
+      --incorrect: #ef4444;
+      --incorrect-bg: rgba(239, 68, 68, 0.15);
+      --unanswered: #f59e0b;
+      --skipped: #6b7280;
+      --review: #a855f7;
+      --not-visited: #374151;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: #181a1f;
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .exam-title-box h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+    }
+
+    .exam-title-box p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .top-stats {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-badge {
+      padding: 6px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-badge span.val {
+      color: var(--accent);
+    }
+
+    .btn-palette-trigger {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-palette-trigger:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Main Container */
+    .main-container {
+      max-width: 900px;
+      width: 100%;
+      margin: 24px auto;
+      padding: 0 16px;
+      flex: 1;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .q-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .q-number {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+    }
+
+    .marking-tag {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Stem */
+    .stem-en {
+      font-size: 16px;
+      line-height: 1.6;
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: #f9fafb;
+    }
+
+    .stem-hi {
+      font-size: 16px;
+      line-height: 1.7;
+      font-weight: 500;
+      color: #e5e7eb;
+      margin-bottom: 24px;
+    }
+
+    /* Options */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .opt-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 14px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1.5;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.15s ease;
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: #2d313a;
+    }
+
+    .opt-key {
+      font-weight: 700;
+      min-width: 24px;
+      color: var(--text-muted);
+    }
+
+    .opt-btn.correct {
+      background: var(--correct-bg) !important;
+      border-color: var(--correct) !important;
+      color: #ecfdf5 !important;
+    }
+
+    .opt-btn.correct .opt-key {
+      color: var(--correct) !important;
+    }
+
+    .opt-btn.incorrect {
+      background: var(--incorrect-bg) !important;
+      border-color: var(--incorrect) !important;
+      color: #fef2f2 !important;
+    }
+
+    .opt-btn.incorrect .opt-key {
+      color: var(--incorrect) !important;
+    }
+
+    .opt-btn:disabled {
+      cursor: default;
+    }
+
+    /* Explanation Drawer */
+    .exp-box {
+      background: #181a1f;
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .exp-box.active {
+      display: block;
+    }
+
+    .exp-box h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .exp-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #d1d5db;
+      margin-bottom: 10px;
+    }
+
+    .exam-fact {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border-color);
+      font-size: 12px;
+      color: #fbbf24;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    /* Actions */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-secondary {
+      background: var(--bg-card-alt);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: #323640;
+    }
+
+    .btn-review {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: var(--review);
+      color: #d8b4fe;
+    }
+
+    .btn-review:hover {
+      background: rgba(168, 85, 247, 0.25);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Palette Modal / Drawer */
+    .palette-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(2px);
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .palette-overlay.open {
+      display: flex;
+    }
+
+    .palette-drawer {
+      background: #181a1f;
+      width: 100%;
+      max-width: 440px;
+      height: 100%;
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      animation: slideIn 0.25s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    .palette-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .palette-header h3 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .btn-close:hover {
+      color: #fff;
+    }
+
+    .palette-legend {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .palette-grid {
+      padding: 18px 20px;
+      flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .q-pill {
+      aspect-ratio: 1;
+      background: var(--not-visited);
+      border: 1px solid transparent;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .q-pill:hover {
+      filter: brightness(1.2);
+    }
+
+    .q-pill.active {
+      border: 2px solid #fff;
+    }
+
+    .q-pill.correct { background: var(--correct); }
+    .q-pill.incorrect { background: var(--incorrect); }
+    .q-pill.unanswered { background: var(--unanswered); }
+    .q-pill.skipped { background: var(--skipped); }
+    .q-pill.review { background: var(--review); }
+
+    /* Summary Dashboard Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .summary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 550px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .summary-card h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .score-banner {
+      background: #181a1f;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    .score-banner .score-num {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .summary-item {
+      background: var(--bg-card-alt);
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .summary-item .label {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .summary-item .val {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .top-bar { padding: 10px 14px; }
+      .exam-title-box h1 { font-size: 14px; }
+      .main-container { margin: 12px auto; padding: 0 10px; }
+      .card { padding: 16px; }
+      .palette-drawer { max-width: 100%; }
+      .palette-grid { grid-template-columns: repeat(5, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="exam-title-box">
+      <h1>UPSSSC PET: वर्ष 2014 के पश्चात के ढांचागत सुधार</h1>
+      <p>100 Questions CBT Mode (+1.00 / -0.25 Mark)</p>
+    </div>
+    <div class="top-stats">
+      <div class="stat-badge">
+        <span>Q:</span>
+        <span class="val" id="top-counter">1/100</span>
+      </div>
+      <div class="stat-badge">
+        <span>Score:</span>
+        <span class="val" id="top-score">0.00</span>
+      </div>
+      <button class="btn-palette-trigger" id="open-palette-btn">
+        📋 Open Palette
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Question Stage -->
+  <main class="main-container">
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-number" id="q-label">Question 1</span>
+        <span class="marking-tag">Marking: +1.00 | -0.25</span>
+      </div>
+
+      <div class="stem-en" id="q-stem-en">Loading...</div>
+      <div class="stem-hi" id="q-stem-hi">लोड हो रहा है...</div>
+
+      <div class="options-grid" id="options-container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Explanation Card -->
+      <div class="exp-box" id="exp-drawer">
+        <h4>Verification & Solution</h4>
+        <div class="exp-text" id="exp-en"></div>
+        <div class="exp-text" id="exp-hi"></div>
+        <div class="exam-fact" id="exp-fact"></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-bar">
+        <div class="btn-group">
+          <button class="btn btn-secondary" id="btn-skip">Skip</button>
+          <button class="btn btn-review" id="btn-review">Mark Review</button>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" id="btn-prev" disabled>← Previous</button>
+          <button class="btn btn-primary" id="btn-next">Next Question ➔</button>
+          <button class="btn btn-primary" id="btn-finish" style="display:none; background:#10b981;">Complete Test</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Slide-in Question Palette Drawer -->
+  <div class="palette-overlay" id="palette-modal">
+    <div class="palette-drawer">
+      <div class="palette-header">
+        <h3>Question Palette</h3>
+        <button class="btn-close" id="close-palette-btn">✕</button>
+      </div>
+      <div class="palette-legend">
+        <div class="legend-item"><span class="dot" style="background:var(--correct)"></span> Correct (+1.00)</div>
+        <div class="legend-item"><span class="dot" style="background:var(--incorrect)"></span> Incorrect (-0.25)</div>
+        <div class="legend-item"><span class="dot" style="background:var(--unanswered)"></span> Unanswered</div>
+        <div class="legend-item"><span class="dot" style="background:var(--skipped)"></span> Skipped</div>
+        <div class="legend-item"><span class="dot" style="background:var(--review)"></span> Review</div>
+        <div class="legend-item"><span class="dot" style="background:var(--not-visited)"></span> Not Visited</div>
+      </div>
+      <div class="palette-grid" id="palette-grid">
+        <!-- 1 to 100 pills -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Summary Modal -->
+  <div class="modal-overlay" id="summary-modal">
+    <div class="summary-card">
+      <h2>Test Performance Report</h2>
+      <p style="color:var(--text-muted); font-size:13px;">UPSSSC PET Standard Exam Evaluation</p>
+      
+      <div class="score-banner">
+        <div style="font-size:12px; color:var(--text-muted); text-transform:uppercase;">Net Score</div>
+        <div class="score-num" id="modal-net-score">0.00</div>
+        <div style="font-size:12px; color:var(--text-muted);">Max Marks: 100.00</div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="label">Correct (+1.00)</div>
+          <div class="val" style="color:var(--correct)" id="modal-correct">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="label">Incorrect (-0.25)</div>
+          <div class="val" style="color:var(--incorrect)" id="modal-incorrect">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="label">Skipped / Unattempted</div>
+          <div class="val" style="color:var(--skipped)" id="modal-skipped">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="label">Accuracy Rate</div>
+          <div class="val" style="color:var(--accent)" id="modal-accuracy">0%</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%; justify-content:center;" id="modal-close-btn">
+        Review Answers in Palette
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Embedded 100 Questions Database generated across Batches 1 to 4
+    const questionBank = [
+      // Batch 1 (Q1 to Q25)
+      {
+        qNum: 1,
+        stemEn: "Under the PM Gati Shakti National Master Plan launched in October 2021, how many core infrastructure pillars (engines) drive the multimodal connectivity framework?",
+        stemHi: "अक्टूबर 2021 में शुरू किए गए 'पीएम गति शक्ति राष्ट्रीय मास्टर प्लान' के तहत मल्टीमॉडल कनेक्टिविटी ढांचे को कितने प्रमुख अवसंरचना स्तंभ (इंजन) संचालित करते हैं?",
+        options: [
+          "5 Pillars / 5 स्तंभ",
+          "7 Pillars / 7 स्तंभ",
+          "9 Pillars / 9 स्तंभ",
+          "11 Pillars / 11 स्तंभ",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The PM Gati Shakti National Master Plan is driven by 7 specific economic engines: Roads, Railways, Airports, Ports, Mass Transport, Waterways, and Logistics Infrastructure.",
+        expHi: "पीएम गति शक्ति राष्ट्रीय मास्टर प्लान 7 इंजनों द्वारा संचालित है: सड़क, रेलवे, हवाई अड्डे, बंदरगाह, सार्वजनिक परिवहन, जलमार्ग और लॉजिस्टिक्स अवसंरचना।",
+        examFact: "PM Gati Shakti was launched on 13 October 2021 with an outlay target of ₹100 lakh crore to eliminate departmental silos."
+      },
+      {
+        qNum: 2,
+        stemEn: "Which initiative was introduced to develop world-class port infrastructure, promote port-led industrialization, and enhance coastal shipping in India?",
+        stemHi: "भारत में विश्वस्तरीय बंदरगाह अवसंरचना विकसित करने, बंदरगाह-आधारित औद्योगिकीकरण को बढ़ावा देने तथा तटीय नौवहन को सशक्त करने हेतु किस पहल की शुरुआत की गई?",
+        options: [
+          "Bharatmala Pariyojana / भारतमाला परियोजना",
+          "Sagarmala Programme / सागरमाला कार्यक्रम",
+          "UDAN Scheme / उड़ान योजना",
+          "PM Mitra Parks / पीएम मित्र पार्क",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Sagarmala Programme aims to modernize India's ports, enhance port connectivity, and promote port-led direct and indirect industrial development along the coastlines.",
+        expHi: "सागरमाला कार्यक्रम का मुख्य उद्देश्य बंदरगाहों का आधुनिकीकरण, तीव्र कनेक्टिविटी और तटीय क्षेत्रों में बंदरगाह-आधारित औद्योगिक विकास को गति देना है।",
+        examFact: "Sagarmala was approved by the Union Cabinet in March 2015 under the Ministry of Ports, Shipping and Waterways."
+      },
+      {
+        qNum: 3,
+        stemEn: "What is the primary operational objective of the 'Bharatmala Pariyojana' launched by the Ministry of Road Transport and Highways?",
+        stemHi: "सड़क परिवहन और राजमार्ग मंत्रालय द्वारा शुरू की गई 'भारतमाला परियोजना' का प्राथमिक परिचालन उद्देश्य क्या है?",
+        options: [
+          "Electrification of entire broad-gauge rail network / संपूर्ण ब्रॉड-गेज रेल नेटवर्क का विद्युतीकरण",
+          "Optimization of national highway freight corridors and border connectivity / राष्ट्रीय राजमार्ग माल ढुलाई गलियारों एवं सीमावर्ती संपर्क का अनुकूलन",
+          "Construction of rural all-weather roads under Gram Sadak Yojana / ग्राम सड़क योजना के तहत ग्रामीण बारहमासी सड़कों का निर्माण",
+          "Development of inland waterways across major river systems / प्रमुख नदी प्रणालियों में अंतर्देशीय जलमार्गों का विकास",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Bharatmala Pariyojana focuses on optimizing highway corridors, developing economic corridors, inter-corridors, feeder routes, border roads, and coastal expressways.",
+        expHi: "भारतमाला परियोजना का मुख्य फोकस आर्थिक गलियारों, इंटर-कॉरिडोर, फीडर रूट, सीमावर्ती एवं तटीय सड़कों के विकास द्वारा राष्ट्रीय राजमार्ग नेटवर्क को सुदृढ़ बनाना है।",
+        examFact: "Bharatmala Phase-I was approved in October 2017 to develop approx. 34,800 km of national highways."
+      },
+      {
+        qNum: 4,
+        stemEn: "The National Infrastructure Pipeline (NIP) was launched for which specific projected implementation timeline?",
+        stemHi: "राष्ट्रीय अवसंरचना पाइपलाइन (NIP) को किस विशिष्ट क्रियान्वयन समयावधि के लिए शुरू किया गया था?",
+        options: [
+          "FY 2015-16 to 2019-20 / वित्त वर्ष 2015-16 से 2019-20",
+          "FY 2022-23 to 2026-27 / वित्त वर्ष 2022-23 से 2026-27",
+          "FY 2020-21 to 2024-25 / वित्त वर्ष 2020-21 से 2024-25",
+          "FY 2018-19 to 2022-23 / वित्त वर्ष 2018-19 to 2022-23",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Task Force headed by the Secretary (DEA) submitted its final report on NIP covering FY 2020–2025 with an estimated investment of over ₹111 lakh crore across energy, roads, railways, and urban infrastructure.",
+        expHi: "आर्थिक कार्य विभाग (DEA) के सचिव की अध्यक्षता वाली टास्क फोर्स द्वारा प्रस्तुत NIP रिपोर्ट वित्त वर्ष 2020-25 की अवधि हेतु ₹111 लाख करोड़ से अधिक के नियोजित निवेश के लिए बनाई गई थी।",
+        examFact: "Funding ratio under NIP is shared as Center (39%), State (40%), and Private Sector (21%)."
+      },
+      {
+        qNum: 5,
+        stemEn: "In August 2021, the Government of India launched the National Monetisation Pipeline (NMP). What is the primary operational mandate of NMP?",
+        stemHi: "अगस्त 2021 में भारत सरकार द्वारा 'राष्ट्रीय मुद्रीकरण पाइपलाइन' (NMP) की शुरुआत की गई। NMP का प्राथमिक परिचालन अधिदेश क्या है?",
+        options: [
+          "Disinvestment of loss-making central public sector enterprises / घाटे में चल रहे केंद्रीय सार्वजनिक क्षेत्र के उपक्रमों का विनिवेश",
+          "Unlocking value in brownfield core infrastructure assets without transferring ownership / स्वामित्व हस्तांतरित किए बिना पुरानी कोर अवसंरचना संपत्तियों का मुद्रीकरण",
+          "Acquisition of private land for greenfield SEZ projects / ग्रीनफील्ड सेज परियोजनाओं के लिए निजी भूमि का अधिग्रहण",
+          "Privatization of nationalized commercial banking institutions / राष्ट्रीयकृत वाणिज्यिक बैंकिंग संस्थानों का निजीकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "NMP focuses exclusively on brownfield de-risked core infrastructure assets to monetize them via structured concessions without selling sovereign asset ownership.",
+        expHi: "एनएमपी (NMP) का उद्देश्य सरकारी स्वामित्व बेचे बिना, केवल संचालन व उपयोग अधिकारों को लीज/रियायत पर देकर ब्राउनफील्ड कोर संपत्तियों से राजस्व जुटाना है।",
+        examFact: "The NMP envisaged a monetization potential of ₹6.0 lakh crore over the 4-year period (FY 2022 to FY 2025)."
+      },
+      {
+        qNum: 6,
+        stemEn: "What is the full form of the regional airport connectivity scheme 'UDAN' launched under the structural aviation reforms?",
+        stemHi: "नागरिक उड्डयन में संरचनात्मक सुधारों के तहत शुरू की गई क्षेत्रीय हवाई संपर्क योजना 'UDAN' का पूर्ण रूप क्या है?",
+        options: [
+          "Unnat Desh Abhiyan Network / उन्नत देश अभियान नेटवर्क",
+          "Universal Domestic Aviation Network / यूनिवर्सल डोमेस्टिक एविएशन नेटवर्क",
+          "Ude Desh ka Aam Nagrik / उड़े देश का आम नागरिक",
+          "Urban Development Aviation Nexus / अर्बन डेवलपमेंट एविएशन नेक्सस",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "UDAN stands for 'Ude Desh ka Aam Nagrik', formulated to enhance regional connectivity by making air travel affordable to tier-2 and tier-3 cities via viability gap funding (VGF).",
+        expHi: "UDAN का पूर्ण रूप 'उड़े देश का आम नागरिक' है, जिसे टियर-2 और टियर-3 शहरों में क्षेत्रीय हवाई संपर्क बढ़ाने और आम नागरिक को सस्ती हवाई यात्रा उपलब्ध कराने हेतु शुरू किया गया।",
+        examFact: "The first flight under UDAN was flagged off between Shimla and Delhi in April 2017."
+      },
+      {
+        qNum: 7,
+        stemEn: "What was the original approved target year for achieving 100 Smart Cities under the 'Smart Cities Mission' launched in June 2015?",
+        stemHi: "जून 2015 में शुरू किए गए 'स्मार्ट सिटीज मिशन' के तहत 100 स्मार्ट शहरों के विकास का मूल स्वीकृत लक्ष्य वर्ष क्या था?",
+        options: [
+          "2017 / 2017",
+          "2018 / 2018",
+          "2019 / 2019",
+          "2020 / 2020",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Smart Cities Mission was launched on 25 June 2015 as a Centrally Sponsored Scheme with an initial operational five-year window running up to FY 2019–2020.",
+        expHi: "स्मार्ट सिटी मिशन 25 जून 2015 को शुरू किया गया था, जिसका मूल क्रियान्वयन लक्ष्य 5 वर्षों की अवधि (2015-16 से 2019-2020) के भीतर निर्धारित था।",
+        examFact: "Smart Cities Mission is implemented through a Special Purpose Vehicle (SPV) created at the city level under the Companies Act, 2013."
+      },
+      {
+        qNum: 8,
+        stemEn: "Dedicated Freight Corridors (DFCs) were designed to structurally separate freight transport from passenger rail. Where is the Eastern DFC terminating in Uttar Pradesh?",
+        stemHi: "माल ढुलाई को यात्री रेल नेटवर्क से अलग करने हेतु डेडिकेटेड फ्रेट कॉरिडोर (DFC) विकसित किए गए। ईस्टर्न डीएफसी (EDFC) का टर्मिनल उत्तर प्रदेश में किस स्थान पर स्थित है?",
+        options: [
+          "Kanpur / कानपुर",
+          "Gorakhpur / गोरखपुर",
+          "Mughalsarai (Pt. Deen Dayal Upadhyaya Junction) / मुग़लसराय (पं. दीनदयाल उपाध्याय जंक्शन)",
+          "Sonnagar / सोननगर",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4,
+        expEn: "None of options A, B, C, or D represent the exact eastern terminus of the operational Eastern DFC project. The Eastern DFC originates at Sahnewal (Ludhiana, Punjab) and extends to Dankuni in West Bengal. Sonnagar is in Bihar, not UP.",
+        expHi: "विकल्प A से D में से कोई भी EDFC का वास्तविक टर्मिनल नहीं है। ईस्टर्न डीएफसी साहनेवाल (लुधियाना, पंजाब) से शुरू होकर दानकुनी (पश्चिम बंगाल) तक विस्तृत है। सोननगर बिहार में स्थित है। अतः सही विकल्प (E) है।",
+        examFact: "The Dedicated Freight Corridor Corporation of India Limited (DFCCIL) is a public sector enterprise under the Ministry of Railways, registered in 2006."
+      },
+      {
+        qNum: 9,
+        stemEn: "Which specialized development finance institution was established by an Act of Parliament in 2021 to support long-term non-recourse infrastructure financing in India?",
+        stemHi: "दीर्घकालिक अवसंरचना वित्तपोषण की आवश्यकताओं को पूरा करने हेतु वर्ष 2021 में संसद के अधिनियम द्वारा किस विशेष विकास वित्त संस्थान (DFI) की स्थापना की गई?",
+        options: [
+          "National Bank for Financing Infrastructure and Development (NaBFID) / नेशनल बैंक फॉर फाइनेंसिंग इन्फ्रास्ट्रक्चर एंड डेवलपमेंट",
+          "Infrastructure Development Finance Company (IDFC) / इन्फ्रास्ट्रक्चर डेवलपमेंट फाइनेंस कंपनी",
+          "Small Industries Development Bank of India (SIDBI) / भारतीय लघु उद्योग विकास बैंक",
+          "Industrial Finance Corporation of India (IFCI) / भारतीय औद्योगिक वित्त निगम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Parliament passed the NaBFID Act in March 2021 to establish the National Bank for Financing Infrastructure and Development as a premier DFI to address the asset-liability mismatch in infrastructure loans.",
+        expHi: "मार्च 2021 में संसद द्वारा पारित अधिनियम के माध्यम से NaBFID की स्थापना बुनियादी ढांचा क्षेत्र के लिए एक समर्पित विकास वित्त संस्थान (DFI) के रूप में की गई।",
+        examFact: "NaBFID is regulated and supervised as an All-India Financial Institution (AIFI) under the RBI Act, 1934."
+      },
+      {
+        qNum: 10,
+        stemEn: "Under the Atal Mission for Rejuvenation and Urban Transformation (AMRUT) launched in 2015, what is the primary focus sector?",
+        stemHi: "2015 में शुरू किए गए 'अटल कायाकल्प और शहरी परिवर्तन मिशन' (AMRUT) का प्राथमिक फोकस क्षेत्र कौन सा है?",
+        options: [
+          "Slum rehabilitation and affordable housing construction / मलिन बस्तियों का पुनर्वास एवं किफायती आवास निर्माण",
+          "Universal tap water supply and sewerage/septage management in urban centers / शहरी क्षेत्रों में सार्वभौमिक नल जल आपूर्ति एवं सीवरेज/सेप्टेज प्रबंधन",
+          "Free Wi-Fi network across Tier-2 city centers / टियर-2 शहरों में निःशुल्क वाई-फाई नेटवर्क",
+          "Urban highway construction and bypass development / शहरी राजमार्ग निर्माण एवं बाईपास विकास",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "AMRUT focuses primarily on providing universal coverage of water supply, sewerage networks, storm water drainage, urban transport, and green spaces in 500 selected cities.",
+        expHi: "कायाकल्प और शहरी परिवर्तन के लिए अटल मिशन (AMRUT) का प्राथमिक उद्देश्य 500 शहरों में पाइप द्वारा जलापूर्ति और सीवरेज/सेप्टेज नेटवर्क का शत-प्रतिशत आच्छादन सुनिश्चित करना है।",
+        examFact: "AMRUT 2.0 was launched in October 2021 aiming to make all statutory towns 'water secure'."
+      },
+      {
+        qNum: 11,
+        stemEn: "National Waterway 1 (NW-1), modernized with multimodal terminals under the Jal Marg Vikas Project (JMVP), spans across which river?",
+        stemHi: "जल मार्ग विकास परियोजना (JMVP) के तहत बहुमॉडल टर्मिनलों के साथ आधुनिक बनाया गया 'राष्ट्रीय जलमार्ग-1' (NW-1) किस नदी पर विस्तृत है?",
+        options: [
+          "Brahmaputra River / ब्रह्मपुत्र नदी",
+          "Godavari River / गोदावरी नदी",
+          "Ganga-Bhagirathi-Hooghly River System / गंगा-भागीरथी-हुगली नदी प्रणाली",
+          "Narmada River / नर्मदा नदी",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "National Waterway 1 stretches from Prayagraj to Haldia (1,620 km) across the Ganga-Bhagirathi-Hooghly river system and is assisted technically and financially by the World Bank.",
+        expHi: "राष्ट्रीय जलमार्ग-1 प्रयागराज से हल्दिया तक (1,620 किमी) गंगा-भागीरथी-हुगली नदी प्रणाली पर स्थित है, जिसे विश्व बैंक की सहायता से आधुनिक नौवहन हेतु विकसित किया गया है।",
+        examFact: "The multi-modal terminal at Varanasi (Uttar Pradesh) on NW-1 was inaugurated in November 2018."
+      },
+      {
+        qNum: 12,
+        stemEn: "The Pradhan Mantri Awas Yojana - Urban (PMAY-U) was launched in June 2015 under the administrative jurisdiction of which Union Ministry?",
+        stemHi: "जून 2015 में शुरू की गई 'प्रधानमंत्री आवास योजना - शहरी' (PMAY-U) किस केंद्रीय मंत्रालय के प्रशासनिक अधिकार क्षेत्र के अंतर्गत है?",
+        options: [
+          "Ministry of Rural Development / ग्रामीण विकास मंत्रालय",
+          "Ministry of Housing and Urban Affairs / आवास और शहरी मामलों का मंत्रालय",
+          "Ministry of Social Justice and Empowerment / सामाजिक न्याय और अधिकारिता मंत्रालय",
+          "Ministry of Finance / वित्त मंत्रालय",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "PMAY-U is administered by the Ministry of Housing and Urban Affairs (MoHUA) to provide pucca houses with basic amenities to eligible urban beneficiaries.",
+        expHi: "प्रधानमंत्री आवास योजना - शहरी (PMAY-U) का क्रियान्वयन आवासन और शहरी कार्य मंत्रालय (MoHUA) द्वारा झुग्गीवासियों और निम्न आय वर्ग को पक्के मकान देने हेतु किया जाता है।",
+        examFact: "PMAY-U operates through four verticals: ISSR, CLSS, AHP, and BLC."
+      },
+      {
+        qNum: 13,
+        stemEn: "In which year was the Insolvency and Bankruptcy Code (IBC) enacted to provide a structural legal framework for resolving corporate distress and NPAs in infrastructure lending?",
+        stemHi: "अवसंरचना ऋण और कॉरपोरेट तनाव के समाधान हेतु एक संरचनात्मक कानूनी ढांचा प्रदान करने के लिए किस वर्ष दिवाला और शोधन अक्षमता संहिता (IBC) अधिनियमित की गई थी?",
+        options: [
+          "2014 / 2014",
+          "2015 / 2015",
+          "2016 / 2016",
+          "2018 / 2018",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Insolvency and Bankruptcy Code, 2016 was enacted in May 2016 to consolidate and amend the laws relating to reorganization and insolvency resolution of corporate entities in a time-bound manner.",
+        expHi: "दिवाला और शोधन अक्षमता संहिता (IBC), 2016 को मई 2016 में संसद द्वारा पारित किया गया, जिसका उद्देश्य कंपनियों की वित्तीय संकटग्रस्त संपत्तियों का समयबद्ध समाधान करना था।",
+        examFact: "IBC established the Insolvency and Bankruptcy Board of India (IBBI) as its regulatory oversight body."
+      },
+      {
+        qNum: 14,
+        stemEn: "The National Logistics Policy (NLP) was officially launched by the Prime Minister in which year to reduce the logistics cost from ~14% of GDP to single digits?",
+        stemHi: "लॉजिस्टिक्स लागत को सकल घरेलू उत्पाद के लगभग 14% से घटाकर एकल अंक (single digits) में लाने हेतु प्रधानमंत्री द्वारा किस वर्ष 'राष्ट्रीय लॉजिस्टिक्स नीति' (NLP) शुरू की गई?",
+        options: [
+          "2019 / 2019",
+          "2020 / 2020",
+          "2021 / 2021",
+          "2022 / 2022",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The National Logistics Policy (NLP) was unveiled on September 17, 2022, introducing ULIP (Unified Logistics Interface Platform) to bridge systemic efficiency gaps.",
+        expHi: "राष्ट्रीय लॉजिस्टिक्स नीति (NLP) को 17 सितंबर 2022 को लॉन्च किया गया, जिसका लक्ष्य भारतीय लॉजिस्टिक्स लागत को वैश्विक मानकों के समकक्ष लाना है।",
+        examFact: "The Unified Logistics Interface Platform (ULIP) integrates data from seven different ministries to enable seamless freight tracking."
+      },
+      {
+        qNum: 15,
+        stemEn: "Under the structural power reforms initiated post-2014, what was the primary mandate of the Ujwal DISCOM Assurance Yojana (UDAY)?",
+        stemHi: "2014 के बाद शुरू किए गए संरचनात्मक विद्युत सुधारों के तहत 'उज्ज्वल डिस्कॉम एश्योरेंस योजना' (UDAY) का प्राथमिक उद्देश्य क्या था?",
+        options: [
+          "Financial turnaround and operational improvement of state power distribution companies / राज्य विद्युत वितरण कंपनियों (DISCOMs) का वित्तीय पुनरुद्धार और परिचालन सुधार",
+          "Free distribution of solar panel rooftop units across all agricultural households / सभी कृषि परिवारों को रूफटॉप सौर पैनल इकाइयों का निःशुल्क वितरण",
+          "Complete replacement of coal-fired thermal power plants with nuclear energy / कोयला आधारित ताप विद्युत संयंत्रों का परमाणु ऊर्जा से पूर्ण प्रतिस्थापन",
+          "Privatization of the National Thermal Power Corporation (NTPC) / नेशनल थर्मल पावर कॉर्पोरेशन (NTPC) का निजीकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "UDAY was launched in November 2015 to restructure the accumulated debt of state-owned power distribution companies (DISCOMs) and reduce their AT&C losses.",
+        expHi: "UDAY योजना को नवंबर 2015 में राज्य बिजली वितरण कंपनियों (डिस्कॉम) के भारी ऋण संकट को दूर करने तथा उनकी परिचालन दक्षता में सुधार करने हेतु शुरू किया गया था।",
+        examFact: "UDAY enabled state governments to take over up to 75% of DISCOMs' debt by issuing state government bonds."
+      },
+      {
+        qNum: 16,
+        stemEn: "What is the full form of the optical fiber connectivity initiative 'BharatNet', which was revamped to structurally link all Gram Panchayats?",
+        stemHi: "सभी ग्राम पंचायतों को ब्रॉडबैंड से जोड़ने हेतु पुनर्गठित ऑप्टिकल फाइबर संपर्क पहल 'भारतनेट' (BharatNet) का पूर्ववर्ती नाम क्या था?",
+        options: [
+          "National Broadband Network (NBN) / नेशनल ब्रॉडबैंड नेटवर्क",
+          "National Optical Fibre Network (NOFN) / नेशनल ऑप्टिकल फाइबर नेटवर्क",
+          "Gramin Digital Sanchar Yojana (GDSY) / ग्रामीण डिजिटल संचार योजना",
+          "Digital Bharat Optical Grid (DBOG) / डिजिटल भारत ऑप्टिकल ग्रिड",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "BharatNet was originally launched in October 2011 as the National Optical Fibre Network (NOFN) and was structurally revamped and renamed as BharatNet in 2015 under the Digital India initiative.",
+        expHi: "भारतनेट को मूल रूप से अक्टूबर 2011 में नेशनल ऑप्टिकल फाइबर नेटवर्क (NOFN) के रूप में शुरू किया गया था, जिसे 2015 में पुनर्गठित कर 'भारतनेट' नाम दिया गया।",
+        examFact: "BharatNet is funded through the Universal Service Obligation Fund (USOF), now known as Digital Bharat Nidhi."
+      },
+      {
+        qNum: 17,
+        stemEn: "The first semi-high-speed 'Vande Bharat Express' train (Train 18) was commercially flagged off on which railway route in February 2019?",
+        stemHi: "फरवरी 2019 में भारत की पहली सेमी-हाई-स्पीड 'वंदे भारत एक्सप्रेस' ट्रेन (ट्रेन 18) को किस रेलवे मार्ग पर व्यावसायिक रूप से हरी झंडी दिखाई गई थी?",
+        options: [
+          "Mumbai Central to Ahmedabad / मुंबई सेंट्रल से अहमदाबाद",
+          "New Delhi to Varanasi / नई दिल्ली से वाराणसी",
+          "New Delhi to Katra / नई दिल्ली से कटरा",
+          "Howrah to Puri / हावड़ा से पुरी",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "India's first semi-high-speed train, Vande Bharat Express (manufactured by Integral Coach Factory, Chennai), was flagged off on 15 February 2019 between New Delhi and Varanasi.",
+        expHi: "भारत की पहली वंदे भारत एक्सप्रेस (ट्रेन 18) का परिचालन 15 फरवरी 2019 को नई दिल्ली से वाराणसी मार्ग पर प्रधानमंत्री नरेंद्र मोदी द्वारा प्रारंभ किया गया था।",
+        examFact: "Vande Bharat coaches are indigenous trainsets designed and manufactured at the Integral Coach Factory (ICF), Perambur, Chennai."
+      },
+      {
+        qNum: 18,
+        stemEn: "Real Estate (Regulation and Development) Act (RERA) was enforced across India to bring transparency and structural governance to the real estate sector in which year?",
+        stemHi: "रियल एस्टेट क्षेत्र में पारदर्शिता और संरचनात्मक अनुशासन लाने हेतु 'रियल एस्टेट (विनियमन और विकास) अधिनियम' (RERA) देश में किस वर्ष पूरी तरह लागू हुआ?",
+        options: [
+          "2014 / 2014",
+          "2015 / 2015",
+          "2016 / 2016",
+          "2017 / 2017",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Although passed by Parliament in 2016, the Real Estate (Regulation and Development) Act, 2016 came into full force across India on May 1, 2017.",
+        expHi: "संसद द्वारा वर्ष 2016 में अधिनियम पारित होने के उपरांत, रेरा (RERA) के शेष सभी प्रावधान 1 मई 2017 से पूर्णतः लागू हुए थे।",
+        examFact: "Under RERA, builders must deposit 70% of the funds realized from buyers into a dedicated escrow account for construction work."
+      },
+      {
+        qNum: 19,
+        stemEn: "Which public financial institution was approved by the Union Cabinet in 2015 to act as an anchor quasi-sovereign wealth fund for financing greenfield and brownfield infrastructure?",
+        stemHi: "ग्रीनफील्ड और ब्राउनफील्ड अवसंरचना के वित्तपोषण हेतु अर्ध-संप्रभु वेल्थ फंड (quasi-sovereign fund) के रूप में 2015 में किस संस्थान के गठन को मंजूरी दी गई थी?",
+        options: [
+          "National Investment and Infrastructure Fund (NIIF) / राष्ट्रीय निवेश और अवसंरचना कोष",
+          "Infrastructure Leasing & Financial Services (IL&FS) / इन्फ्रास्ट्रक्चर लीजिंग एंड फाइनेंशियल सर्विसेज",
+          "State Bank of India Capital Markets (SBICAP) / एसबीआई कैपिटल मार्केट्स",
+          "Power Finance Corporation (PFC) / पावर फाइनेंस कॉर्पोरेशन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The National Investment and Infrastructure Fund (NIIF) was set up in December 2015 as a Category II Alternative Investment Fund (AIF) with a proposed corpus of ₹40,000 crore, where the government holds a 49% stake.",
+        expHi: "नेशनल इन्वेस्टमेंट एंड इन्फ्रास्ट्रक्चर फंड (NIIF) की स्थापना दिसंबर 2015 में अवसंरचना विकास में घरेलू और अंतर्राष्ट्रीय निवेश को आकर्षित करने हेतु अर्ध-संप्रभु कोष के रूप में की गई थी।",
+        examFact: "The Government of India holds 49% shareholding in NIIF, while the remaining 51% is held by domestic and global institutional investors."
+      },
+      {
+        qNum: 20,
+        stemEn: "In the civil aviation sector, how much Foreign Direct Investment (FDI) is permitted under the 100% automatic route for Greenfield airport projects in India?",
+        stemHi: "नागरिक उड्डयन क्षेत्र में भारत में ग्रीनफील्ड हवाई अड्डा परियोजनाओं के लिए 100% स्वचालित मार्ग के तहत कितना प्रत्यक्ष विदेशी निवेश (FDI) अनुमत है?",
+        options: [
+          "49% / 49%",
+          "74% / 74%",
+          "100% / 100%",
+          "26% / 26%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Under structural ease-of-business FDI reforms post-2014, 100% Foreign Direct Investment is permitted under the automatic route for greenfield airport development projects.",
+        expHi: "अवसंरचना सुधारों के तहत, ग्रीनफील्ड हवाई अड्डा परियोजनाओं में स्वचालित मार्ग (automatic route) के अंतर्गत 100% प्रत्यक्ष विदेशी निवेश (FDI) की अनुमति है।",
+        examFact: "For existing brownfield airport projects, 100% FDI is also allowed (up to 100% under automatic route)."
+      },
+      {
+        qNum: 21,
+        stemEn: "Which digital toll collection infrastructure framework based on RFID technology was made mandatory on National Highways from February 2021?",
+        stemHi: "आरएफआईडी (RFID) तकनीक पर आधारित कौन सा डिजिटल टोल संग्रह बुनियादी ढांचा फरवरी 2021 से राष्ट्रीय राजमार्गों पर अनिवार्य कर दिया गया?",
+        options: [
+          "FASTag / फास्टैग",
+          "TollPay / टोलपे",
+          "BharatToll / भारतटोल",
+          "DigiYatra / डिजीयात्रा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "FASTag employs Radio Frequency Identification (RFID) technology for electronic toll collection directly from the prepaid or linked bank account while the vehicle is in motion, minimizing congestion at toll plazas.",
+        expHi: "फास्टैग (FASTag) रेडियो फ्रीक्वेंसी आइडेंटिफिकेशन (RFID) तकनीक का उपयोग करता है, जिसे राष्ट्रीय राजमार्गों पर निर्बाध आवागमन सुनिश्चित करने हेतु अनिवार्य बनाया गया।",
+        examFact: "FASTag operates under the National Electronic Toll Collection (NETC) program developed by the National Payments Corporation of India (NPCI)."
+      },
+      {
+        qNum: 22,
+        stemEn: "What is the designated installed capacity target for Renewable Energy by the year 2030, announced as part of India's updated structural energy transition commitments (Panchamrit)?",
+        stemHi: "भारत की अद्यतन संरचनात्मक ऊर्जा परिवर्तन प्रतिबद्धताओं (पंचामृत) के हिस्से के रूप में वर्ष 2030 तक गैर-जीवाश्म/नवीकरणीय ऊर्जा स्रोतों से कुल कितनी स्थापित क्षमता का लक्ष्य रखा गया है?",
+        options: [
+          "175 GW / 175 गीगावाट",
+          "350 GW / 350 गीगावाट",
+          "500 GW / 500 गीगावाट",
+          "750 GW / 750 गीगावाट",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "At COP26 in Glasgow, India announced its 'Panchamrit' climate action pledge, which includes achieving 500 GW of non-fossil fuel energy capacity by 2030.",
+        expHi: "कॉप-26 (COP26) शिखर सम्मेलन में घोषित पंचामृत संकल्पों के अंतर्गत भारत ने 2030 तक गैर-जीवाश्म ईंधन ऊर्जा स्रोतों से 500 गीगावाट (GW) क्षमता प्राप्त करने का लक्ष्य तय किया है।",
+        examFact: "India originally had a target of 175 GW of renewable energy by 2022, which was subsequently scaled up to 500 GW by 2030."
+      },
+      {
+        qNum: 23,
+        stemEn: "Which state hosts the starting point of the Western Dedicated Freight Corridor (WDFC) at Dadri?",
+        stemHi: "दादरी स्थित वेस्टर्न डेडिकेटेड फ्रेट कॉरिडोर (WDFC) का प्रारंभिक बिंदु किस राज्य में स्थित है?",
+        options: [
+          "Haryana / हरियाणा",
+          "Rajasthan / राजस्थान",
+          "Gujarat / गुजरात",
+          "Uttar Pradesh / उत्तर प्रदेश",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Dadri, which serves as the connecting junction and eastern origin for the Western Dedicated Freight Corridor (running to Jawaharlal Nehru Port Trust in Navi Mumbai), is located in Uttar Pradesh (Gautam Buddha Nagar district).",
+        expHi: "दादरी, जो वेस्टर्न डेडिकेटेड फ्रेट कॉरिडोर (WDFC) का आरंभिक जंक्शन है तथा जेएनपीटी (नवी मुंबई) तक जाता है, उत्तर प्रदेश के गौतमबुद्ध नगर जिले में स्थित है।",
+        examFact: "Dadri serves as the major interchange link between both the Eastern and Western Dedicated Freight Corridors."
+      },
+      {
+        qNum: 24,
+        stemEn: "In the maritime infrastructure domain, the 'Major Port Authorities Act' passed by Parliament to grant operational autonomy and replace the 1963 statute came into force in which year?",
+        stemHi: "समुद्री अवसंरचना के क्षेत्र में, बंदरगाहों को परिचालन स्वायत्तता प्रदान करने और 1963 के कानून को प्रतिस्थापित करने हेतु संसद द्वारा पारित 'महापत्तन प्राधिकरण अधिनियम' किस वर्ष लागू हुआ?",
+        options: [
+          "2018 / 2018",
+          "2019 / 2019",
+          "2020 / 2020",
+          "2021 / 2021",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Major Port Authorities Act, 2021 replaced the Major Port Trusts Act, 1963, providing greater operational freedom and replacing the tariff-setting powers of TAMP (Tariff Authority for Major Ports).",
+        expHi: "महापत्तन प्राधिकरण अधिनियम, 2021 ने महापत्तन न्यास अधिनियम 1963 का स्थान लिया, जिससे भारत के प्रमुख बंदरगाहों को निर्णय लेने और दरों के निर्धारण में स्वायत्तता प्राप्त हुई।",
+        examFact: "India has 12 major public ports that come under the jurisdiction of the central government and are governed under this Act."
+      },
+      {
+        qNum: 25,
+        stemEn: "Which dedicated initiative was launched under railway structural reforms in 2023 for the holistic redevelopment and modernization of more than 1,300 railway stations across India?",
+        stemHi: "वर्ष 2023 में रेलवे संरचनात्मक सुधारों के तहत देश भर के 1,300 से अधिक रेलवे स्टेशनों के समग्र पुनर्विकास और आधुनिकीकरण हेतु किस समर्पित योजना की शुरुआत की गई?",
+        options: [
+          "Rail Vikas Yojana / रेल विकास योजना",
+          "Adarsh Station Scheme / आदर्श स्टेशन योजना",
+          "Amrit Bharat Station Scheme / अमृत भारत स्टेशन योजना",
+          "Tejas Modernization Mission / तेजस आधुनिकीकरण मिशन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Ministry of Railways launched the Amrit Bharat Station Scheme in 2023 with the master-plan vision of modernizing over 1,300 railway stations with city centers, pedestrian flow amenities, and rooftop plazas.",
+        expHi: "भारतीय रेलवे ने 2023 में 'अमृत भारत स्टेशन योजना' शुरू की, जिसके अंतर्गत देश के 1,300 से अधिक रेलवे स्टेशनों के दीर्घकालिक उन्नयन, आधुनिक यात्री सुविधाओं और रूफटॉप प्लाजा का निर्माण किया जा रहा है।",
+        examFact: "The Amrit Bharat Station Scheme replaced previous station modernization initiatives like the Adarsh Station Scheme to implement a uniform master-plan-driven redesign."
+      },
+
+      // Batch 2 (Q26 to Q50)
+      {
+        qNum: 26,
+        stemEn: "What was the revised targeted terminal year for achieving 'Housing for All' under Pradhan Mantri Awas Yojana - Urban (PMAY-U) after its extension beyond 2022?",
+        stemHi: "2022 के बाद विस्तारित किए जाने पर प्रधानमंत्री आवास योजना - शहरी (PMAY-U) के तहत 'सभी के लिए आवास' के लक्ष्य को पूरा करने हेतु संशोधित अंतिम तिथि क्या तय की गई थी?",
+        options: [
+          "December 2023 / दिसंबर 2023",
+          "December 2024 / दिसंबर 2024",
+          "March 2026 / मार्च 2026",
+          "August 2025 / अगस्त 2025",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Union Cabinet extended the implementation period of PMAY-U up to 31 December 2024 to complete the construction of all sanctioned houses without altering the funding pattern.",
+        expHi: "केंद्रीय मंत्रिमंडल ने पहले से स्वीकृत सभी आवासों का निर्माण कार्य पूर्ण करने के उद्देश्य से PMAY-U की अवधि को 31 दिसंबर 2024 तक विस्तारित किया था।",
+        examFact: "PMAY-U was initially launched on 25 June 2015 with the original completion mandate of 2022."
+      },
+      {
+        qNum: 27,
+        stemEn: "The National Gas Grid project aimed to increase the share of natural gas in India's primary energy mix from ~6% to what percentage by 2030?",
+        stemHi: "राष्ट्रीय गैस ग्रिड परियोजना का उद्देश्य भारत के प्राथमिक ऊर्जा मिश्रण में प्राकृतिक गैस की हिस्सेदारी को लगभग 6% से बढ़ाकर 2030 तक कितने प्रतिशत करना है?",
+        options: [
+          "10% / 10%",
+          "12% / 12%",
+          "15% / 15%",
+          "20% / 20%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "To transition towards a gas-based economy, the Government of India set a structural policy target to raise the share of natural gas in the primary energy basket to 15% by 2030 through the expansion of cross-country pipelines.",
+        expHi: "भारत सरकार ने गैस-आधारित अर्थव्यवस्था की ओर अग्रसर होने के लिए प्राथमिक ऊर्जा मिश्रण में प्राकृतिक गैस का अनुपात 2030 तक बढ़ाकर 15% करने का लक्ष्य रखा है।",
+        examFact: "The 'One Nation, One Gas Grid' initiative connects major gas supply centers, LNG terminals, and City Gas Distribution (CGD) networks across India."
+      },
+      {
+        qNum: 28,
+        stemEn: "The Hybrid Annuity Model (HAM) was introduced in 2016 for highway infrastructure development to mitigate private developers' financial risk. What percentage of the project cost is provided by the government during the construction phase under HAM?",
+        stemHi: "राजमार्ग बुनियादी ढांचे के विकास में निजी विकासकर्ताओं के वित्तीय जोखिम को कम करने हेतु 2016 में हाइब्रिड वार्षिकी मॉडल (HAM) पेश किया गया। इसके तहत निर्माण अवधि के दौरान सरकार द्वारा परियोजना लागत का कितना प्रतिशत प्रदान किया जाता है?",
+        options: [
+          "20% / 20%",
+          "40% / 40%",
+          "50% / 50%",
+          "60% / 60%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under the Hybrid Annuity Model (HAM), the National Highways Authority of India (NHAI) provides 40% of the project cost as cash support in five equal installments linked to construction milestones, while the developer finances the remaining 60%.",
+        expHi: "हाइब्रिड वार्षिकी मॉडल (HAM) के अंतर्गत सरकार (NHAI) निर्माण चरण के दौरान पांच किस्तों में परियोजना लागत का 40% प्रदान करती है, जबकि शेष 60% का वित्तपोषण विकासकर्ता द्वारा किया जाता है।",
+        examFact: "HAM is a mix of EPC (Engineering, Procurement, and Construction) and BOT-Annuity (Build-Operate-Transfer) models."
+      },
+      {
+        qNum: 29,
+        stemEn: "Which dedicated digital portal was established under the PM Gati Shakti framework to bring geographic information system (GIS) based mapping of all physical infrastructure onto a unified platform?",
+        stemHi: "पीएम गति शक्ति ढांचे के तहत सभी भौतिक अवसंरचनाओं के भौगोलिक सूचना प्रणाली (GIS) आधारित मानचित्रण को एकीकृत करने के लिए किस समर्पित पोर्टल का उपयोग किया जाता है?",
+        options: [
+          "BISAG-N National Master Plan Portal / BISAG-N राष्ट्रीय मास्टर प्लान पोर्टल",
+          "Bhuvan Geospatial Engine / भुवन भू-स्थानिक इंजन",
+          "BharatMap Geospatial Engine / भारतमैप भू-स्थानिक इंजन",
+          "PM Sadak GIS / पीएम सड़क जीआईएस",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The PM Gati Shakti National Master Plan platform was developed by the Bhaskaracharya National Institute for Space Applications and Geo-informatics (BISAG-N) using dynamic GIS data across 200+ spatial data layers.",
+        expHi: "पीएम गति शक्ति का डिजिटल प्लेटफॉर्म भास्कराचार्य राष्ट्रीय अंतरिक्ष अनुप्रयोग और भू-सूचना विज्ञान संस्थान (BISAG-N) द्वारा विकसित किया गया है, जो 200 से अधिक लेयर्स का एकीकृत जीआईएस मानचित्रण प्रदान करता है।",
+        examFact: "BISAG-N is an autonomous scientific society under the Ministry of Electronics and Information Technology (MeitY), located in Gandhinagar, Gujarat."
+      },
+      {
+        qNum: 30,
+        stemEn: "Under the Jal Jeevan Mission (JJM) launched in August 2019, what is the defined quantity of potable tap water committed per person per day to every rural household?",
+        stemHi: "अगस्त 2019 में शुरू किए गए 'जल जीवन मिशन' (JJM) के तहत प्रत्येक ग्रामीण परिवार को प्रति व्यक्ति प्रति दिन कितने लीटर पीने योग्य नल जल उपलब्ध कराने का मानक तय किया गया है?",
+        options: [
+          "40 Litres / 40 लीटर",
+          "45 Litres / 45 लीटर",
+          "50 Litres / 50 लीटर",
+          "55 Litres / 55 लीटर",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Jal Jeevan Mission aims to provide Functional Household Tap Connections (FHTC) delivering 55 litres of potable water per capita per day (lpcd) to every rural household.",
+        expHi: "जल जीवन मिशन के अंतर्गत प्रत्येक ग्रामीण परिवार को 'हर घर जल' के तहत प्रति व्यक्ति प्रतिदिन 55 लीटर निर्धारित गुणवत्ता का पेयजल उपलब्ध कराने का लक्ष्य है।",
+        examFact: "Jal Jeevan Mission is implemented by the Department of Drinking Water and Sanitation under the Ministry of Jal Shakti."
+      },
+      {
+        qNum: 31,
+        stemEn: "India's first high-speed rail (bullet train) corridor under construction connects Mumbai with which western commercial city?",
+        stemHi: "भारत का पहला निर्माणाधीन हाई-स्पीड रेल (बुलेट ट्रेन) गलियारा मुंबई को किस पश्चिमी व्यापारिक शहर से जोड़ता है?",
+        options: [
+          "Surat / सूरत",
+          "Vadodara / वडोदरा",
+          "Ahmedabad / अहमदाबाद",
+          "Pune / पुणे",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Mumbai–Ahmedabad High Speed Rail Corridor (MAHSR), spanning 508 km, is being implemented with technical and financial assistance from the Japan International Cooperation Agency (JICA) using Shinkansen technology.",
+        expHi: "मुंबई-अहमदाबाद हाई-स्पीड रेल कॉरिडोर (508 किमी) भारत की पहली बुलेट ट्रेन परियोजना है, जो जापान के तकनीकी और वित्तीय सहयोग से क्रियान्वित की जा रही है।",
+        examFact: "The executing agency for this project is the National High Speed Rail Corporation Limited (NHSRCL), incorporated in 2016."
+      },
+      {
+        qNum: 32,
+        stemEn: "In which year was the 'National Green Hydrogen Mission' officially approved by the Union Cabinet to drive clean energy infrastructure development?",
+        stemHi: "स्वच्छ ऊर्जा अवसंरचना के विकास को गति देने के लिए केंद्रीय मंत्रिमंडल द्वारा 'राष्ट्रीय हरित हाइड्रोजन मिशन' को आधिकारिक रूप से किस वर्ष मंजूरी दी गई थी?",
+        options: [
+          "2020 / 2020",
+          "2021 / 2021",
+          "2022 / 2022",
+          "2023 / 2023",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Union Cabinet approved the National Green Hydrogen Mission on 4 January 2023 with an initial outlay of ₹19,744 crore to make India a global hub for the production and export of green hydrogen.",
+        expHi: "केंद्रीय मंत्रिमंडल ने 4 जनवरी 2023 को ₹19,744 करोड़ के परिव्यय के साथ राष्ट्रीय हरित हाइड्रोजन मिशन को औपचारिक रूप से मंजूरी दी।",
+        examFact: "The mission targets producing at least 5 Million Metric Tonnes (MMT) of green hydrogen per annum by 2030."
+      },
+      {
+        qNum: 33,
+        stemEn: "Which institutional entity was created in 2021 as a 'bad bank' to acquire stressed infrastructure and commercial loans from banking balance sheets?",
+        stemHi: "बैंकों के बही-खातों से संकटग्रस्त अवसंरचना और वाणिज्यिक ऋणों को अधिगृहीत करने हेतु 2021 में 'बैड बैंक' के रूप में किस संस्था का गठन किया गया?",
+        options: [
+          "National Asset Reconstruction Company Limited (NARCL) / नेशनल एसेट रिकंस्ट्रक्शन कंपनी लिमिटेड",
+          "Industrial Development Asset Bank (IDAB) / इंडस्ट्रियल डेवलपमेंट एसेट बैंक",
+          "Stressed Assets Stabilization Fund (SASF) / तनावग्रस्त परिसंपत्ति स्थिरीकरण कोष",
+          "National Infrastructure Liquidity Fund (NILF) / राष्ट्रीय अवसंरचना तरलता कोष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "NARCL (National Asset Reconstruction Company Limited) was incorporated in 2021 to consolidate and aggregate stressed loans of banks, complemented by IDRCL (India Debt Resolution Company Limited) for operational asset management.",
+        expHi: "NARCL की स्थापना 2021 में बैंकों के गैर-निष्पादित ऋणों (NPAs) को समेकित करने और उनके समाधान हेतु एक परिसंपत्ति पुनर्निर्माण कंपनी (ARC/बैड बैंक) के रूप में की गई थी।",
+        examFact: "The government provided a sovereign guarantee of up to ₹30,600 crore on Security Receipts (SRs) issued by NARCL."
+      },
+      {
+        qNum: 34,
+        stemEn: "Real Estate Investment Trusts (REITs) and Infrastructure Investment Trusts (InvITs) are regulated in India by which financial statutory authority?",
+        stemHi: "भारत में रियल एस्टेट इन्वेस्टमेंट ट्रस्ट (REITs) और इंफ्रास्ट्रक्चर इन्वेस्टमेंट ट्रस्ट (InvITs) किस वैधानिक वित्तीय प्राधिकरण द्वारा विनियमित होते हैं?",
+        options: [
+          "Reserve Bank of India (RBI) / भारतीय रिज़र्व बैंक",
+          "Pension Fund Regulatory and Development Authority (PFRDA) / पेंशन निधि विनियामक और विकास प्राधिकरण",
+          "Securities and Exchange Board of India (SEBI) / भारतीय प्रतिभूति और विनिमय बोर्ड",
+          "Insurance Regulatory and Development Authority of India (IRDAI) / भारतीय बीमा विनियामक और विकास प्राधिकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "REITs and InvITs are structured investment vehicles governed by regulations notified by the Securities and Exchange Board of India (SEBI) to channel institutional and retail savings into long-term infrastructure.",
+        expHi: "सेबी (SEBI) द्वारा अधिसूचित विनियमों के तहत InvITs और REITs को विनियमित किया जाता है, जो अवसंरचना और रियल एस्टेट संपत्तियों में पूंजी जुटाने के माध्यम हैं।",
+        examFact: "InvITs allow developers to monetize operational infrastructure assets like highways, power grids, and telecom towers."
+      },
+      {
+        qNum: 35,
+        stemEn: "In which year was the 'National Monetisation Pipeline' (NMP) officially launched by the Union Finance Minister?",
+        stemHi: "केंद्रीय वित्त मंत्री द्वारा 'राष्ट्रीय मुद्रीकरण पाइपलाइन' (NMP) आधिकारिक तौर पर किस वर्ष शुरू की गई थी?",
+        options: [
+          "2018 / 2018",
+          "2019 / 2019",
+          "2020 / 2020",
+          "2021 / 2021",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The National Monetisation Pipeline (NMP) covering brownfield infrastructure assets across 12 line ministries was officially launched by Union Finance Minister Nirmala Sitharaman on 23 August 2021.",
+        expHi: "केंद्रीय वित्त मंत्री निर्मला सीतारमण ने 23 अगस्त 2021 को राष्ट्रीय मुद्रीकरण पाइपलाइन (NMP) का अनावरण किया, जिसमें 12 प्रमुख मंत्रालयों की संपत्तियों को शामिल किया गया था।",
+        examFact: "Roads (NHAI) and Railways together account for more than 50% of the total aggregate monetization value under the NMP."
+      },
+      {
+        qNum: 36,
+        stemEn: "Under the Deen Dayal Upadhyaya Gram Jyoti Yojana (DDUGJY) launched in 2015, what was the primary structural target for rural electrical infrastructure?",
+        stemHi: "2015 में शुरू की गई 'दीनदयाल उपाध्याय ग्राम ज्योति योजना' (DDUGJY) का ग्रामीण विद्युत अवसंरचना के लिए प्राथमिक संरचनात्मक लक्ष्य क्या था?",
+        options: [
+          "Feeder separation for agricultural and non-agricultural consumers and 100% village electrification / कृषि और गैर-कृषि उपभोक्ताओं के लिए फीडर पृथक्करण एवं 100% ग्रामीण विद्युतीकरण",
+          "Free rooftop solar distribution across all BPL families / सभी बीपीएल परिवारों को मुफ्त रूफटॉप सोलर वितरण",
+          "Mandatory nuclear energy transmission to village clusters / ग्रामीण क्लस्टरों में परमाणु ऊर्जा का अनिवार्य पारेषण",
+          "Replacement of all domestic appliances with star-rated equipment / सभी घरेलू उपकरणों को स्टार-रेटेड उपकरणों से बदलना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "DDUGJY focused on feeder separation to ensure continuous power supply to rural homes while rationing supply to agriculture, alongside strengthening distribution sub-transmission infrastructure and completing village electrification.",
+        expHi: "डीडीयूजीजेवाई (DDUGJY) का मुख्य उद्देश्य कृषि और गैर-कृषि फीडरों को अलग करना, ग्रामीण वितरण प्रणाली को मजबूत करना तथा सभी गैर-विद्युतीकृत गांवों तक बिजली पहुंचाना था।",
+        examFact: "On 28 April 2018, the Government of India announced that all inhabited census villages in India had been electrified under DDUGJY."
+      },
+      {
+        qNum: 37,
+        stemEn: "Which state in India is the site of the Purvanchal Expressway and Bundelkhand Expressway, developed to provide structural connectivity to backward regional industrial corridors?",
+        stemHi: "भारत का कौन सा राज्य पूर्वांचल एक्सप्रेसवे और बुंदेलखंड एक्सप्रेसवे का स्थल है, जिन्हें पिछड़े क्षेत्रीय औद्योगिक गलियारों को संरचनात्मक संपर्क प्रदान करने हेतु विकसित किया गया?",
+        options: [
+          "Bihar / बिहार",
+          "Madhya Pradesh / मध्य प्रदेश",
+          "Uttar Pradesh / उत्तर प्रदेश",
+          "Rajasthan / राजस्थान",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Both the Purvanchal Expressway (341 km connecting Lucknow to Ghazipur) and the Bundelkhand Expressway (296 km connecting Chitrakoot to Etawah) are flagship expressways developed in Uttar Pradesh by UPEIDA.",
+        expHi: "पूर्वांचल एक्सप्रेसवे (लखनऊ से गाजीपुर) और बुंदेलखंड एक्सप्रेसवे (चित्रकूट से इटावा) दोनों उत्तर प्रदेश एक्सप्रेसवे औद्योगिक विकास प्राधिकरण (UPEIDA) द्वारा यूपी में निर्मित एक्सप्रेसवे हैं।",
+        examFact: "Uttar Pradesh has developed the largest operational expressway network in India under its dedicated infrastructure enhancement model."
+      },
+      {
+        qNum: 38,
+        stemEn: "What is the total route length of the Western Dedicated Freight Corridor (WDFC) connecting Dadri to Jawaharlal Nehru Port Trust (JNPT)?",
+        stemHi: "दादरी को जवाहरलाल नेहरू पोर्ट ट्रस्ट (JNPT) से जोड़ने वाले वेस्टर्न डेडिकेटेड फ्रेट कॉरिडोर (WDFC) की कुल मार्ग लंबाई कितनी है?",
+        options: [
+          "1,120 km / 1,120 किमी",
+          "1,280 km / 1,280 किमी",
+          "1,506 km / 1,506 किमी",
+          "1,875 km / 1,875 किमी",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Western Dedicated Freight Corridor has a total sanctioned route length of approximately 1,506 km, traversing Uttar Pradesh, Haryana, Rajasthan, Gujarat, and Maharashtra.",
+        expHi: "वेस्टर्न डीएफसी की कुल स्वीकृत मार्ग लंबाई लगभग 1,506 किमी है, जो उत्तर प्रदेश, हरियाणा, राजस्थान, गुजरात और महाराष्ट्र राज्यों से होकर गुजरती है।",
+        examFact: "WDFC is designed to handle double-stack container trains powered by electric locomotives with heavy axle loads (25 to 32.5 tonnes)."
+      },
+      {
+        qNum: 39,
+        stemEn: "What is the primary role of the Indian Renewable Energy Development Agency (IREDA), which was granted 'Navratna' status in 2024?",
+        stemHi: "भारतीय अक्षय ऊर्जा विकास एजेंसी (इरेडा), जिसे 2024 में 'नवरत्न' का दर्जा दिया गया, की प्राथमिक भूमिका क्या है?",
+        options: [
+          "Exclusive exploration of domestic crude oil reserves / घरेलू कच्चे तेल के भंडारों की विशिष्ट खोज",
+          "Specialized non-banking financing of renewable energy and energy efficiency infrastructure projects / नवीकरणीय ऊर्जा और ऊर्जा दक्षता अवसंरचना परियोजनाओं का विशिष्ट गैर-बैंकिंग वित्तपोषण",
+          "Manufacturing of indigenous railway tracks and high-speed bogies / स्वदेशी रेलवे ट्रैक और हाई-स्पीड बोगियों का विनिर्माण",
+          "Construction of national inland water locks / राष्ट्रीय अंतर्देशीय जलमार्ग के लॉकों का निर्माण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "IREDA is a specialized Non-Banking Financial Institution (NBFC) under the Ministry of New and Renewable Energy (MNRE) dedicated to financing new and renewable energy projects and clean technology infrastructure.",
+        expHi: "इरेडा (IREDA) नवीन और नवीकरणीय ऊर्जा मंत्रालय के प्रशासनिक नियंत्रण में एक गैर-बैंकिंग वित्तीय संस्थान (NBFC) है, जो सौर, पवन, बायोमास और हरित परियोजनाओं को वित्तीय सहायता प्रदान करता है।",
+        examFact: "IREDA was established in 1987 as a public limited government company and went public with an IPO on Indian stock exchanges in late 2023."
+      },
+      {
+        qNum: 40,
+        stemEn: "Which deep-water port project in Kerala was developed as India's first dedicated international container transshipment port under the PPP model?",
+        stemHi: "केरल में कौन सी गहरे पानी की बंदरगाह परियोजना पीपीपी (PPP) मॉडल के तहत भारत के पहले समर्पित अंतरराष्ट्रीय कंटेनर ट्रांसशिपमेंट पोर्ट के रूप में विकसित की गई?",
+        options: [
+          "Cochin Port Trust / कोचीन पोर्ट ट्रस्ट",
+          "Vizhinjam International Seaport / विझिनजम अंतरराष्ट्रीय सीपोर्ट",
+          "Beypore Port / बेपोर पोर्ट",
+          "Kollam Port / कोल्लम पोर्ट",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Vizhinjam International Seaport near Thiruvananthapuram, Kerala, developed in partnership with the Adani Group, is India's first automated deep-water transshipment container port, designed to capture transshipment traffic from Colombo and Singapore.",
+        expHi: "केरल के तिरुवनंतपुरम के निकट विझिनजम बंदरगाह भारत का पहला गहरा पानी का अंतरराष्ट्रीय कंटेनर ट्रांसशिपमेंट पोर्ट है, जिसे वैश्विक समुद्री व्यापार मार्गों से जोड़ने के लिए विकसित किया गया है।",
+        examFact: "Vizhinjam has a natural water depth of ~20 meters, allowing mega container vessels to berth without capital dredging."
+      },
+      {
+        qNum: 41,
+        stemEn: "What is the targeted investment size announced under the National Infrastructure Pipeline (NIP) for the initial five-year rollout?",
+        stemHi: "राष्ट्रीय अवसंरचना पाइपलाइन (NIP) के तहत प्रारंभिक पांच-वर्षीय क्रियान्वयन हेतु घोषित लक्षित निवेश आकार क्या था?",
+        options: [
+          "₹50 Lakh Crore / ₹50 लाख करोड़",
+          "₹75 Lakh Crore / ₹75 लाख करोड़",
+          "₹100 Lakh Crore / ₹100 लाख करोड़",
+          "₹111 Lakh Crore / ₹111 लाख करोड़",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The NIP was unveiled with an initial projected capital outlay of ₹102 lakh crore, which was subsequently scaled up to over ₹111 lakh crore across energy, roads, urban, and railway sectors.",
+        expHi: "NIP टास्क फोर्स की अंतिम रिपोर्ट में 2020-2025 की अवधि के दौरान कुल अनुमानित अवसंरचना निवेश परिव्यय ₹111 लाख करोड़ से अधिक आंका गया था।",
+        examFact: "Energy (24%), Roads (18%), Urban (17%), and Railways (12%) accounted for over 70% of the projected capital investments under NIP."
+      },
+      {
+        qNum: 42,
+        stemEn: "Which apex coordination committee was constituted under the PM Gati Shakti architecture to assess all multimodal infrastructure projects costing over ₹500 crore?",
+        stemHi: "₹500 करोड़ से अधिक लागत वाली सभी मल्टीमॉडल अवसंरचना परियोजनाओं की समीक्षा हेतु पीएम गति शक्ति ढांचे के तहत किस शीर्ष समन्वय समिति का गठन किया गया?",
+        options: [
+          "National Infrastructure Appraisal Board / राष्ट्रीय अवसंरचना मूल्यांकन बोर्ड",
+          "Cabinet Committee on Transport Alignment / परिवहन संरेखण पर कैबिनेट समिति",
+          "Network Planning Group (NPG) / नेटवर्क प्लानिंग ग्रुप (NPG)",
+          "Central Project Coordination Bureau / केंद्रीय परियोजना समन्वय ब्यूरो",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Network Planning Group (NPG) consists of the heads of planning departments of seven connectivity ministries and reviews infrastructure projects before submission to the Public Investment Board (PIB) or Cabinet.",
+        expHi: "पीएम गति शक्ति के तहत गठित 'नेटवर्क प्लानिंग ग्रुप' (NPG) में विभिन्न मंत्रालयों के योजना प्रमुख शामिल होते हैं, जो यह सुनिश्चित करते हैं कि परियोजनाएं मल्टीमॉडल कनेक्टिविटी के अनुरूप एकीकृत हों।",
+        examFact: "The NPG functions under the administrative support of the Logistics Division of the Department for Promotion of Industry and Internal Trade (DPIIT)."
+      },
+      {
+        qNum: 43,
+        stemEn: "Which of the following high-capacity expressways connects the National Capital Region (Delhi) directly to Mumbai, cutting transit time by almost half?",
+        stemHi: "निम्नलिखित में से कौन सा उच्च-क्षमता वाला एक्सप्रेसवे राष्ट्रीय राजधानी क्षेत्र (दिल्ली) को सीधे मुंबई से जोड़ता है और पारगमन समय को लगभग आधा कर देता है?",
+        options: [
+          "Golden Quadrilateral Expressway / स्वर्णिम चतुर्भुज एक्सप्रेसवे",
+          "Delhi–Mumbai Expressway / दिल्ली-मुंबई एक्सप्रेसवे",
+          "Western Ring Expressway / वेस्टर्न रिंग एक्सप्रेसवे",
+          "Grand Trunk Super Expressway / ग्रांड ट्रंक सुपर एक्सप्रेसवे",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Delhi–Mumbai Expressway is an 8-lane (expandable to 12-lane) access-controlled greenfield expressway stretching ~1,386 km under the Bharatmala Pariyojana, linking Delhi, Haryana, Rajasthan, MP, Gujarat, and Maharashtra.",
+        expHi: "दिल्ली-मुंबई एक्सप्रेसवे लगभग 1,386 किमी लंबा 8-लेन एक्सेस-नियंत्रित ग्रीनफील्ड एक्सप्रेसवे है, जो यात्रा के समय को 24 घंटे से घटाकर लगभग 12 घंटे कर देता है।",
+        examFact: "It is the longest expressway in India developed by NHAI and incorporates wildlife crossings and underpasses across sensitive ecological zones."
+      },
+      {
+        qNum: 44,
+        stemEn: "Which statutory body was established by the Inland Vessels Act, 2021, to provide uniform safety and navigation standards for inland waterways transport across Indian states?",
+        stemHi: "भारतीय राज्यों में अंतर्देशीय जलमार्ग परिवहन के लिए समान सुरक्षा और नौवहन मानक प्रदान करने हेतु 'अंतर्देशीय पोत अधिनियम, 2021' द्वारा किस ढांचे का मानकीकरण किया गया?",
+        options: [
+          "Port Trust Regulatory Board / पोर्ट ट्रस्ट विनियामक बोर्ड",
+          "Central Inland Vessel Registration Authority / केंद्रीय अंतर्देशीय पोत पंजीकरण प्राधिकरण",
+          "Unified National Registry and State-Survey Standards / एकीकृत राष्ट्रीय रजिस्ट्री और राज्य-सर्वेक्षण मानक",
+          "Inland Waterways Port Tribunal / अंतर्देशीय जलमार्ग बंदरगाह अधिकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4,
+        expEn: "The Inland Vessels Act, 2021 did not establish options A, B, C, or D as separate statutory boards. Instead, it repealed the century-old Inland Vessels Act of 1917 to establish a centralized portal for unified vessel registration, survey certificates, and licensing valid across all states, executed through state governments under central guidelines.",
+        expHi: "अंतर्देशीय पोत अधिनियम, 2021 ने 1917 के औपनिवेशिक कानून को निरस्त कर केंद्र सरकार के दिशा-निर्देशों के तहत पूरे देश के लिए एक केंद्रीय डेटाबेस और सभी राज्यों में मान्य एकीकृत पंजीकरण प्रणाली लागू की; इसमें A, B, C या D में उल्लिखित कोई अलग वैधानिक बोर्ड नहीं बनाया गया। अतः सही विकल्प (E) है।",
+        examFact: "The Inland Vessels Act, 2021 replaced state-specific vessel regulations with uniform national certification valid across all states."
+      },
+      {
+        qNum: 45,
+        stemEn: "The 'PM MITRA' scheme, approved by the Government of India in 2021, is designed to build mega world-class infrastructure in which industrial sector?",
+        stemHi: "2021 में भारत सरकार द्वारा अनुमोदित 'पीएम मित्र' (PM MITRA) योजना किस औद्योगिक क्षेत्र में विश्वस्तरीय मेगा अवसंरचना के निर्माण हेतु बनाई गई है?",
+        options: [
+          "Electronics and Semiconductor Manufacturing / इलेक्ट्रॉनिक्स और सेमीकंडक्टर विनिर्माण",
+          "Textile and Apparel Manufacturing / कपड़ा और परिधान विनिर्माण",
+          "Pharmaceutical and Bulk Drug Manufacturing / फार्मास्युटिकल और बल्क ड्रग विनिर्माण",
+          "Automobile and Heavy Engineering / ऑटोमोबाइल और भारी इंजीनियरिंग",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "PM MITRA stands for PM Mega Integrated Textile Region and Apparel scheme. It aims to develop 7 mega textile parks across India with plug-and-play integrated infrastructure to reduce logistics costs.",
+        expHi: "पीएम मित्र (PM MITRA) का पूर्ण रूप 'पीएम मेगा इंटीग्रेटेड टेक्सटाइल रीजन एंड अपैरल' है, जिसका उद्देश्य कपड़ा उद्योग के लिए संपूर्ण मूल्य श्रृंखला को एक ही स्थान पर एकीकृत कर 7 विशाल पार्क स्थापित करना है।",
+        examFact: "PM MITRA is inspired by the 5F vision of the Prime Minister: Farm to Fibre, Fibre to Factory, Factory to Fashion, Fashion to Foreign."
+      },
+      {
+        qNum: 46,
+        stemEn: "Under the Revamped Distribution Sector Scheme (RDSS) launched in 2021 with an outlay of over ₹3 lakh crore, what is the mandatory structural metering reform being implemented?",
+        stemHi: "₹3 लाख करोड़ से अधिक के परिव्यय के साथ 2021 में शुरू की गई 'पुनरोद्धारित वितरण क्षेत्र योजना' (RDSS) के तहत कौन सा अनिवार्य संरचनात्मक मीटरिंग सुधार लागू किया जा रहा है?",
+        options: [
+          "Installation of prepaid smart meters across all consumer segments / सभी उपभोक्ता श्रेणियों में प्रीपेड स्मार्ट मीटर की स्थापना",
+          "Total abolishment of electric metering in rural areas / ग्रामीण क्षेत्रों में विद्युत मीटरिंग का पूर्ण उन्मूलन",
+          "Manual analog meters replacing digital meters / डिजिटल मीटर के स्थान पर मैनुअल एनालॉग मीटर",
+          "Biometric fingerprint-operated electric meters / बायोमेट्रिक फिंगरप्रिंट संचालित विद्युत मीटर",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "RDSS mandates the pan-India installation of prepaid smart meters (over 250 million target) across all consumers to structurally reduce aggregate technical and commercial (AT&C) losses of DISCOMs to 12-15%.",
+        expHi: "आरडीएसएस (RDSS) का मुख्य सुधार घटक देश भर में लगभग 25 करोड़ प्रीपेड स्मार्ट मीटर लगाना है ताकि वितरण घाटे (AT&C) को घटाकर 12-15% तक लाया जा सके और डिस्कॉम की वित्तीय स्थिति सुधारी जा सके।",
+        examFact: "RDSS is executed by REC Limited and Power Finance Corporation (PFC) as the nodal agencies."
+      },
+      {
+        qNum: 47,
+        stemEn: "Which international transit trade route project links the port of Kolkata in India with the port of Sittwe in Myanmar to unlock access to India's landlocked Northeast?",
+        stemHi: "कौन सी अंतरराष्ट्रीय पारगमन व्यापार मार्ग परियोजना भारत के कोलकाता बंदरगाह को म्यांमार के सितवे बंदरगाह से जोड़ती है ताकि पूर्वोत्तर भारत को वैकल्पिक समुद्री संपर्क मिल सके?",
+        options: [
+          "India–Myanmar–Thailand Trilateral Highway / भारत-म्यांमार-थाईलैंड त्रिपक्षीय राजमार्ग",
+          "Kaladan Multi-Modal Transit Transport Project / कलादान मल्टी-मॉडल ट्रांजिट ट्रांसपोर्ट प्रोजेक्ट",
+          "Asian Highway Network Project / एशियन हाइवे नेटवर्क प्रोजेक्ट",
+          "Bangladesh–Bhutan–India–Nepal (BBIN) Corridor / बांग्लादेश-भूटान-भारत-नेपाल (BBIN) कॉरिडोर",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Kaladan Multi-Modal Transit Transport Project connects Kolkata to Sittwe port in Myanmar by sea, followed by river transport on the Kaladan river and highway road access to Mizoram in Northeast India.",
+        expHi: "कलादान मल्टी-मॉडल ट्रांजिट ट्रांसपोर्ट प्रोजेक्ट कोलकाता बंदरगाह को म्यांमार के सितवे बंदरगाह से और वहां से कलादान नदी व सड़क मार्ग द्वारा मिजोरम से जोड़ता है।",
+        examFact: "The Sittwe Port in Myanmar, built with Indian grant assistance under the Kaladan project, was operationalized in May 2023."
+      },
+      {
+        qNum: 48,
+        stemEn: "The 'Production Linked Incentive' (PLI) scheme for Semiconductor and Display Fabrication ecosystem was introduced with what financial incentive outlay?",
+        stemHi: "सेमीकंडक्टर और डिस्प्ले फैब्रिकेशन पारिस्थितिकी तंत्र के लिए 'उत्पादन लिंक्ड प्रोत्साहन' (PLI / India Semiconductor Mission) योजना कितने वित्तीय प्रोत्साहन परिव्यय के साथ शुरू की गई थी?",
+        options: [
+          "₹30,000 Crore / ₹30,000 करोड़",
+          "₹50,000 Crore / ₹50,000 करोड़",
+          "₹76,000 Crore / ₹76,000 करोड़",
+          "₹1,00,000 Crore / ₹1,00,000 करोड़",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Government of India approved the comprehensive Semicon India program with an outlay of ₹76,000 crore in December 2021 to develop silicon fabs, display fabs, compound semiconductors, and ATMP/OSAT facilities.",
+        expHi: "भारत सरकार ने दिसंबर 2021 में देश में सेमीकंडक्टर और डिस्प्ले विनिर्माण पारिस्थितिकी तंत्र विकसित करने हेतु ₹76,000 करोड़ के वित्तीय परिव्यय वाले सेमीकॉन इंडिया कार्यक्रम को मंजूरी दी थी।",
+        examFact: "The program is driven by the India Semiconductor Mission (ISM), an independent business division within the Digital India Corporation."
+      },
+      {
+        qNum: 49,
+        stemEn: "Which dedicated institution was formed in 2022 to administer the development, operation, and maintenance of all ropeway projects under the 'Parvatmala Pariyojana'?",
+        stemHi: "'पर्वतमाला परियोजना' के तहत सभी रोपवे परियोजनाओं के विकास, संचालन और रखरखाव के लिए किस एजेंसी को नोडल दायित्व सौंपा गया है?",
+        options: [
+          "Border Roads Organisation (BRO) / सीमा सड़क संगठन (BRO)",
+          "National Highways Logistics Management Limited (NHLML) / नेशनल हाइवे लॉजिस्टिक्स मैनेजमेंट लिमिटेड (NHLML)",
+          "Indian Railway Construction Limited (IRCON) / इंडियन रेलवे कंस्ट्रक्शन लिमिटेड (इरकॉन)",
+          "Tehri Hydro Development Corporation (THDC) / टिहरी हाइड्रो डेवलपमेंट कॉर्पोरेशन (THDC)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "National Highways Logistics Management Limited (NHLML), a 100% owned subsidiary of the National Highways Authority of India (NHAI), is tasked with executing the Parvatmala Pariyojana (National Ropeways Development Programme).",
+        expHi: "भारतीय राष्ट्रीय राजमार्ग प्राधिकरण (NHAI) की पूर्ण स्वामित्व वाली सहायक कंपनी 'नेशनल हाइवे लॉजिस्टिक्स मैनेजमेंट लिमिटेड' (NHLML) को पर्वतमाला योजना के तहत रोपवे परियोजनाओं के निर्माण का नोडल कार्य सौंपा गया है।",
+        examFact: "Parvatmala Pariyojana was announced in the Union Budget 2022-23 to provide ecological connectivity in congested urban locations and hilly terrains."
+      },
+      {
+        qNum: 50,
+        stemEn: "Under the central port development framework, which was designated as India's 13th major port, approved to be developed as an all-weather greenfield deep-draft port in Maharashtra?",
+        stemHi: "केंद्रीय बंदरगाह विकास ढांचे के तहत, महाराष्ट्र में एक बारहमासी ग्रीनफील्ड डीप-ड्राफ्ट बंदरगाह के रूप में विकसित करने हेतु अनुमोदित भारत का 13वां प्रमुख बंदरगाह कौन सा है?",
+        options: [
+          "Jaigarh Port / जयगढ़ बंदरगाह",
+          "Dighi Port / दिघी बंदरगाह",
+          "Vadhavan Port / वधावन बंदरगाह",
+          "Rewas Port / रेवास बंदरगाह",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Vadhavan Port, located near Dahanu in Palghar district of Maharashtra, was approved by the Union Cabinet as a landlord-model greenfield major port capable of handling ultra-large container vessels.",
+        expHi: "केंद्रीय मंत्रिमंडल ने महाराष्ट्र के पालघर जिले में वधावन बंदरगाह (Vadhavan Port) को भारत के 13वें प्रमुख बंदरगाह के रूप में विकसित करने की मंजूरी दी, जो लैंडलॉर्ड मॉडल पर संचालित होगा।",
+        examFact: "Vadhavan Port is being developed by a Special Purpose Vehicle (SPV) formed by Jawaharlal Nehru Port Authority (JNPA) and Maharashtra Maritime Board (MMB)."
+      },
+
+      // Batch 3 (Q51 to Q75)
+      {
+        qNum: 51,
+        stemEn: "What is the minimum project cost threshold for an infrastructure project to be monitored directly by the Project Monitoring Group (PMG) under the Cabinet Secretariat / DPIIT?",
+        stemHi: "कैबिनेट सचिवालय / DPIIT के अंतर्गत 'प्रोजेक्ट मॉनिटरिंग ग्रुप' (PMG) द्वारा प्रत्यक्ष रूप से निगरानी किए जाने हेतु किसी अवसंरचना परियोजना की न्यूनतम लागत सीमा क्या है?",
+        options: [
+          "₹100 Crore / ₹100 करोड़",
+          "₹250 Crore / ₹250 करोड़",
+          "₹500 Crore / ₹500 करोड़",
+          "₹1,000 Crore / ₹1,000 करोड़",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Project Monitoring Group (PMG) is an institutional mechanism set up to resolve regulatory bottlenecks and track the fast-track commissioning of major public and private infrastructure projects with an investment threshold of ₹500 crore and above.",
+        expHi: "प्रोजेक्ट मॉनिटरिंग ग्रुप (PMG) ₹500 करोड़ या उससे अधिक की लागत वाली प्रमुख सार्वजनिक व निजी अवसंरचना परियोजनाओं में अंतर-मंत्रालयी बाधाओं को दूर करने और त्वरित क्रियान्वयन हेतु एक संस्थागत तंत्र है।",
+        examFact: "PMG functions under the administrative control of the Department for Promotion of Industry and Internal Trade (DPIIT) via an online portal."
+      },
+      {
+        qNum: 52,
+        stemEn: "Under the PM Street Vendor’s AtmaNirbhar Nidhi (PM SVANidhi) scheme launched in June 2020, what initial working capital loan amount is extended to urban street vendors?",
+        stemHi: "जून 2020 में शुरू की गई 'पीएम स्ट्रीट वेंडर्स आत्मनिर्भर निधि' (PM SVANidhi) योजना के अंतर्गत शहरी रेहड़ी-पटरी विक्रेताओं को कितनी प्रारंभिक कार्यशील पूंजी ऋण राशि प्रदान की जाती है?",
+        options: [
+          "₹5,000 / ₹5,000",
+          "₹10,000 / ₹10,000",
+          "₹20,000 / ₹20,000",
+          "₹50,000 / ₹50,000",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The PM SVANidhi scheme provides collateral-free working capital micro-credit starting with an initial tranche of up to ₹10,000 for a one-year tenure, incentivized by an interest subsidy of 7% per annum for prompt repayment.",
+        expHi: "पीएम स्वनिधि योजना शहरी रेहड़ी-पटरी वालों को पहली किस्त के रूप में ₹10,000 तक का संपार्श्विक-मुक्त (बिना गारंटी) कार्यशील पूंजी ऋण प्रदान करती है, जिस पर समय पर पुनर्भुगतान करने पर 7% वार्षिक ब्याज सब्सिडी मिलती है।",
+        examFact: "The implementation partner for credit administration under PM SVANidhi is the Small Industries Development Bank of India (SIDBI)."
+      },
+      {
+        qNum: 53,
+        stemEn: "Under the Pradhan Mantri Gram Sadak Yojana - Phase III (PMGSY-III) approved in 2019, what is the core structural target for road connectivity?",
+        stemHi: "2019 में अनुमोदित 'प्रधानमंत्री ग्राम सड़क योजना - चरण III' (PMGSY-III) के अंतर्गत सड़क संपर्क का मुख्य संरचनात्मक लक्ष्य क्या है?",
+        options: [
+          "Construction of multi-lane elevated ring roads around metropolitan zones / महानगरीय क्षेत्रों के चारों ओर बहु-लेन एलिवेटेड रिंग रोड का निर्माण",
+          "Upgradation of 1,25,000 km of through routes and major rural links connecting Gramin Agricultural Markets / ग्रामीण कृषि बाजारों से जोड़ने वाले 1,25,000 किमी ग्रामीण संपर्कों एवं थ्रू-रूटों का उन्नयन",
+          "Dedicated border fencing corridors along Line of Actual Control / वास्तविक नियंत्रण रेखा पर समर्पित सीमा बाड़ गलियारों का निर्माण",
+          "Paving of coastal fisherfolk docking tracks / तटीय मछुआरों के डॉकिंग ट्रैकों का पक्कीकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "PMGSY-III focuses on the consolidation and upgradation of 1,25,000 km of existing Through Routes and Major Rural Links connecting habitations to Gramin Agricultural Markets (GrAMs), higher secondary schools, and hospitals.",
+        expHi: "PMGSY-चरण III का मुख्य उद्देश्य गांवों को ग्रामीण कृषि बाजारों (GrAMs), उच्चतर माध्यमिक विद्यालयों और अस्पतालों से जोड़ने वाले 1,25,000 किमी मौजूदा ग्रामीण मार्गों का उन्नयन एवं सुदृढ़ीकरण करना है।",
+        examFact: "PMGSY is a Centrally Sponsored Scheme administered by the Ministry of Rural Development, with funding shared 60:40 between Center and States (90:10 for NE/Himalayan states)."
+      },
+      {
+        qNum: 54,
+        stemEn: "The Atal Tunnel, which provides year-round all-weather connectivity between Manali and the Lahaul-Spiti valley, was excavated under which Himalayan mountain pass?",
+        stemHi: "मनाली और लाहौल-स्पीति घाटी के बीच साल भर बारहमासी संपर्क प्रदान करने वाली 'अटल टनल' किस हिमालयी दर्रे के नीचे निर्मित की गई है?",
+        options: [
+          "Banihal Pass / बनिहाल दर्रा",
+          "Zoji La Pass / ज़ोजी ला दर्रा",
+          "Rohtang Pass / रोहतांग दर्रा",
+          "Khardung La Pass / खारदुंग ला दर्रा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The 9.02 km long Atal Tunnel was constructed under the Rohtang Pass in the Pir Panjal range of the Himalayas by the Border Roads Organisation (BRO) and was opened in October 2020.",
+        expHi: "9.02 किमी लंबी अटल टनल हिमालय की पीर पंजाल श्रेणी में रोहतांग दर्रे के नीचे सीमा सड़क संगठन (BRO) द्वारा बनाई गई है, जिसका उद्घाटन अक्टूबर 2020 में किया गया था।",
+        examFact: "It is recognized as one of the world's longest single-tube highway tunnels above an elevation of 10,000 feet (3,000 meters)."
+      },
+      {
+        qNum: 55,
+        stemEn: "In the context of economic and logistics corridor reforms post-2014, what is the statutory minimum target share of Indian Railways in national freight traffic envisioned under the National Rail Plan (NRP) 2030?",
+        stemHi: "2014 के बाद आर्थिक और लॉजिस्टिक्स सुधारों के संदर्भ में 'राष्ट्रीय रेल योजना (NRP) 2030' के तहत राष्ट्रीय माल ढुलाई में भारतीय रेलवे की हिस्सेदारी को बढ़ाकर कितने प्रतिशत करने का लक्ष्य रखा गया है?",
+        options: [
+          "30% / 30%",
+          "35% / 35%",
+          "45% / 45%",
+          "60% / 60%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The National Rail Plan (NRP) for India – 2030 aims to scale up the modal share of railways in total national freight transportation from approximately 27% to 45% by 2030 to lower national logistics overheads.",
+        expHi: "राष्ट्रीय रेल योजना (NRP) 2030 का लक्ष्य देश की कुल माल ढुलाई में रेलवे की मॉडल हिस्सेदारी को लगभग 27% से बढ़ाकर 2030 तक 45% करना है ताकि लॉजिस्टिक्स लागत घटाई जा सके।",
+        examFact: "The NRP envisions a future-ready railway system by 2030 that caters to traffic requirements through 2050."
+      },
+      {
+        qNum: 56,
+        stemEn: "The Kashi Vishwanath Corridor, which transformed urban pedestrian and pilgrimage infrastructure along the Ghats of Varanasi, was dedicated to the nation in which month and year?",
+        stemHi: "वाराणसी के घाटों पर शहरी पैदल यात्री और तीर्थयात्रा अवसंरचना को पुनर्निर्मित करने वाले 'काशी विश्वनाथ कॉरिडोर' का लोकार्पण किस माह और वर्ष में किया गया था?",
+        options: [
+          "December 2021 / दिसंबर 2021",
+          "January 2020 / जनवरी 2020",
+          "March 2022 / मार्च 2022",
+          "August 2019 / अगस्त 2019",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Phase 1 of the Kashi Vishwanath Corridor project, connecting the historic temple to the banks of the River Ganga (Lalita Ghat), was inaugurated by the Prime Minister on 13 December 2021.",
+        expHi: "काशी विश्वनाथ कॉरिडोर परियोजना के पहले चरण का लोकार्पण प्रधानमंत्री द्वारा 13 दिसंबर 2021 को किया गया था, जिसने मंदिर को सीधे गंगा के ललिता घाट से जोड़ा।",
+        examFact: "The corridor expanded the temple premises from around 3,000 square feet to over 5 lakh square feet with modern public amenities."
+      },
+      {
+        qNum: 57,
+        stemEn: "In renewable energy infrastructure, the world's largest single-location solar power park at Bhadla is situated in which Indian state?",
+        stemHi: "नवीकरणीय ऊर्जा अवसंरचना में, भादला सौर पार्क (Bhadla Solar Park) किस भारतीय राज्य में स्थित है?",
+        options: [
+          "Gujarat / गुजरात",
+          "Madhya Pradesh / मध्य प्रदेश",
+          "Rajasthan / राजस्थान",
+          "Andhra Pradesh / आंध्र प्रदेश",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Bhadla Solar Park, with an installed capacity exceeding 2,245 MW, is located in the Phalodi/Jodhpur district of Rajasthan and represents one of the largest solar power installations globally.",
+        expHi: "2,245 मेगावाट से अधिक क्षमता वाला भादला सोलर पार्क राजस्थान के फलौदी/जोधपुर जिले में स्थित है और यह विश्व के सबसे बड़े सौर ऊर्जा पार्कों में से एक है।",
+        examFact: "Developed under the Scheme for Development of Solar Parks and Ultra Mega Solar Power Projects launched in 2014 by MNRE."
+      },
+      {
+        qNum: 58,
+        stemEn: "What was the core purpose of introducing the 'InViT' (Infrastructure Investment Trust) structure by NHAI under the brand name 'NHAI InvIT'?",
+        stemHi: "'NHAI InvIT' के माध्यम से भारतीय राष्ट्रीय राजमार्ग प्राधिकरण द्वारा इंफ्रास्ट्रक्चर इन्वेस्टमेंट ट्रस्ट संरचना पेश करने का मुख्य उद्देश्य क्या था?",
+        options: [
+          "Direct construction of rural canal systems / ग्रामीण नहर प्रणालियों का प्रत्यक्ष निर्माण",
+          "Monetization of completed, toll-generating operational national highway stretches / पूर्ण हो चुके और टोल-राजस्व उत्पन्न करने वाले परिचालन राष्ट्रीय राजमार्गों का मुद्रीकरण",
+          "Complete write-off of state transport undertakings' debt / राज्य परिवहन उपक्रमों के ऋणों का पूर्ण अपलेखन",
+          "Providing interest-free fuel subsidies to truck fleet operators / ट्रक बेड़े के संचालकों को ब्याज-मुक्त ईंधन सब्सिडी प्रदान करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "NHAI launched its Infrastructure Investment Trust (InvIT) to monetize completed, operational, and toll-yielding national highway stretches by pooling long-term domestic and foreign institutional capital into infrastructure.",
+        expHi: "एनएचएआई (NHAI) ने InvIT संरचना का उपयोग टोल देने वाले पूर्ण राष्ट्रीय राजमार्ग खंडों के मुद्रीकरण हेतु किया, जिससे संस्थागत निवेशकों से दीर्घकालिक पूंजी जुटाई जा सके।",
+        examFact: "NHAI InvIT was launched in late 2021 and counts institutional entities like CPPIB and OTPP among its anchor foreign investors."
+      },
+      {
+        qNum: 59,
+        stemEn: "The National Single Window System (NSWS) for investors and businesses was launched in September 2021 by which Union Ministry?",
+        stemHi: "निवेशकों और व्यवसायों के लिए 'राष्ट्रीय एकल खिड़की प्रणाली' (NSWS) को सितंबर 2021 में किस केंद्रीय मंत्रालय द्वारा शुरू किया गया था?",
+        options: [
+          "Ministry of Finance / वित्त मंत्रालय",
+          "Ministry of Commerce and Industry / वाणिज्य और उद्योग मंत्रालय",
+          "Ministry of Heavy Industries / भारी उद्योग मंत्रालय",
+          "Ministry of Micro, Small and Medium Enterprises / सूक्ष्म, लघु और मध्यम उद्यम मंत्रालय",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The National Single Window System (NSWS) was launched by the Ministry of Commerce and Industry (implemented via DPIIT and Invest India) as a digital portal for securing clearances and approvals across Central and State departments.",
+        expHi: "राष्ट्रीय एकल खिड़की प्रणाली (NSWS) वाणिज्य और उद्योग मंत्रालय (DPIIT) द्वारा शुरू की गई, जो निवेशकों को केंद्रीय और राज्य स्वीकृतियों के लिए 'वन-स्टॉप शॉप' मंच प्रदान करती है।",
+        examFact: "NSWS eliminates the need for investors to visit multiple ministry platforms, significantly enhancing ease of doing business in industrial infrastructure."
+      },
+      {
+        qNum: 60,
+        stemEn: "Which flagship program was approved in 2016 to set up 10 indigenous Heavy Water Nuclear Reactors to boost nuclear power infrastructure in India?",
+        stemHi: "भारत में परमाणु ऊर्जा अवसंरचना को बढ़ावा देने के लिए 10 स्वदेशी भारी जल परमाणु रिएक्टर (PHWR) स्थापित करने हेतु 2017 में किस रिएक्टर विन्यास को एक साथ स्वीकृति दी गई थी?",
+        options: [
+          "500 MW Prototype Fast Breeder Reactors / 500 मेगावाट प्रोटोटाइप फास्ट ब्रीडर रिएक्टर",
+          "700 MW Pressurized Heavy Water Reactors (PHWR) / 700 मेगावाट प्रेशराइज्ड हेवी वाटर रिएक्टर (PHWR)",
+          "1,000 MW VVER Light Water Reactors / 1,000 मेगावाट वीवीईआर लाइट वाटर रिएक्टर",
+          "220 MW Boiling Water Reactors / 220 मेगावाट बॉयलिंग वाटर रिएक्टर",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "In May 2017, the Union Cabinet approved the bulk construction of 10 indigenous 700 MW Pressurized Heavy Water Reactors (PHWRs) across four sites (Kaiga, Chutka, Gorakhpur-Haryana, Mahi Banswara) to scale up clean baseload infrastructure.",
+        expHi: "मई 2017 में केंद्रीय मंत्रिमंडल ने घरेलू परमाणु ऊर्जा क्षमता को गति देने के लिए 700 मेगावाट क्षमता वाले 10 स्वदेशी प्रेशराइज्ड हेवी वाटर रिएक्टरों (PHWR) के निर्माण को एक साथ थोक स्वीकृति दी थी।",
+        examFact: "This structural fleet-mode procurement significantly reduced gestation periods and enhanced domestic manufacturing under Make in India."
+      },
+      {
+        qNum: 61,
+        stemEn: "Under the PM-eBus Sewa scheme approved by the Union Cabinet in August 2023, how many electric buses are targeted to be deployed across Indian cities on a PPP model?",
+        stemHi: "अगस्त 2023 में केंद्रीय मंत्रिमंडल द्वारा अनुमोदित 'पीएम-ईबस सेवा' योजना के अंतर्गत पीपीपी (PPP) मॉडल पर भारतीय शहरों में कितनी इलेक्ट्रिक बसें तैनात करने का लक्ष्य रखा गया है?",
+        options: [
+          "5,000 Electric Buses / 5,000 इलेक्ट्रिक बसें",
+          "10,000 Electric Buses / 10,000 इलेक्ट्रिक बसें",
+          "20,000 Electric Buses / 20,000 इलेक्ट्रिक बसें",
+          "50,000 Electric Buses / 50,000 इलेक्ट्रिक बसें",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The PM-eBus Sewa scheme aims to deploy 10,000 electric buses on Public-Private Partnership (PPP) model across cities with populations of 3 to 40 lakh, with an estimated total project cost of ₹57,613 crore.",
+        expHi: "पीएम-ईबस सेवा योजना के अंतर्गत 3 से 40 लाख की आबादी वाले शहरों में सार्वजनिक-निजी भागीदारी (PPP) मॉडल पर 10,000 इलेक्ट्रिक बसें संचालित करने का प्रावधान किया गया है।",
+        examFact: "MoHUA coordinates the scheme, which also provides central support for behind-the-meter power infrastructure and depot development."
+      },
+      {
+        qNum: 62,
+        stemEn: "Under the structural modernization of agricultural infrastructure post-2020, what is the total financing corpus earmarked under the Agriculture Infrastructure Fund (AIF)?",
+        stemHi: "2020 के बाद कृषि अवसंरचना के आधुनिकीकरण के अंतर्गत 'कृषि अवसंरचना कोष' (AIF) के तहत कुल कितना वित्तपोषण कोष निर्धारित किया गया है?",
+        options: [
+          "₹25,000 Crore / ₹25,000 करोड़",
+          "₹50,000 Crore / ₹50,000 करोड़",
+          "₹1,00,000 Crore / ₹1,00,000 करोड़",
+          "₹2,00,000 Crore / ₹2,00,000 करोड़",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Agriculture Infrastructure Fund (AIF) is a medium-to-long term debt financing facility of ₹1 lakh crore for post-harvest management infrastructure and community farming assets, backed by 3% interest subvention.",
+        expHi: "कृषि अवसंरचना कोष (AIF) फसल कटाई उपरांत प्रबंधन और सामुदायिक कृषि परिसंपत्तियों के निर्माण हेतु ₹1 लाख करोड़ की मध्यम-से-दीर्घकालिक ऋण सुविधा प्रदान करता है, जिस पर 3% वार्षिक ब्याज छूट मिलती है।",
+        examFact: "The operational period of the AIF financing facility runs for 13 years (FY 2020-21 to FY 2032-33)."
+      },
+      {
+        qNum: 63,
+        stemEn: "The Western Dedicated Freight Corridor passes through all of the following Indian states EXCEPT:",
+        stemHi: "वेस्टर्न डेडिकेटेड फ्रेट कॉरिडोर (WDFC) निम्नलिखित में से किस भारतीय राज्य से होकर नहीं गुजरता है?",
+        options: [
+          "Rajasthan / राजस्थान",
+          "Gujarat / गुजरात",
+          "Madhya Pradesh / मध्य प्रदेश",
+          "Haryana / हरियाणा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Western Dedicated Freight Corridor traverses five states: Uttar Pradesh, Haryana, Rajasthan, Gujarat, and Maharashtra. It does not pass through Madhya Pradesh.",
+        expHi: "वेस्टर्न डीएफसी पांच राज्यों—उत्तर प्रदेश, हरियाणा, राजस्थान, गुजरात और महाराष्ट्र से गुजरता है। यह मध्य प्रदेश से होकर नहीं गुजरता है।",
+        examFact: "Rajasthan accounts for the largest individual share of the Western DFC alignment (~565 km)."
+      },
+      {
+        qNum: 64,
+        stemEn: "India’s first commercial 14-lane expressway designed to relieve severe vehicular congestion in the National Capital Region is:",
+        stemHi: "राष्ट्रीय राजधानी क्षेत्र में गंभीर वाहन जाम को कम करने के लिए डिजाइन किया गया भारत का पहला 14-लेन वाला वाणिज्यिक एक्सप्रेसवे कौन सा है?",
+        options: [
+          "Delhi–Meerut Expressway / दिल्ली-मेरठ एक्सप्रेसवे",
+          "Yamuna Expressway / यमुना एक्सप्रेसवे",
+          "Eastern Peripheral Expressway / ईस्टर्न पेरिफेरल एक्सप्रेसवे",
+          "Noida–Greater Noida Expressway / नोएडा-ग्रेटर नोएडा एक्सप्रेसवे",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Delhi–Meerut Expressway (spanning 82 km) features a 14-lane section on the Delhi-Dasna stretch, making it India's widest expressway corridor to decongest traffic between Delhi and western Uttar Pradesh.",
+        expHi: "दिल्ली-मेरठ एक्सप्रेसवे (82 किमी) के दिल्ली-डासना खंड में 14-लेन का ढांचा बनाया गया है, जो राष्ट्रीय राजधानी और पश्चिमी उत्तर प्रदेश के बीच यात्रा के समय को 2.5 घंटे से घटाकर 45 मिनट करता है।",
+        examFact: "The expressway was formally dedicated to the nation in phases and fully inaugurated in April 2021."
+      },
+      {
+        qNum: 65,
+        stemEn: "Which river hosts India's longest river bridge, the 9.15 km long Bhupen Hazarika Setu (Dhola-Sadiya Bridge), inaugurated in May 2017?",
+        stemHi: "मई 2017 में उद्घाटित भारत का सबसे लंबा नदी पुल, 9.15 किमी लंबा भूपेन हजारिका सेतु (ढोला-सदिया पुल), किस नदी पर स्थित है?",
+        options: [
+          "Subansiri River / सुबनसिरी नदी",
+          "Lohit River / लोहित नदी",
+          "Manas River / मानस नदी",
+          "Dibang River / दिबांग नदी",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Bhupen Hazarika Setu (Dhola-Sadiya Bridge) connects Assam and Arunachal Pradesh over the Lohit River, a major tributary of the Brahmaputra River.",
+        expHi: "9.15 किमी लंबा भूपेन हजारिका सेतु (ढोला-सदिया पुल) ब्रह्मपुत्र की प्रमुख सहायक नदी 'लोहित' पर बना है, जो असम और अरुणाचल प्रदेश को रणनीतिक व बारहमासी संपर्क प्रदान करता है।",
+        examFact: "Built to military specifications, the bridge allows the movement of heavy defence vehicles including 60-tonne battle tanks to the Indo-China border."
+      },
+      {
+        qNum: 66,
+        stemEn: "Under the Digital India Land Records Modernization Programme (DILRMP), which structural survey initiative utilizes drone technology to map inhabited rural land parcel boundaries?",
+        stemHi: "डिजिटल इंडिया भूमि अभिलेख आधुनिकीकरण कार्यक्रम के तहत ग्रामीण आबादी वाली भूमि के सीमांकन हेतु ड्रोन तकनीक का उपयोग करने वाली संरचनात्मक पहल कौन सी है?",
+        options: [
+          "SVAMITVA Scheme / स्वामित्व योजना",
+          "Bhoomi Seva Project / भूमि सेवा परियोजना",
+          "Gram Bhuvan Mission / ग्राम भुवन मिशन",
+          "e-Dharti Network / ई-धरती नेटवर्क",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "SVAMITVA (Survey of Villages and Mapping with Improvised Technology in Village Areas) was launched nationwide on National Panchayati Raj Day (24 April 2020/2021) to map rural inhabited areas using drones and provide property cards.",
+        expHi: "'स्वामित्व' (SVAMITVA) योजना का उद्देश्य ग्रामीण आबादी क्षेत्रों में ड्रोन तकनीक से भूमि सर्वेक्षण कर संपत्ति के मालिकों को कानूनी दस्तावेज (प्रॉपर्टी कार्ड/घरौनी) उपलब्ध कराना है।",
+        examFact: "SVAMITVA is implemented by the Ministry of Panchayati Raj with the Survey of India as the technology partner."
+      },
+      {
+        qNum: 67,
+        stemEn: "The world's highest railway arch bridge constructed across the Chenab River in Jammu & Kashmir stands at what height above the river bed?",
+        stemHi: "जम्मू और कश्मीर में चिनाब नदी पर निर्मित विश्व के सबसे ऊंचे रेलवे आर्च ब्रिज की नदी तल से ऊंचाई कितनी है?",
+        options: [
+          "285 meters / 285 मीटर",
+          "324 meters / 324 मीटर",
+          "359 meters / 359 मीटर",
+          "412 meters / 412 मीटर",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Chenab Rail Bridge, part of the Udhampur-Srinagar-Baramulla Rail Link (USBRL) project, rises 359 meters (1,178 ft) above the river bed, making it 35 meters taller than the Eiffel Tower in Paris.",
+        expHi: "चिनाब रेल ब्रिज नदी तल से 359 मीटर की ऊंचाई पर स्थित है। यह उधमपुर-श्रीनगर-बारामूला रेल लिंक (USBRL) का हिस्सा है और विश्व का सबसे ऊंचा रेलवे आर्च ब्रिज है।",
+        examFact: "Built with structural steel designed to withstand blast loads, extreme temperatures (-20°C), and wind speeds up to 266 km/h."
+      },
+      {
+        qNum: 68,
+        stemEn: "What was the declared financial outlay of the Sagarmala Programme across its identified port modernization and connectivity projects?",
+        stemHi: "सागरमाला कार्यक्रम के अंतर्गत पहचानी गई बंदरगाह आधुनिकीकरण और कनेक्टिविटी परियोजनाओं का कुल अनुमानित वित्तीय परिव्यय कितना आंका गया था?",
+        options: [
+          "₹1.5 Lakh Crore / ₹1.5 लाख करोड़",
+          "₹3.2 Lakh Crore / ₹3.2 लाख करोड़",
+          "₹5.5 Lakh Crore / ₹5.5 लाख करोड़",
+          "₹8.5 Lakh Crore / ₹8.5 लाख करोड़",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4,
+        expEn: "None of options A, B, C, or D match the official Sagarmala master plan portfolio. The Ministry of Ports, Shipping and Waterways identified over 800 projects worth approximately ₹5.4 to ₹5.5 lakh crore initially, which expanded under the Sagarmala National Perspective Plan to an aggregate tracked portfolio exceeding ₹5.8 to ₹6.0+ lakh crore across port modernization, rail/road connectivity, and port-led industrialization. Options A, B, C, and D are factually inaccurate standard figures.",
+        expHi: "विकल्प A, B, C और D में से कोई भी आधिकारिक आंकड़ा सही नहीं है। सागरमाला के नेशनल पर्सपेक्टिव प्लान के तहत परियोजनाओं का कुल ट्रैक किया गया संचयी पोर्टफोलियो ₹5.8 से ₹6.0+ लाख करोड़ के दायरे में रहा है। अतः सही विकल्प (E) है।",
+        examFact: "The Sagarmala project portfolio is structured across five pillars: Port Modernization, Port Connectivity, Port-led Industrialization, Coastal Community Development, and Coastal Shipping & IWT."
+      },
+      {
+        qNum: 69,
+        stemEn: "Which international financial institution extended a $375 million loan in 2017 to co-finance the development of Inland Waterway-1 (Jal Marg Vikas Project) on the Ganga River?",
+        stemHi: "गंगा नदी पर राष्ट्रीय जलमार्ग-1 (जल मार्ग विकास परियोजना) के विकास के लिए 2017 में किस अंतरराष्ट्रीय वित्तीय संस्थान ने 375 मिलियन डॉलर का ऋण स्वीकृत किया था?",
+        options: [
+          "Asian Development Bank (ADB) / एशियाई विकास बैंक",
+          "New Development Bank (NDB) / न्यू डेवलपमेंट बैंक",
+          "International Bank for Reconstruction and Development (World Bank) / विश्व बैंक (IBRD)",
+          "Asian Infrastructure Investment Bank (AIIB) / एशियाई अवसंरचना निवेश बैंक",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Jal Marg Vikas Project (JMVP) for capacity augmentation of navigation on National Waterway-1 (Varanasi to Haldia) is being implemented by the Inland Waterways Authority of India (IWAI) with technical and financial assistance of $375 million from the World Bank.",
+        expHi: "राष्ट्रीय जलमार्ग-1 पर नौवहन क्षमता बढ़ाने के लिए जल मार्ग विकास परियोजना (JMVP) को भारतीय अंतर्देशीय जलमार्ग प्राधिकरण (IWAI) द्वारा विश्व बैंक (World Bank) की 375 मिलियन डॉलर की वित्तीय सहायता से क्रियान्वित किया गया।",
+        examFact: "JMVP facilitated the construction of multimodal terminals at Varanasi, Sahibganj, and Haldia, along with a new navigational lock at Farakka."
+      },
+      {
+        qNum: 70,
+        stemEn: "Which state houses the strategically critical Sela Tunnel, inaugurated in March 2024 to provide all-weather road connectivity to Tawang near the LAC?",
+        stemHi: "एलएसी के समीप तवांग को बारहमासी सड़क संपर्क प्रदान करने के लिए मार्च 2024 में उद्घाटित रणनीतिक 'सेला टनल' किस राज्य में स्थित है?",
+        options: [
+          "Sikkim / सिक्किम",
+          "Himachal Pradesh / हिमाचल प्रदेश",
+          "Uttarakhand / उत्तराखंड",
+          "Arunachal Pradesh / अरुणाचल प्रदेश",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Sela Tunnel is located in the West Kameng and Tawang districts of Arunachal Pradesh at an elevation of over 13,000 feet, excavated by the BRO to bypass the snow-bound Sela Pass.",
+        expHi: "सेला टनल अरुणाचल प्रदेश में 13,000 फीट से अधिक की ऊंचाई पर सीमा सड़क संगठन (BRO) द्वारा निर्मित की गई है, जो तवांग तक हर मौसम में निर्बाध आवागमन सुनिश्चित करती है।",
+        examFact: "It is the longest bi-lane tunnel in the world constructed at an altitude above 13,000 feet."
+      },
+      {
+        qNum: 71,
+        stemEn: "Under structural logistics and highway corridor reforms, what is the standard axle load limit revision implemented in India in 2018 to enhance trucking freight capacity?",
+        stemHi: "लॉजिस्टिक्स और सड़क परिवहन सुधारों के तहत, ट्रकों की माल वहन क्षमता बढ़ाने के लिए 2018 में भारत में एक्सल लोड सीमा में लगभग कितने प्रतिशत की वृद्धि की गई थी?",
+        options: [
+          "5% to 8% / 5% से 8%",
+          "10% to 12% / 10% से 12%",
+          "20% to 25% / 20% से 25%",
+          "40% to 50% / 40% से 50%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "In July 2018, the Ministry of Road Transport and Highways increased the permissible gross vehicle weight (GVW) and axle load limits for commercial trucks by approximately 20% to 25%, bringing Indian freight norms on par with international standards.",
+        expHi: "जुलाई 2018 में सड़क परिवहन और राजमार्ग मंत्रालय ने ट्रकों की सकल भार क्षमता (एक्सल लोड) में लगभग 20% से 25% की वृद्धि की, जिससे देश में माल ढुलाई दक्षता बढ़ी और लॉजिस्टिक्स लागत घटी।",
+        examFact: "For instance, the maximum gross weight of a two-axle truck was increased from 16.2 tonnes to 18.5 tonnes."
+      },
+      {
+        qNum: 72,
+        stemEn: "In railway track safety infrastructure, what is the indigenous Automatic Train Protection (ATP) system developed by Indian Railways named?",
+        stemHi: "रेलवे ट्रैक सुरक्षा अवसंरचना के क्षेत्र में, भारतीय रेलवे द्वारा विकसित स्वदेशी स्वचालित ट्रेन सुरक्षा (ATP) प्रणाली का नाम क्या है?",
+        options: [
+          "Rakshak / रक्षक",
+          "Trishul / त्रिशूल",
+          "Kavach / कवच",
+          "Suraksha / सुरक्षा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Kavach is an indigenously developed Automatic Train Protection (ATP) system engineered by the Research Designs and Standards Organisation (RDSO) to prevent train collisions caused by Signal Passing At Danger (SPAD) or overspeeding.",
+        expHi: "'कवच' (Kavach) भारतीय रेलवे के अनुसंधान डिजाइन और मानक संगठन (RDSO) द्वारा विकसित एक स्वदेशी स्वचालित ट्रेन सुरक्षा प्रणाली है, जो रेलगाड़ियों की आमने-सामने की टक्कर को रोकती है।",
+        examFact: "Kavach achieves Safety Integrity Level 4 (SIL-4), the highest level of safety certification in international rail operations."
+      },
+      {
+        qNum: 73,
+        stemEn: "What is the authorized institutional target capacity of the International Solar Alliance (ISA), launched jointly by India and France in 2015, for mobilizing solar energy investment by 2030?",
+        stemHi: "2015 में भारत और फ्रांस द्वारा संयुक्त रूप से शुरू किए गए 'अंतर्राष्ट्रीय सौर गठबंधन' (ISA) का 2030 तक सौर निवेश जुटाने का संस्थागत लक्ष्य क्या है?",
+        options: [
+          "$100 Billion / $100 बिलियन",
+          "$500 Billion / $500 बिलियन",
+          "$1 Trillion / $1 ट्रिलियन (1000 बिलियन डॉलर)",
+          "$5 Trillion / $5 ट्रिलियन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The International Solar Alliance (ISA) under its 'Towards 1000' strategy aims to mobilize more than $1,000 billion ($1 trillion) of investment in solar energy solutions by 2030 across member countries.",
+        expHi: "अंतर्राष्ट्रीय सौर गठबंधन (ISA) का लक्ष्य अपने एजेंडे के तहत 2030 तक सदस्य देशों में सौर ऊर्जा समाधानों के विकास हेतु 1 ट्रिलियन डॉलर (1,000 बिलियन डॉलर) से अधिक का निवेश जुटाना है।",
+        examFact: "ISA is the first treaty-based intergovernmental organization headquartered in India, located at the National Institute of Solar Energy (NISE) in Gurugram, Haryana."
+      },
+      {
+        qNum: 74,
+        stemEn: "Which major inland river container terminal in Uttar Pradesh was inaugurated in November 2018 on National Waterway-1 as part of multimodal cargo infrastructure?",
+        stemHi: "उत्तर प्रदेश में किस प्रमुख अंतर्देशीय नदी कंटेनर टर्मिनल का उद्घाटन नवंबर 2018 में बहुमॉडल कार्गो अवसंरचना के तहत राष्ट्रीय जलमार्ग-1 पर किया गया था?",
+        options: [
+          "Prayagraj Multimodal Terminal / प्रयागराज मल्टीमॉडल टर्मिनल",
+          "Kanpur Multimodal Terminal / कानपुर मल्टीमॉडल टर्मिनल",
+          "Varanasi Multimodal Terminal (Ralhpura) / वाराणसी मल्टीमॉडल टर्मिनल (राल्हूपुर)",
+          "Ghazipur Floating Terminal / गाजीपुर फ्लोटिंग टर्मिनल",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The multimodal river port at Ralhpura, Varanasi, constructed at a cost of approximately ₹207 crore under the Jal Marg Vikas Project, was formally inaugurated on 12 November 2018 when it received India’s first container vessel sailing from Kolkata.",
+        expHi: "वाराणसी (राल्हूपुर) में गंगा नदी पर बने देश के पहले मल्टीमॉडल टर्मिनल का उद्घाटन 12 नवंबर 2018 को किया गया था, जहां कोलकाता से अंतर्देशीय जलमार्ग द्वारा भेजा गया पहला कंटेनर पोत पहुंचा था।",
+        examFact: "The project was executed under the aegis of the Inland Waterways Authority of India (IWAI)."
+      },
+      {
+        qNum: 75,
+        stemEn: "Under the Saubhagya (Pradhan Mantri Sahaj Bijli Har Ghar Yojana) scheme launched in September 2017, what was the primary target parameter?",
+        stemHi: "सितंबर 2017 में शुरू की गई 'सौभाग्य' (प्रधानमंत्री सहज बिजली हर घर योजना) का प्राथमिक लक्ष्य पैरामीटर क्या था?",
+        options: [
+          "Free supply of electric 2-wheelers to all rural youth / सभी ग्रामीण युवाओं को इलेक्ट्रिक 2-पहिया वाहनों की मुफ्त आपूर्ति",
+          "100% universal household electrification across both rural and urban areas / ग्रामीण और शहरी दोनों क्षेत्रों में 100% सार्वभौमिक घरेलू विद्युतीकरण",
+          "Mandatory replacement of domestic LPG cylinders with electric cookstoves / घरेलू एलपीजी सिलेंडरों का इलेक्ट्रिक चूल्हों से अनिवार्य प्रतिस्थापन",
+          "Complete shutdown of private power generation facilities / निजी विद्युत उत्पादन इकाइयों को पूर्णतः बंद करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Pradhan Mantri Sahaj Bijli Har Ghar Yojana – Saubhagya aimed to achieve universal household electrification by providing last-mile electricity connectivity to all remaining un-electrified households in rural and urban areas.",
+        expHi: "'सौभाग्य' योजना का उद्देश्य ग्रामीण और शहरी दोनों क्षेत्रों में सभी इच्छुक गैर-विद्युतीकृत घरों को अंतिम छोर तक बिजली कनेक्शन प्रदान कर शत-प्रतिशत घरेलू विद्युतीकरण प्राप्त करना था।",
+        examFact: "Poor households received free electricity connections, while others paid a nominal ₹500 in 10 installments through their electricity bills."
+      },
+
+      // Batch 4 (Q76 to Q100)
+      {
+        qNum: 76,
+        stemEn: "Under the 'City Gas Distribution' (CGD) structural bidding rounds conducted by PNGRB, what percentage of India's population is covered under authorized CGD networks by the 11th/12th bidding rounds?",
+        stemHi: "पेट्रोलियम एवं प्राकृतिक गैस विनियामक बोर्ड (PNGRB) द्वारा आयोजित सीजीडी (CGD) बोली चक्रों के तहत 11वें/12वें दौर तक देश की कुल जनसंख्या का लगभग कितना प्रतिशत अधिकृत सीजीडी नेटवर्क के दायरे में आ चुका है?",
+        options: [
+          "~50%",
+          "~70%",
+          "~98%",
+          "~80%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "With the conclusion of the 11th and 11thA/12th CGD bidding rounds post-2014, City Gas Distribution networks authorized by PNGRB cover approximately 98% of India's population and 88% of the country's geographical area.",
+        expHi: "पेट्रोलियम एवं प्राकृतिक गैस विनियामक बोर्ड (PNGRB) के 11वें और 12वें दौर की बोलियों के बाद देश की लगभग 98% आबादी और 88% भौगोलिक क्षेत्र को सीएनजी और पीएनजी वितरण नेटवर्क के दायरे में लाया गया है।",
+        examFact: "The Petroleum and Natural Gas Regulatory Board (PNGRB) was constituted under the PNGRB Act, 2006 to regulate refining, processing, storage, transportation, and marketing of petroleum products and natural gas."
+      },
+      {
+        qNum: 77,
+        stemEn: "What is the designated speed potential designed for passenger train operations on the Mumbai–Ahmedabad High Speed Rail (MAHSR) Corridor?",
+        stemHi: "मुंबई-अहमदाबाद हाई-स्पीड रेल (MAHSR) कॉरिडोर पर यात्री ट्रेन संचालन हेतु डिजाइन की गई अधिकतम गति क्षमता कितनी है?",
+        options: [
+          "250 km/h / 250 किमी/घंटा",
+          "300 km/h / 300 किमी/घंटा",
+          "350 km/h / 350 किमी/घंटा",
+          "400 km/h / 400 किमी/घंटा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Mumbai–Ahmedabad Bullet Train corridor is engineered for an operating speed of 320 km/h and a maximum design speed of 350 km/h using Japanese E5 series Shinkansen trainsets.",
+        expHi: "मुंबई-अहमदाबाद बुलेट ट्रेन कॉरिडोर की अधिकतम डिजाइन गति 350 किमी/घंटा और परिचालन गति (operating speed) 320 किमी/घंटा निर्धारित की गई है।",
+        examFact: "The corridor spans 508 km across 12 stations, with a 21-km undersea/underground tunnel section between Mumbai and Thane."
+      },
+      {
+        qNum: 78,
+        stemEn: "In the telecom and digital infrastructure sector, what is the maximum Foreign Direct Investment (FDI) permitted under the 100% automatic route following the structural reforms cleared in September 2021?",
+        stemHi: "दूरसंचार और डिजिटल अवसंरचना क्षेत्र में, सितंबर 2021 में स्वीकृत संरचनात्मक सुधारों के बाद 100% स्वचालित मार्ग (automatic route) के तहत कितना प्रत्यक्ष विदेशी निवेश (FDI) अनुमत है?",
+        options: [
+          "49%",
+          "74%",
+          "100%",
+          "51%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "In September 2021, the Union Cabinet approved a major structural telecom package that liberalized FDI in the telecom sector to 100% under the automatic route, up from the earlier limit of 49% under the automatic route.",
+        expHi: "सितंबर 2021 में केंद्रीय मंत्रिमंडल द्वारा स्वीकृत दूरसंचार सुधार पैकेज के तहत इस क्षेत्र में स्वचालित मार्ग (automatic route) से 100% प्रत्यक्ष विदेशी निवेश (FDI) की अनुमति दी गई।",
+        examFact: "The reform package also rationalized the definition of Adjusted Gross Revenue (AGR) by excluding non-telecom revenues."
+      },
+      {
+        qNum: 79,
+        stemEn: "Which greenfield international airport in Uttar Pradesh was conceived as the largest airport in India by operational runway capacity upon its full multi-phase completion?",
+        stemHi: "उत्तर प्रदेश का कौन सा ग्रीनफील्ड अंतरराष्ट्रीय हवाई अड्डा अपने पूर्ण बहु-चरणीय निर्माण के उपरांत परिचालन रनवे क्षमता के आधार पर भारत का सबसे बड़ा हवाई अड्डा बनने के उद्देश्य से विकसित किया जा रहा है?",
+        options: [
+          "Ayodhya International Airport (Maharishi Valmiki Airport) / अयोध्या अंतरराष्ट्रीय हवाई अड्डा",
+          "Kushinagar International Airport / कुशीनगर अंतरराष्ट्रीय हवाई अड्डा",
+          "Noida International Airport (Jewar) / नोएडा अंतरराष्ट्रीय हवाई अड्डा (जेवर)",
+          "Lal Bahadur Shastri International Airport / लाल बहादुर शास्त्री अंतरराष्ट्रीय हवाई अड्डा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Noida International Airport located at Jewar, Gautam Buddha Nagar, is planned as a multi-runway mega greenfield aviation hub developed under a PPP concession model with Zurich Airport International AG.",
+        expHi: "गौतमबुद्ध नगर के जेवर में निर्माणाधीन 'नोएडा अंतरराष्ट्रीय हवाई अड्डा' भारत का सबसे बड़ा बहु-रनवे ग्रीनफील्ड हवाई अड्डा बनने की दिशा में विकसित किया जा रहा है।",
+        examFact: "The concession agreement for Jewar Airport grants a 40-year operational period to Yamuna International Airport Private Limited (YIAPL)."
+      },
+      {
+        qNum: 80,
+        stemEn: "The 'Kavach' safety signaling infrastructure deployed on Indian Railways uses which of the following radio communication technologies for track-to-locomotive communication?",
+        stemHi: "भारतीय रेलवे में प्रयुक्त 'कवच' (Kavach) सुरक्षा सिग्नलिंग प्रणाली ट्रैक और लोकोमोटिव के बीच संचार हेतु किस रेडियो संचार तकनीक का उपयोग करती है?",
+        options: [
+          "Satellite Ka-band only / केवल सैटेलाइट Ka-बैंड",
+          "Ultra-High Frequency (UHF) radio and RFID / अल्ट्रा-हाई फ्रीक्वेंसी (UHF) रेडियो और RFID",
+          "5G mmWave Beamforming / 5G मिलीमीटर-वेव बीमफॉर्मिंग",
+          "Optical Laser Transceiver / ऑप्टिकल लेजर ट्रांसीवर",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Kavach relies on Radio Frequency Identification (RFID) tags fitted along tracks and stations, communicating with loco units and station equipment via Ultra-High Frequency (UHF) 400 MHz radio link systems.",
+        expHi: "'कवच' तकनीक ट्रैक पर लगे आरएफआईडी (RFID) टैग और स्टेशन तथा लोकोमोटिव में स्थापित यूएचएफ (UHF) रेडियो संचार प्रणाली के समन्वय पर काम करती है।",
+        examFact: "Kavach automatically applies train brakes if the driver fails to control speed according to railway signal aspects."
+      },
+      {
+        qNum: 81,
+        stemEn: "What is the total length of the newly operationalized Eastern Dedicated Freight Corridor (EDFC) from Sahnewal (Punjab) to Dankuni (West Bengal)?",
+        stemHi: "साहनेवाल (पंजाब) से दानकुनी (पश्चिम बंगाल) तक विस्तृत ईस्टर्न डेडिकेटेड फ्रेट कॉरिडोर (EDFC) की कुल स्वीकृत लंबाई लगभग कितनी है?",
+        options: [
+          "1,320 km / 1,320 किमी",
+          "1,506 km / 1,506 किमी",
+          "1,875 km / 1,875 किमी",
+          "2,140 km / 2,140 किमी",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The total route length of the Eastern Dedicated Freight Corridor (EDFC) is approximately 1,875 km, starting at Sahnewal near Ludhiana and ending at Dankuni near Kolkata.",
+        expHi: "ईस्टर्न डीएफसी (EDFC) की कुल स्वीकृत मार्ग लंबाई लगभग 1,875 किमी है, जो लुधियाना (पंजाब) के निकट साहनेवाल से पश्चिम बंगाल के दानकुनी तक विस्तृत है।",
+        examFact: "The World Bank funded the 1,192 km Sahnewal to Pt. Deen Dayal Upadhyaya Junction section of the EDFC."
+      },
+      {
+        qNum: 82,
+        stemEn: "The Toll-Operate-Transfer (TOT) model introduced by NHAI in 2016 for monetizing operational national highways grants operational concession rights to private investors for a standard period of:",
+        stemHi: "परिचालन राष्ट्रीय राजमार्गों के मुद्रीकरण हेतु 2016 में NHAI द्वारा शुरू किए गए 'टोल-ऑपरेट-ट्रांसफर' (TOT) मॉडल के तहत निजी निवेशकों को कितने वर्षों की मानक अवधि हेतु रियायत (concession) अधिकार दिए जाते हैं?",
+        options: [
+          "5 Years / 5 वर्ष",
+          "10 Years / 10 वर्ष",
+          "30 Years / 30 वर्ष",
+          "50 Years / 50 वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Under the TOT model, completed public-funded national highway stretches with a minimum 2-year tolling history are leased out to private institutional concessionaires for a 30-year period in exchange for an upfront lump-sum payment.",
+        expHi: "टीओटी (TOT) मॉडल के अंतर्गत कम से कम दो वर्ष से टोल ले रहे राष्ट्रीय राजमार्गों के परिचालन और टोल संग्रह का अधिकार 30 वर्ष की निश्चित अवधि के लिए निजी विकासकर्ता को एकमुश्त राशि के बदले सौंपा जाता है।",
+        examFact: "The upfront proceeds realized from TOT bundles are utilized by NHAI for constructing new greenfield expressway corridors."
+      },
+      {
+        qNum: 83,
+        stemEn: "Which of the following corridors is NOT one of the 11 approved National Industrial Corridors being developed across India under the National Industrial Corridor Development Programme (NICDP)?",
+        stemHi: "राष्ट्रीय औद्योगिक गलियारा विकास कार्यक्रम (NICDP) के तहत विकसित किए जा रहे 11 स्वीकृत राष्ट्रीय औद्योगिक गलियारों में निम्नलिखित में से कौन सा शामिल नहीं है?",
+        options: [
+          "Delhi–Mumbai Industrial Corridor (DMIC) / दिल्ली-मुंबई औद्योगिक गलियारा",
+          "Chennai–Bengaluru Industrial Corridor (CBIC) / चेन्नई-बेंगलुरु औद्योगिक गलियारा",
+          "Amritsar–Kolkata Industrial Corridor (AKIC) / अमृतसर-कोलकाता औद्योगिक गलियारा",
+          "Shimla–Leh High-Altitude Industrial Corridor / शिमला-लेह उच्च-तुंगता औद्योगिक गलियारा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Government of India approved 11 Industrial Corridors (such as DMIC, CBIC, AKIC, BMIC, Vizag-Chennai, Hyderabad-Nagpur, etc.). There is no approved 'Shimla–Leh High-Altitude Industrial Corridor' in the NICDP framework.",
+        expHi: "NICDP के तहत 11 औद्योगिक गलियारे विकसित किए जा रहे हैं (जैसे DMIC, AKIC, CBIC आदि)। 'शिमला-लेह हाई-एल्टीट्यूड इंडस्ट्रियल कॉरिडोर' जैसा कोई गलियारा इसमें शामिल नहीं है।",
+        examFact: "The National Industrial Corridor Development and Implementation Trust (NICDIT) acts as the apex body overseeing industrial corridor nodes."
+      },
+      {
+        qNum: 84,
+        stemEn: "What is the target year set by Indian Railways to achieve 'Net Zero Carbon Emission' as part of its structural green energy transition?",
+        stemHi: "भारतीय रेलवे ने अपने संरचनात्मक हरित ऊर्जा परिवर्तन के हिस्से के रूप में 'शुद्ध शून्य कार्बन उत्सर्जन' (Net Zero Carbon Emission) हासिल करने का लक्ष्य किस वर्ष तक निर्धारित किया है?",
+        options: [
+          "2025",
+          "2030",
+          "2040",
+          "2070",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Indian Railways has committed to becoming a Net Zero Carbon Emitter by 2030 through 100% electrification of its broad-gauge network and large-scale deployment of solar and wind generation assets.",
+        expHi: "भारतीय रेलवे ने अपने संपूर्ण ब्रॉड-गेज नेटवर्क के शत-प्रतिशत विद्युतीकरण और सौर/पवन ऊर्जा उत्पादन के माध्यम से 2030 तक शुद्ध-शून्य कार्बन उत्सर्जक बनने का महत्वाकांक्षी लक्ष्य रखा है।",
+        examFact: "India as a country has pledged to achieve overall net-zero carbon emissions by 2070 at the COP26 climate summit."
+      },
+      {
+        qNum: 85,
+        stemEn: "In the context of national highway construction, what was the structural achievement milestone recorded in the pace of highway construction per day during FY 2020-21?",
+        stemHi: "राष्ट्रीय राजमार्ग निर्माण के संदर्भ में, वित्त वर्ष 2020-21 के दौरान प्रतिदिन सड़क निर्माण की गति का कौन सा सर्वकालिक रिकॉर्ड दर्ज किया गया था?",
+        options: [
+          "~12 km/day / ~12 किमी/दिन",
+          "~22 km/day / ~22 किमी/दिन",
+          "~37 km/day / ~37 किमी/दिन",
+          "~55 km/day / ~55 किमी/दिन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "During FY 2020-21, the Ministry of Road Transport and Highways (MoRTH) achieved an all-time record highway construction pace of 37 km per day (13,327 km in the entire fiscal year).",
+        expHi: "वित्त वर्ष 2020-21 में MoRTH और NHAI ने 37 किलोमीटर प्रतिदिन की दर से 13,327 किलोमीटर राष्ट्रीय राजमार्गों का निर्माण कर ऐतिहासिक उपलब्धि दर्ज की थी।",
+        examFact: "In 2014-15, the construction speed stood at approximately 12 km per day, more than tripling due to structural EPC contract reforms."
+      },
+      {
+        qNum: 86,
+        stemEn: "What is the statutory name of the nodal authority responsible for planning, construction, and regulation of the Regional Rapid Transit System (RRTS) corridors in the National Capital Region?",
+        stemHi: "राष्ट्रीय राजधानी क्षेत्र में रीजनल रैपिड ट्रांजिट सिस्टम (RRTS) गलियारों की योजना, निर्माण और नियमन हेतु जिम्मेदार नोडल संस्था का वैधानिक नाम क्या है?",
+        options: [
+          "Delhi Metro Rail Corporation (DMRC) / दिल्ली मेट्रो रेल कॉर्पोरेशन",
+          "National Capital Region Transport Corporation (NCRTC) / राष्ट्रीय राजधानी क्षेत्र परिवहन निगम",
+          "Dedicated Urban Transit Authority (DUTA) / डेडिकेटेड अर्बन ट्रांजिट अथॉरिटी",
+          "Northern Railway Infrastructure Division / उत्तर रेलवे अवसंरचना प्रभाग",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The National Capital Region Transport Corporation (NCRTC) is a joint venture company of the Government of India and the states of Delhi, Haryana, Rajasthan, and Uttar Pradesh mandated to implement the semi-high speed RRTS (Namo Bharat train) network.",
+        expHi: "'राष्ट्रीय राजधानी क्षेत्र परिवहन निगम' (NCRTC) केंद्र सरकार और दिल्ली, हरियाणा, राजस्थान एवं उत्तर प्रदेश सरकारों का संयुक्त उपक्रम है, जो नमो भारत (RRTS) परियोजनाओं का क्रियान्वयन करता है।",
+        examFact: "The priority section of India's first RRTS (Delhi–Ghaziabad–Meerut Corridor) between Sahibabad and Duhai Depot was inaugurated in October 2023."
+      },
+      {
+        qNum: 87,
+        stemEn: "The Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) scheme was launched in 2019 to provide which critical agricultural infrastructure?",
+        stemHi: "2019 में शुरू की गई 'प्रधानमंत्री किसान ऊर्जा सुरक्षा एवं उत्थान महाभियान' (PM-KUSUM) योजना किस महत्वपूर्ण कृषि अवसंरचना को उपलब्ध कराने के उद्देश्य से लाई गई थी?",
+        options: [
+          "Free drip irrigation sprinkler pipelines / मुफ्त ड्रिप सिंचाई स्प्रिंकलर पाइपलाइन",
+          "Solar-powered agricultural water pumps and grid-connected solar plants / सौर-संचालित कृषि जल पंप और ग्रिड-कनेक्टेड सौर ऊर्जा संयंत्र",
+          "Diesel subsidy coupons for tractor machinery / ट्रैक्टर मशीनरी हेतु डीजल सब्सिडी कूपन",
+          "Cold chain transport vans for horticultural farmers / बागवानी किसानों हेतु कोल्ड चेन परिवहन वैन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "PM-KUSUM was launched by the Ministry of New and Renewable Energy (MNRE) to provide standalone solar pumps (Component B), solarize existing grid-connected agriculture pumps (Component C), and set up decentralized renewable power plants on barren farmlands (Component A).",
+        expHi: "पीएम-कुसुम (PM-KUSUM) योजना किसानों को सौर पंप स्थापित करने, मौजूदा ग्रिड से जुड़े कृषि पंपों का सौरकरण करने और बंजर भूमि पर विकेंद्रीकृत सौर संयंत्र लगाकर बिजली ग्रिड को बेचने की सुविधा देती है।",
+        examFact: "PM-KUSUM reduces farmer reliance on diesel pumps and lightens the burden of agricultural electricity subsidies on state DISCOMs."
+      },
+      {
+        qNum: 88,
+        stemEn: "Which Indian city became the first in the country to operate a commercial Water Metro service, integrating modern electric-hybrid passenger ferries with island connectivity?",
+        stemHi: "आधुनिक इलेक्ट्रिक-हाइब्रिड यात्री नौकाओं के माध्यम से द्वीपों को जोड़ने वाली व्यावसायिक 'वाटर मेट्रो' सेवा संचालित करने वाला भारत का पहला शहर कौन सा बना?",
+        options: [
+          "Panaji (Goa) / पणजी (गोवा)",
+          "Mumbai (Maharashtra) / मुंबई (महाराष्ट्र)",
+          "Kochi (Kerala) / कोच्चि (केरल)",
+          "Kolkata (West Bengal) / कोलकाता (पश्चिम बंगाल)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Kochi Water Metro project, inaugurated in April 2023, is India's first integrated water transport system featuring battery-powered electric-hybrid catamarans connecting 10 islands around Kochi with unified ticketing.",
+        expHi: "केरल के कोच्चि में अप्रैल 2023 में भारत की पहली 'वाटर मेट्रो' सेवा शुरू की गई, जो मुख्य भूमि को आसपास के 10 द्वीपों से आधुनिक वातानुकूलित इलेक्ट्रिक बोट्स के जरिए जोड़ती है।",
+        examFact: "The project is funded jointly by the Government of Kerala and German funding agency KfW."
+      },
+      {
+        qNum: 89,
+        stemEn: "Which port on the eastern coast of India is home to the first dedicated deep-water Outer Harbour facility for bulk iron-ore export with fully automated mechanized handling?",
+        stemHi: "भारत के पूर्वी तट पर कौन सा बंदरगाह पूरी तरह से स्वचालित यांत्रिक हैंडलिंग के साथ थोक लौह-अयस्क निर्यात के लिए पहले समर्पित गहरे पानी के आउटर हार्बर का स्थल है?",
+        options: [
+          "Mormugao Port / मोरमुगाओ बंदरगाह",
+          "Paradip Port / पारादीप बंदरगाह",
+          "Visakhapatnam Port / विशाखापत्तनम बंदरगाह",
+          "Ennore (Kamarajar) Port / एन्नौर (कामराजार) बंदरगाह",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Visakhapatnam Port in Andhra Pradesh features an outer harbor with automated mechanized iron-ore handling facilities capable of berthing cape-size vessels with drafts up to 18.5 meters.",
+        expHi: "आंध्र प्रदेश का विशाखापत्तनम बंदरगाह गहरे पानी के आउटर हार्बर और स्वचालित मैकेनाइज्ड लौह-अयस्क हैंडलिंग प्रणाली से युक्त पूर्वी तट का प्रमुख बंदरगाह है।",
+        examFact: "Visakhapatnam is a natural harbor protected by the famous Dolphin's Nose hill promontory."
+      },
+      {
+        qNum: 90,
+        stemEn: "Which of the following constitutional amendments created the enabling institutional structure for the Goods and Services Tax (GST) Council, which removed interstate check-posts and physical border barriers to freight logistics in 2017?",
+        stemHi: "निम्नलिखित में से किस संविधान संशोधन अधिनियम ने जीएसटी (GST) परिषद की स्थापना का मार्ग प्रशस्त किया, जिसने 2017 में अंतर-राज्यीय चेक-पोस्ट और भौतिक सीमा बाधाओं को समाप्त कर लॉजिस्टिक्स प्रवाह को गति दी?",
+        options: [
+          "99th Constitutional Amendment Act / 99वां संविधान संशोधन अधिनियम",
+          "100th Constitutional Amendment Act / 100वां संविधान संशोधन अधिनियम",
+          "101st Constitutional Amendment Act / 101वां संविधान संशोधन अधिनियम",
+          "103rd Constitutional Amendment Act / 103वां संविधान संशोधन अधिनियम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The 101st Constitutional Amendment Act, 2016 introduced Article 279A for the GST Council and enacted the GST regime, which structurally eliminated state border octroi check-posts and reduced commercial truck transit delays.",
+        expHi: "101वें संविधान संशोधन अधिनियम, 2016 द्वारा देश में जीएसटी लागू किया गया, जिसने राज्यों की सीमाओं पर लगने वाले प्रवेश कर (चुंगी/ऑक्ट्रॉय) चेक-नाकों को समाप्त कर माल ढुलाई में लगने वाले समय को काफी घटा दिया।",
+        examFact: "GST was rolled out nationally on 1 July 2017 with the e-Way Bill system integrated in 2018 for digital cargo movement tracking."
+      },
+      {
+        qNum: 91,
+        stemEn: "What is the designated speed limit specification designed for high-capacity freight train movements along the operational Dedicated Freight Corridors (DFCs)?",
+        stemHi: "परिचालनगत डेडिकेटेड फ्रेट कॉरिडोर (DFC) पर उच्च-क्षमता वाली मालगाड़ियों के संचालन हेतु डिजाइन की गई अधिकतम गति सीमा क्या है?",
+        options: [
+          "60 km/h / 60 किमी/घंटा",
+          "75 km/h / 75 किमी/घंटा",
+          "100 km/h / 100 किमी/घंटा",
+          "130 km/h / 130 किमी/घंटा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Dedicated Freight Corridors are designed for a maximum operational speed of 100 km/h for heavy haul freight trains, up from the legacy average freight speed of 25 km/h on mixed Indian Railways tracks.",
+        expHi: "डीएफसी (DFC) पर मालगाड़ियों के दौड़ने की अधिकतम डिजाइन गति 100 किमी/घंटा है, जिससे मालगाड़ियों की औसत परिचालन गति में 3 से 4 गुना वृद्धि संभव हुई है।",
+        examFact: "Heavy haul trains on DFC corridors can carry gross train weights of up to 13,000 tonnes using head-on generation (HOG) and electric multi-unit locomotives."
+      },
+      {
+        qNum: 92,
+        stemEn: "The 'Jal Marg Vikas Project' (JMVP) encompasses capacity augmentation between which specific endpoints on the Ganga River?",
+        stemHi: "जल मार्ग विकास परियोजना (JMVP) के तहत गंगा नदी पर किन दो विशिष्ट स्थलों के बीच नौवहन क्षमता संवर्धन किया जा रहा है?",
+        options: [
+          "Haridwar to Prayagraj / हरिद्वार से प्रयागराज",
+          "Prayagraj to Haldia / प्रयागराज से हल्दिया",
+          "Varanasi to Patna / वाराणसी से पटना",
+          "Varanasi to Kolkata / वाराणसी से कोलकाता",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "JMVP covers the stretch between Prayagraj and Haldia on National Waterway-1, creating a navigational fairway with a guaranteed Least Available Depth (LAD) of 2.2 to 3.0 meters for 1,500-2,000 DWT vessels.",
+        expHi: "जल मार्ग विकास परियोजना (JMVP) राष्ट्रीय जलमार्ग-1 पर प्रयागराज से हल्दिया तक 1,620 किमी लंबे खंड में 1,500-2,000 टन वजन वाले जहाजों के सुगम आवागमन हेतु जल गहराई और टर्मिनलों का विकास करती है।",
+        examFact: "National Waterway 1 was declared under the National Waterways Act of 1986."
+      },
+      {
+        qNum: 93,
+        stemEn: "Which autonomous regulatory commission was constituted under the Electricity Act, 2003, and continues to determine interstate transmission tariffs and promote grid discipline in Indian power sector reforms?",
+        stemHi: "विद्युत अधिनियम, 2003 के तहत गठित कौन सा स्वायत्त विनियामक आयोग अंतर-राज्यीय पारेषण दरों का निर्धारण करने और भारतीय विद्युत क्षेत्र सुधारों में ग्रिड अनुशासन बनाए रखने का कार्य करता है?",
+        options: [
+          "Central Electricity Authority (CEA) / केंद्रीय विद्युत प्राधिकरण",
+          "Central Electricity Regulatory Commission (CERC) / केंद्रीय विद्युत विनियामक आयोग",
+          "Power System Operation Corporation (POSOCO) / पावर सिस्टम ऑपरेशन कॉर्पोरेशन",
+          "National Power Grid Council (NPGC) / राष्ट्रीय पावर ग्रिड परिषद",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Central Electricity Regulatory Commission (CERC) is the apex statutory regulator tasked with regulating tariffs of generating companies owned or controlled by the Central Government and regulating inter-state transmission of electricity.",
+        expHi: "केंद्रीय विद्युत विनियामक आयोग (CERC) अंतर-राज्यीय विद्युत पारेषण (inter-state transmission) और केंद्रीय उत्पादन कंपनियों के टैरिफ निर्धारण का वैधानिक कार्य करता है।",
+        examFact: "The Central Electricity Authority (CEA) serves as the technical advisor to the Ministry of Power, whereas CERC functions as the quasi-judicial tariff regulator."
+      },
+      {
+        qNum: 94,
+        stemEn: "What is the designated financial corpus of the Urban Infrastructure Development Fund (UIDF) established in the Union Budget 2023-24 to finance public urban infrastructure in Tier-2 and Tier-3 cities?",
+        stemHi: "टियर-2 और टियर-3 शहरों में सार्वजनिक शहरी अवसंरचना के वित्तपोषण हेतु केंद्रीय बजट 2023-24 में स्थापित 'शहरी अवसंरचना विकास कोष' (UIDF) का वार्षिक कोष कितना निर्धारित किया गया है?",
+        options: [
+          "₹2,000 Crore per year / ₹2,000 करोड़ प्रति वर्ष",
+          "₹5,000 Crore per year / ₹5,000 करोड़ प्रति वर्ष",
+          "₹10,000 Crore per year / ₹10,000 करोड़ प्रति वर्ष",
+          "₹25,000 Crore per year / ₹25,000 करोड़ प्रति वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The UIDF was established with an annual allocation of ₹10,000 crore, managed by the National Housing Bank (NHB), using priority sector lending shortfalls to fund basic infrastructure in Tier-2 and Tier-3 urban areas.",
+        expHi: "बजट 2023-24 में घोषित 'शहरी अवसंरचना विकास कोष' (UIDF) का वार्षिक कॉर्पस ₹10,000 करोड़ तय किया गया है, जिसका प्रबंधन नेशनल हाउसिंग बैंक (NHB) द्वारा किया जाता है।",
+        examFact: "UIDF is structured on the lines of the Rural Infrastructure Development Fund (RIDF) managed by NABARD."
+      },
+      {
+        qNum: 95,
+        stemEn: "The Zoji La Tunnel, constructed to establish all-weather year-round connectivity between the Kashmir Valley and Ladakh, is located on which National Highway?",
+        stemHi: "कश्मीर घाटी और लद्दाख के मध्य वर्ष भर बारहमासी संपर्क स्थापित करने हेतु निर्माणाधीन 'ज़ोजी ला टनल' किस राष्ट्रीय राजमार्ग पर स्थित है?",
+        options: [
+          "NH 44",
+          "NH 1",
+          "NH 3",
+          "NH 503",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The 14.15 km long Zoji La Tunnel is being excavated under the Zoji La pass on National Highway 1 (Srinagar–Kargil–Leh Highway) to prevent the multi-month winter isolation of Ladakh.",
+        expHi: "14.15 किमी लंबी ज़ोजी ला सुरंग राष्ट्रीय राजमार्ग 1 (NH-1 श्रीनगर-कारगिल-लेह) पर स्थित है, जो भारी बर्फबारी के दौरान भी लद्दाख क्षेत्र के लिए बारहमासी सड़क मार्ग उपलब्ध कराएगी।",
+        examFact: "Once complete, it will be Asia's longest bi-directional road tunnel at an elevation of over 11,500 feet."
+      },
+      {
+        qNum: 96,
+        stemEn: "Which scheme was approved in 2020 by the Union Cabinet to provide ₹1,000 crore viability gap funding (VGF) for deep-water ports under maritime structural policy reforms?",
+        stemHi: "समुद्री संरचनात्मक नीतिगत सुधारों के तहत गहरे पानी के बंदरगाहों हेतु वीजीएफ (VGF) और भारतीय ध्वज वाले व्यापारिक जहाजों को बढ़ावा देने के लिए कैबिनेट द्वारा अनुमोदित सब्सिडी योजना का प्राथमिक ध्यान किस पर केंद्रित था?",
+        options: [
+          "Scrap-and-Build Subsidy for Private Shipyards / निजी शिपयार्डों के लिए स्क्रैप-एंड-बिल्ड सब्सिडी",
+          "Subsidy support to Indian shipping companies in global tenders for import of government cargo / सरकारी कार्गो के आयात के लिए वैश्विक निविदाओं में भारतीय शिपिंग कंपनियों को सब्सिडी सहायता",
+          "Direct cash transfer to dockworkers / डॉक कर्मचारियों को प्रत्यक्ष नकद हस्तांतरण",
+          "Waiver of all canal fees for international liners / अंतरराष्ट्रीय लाइनर्स के लिए सभी नहर शुल्कों की छूट",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "In July 2021, the Cabinet approved a scheme of ₹1,624 crore over five years to provide subsidy support to Indian shipping companies in global tenders floated by Ministries and CPSEs for importing government cargoes, thereby promoting domestic merchant shipping capacity.",
+        expHi: "जुलाई 2021 में केंद्रीय मंत्रिमंडल ने भारतीय शिपिंग कंपनियों को वैश्विक निविदाओं में सक्षम बनाने और देश के मर्चेंट फ्लीट को बढ़ावा देने हेतु ₹1,624 करोड़ की सब्सिडी सहायता योजना को मंजूरी दी थी।",
+        examFact: "This policy boosts the share of Indian-flagged merchant ships in carrying the nation's strategic raw material imports like crude oil and fertilizers."
+      },
+      {
+        qNum: 97,
+        stemEn: "In highway asset classification under Bharatmala Pariyojana, how many kilometers of dedicated Economic Corridors were approved for construction under Phase-I?",
+        stemHi: "भारतमाला परियोजना के चरण-1 के तहत कितने किलोमीटर समर्पित 'आर्थिक गलियारों' (Economic Corridors) के निर्माण को मंजूरी दी गई थी?",
+        options: [
+          "4,000 km / 4,000 किमी",
+          "6,000 km / 6,000 किमी",
+          "9,000 km / 9,000 किमी",
+          "12,000 km / 12,000 किमी",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Under Phase-I of Bharatmala Pariyojana (which sanctioned 34,800 km of roads in total), exactly 9,000 km was dedicated specifically to Economic Corridors (such as Mumbai-Kolkata, Delhi-Amritsar, etc.).",
+        expHi: "भारतमाला परियोजना चरण-I के 34,800 किमी के कुल पैकेज में से विशेष रूप से 9,000 किमी का आवंटन 'आर्थिक गलियारों' (Economic Corridors) के विकास हेतु किया गया था।",
+        examFact: "Other components of Phase-I included 6,000 km of Inter-corridors and Feeder Routes, 5,000 km of National Corridors Efficiency Improvement, and 2,000 km of Border and International Connectivity Roads."
+      },
+      {
+        qNum: 98,
+        stemEn: "What is the targeted non-fossil fuel electricity generation capacity proportion committed by India in its Nationally Determined Contributions (NDCs) by 2030?",
+        stemHi: "भारत द्वारा 2030 तक अपने राष्ट्रीय स्तर पर निर्धारित योगदान (NDC) में कुल स्थापित बिजली क्षमता का कितना प्रतिशत गैर-जीवाश्म ईंधन स्रोतों से प्राप्त करने का संकल्प लिया गया है?",
+        options: [
+          "25%",
+          "33%",
+          "50%",
+          "75%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Under its updated Nationally Determined Contribution (NDC) submitted to the UNFCCC in August 2022, India committed to achieving 50% cumulative electric power installed capacity from non-fossil fuel-based energy resources by 2030.",
+        expHi: "अगस्त 2022 में प्रस्तुत अद्यतन NDC के तहत भारत ने 2030 तक अपनी कुल स्थापित विद्युत उत्पादन क्षमता का 50% गैर-जीवाश्म स्रोतों (सौर, पवन, हाइड्रो, परमाणु आदि) से प्राप्त करने का लक्ष्य तय किया है।",
+        examFact: "India surpassed its original COP21 Paris pledge (40% by 2030) in November 2021, nearly nine years ahead of schedule."
+      },
+      {
+        qNum: 99,
+        stemEn: "Under the UDAN scheme for regional air connectivity, what is the standard maximum airfare cap initially fixed for a 1-hour fixed-wing flight covering ~500 km?",
+        stemHi: "क्षेत्रीय हवाई संपर्क योजना (UDAN) के अंतर्गत लगभग 500 किमी की दूरी वाली 1 घंटे की फिक्स्ड-विंग उड़ान हेतु प्रारंभिक मानक अधिकतम किराया सीमा क्या निर्धारित की गई थी?",
+        options: [
+          "₹1,500",
+          "₹2,500",
+          "₹3,500",
+          "₹5,000",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under the UDAN scheme guidelines, the airfare for 50% of the seats on a flight covering 500 km (or one hour of flight time) was capped at ₹2,500, with the difference in operating expenses subsidized via Viability Gap Funding (VGF) funded by a levy on metro air routes.",
+        expHi: "उड़ान योजना के दिशा-निर्देशों के तहत 500 किमी (या 1 घंटे) की उड़ान के लिए 50% सीटों का अधिकतम किराया ₹2,500 निर्धारित किया गया था, जिसकी भरपाई ऑपरेटरों को वायबिलिटी गैप फंडिंग (VGF) से की जाती है।",
+        examFact: "The scheme is administered by the Airports Authority of India (AAI) as the implementing agency."
+      },
+      {
+        qNum: 100,
+        stemEn: "In urban transit infrastructure reforms, which Indian state holds the distinction of having the highest number of cities with operational Metro Rail and Metro Neo/Lite systems?",
+        stemHi: "शहरी परिवहन अवसंरचना सुधारों के तहत, भारत का कौन सा राज्य परिचालनगत मेट्रो रेल नेटवर्क वाले शहरों की सर्वाधिक संख्या का गौरव रखता है?",
+        options: [
+          "Maharashtra / महाराष्ट्र",
+          "Gujarat / गुजरात",
+          "Uttar Pradesh / उत्तर प्रदेश",
+          "Tamil Nadu / तमिलनाडु",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Uttar Pradesh has the largest number of cities with operational or active metro transit systems in India, including Noida-Greater Noida, Lucknow, Ghaziabad, Kanpur, and Agra, with additional networks in Meerut and planned extensions.",
+        expHi: "उत्तर प्रदेश देश का ऐसा राज्य है जिसके सर्वाधिक शहरों (नोएडा, गाजियाबाद, लखनऊ, कानपुर और आगरा) में मेट्रो रेल प्रणालियां संचालित हैं तथा मेरठ और अन्य शहरों में कार्य प्रगति पर है।",
+        examFact: "Metro rail projects in the state are developed and managed primarily by the Uttar Pradesh Metro Rail Corporation (UPMRC)."
+      }
+    ];
+
+    // State Variables
+    let currentIndex = 0;
+    // Status per question: 'not-visited', 'unanswered', 'correct', 'incorrect', 'skipped', 'review'
+    const userState = Array.from({ length: 100 }, () => ({
+      status: 'not-visited',
+      selectedOpt: null,
+      locked: false
+    }));
+
+    // DOM Elements
+    const qLabel = document.getElementById('q-label');
+    const qStemEn = document.getElementById('q-stem-en');
+    const qStemHi = document.getElementById('q-stem-hi');
+    const optionsContainer = document.getElementById('options-container');
+    const expDrawer = document.getElementById('exp-drawer');
+    const expEn = document.getElementById('exp-en');
+    const expHi = document.getElementById('exp-hi');
+    const expFact = document.getElementById('exp-fact');
+
+    const topCounter = document.getElementById('top-counter');
+    const topScore = document.getElementById('top-score');
+
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnSkip = document.getElementById('btn-skip');
+    const btnReview = document.getElementById('btn-review');
+    const btnFinish = document.getElementById('btn-finish');
+
+    const paletteModal = document.getElementById('palette-modal');
+    const openPaletteBtn = document.getElementById('open-palette-btn');
+    const closePaletteBtn = document.getElementById('close-palette-btn');
+    const paletteGrid = document.getElementById('palette-grid');
+
+    const summaryModal = document.getElementById('summary-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+
+    // Option Keys
+    const optLabels = ['(A)', '(B)', '(C)', '(D)', '(E)'];
+
+    // Calculation Engine
+    function calculateScore() {
+      let correct = 0;
+      let incorrect = 0;
+      let skipped = 0;
+
+      userState.forEach(st => {
+        if (st.status === 'correct') correct++;
+        else if (st.status === 'incorrect') incorrect++;
+        else if (st.status === 'skipped' || st.status === 'unanswered' || st.status === 'not-visited' || st.status === 'review') {
+          skipped++;
+        }
+      });
+
+      const net = (correct * 1.0) - (incorrect * 0.25);
+      return {
+        correct,
+        incorrect,
+        skipped,
+        netScore: net.toFixed(2),
+        accuracy: (correct + incorrect > 0) ? ((correct / (correct + incorrect)) * 100).toFixed(1) : 0
+      };
+    }
+
+    function updateScoreboard() {
+      const stats = calculateScore();
+      topScore.textContent = stats.netScore;
+      topCounter.textContent = `${currentIndex + 1}/100`;
+    }
+
+    // Palette Renderer
+    function initPalette() {
+      paletteGrid.innerHTML = '';
+      for (let i = 0; i < 100; i++) {
+        const pill = document.createElement('button');
+        pill.className = `q-pill ${userState[i].status}`;
+        pill.textContent = i + 1;
+        pill.addEventListener('click', () => {
+          jumpToQuestion(i);
+          closePalette();
+        });
+        paletteGrid.appendChild(pill);
+      }
+    }
+
+    function updatePalettePill(idx) {
+      const pills = paletteGrid.querySelectorAll('.q-pill');
+      if (pills[idx]) {
+        pills[idx].className = `q-pill ${userState[idx].status} ${idx === currentIndex ? 'active' : ''}`;
+      }
+    }
+
+    function refreshPaletteHighlight() {
+      const pills = paletteGrid.querySelectorAll('.q-pill');
+      pills.forEach((p, idx) => {
+        p.classList.toggle('active', idx === currentIndex);
+      });
+    }
+
+    // Question Rendering
+    function renderQuestion(idx) {
+      const q = questionBank[idx];
+      const st = userState[idx];
+
+      // Mark as visited/unanswered if not yet answered
+      if (st.status === 'not-visited') {
+        st.status = 'unanswered';
+      }
+
+      qLabel.textContent = `Question ${q.qNum} of 100`;
+      qStemEn.textContent = q.stemEn;
+      qStemHi.textContent = q.stemHi;
+
+      // Render Options
+      optionsContainer.innerHTML = '';
+      q.options.forEach((optText, oIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+
+        const keySpan = document.createElement('span');
+        keySpan.className = 'opt-key';
+        keySpan.textContent = optLabels[oIdx];
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = optText;
+
+        btn.appendChild(keySpan);
+        btn.appendChild(textSpan);
+
+        if (st.locked) {
+          btn.disabled = true;
+          if (oIdx === q.correct) {
+            btn.classList.add('correct');
+          } else if (oIdx === st.selectedOpt) {
+            btn.classList.add('incorrect');
+          }
+        } else {
+          btn.addEventListener('click', () => handleOptionClick(idx, oIdx));
+        }
+
+        optionsContainer.appendChild(btn);
+      });
+
+      // Explanation Drawer
+      if (st.locked) {
+        expEn.innerHTML = `<strong>English:</strong> ${q.expEn}`;
+        expHi.innerHTML = `<strong>व्याख्या:</strong> ${q.expHi}`;
+        expFact.innerHTML = `<strong>Key Exam Fact:</strong> ${q.examFact}`;
+        expDrawer.classList.add('active');
+      } else {
+        expDrawer.classList.remove('active');
+      }
+
+      // Prev/Next Buttons
+      btnPrev.disabled = (idx === 0);
+      if (idx === 99) {
+        btnNext.style.display = 'none';
+        btnFinish.style.display = 'inline-flex';
+      } else {
+        btnNext.style.display = 'inline-flex';
+        btnFinish.style.display = 'none';
+      }
+
+      updatePalettePill(idx);
+      refreshPaletteHighlight();
+      updateScoreboard();
+    }
+
+    function handleOptionClick(qIdx, selectedOpt) {
+      const q = questionBank[qIdx];
+      const st = userState[qIdx];
+
+      st.locked = true;
+      st.selectedOpt = selectedOpt;
+
+      if (selectedOpt === q.correct) {
+        st.status = 'correct';
+      } else {
+        st.status = 'incorrect';
+      }
+
+      renderQuestion(qIdx);
+    }
+
+    function jumpToQuestion(idx) {
+      if (idx < 0 || idx >= 100) return;
+      currentIndex = idx;
+      renderQuestion(currentIndex);
+    }
+
+    // Handlers
+    btnNext.addEventListener('click', () => {
+      if (currentIndex < 99) jumpToQuestion(currentIndex + 1);
+    });
+
+    btnPrev.addEventListener('click', () => {
+      if (currentIndex > 0) jumpToQuestion(currentIndex - 1);
+    });
+
+    btnSkip.addEventListener('click', () => {
+      const st = userState[currentIndex];
+      if (!st.locked) {
+        st.status = 'skipped';
+        updatePalettePill(currentIndex);
+      }
+      if (currentIndex < 99) jumpToQuestion(currentIndex + 1);
+    });
+
+    btnReview.addEventListener('click', () => {
+      const st = userState[currentIndex];
+      if (!st.locked) {
+        st.status = 'review';
+        updatePalettePill(currentIndex);
+      }
+      if (currentIndex < 99) jumpToQuestion(currentIndex + 1);
+    });
+
+    btnFinish.addEventListener('click', () => {
+      showSummaryReport();
+    });
+
+    // Palette Modals
+    function openPalette() {
+      paletteModal.classList.add('open');
+    }
+
+    function closePalette() {
+      paletteModal.classList.remove('open');
+    }
+
+    openPaletteBtn.addEventListener('click', openPalette);
+    closePaletteBtn.addEventListener('click', closePalette);
+
+    paletteModal.addEventListener('click', (e) => {
+      if (e.target === paletteModal) closePalette();
+    });
+
+    // Summary Report Modal
+    function showSummaryReport() {
+      const stats = calculateScore();
+      document.getElementById('modal-net-score').textContent = stats.netScore;
+      document.getElementById('modal-correct').textContent = stats.correct;
+      document.getElementById('modal-incorrect').textContent = stats.incorrect;
+      document.getElementById('modal-skipped').textContent = stats.skipped;
+      document.getElementById('modal-accuracy').textContent = `${stats.accuracy}%`;
+
+      summaryModal.classList.add('open');
+    }
+
+    modalCloseBtn.addEventListener('click', () => {
+      summaryModal.classList.remove('open');
+      openPalette();
+    });
+
+    // Initialize Simulator
+    initPalette();
+    renderQuestion(0);
+  </script>
+</body>
+</html>

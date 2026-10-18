@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPSSSC PET / DSSSB - Indian Economy CBT Simulator (175 Questions)</title>
+  <style>
+    :root {
+      --bg-primary: #121316;
+      --bg-card: #1e2024;
+      --bg-elevated: #272a30;
+      --text-primary: #f1f3f5;
+      --text-secondary: #adb5bd;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.16);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.16);
+      --orange: #f97316;
+      --slate: #64748b;
+      --purple: #a855f7;
+      --dark-gray: #333740;
+      --border: #343842;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.55;
+    }
+
+    /* Header Bar */
+    .cbt-header {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-title span {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .progress-pill {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .score-badge {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid var(--accent);
+      color: #60a5fa;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-primary);
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border);
+    }
+
+    .btn:hover {
+      background-color: #32363e;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-danger {
+      background-color: #dc2626;
+      border-color: #dc2626;
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background-color: #b91c1c;
+    }
+
+    .btn-purple.active {
+      background-color: var(--purple);
+      border-color: var(--purple);
+      color: #fff;
+    }
+
+    /* Main Container */
+    .main-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 16px 60px;
+      flex: 1;
+    }
+
+    .question-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .q-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .q-number-tag {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+
+    .q-marking-info {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      background: var(--bg-elevated);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .q-stem-en {
+      font-size: 1.12rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .q-stem-hi {
+      font-size: 1.06rem;
+      font-weight: 500;
+      color: #d1d5db;
+      margin-bottom: 22px;
+    }
+
+    /* Options List */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-card {
+      background-color: var(--bg-elevated);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.15s ease;
+      text-align: left;
+      width: 100%;
+      color: var(--text-primary);
+      font-size: 0.98rem;
+    }
+
+    .option-card:hover:not(.locked) {
+      border-color: var(--accent);
+      background-color: #2c3038;
+    }
+
+    .option-card.locked {
+      cursor: default;
+    }
+
+    .opt-letter {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 50%;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .option-card.correct-selected,
+    .option-card.correct-outline {
+      border-color: var(--green) !important;
+      background-color: var(--green-bg) !important;
+    }
+
+    .option-card.correct-selected .opt-letter,
+    .option-card.correct-outline .opt-letter {
+      background-color: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .option-card.wrong-selected {
+      border-color: var(--red) !important;
+      background-color: var(--red-bg) !important;
+    }
+
+    .option-card.wrong-selected .opt-letter {
+      background-color: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+
+    /* Action Bar */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Explanation Box */
+    .explanation-card {
+      margin-top: 22px;
+      background-color: #17191d;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: none;
+    }
+
+    .explanation-card.visible {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .exp-header {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #60a5fa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .exp-block {
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      color: #e2e8f0;
+    }
+
+    .exp-block strong {
+      color: #fff;
+    }
+
+    .key-fact-box {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 8px;
+      color: #a7f3d0;
+      font-size: 0.92rem;
+    }
+
+    /* Slide-over Palette Drawer */
+    .palette-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      z-index: 999;
+      display: none;
+      justify-content: flex-end;
+    }
+
+    .palette-backdrop.open {
+      display: flex;
+    }
+
+    .palette-drawer {
+      width: 100%;
+      max-width: 460px;
+      background-color: var(--bg-card);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+      box-shadow: -8px 0 28px rgba(0, 0, 0, 0.5);
+    }
+
+    .palette-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .palette-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .palette-legend {
+      padding: 14px 20px;
+      background-color: #17191c;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px 12px;
+      font-size: 0.8rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .dot.green { background-color: var(--green); }
+    .dot.red { background-color: var(--red); }
+    .dot.orange { background-color: var(--orange); }
+    .dot.slate { background-color: var(--slate); }
+    .dot.purple { background-color: var(--purple); }
+    .dot.dark-gray { background-color: var(--dark-gray); }
+
+    .palette-grid {
+      padding: 18px 20px;
+      overflow-y: auto;
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+      gap: 10px;
+      align-content: start;
+    }
+
+    .p-node {
+      height: 42px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.12s ease;
+    }
+
+    .p-node:hover {
+      transform: scale(1.06);
+    }
+
+    .p-node.current {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .p-node.status-not-visited { background-color: var(--dark-gray); color: #9ca3af; }
+    .p-node.status-correct { background-color: var(--green); }
+    .p-node.status-incorrect { background-color: var(--red); }
+    .p-node.status-unanswered { background-color: var(--orange); }
+    .p-node.status-skipped { background-color: var(--slate); }
+    .p-node.status-review { background-color: var(--purple); }
+
+    /* Final Report Dashboard */
+    #report-view {
+      display: none;
+    }
+
+    .dashboard-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+
+    .stat-box {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-box .val {
+      font-size: 1.65rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .stat-box .lbl {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .review-item {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .review-status-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .cbt-header { padding: 10px 14px; }
+      .question-card { padding: 16px; }
+      .q-stem-en { font-size: 1.02rem; }
+      .q-stem-hi { font-size: 0.98rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="cbt-header">
+    <div class="brand-title">
+      <h1>UPSSSC PET / DSSSB — Indian Economy CBT</h1>
+      <span>175 Standardized Questions • Bilingual • 5 Options (+1.00 / -0.25)</span>
+    </div>
+    <div class="header-controls">
+      <div class="progress-pill" id="header-progress">Question 1 of 175</div>
+      <div class="score-badge" id="header-score">Net Score: 0.00</div>
+      <button class="btn btn-primary" onclick="togglePalette(true)">📋 Open Palette</button>
+      <button class="btn btn-danger" onclick="showFinalReport()">Submit Test</button>
+    </div>
+  </header>
+
+  <!-- Main Exam Area -->
+  <main class="main-container">
+    <div id="exam-view">
+      <div class="question-card">
+        <div class="q-meta">
+          <span class="q-number-tag" id="q-num-label">Question 1</span>
+          <span class="q-marking-info">Correct: +1.00 | Incorrect: -0.25 | Skip: 0.00</span>
+        </div>
+
+        <div class="q-stem-en" id="q-en"></div>
+        <div class="q-stem-hi" id="q-hi"></div>
+
+        <div class="options-list" id="options-container"></div>
+
+        <!-- Bilingual Explanation Card -->
+        <div class="explanation-card" id="exp-card">
+          <div class="exp-header" id="exp-verdict"></div>
+          <div class="exp-block"><strong>English Explanation:</strong> <span id="exp-en"></span></div>
+          <div class="exp-block"><strong>हिंदी व्याख्या:</strong> <span id="exp-hi"></span></div>
+          <div class="key-fact-box"><strong>💡 Key Exam Fact:</strong> <span id="exp-fact"></span></div>
+        </div>
+
+        <!-- Bottom Action Controls -->
+        <div class="action-bar">
+          <div class="action-group">
+            <button class="btn" id="btn-prev" onclick="prevQuestion()">⬅ Previous</button>
+            <button class="btn" id="btn-skip" onclick="skipQuestion()">⏭ Skip Question</button>
+            <button class="btn btn-purple" id="btn-review" onclick="toggleReview()">🟣 Mark for Review</button>
+            <button class="btn" onclick="togglePalette(true)">📋 Open Palette</button>
+          </div>
+          <div class="action-group">
+            <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Next Question ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Report View -->
+    <div id="report-view">
+      <div class="dashboard-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h2 style="font-size:1.5rem; color:#fff;">📊 Final Exam Performance Report</h2>
+            <p style="color:var(--text-secondary); font-size:0.92rem;">Complete Analysis & Bilingual Answer Key Matrix (All 175 Questions)</p>
+          </div>
+          <button class="btn btn-primary" onclick="retakeExam()">🔄 Retake Exam</button>
+        </div>
+
+        <div class="stats-grid" id="report-stats"></div>
+      </div>
+
+      <h3 style="margin-bottom:14px; font-size:1.2rem;">📋 Complete Question-Wise Review Matrix</h3>
+      <div id="review-matrix"></div>
+    </div>
+  </main>
+
+  <!-- Hidden On-Demand Slide-Over Palette Drawer -->
+  <div class="palette-backdrop" id="palette-modal" onclick="handleBackdropClick(event)">
+    <div class="palette-drawer">
+      <div class="palette-header">
+        <h2>📋 Question Palette (1–175)</h2>
+        <button class="btn" onclick="togglePalette(false)">✕ Close Palette</button>
+      </div>
+      <div class="palette-legend">
+        <div class="legend-item"><span class="dot green"></span> Answered & Correct (<span id="leg-correct">0</span>)</div>
+        <div class="legend-item"><span class="dot red"></span> Answered & Incorrect (<span id="leg-wrong">0</span>)</div>
+        <div class="legend-item"><span class="dot orange"></span> Unanswered (<span id="leg-unanswered">0</span>)</div>
+        <div class="legend-item"><span class="dot slate"></span> Skipped (<span id="leg-skipped">0</span>)</div>
+        <div class="legend-item"><span class="dot purple"></span> Marked for Review (<span id="leg-review">0</span>)</div>
+        <div class="legend-item"><span class="dot dark-gray"></span> Not Visited (<span id="leg-notvisited">175</span>)</div>
+      </div>
+      <div class="palette-grid" id="palette-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    const NONE_OPTION = "None of these / इनमें से कोई नहीं";
+
+    // Compact verified dataset of all 175 solved questions from Phase 1
+    // Format: [id, enStem, hiStem, [optA, optB, optC, optD], correctIdx (0=A,1=B,2=C,3=D,4=E), expEn, expHi, keyFact]
+    const rawData = [
+      [1, "The word Economics is derived from the Greek word 'Oikonomia', in which what does 'Nomos' mean?", "अर्थशास्त्र शब्द की उत्पत्ति ग्रीक शब्द 'Oikonomia' से हुई है, जिसमें 'Nomos' का क्या अर्थ है?", ["Society / समाज", "Management / प्रबंधन", "Household / घरेलू", "Wealth / धन"], 1, "The Greek word 'Oikonomia' is formed from 'Oikos' (Household) and 'Nomos' (Management/Law). Thus, 'Nomos' means Management.", "ग्रीक शब्द 'Oikonomia' दो शब्दों से बना है: 'Oikos' (घरेलू) और 'Nomos' (प्रबंधन)। अतः 'Nomos' का अर्थ प्रबंधन है।", "Oikonomia literally translates to 'Household Management'."],
+      [2, "Who is considered the father of Economics, who wrote the book 'The Wealth of Nations' (1776)?", "अर्थशास्त्र का जनक किसे माना जाता है, जिन्होंने 'द वेल्थ ऑफ नेशंस' (1776) पुस्तक लिखी थी?", ["Karl Marx / कार्ल मार्क्स", "John Maynard Keynes / जॉन मेनार्ड कीन्स", "Amartya Sen / अमर्त्य सेन", "Adam Smith / एडम स्मिथ"], 3, "Scottish economist Adam Smith is recognized as the Father of Modern Economics. His 1776 book 'The Wealth of Nations' laid the foundation of classical economics.", "स्कॉटिश अर्थशास्त्री एडम स्मिथ को अर्थशास्त्र का जनक माना जाता है। उन्होंने 1776 में 'द वेल्थ ऑफ नेशंस' पुस्तक लिखी थी।", "Adam Smith also gave the concept of the 'Invisible Hand' in free markets."],
+      [3, "When the principles of economics are applied practically in a specific geographical area, what is it called?", "अर्थशास्त्र के सिद्धांतों को जब किसी विशेष भौगोलिक क्षेत्र में व्यावहारिक रूप से लागू किया जाता है, तो उसे क्या कहते हैं?", ["Economy / अर्थव्यवस्था", "Capitalism / पूंजीवाद", "Microeconomics / सूक्ष्म अर्थशास्त्र", "Socialism / समाजवाद"], 0, "Economics is the theoretical study, whereas an 'Economy' is the practical execution of those principles within a specific geographical region (e.g., Indian Economy).", "अर्थशास्त्र एक सैद्धांतिक विषय है, जबकि किसी निश्चित भौगोलिक क्षेत्र में इसके व्यावहारिक रूप को 'अर्थव्यवस्था' (Economy) कहते हैं।", "Economics = Theory; Economy = Practical real-world structure in a region."],
+      [4, "The policy of 'Laissez-Faire' is mainly related to which type of economy?", "'अहस्तक्षेप की नीति' (Laissez-Faire) का संबंध मुख्य रूप से किस प्रकार की अर्थव्यवस्था से है?", ["Mixed Economy / मिश्रित अर्थव्यवस्था", "Socialist Economy / समाजवादी अर्थव्यवस्था", "Capitalist Economy / पूंजीवादी अर्थव्यवस्था", "Closed Economy / बंद अर्थव्यवस्था"], 2, "'Laissez-Faire' (leave alone / non-intervention by government) is the fundamental principle of a Capitalist (Market) Economy driven by supply and demand.", "'अहस्तक्षेप की नीति' (Laissez-Faire) का अर्थ आर्थिक गतिविधियों में सरकारी हस्तक्षेप न होना है, जो पूंजीवादी अर्थव्यवस्था की मुख्य विशेषता है।", "Capitalist Economy is driven by the motive of Profit Maximization."],
+      [5, "Who is considered the father of the Socialist Economy?", "समाजवादी अर्थव्यवस्था (Socialist Economy) का जनक किसे माना जाता है?", ["Adam Smith / एडम स्मिथ", "P. C. Mahalanobis / पी. सी. महालनोबिस", "John Maynard Keynes / जॉन मेनार्ड कीन्स", "Karl Marx / कार्ल मार्क्स"], 3, "German philosopher and economist Karl Marx (author of 'Das Kapital') is regarded as the Father of the Socialist Economy, where means of production are owned by the state.", "जर्मन दार्शनिक कार्ल मार्क्स ('दास कैपिटल' के लेखक) को समाजवादी अर्थव्यवस्था का जनक माना जाता है।", "The former USSR was the first country to adopt a Socialist/Command Economy after 1917."],
+      [6, "After the Great Depression of 1929, the 'Mixed Economy' system became popular due to the ideas of which economist?", "1929 की वैश्विक महामंदी के बाद किस अर्थशास्त्री के विचारों से 'मिश्रित अर्थव्यवस्था' (Mixed Economy) प्रणाली लोकप्रिय हुई?", ["Adam Smith / एडम स्मिथ", "John Maynard Keynes / जॉन मेनार्ड कीन्स", "Karl Marx / कार्ल मार्क्स", "Dr. Syama Prasad Mookerjee / डॉ. श्यामा प्रसाद मुखर्जी"], 1, "After the 1929 Great Depression, British economist John Maynard Keynes advocated government intervention alongside private enterprise, popularizing the Mixed Economy system.", "1929 की महामंदी के बाद ब्रिटिश अर्थशास्त्री जॉन मेनार्ड कीन्स के विचारों से 'मिश्रित अर्थव्यवस्था' लोकप्रिय हुई।", "J.M. Keynes wrote 'The General Theory of Employment, Interest and Money' (1936)."],
+      [7, "What is an economy called in which both imports and exports are zero (0)?", "उस अर्थव्यवस्था को क्या कहते हैं जिसमें आयात (Import) और निर्यात (Export) दोनों शून्य (0) होते हैं?", ["Open Economy / खुली अर्थव्यवस्था", "Socialist Economy / समाजवादी अर्थव्यवस्था", "Closed Economy / बंद अर्थव्यवस्था", "Mixed Economy / मिश्रित अर्थव्यवस्था"], 2, "A Closed Economy has no foreign trade (Zero Imports and Zero Exports) with the rest of the world.", "जिस अर्थव्यवस्था में विदेशी व्यापार (आयात और निर्यात दोनों) शून्य होता है, उसे 'बंद अर्थव्यवस्था' (Closed Economy) कहते हैं।", "In a Closed Economy, Gross Domestic Product (GDP) equals Gross National Product (GNP)."],
+      [8, "Which sector contributes the most to the GDP of developed countries?", "विकसित देशों (Developed Countries) की GDP में सबसे बड़ा योगदान किस क्षेत्र का होता है?", ["Tertiary Sector / सेवा क्षेत्र", "Primary Sector / प्राथमिक क्षेत्र", "Agricultural Sector / कृषि क्षेत्र", "Secondary Sector / द्वितीयक क्षेत्र"], 0, "In developed nations (like the USA, UK, Japan), the Tertiary (Service) Sector contributes the largest share (often >70%) to GDP.", "विकसित देशों की जीडीपी में सबसे बड़ा योगदान तृतीयक क्षेत्र यानी सेवा क्षेत्र (Tertiary Sector) का होता है।", "Economic development shifts GDP share from Primary -> Secondary -> Tertiary sector."],
+      [9, "When was the first Industrial Policy of independent India presented in the Parliament?", "स्वतंत्र भारत की पहली औद्योगिक नीति (First Industrial Policy) संसद में कब पेश की गई थी?", ["30 April 1956 / 30 अप्रैल 1956", "15 August 1947 / 15 अगस्त 1947", "1 January 1950 / 1 जनवरी 1950", "24 July 1991 / 24 जुलाई 1991"], 4, "Independent India's First Industrial Policy was presented on 6 April 1948 by Dr. Syama Prasad Mookerjee. Since 6 April 1948 is not in options A-D, Option (E) is correct.", "स्वतंत्र भारत की पहली औद्योगिक नीति 6 अप्रैल 1948 को डॉ. श्यामा प्रसाद मुखर्जी द्वारा पेश की गई थी। अतः विकल्प (E) सही है।", "The 1st Industrial Policy (6 April 1948) established India as a Mixed Economy."],
+      [10, "Which Industrial Policy is called the 'Economic Constitution' of India?", "किस औद्योगिक नीति को भारत का 'आर्थिक संविधान' (Economic Constitution) कहा जाता है?", ["Industrial Policy 1948 / औद्योगिक नीति 1948", "Industrial Policy 1956 / औद्योगिक नीति 1956", "Industrial Policy 1991 / औद्योगिक नीति 1991", "Industrial Policy 1977 / औद्योगिक नीति 1977"], 1, "The Industrial Policy Resolution of 1956 (30 April 1956) is known as the 'Economic Constitution of India' as it laid the blueprint for state-led industrialization.", "30 अप्रैल 1956 को घोषित 'औद्योगिक नीति 1956' को भारत का 'आर्थिक संविधान' (Economic Constitution) कहा जाता है।", "The 1956 policy divided industries into Schedule A (17), Schedule B (12), and Schedule C."],
+      [11, "How many industries were kept in 'Schedule A' of the Industrial Policy 1956, which had a complete government monopoly?", "1956 की औद्योगिक नीति की 'अनुसूची A' (Schedule A) में कितने उद्योगों को रखा गया था, जिन पर सरकार का पूर्ण एकाधिकार था?", ["12", "18", "17", "24"], 2, "Schedule A of the Industrial Policy 1956 contained 17 key industries reserved exclusively as a Central Government monopoly.", "1956 की औद्योगिक नीति की 'अनुसूची A' में 17 उद्योग रखे गए थे जिन पर सरकार का पूर्ण एकाधिकार था।", "Schedule A = 17 industries (State monopoly); Schedule B = 12 industries (Mixed/State-led)."],
+      [12, "Under which act did the 'License-Quota Raj' get a legal basis in India?", "भारत में 'लाइसेंस-कोटा राज' (License-Quota Raj) को कानूनी आधार किस अधिनियम के तहत मिला था?", ["MRTP Act 1969", "FERA 1973", "FEMA 1999", "IDRA 1951"], 3, "The Industries (Development and Regulation) Act, 1951 (IDRA 1951) gave the legal basis to the License-Quota-Permit Raj in India.", "उद्योग (विकास और विनियमन) अधिनियम, 1951 (IDRA 1951) ने भारत में 'लाइसेंस-कोटा राज' को कानूनी आधार प्रदान किया।", "C. Rajagopalachari coined the phrase 'License-Permit-Quota Raj'."],
+      [13, "Which act was introduced in 1969 to prevent the concentration of the country's wealth in the hands of a few rich people?", "देश की संपत्ति को चंद अमीर लोगों के हाथों में इकट्ठा होने से रोकने के लिए 1969 में कौन सा अधिनियम लाया गया था?", ["MRTP Act 1969", "FERA Act", "IDRA Act", "FEMA Act"], 0, "The Monopolies and Restrictive Trade Practices Act (MRTP Act, 1969) was enacted to prevent the concentration of economic wealth in a few hands.", "आर्थिक शक्ति और संपत्ति के केंद्रीकरण को रोकने के लिए 1969 में 'MRTP Act 1969' लाया गया था।", "MRTP Act 1969 was later replaced by the Competition Act, 2002 (Raghavan Committee)."],
+      [14, "Which economist coined the term 'Hindu Rate of Growth' for India's slow economic growth rate (approx 3.5%) between 1950 and 1980?", "1950 से 1980 के बीच भारत की धीमी आर्थिक विकास दर (लगभग 3.5%) को 'हिंदू विकास दर' (Hindu Rate of Growth) का नाम किस अर्थशास्त्री ने दिया था?", ["Amartya Sen / अमर्त्य सेन", "Prof. Raj Krishna / प्रो. राजकृष्णा", "Manmohan Singh / मनमोहन सिंह", "John Maynard Keynes / जॉन मेनार्ड कीन्स"], 1, "Indian economist Prof. Raj Krishna coined the term 'Hindu Rate of Growth' in 1978 for India's sluggish ~3.5% GDP growth rate between 1950 and 1980.", "प्रसिद्ध भारतीय अर्थशास्त्री प्रो. राजकृष्णा ने 1950-80 की ~3.5% की धीमी आर्थिक वृद्धि दर को 'हिंदू विकास दर' नाम दिया था।", "Hindu Rate of Growth directly relates to National Income / GDP growth rate (~3.5%)."],
+      [15, "Mining & Quarrying come under which sector of the economy?", "खनन और उत्खनन (Mining & Quarrying) अर्थव्यवस्था के किस क्षेत्र के अंतर्गत आते हैं?", ["Primary Sector / प्राथमिक क्षेत्र", "Secondary Sector / द्वितीयक क्षेत्र", "Tertiary Sector / तृतीयक क्षेत्र", "Quaternary Sector / चतुर्थक क्षेत्र"], 0, "Mining and Quarrying involve direct extraction of natural resources from the Earth and therefore fall under the Primary Sector.", "खनन और उत्खनन (Mining & Quarrying) प्रकृति से सीधे संसाधनों के दोहन से जुड़े हैं, अतः ये प्राथमिक क्षेत्र के अंतर्गत आते हैं।", "Primary Sector includes Agriculture, Forestry, Fishing, and Mining & Quarrying."],
+      [16, "Gas, Water, and Electricity supply are included in which sector of the economy?", "गैस, जल और बिजली आपूर्ति (Electricity & Water Supply) को अर्थव्यवस्था के किस क्षेत्र में शामिल किया जाता है?", ["Primary Sector / प्राथमिक क्षेत्र", "Tertiary Sector / तृतीयक क्षेत्र", "Quinary Sector / पंचम क्षेत्र", "Secondary Sector / द्वितीयक क्षेत्र"], 3, "Electricity, Gas, and Water Supply (utilities), along with Manufacturing and Construction, are classified under the Secondary (Industrial) Sector.", "गैस, जल और बिजली आपूर्ति को विनिर्माण और निर्माण के साथ अर्थव्यवस्था के द्वितीयक (औद्योगिक) क्षेत्र में शामिल किया जाता है।", "Secondary Sector = Manufacturing + Construction + Electricity, Gas & Water Supply."],
+      [17, "Which sector currently contributes the most to the Gross Domestic Product (GDP) of the Indian economy?", "भारतीय अर्थव्यवस्था के सकल घरेलू उत्पाद (GDP) में वर्तमान में सबसे अधिक योगदान किस क्षेत्र का है?", ["Primary Sector / प्राथमिक क्षेत्र", "Secondary Sector / द्वितीयक क्षेत्र", "Tertiary Sector / तृतीयक क्षेत्र", "Quaternary Sector / चतुर्थक क्षेत्र"], 2, "The Tertiary (Service) Sector contributes the most (around 53-55%+) to India's GDP.", "भारतीय अर्थव्यवस्था की जीडीपी (GDP) में वर्तमान में सर्वाधिक योगदान तृतीयक (सेवा) क्षेत्र का है।", "In India: Highest in GDP = Tertiary Sector; Highest in Employment = Primary Sector."],
+      [18, "Most people work in the agricultural sector in India, but their contribution to GDP is low. Due to this situation, which unemployment is found in agriculture?", "भारत में कृषि क्षेत्र में सबसे ज्यादा लोग काम करते हैं लेकिन GDP में उनका योगदान कम है। इस स्थिति के कारण कृषि में कौन सी बेरोजगारी पाई जाती है?", ["Cyclical Unemployment / चक्रीय बेरोजगारी", "Disguised Unemployment / प्रच्छन्न या छुपी हुई बेरोजगारी", "Frictional Unemployment / घर्षणात्मक बेरोजगारी", "Structural Unemployment / संरचनात्मक बेरोजगारी"], 1, "When more workers are engaged in farming than needed and their marginal productivity is zero (MPP = 0), it is called Disguised (Hidden) Unemployment.", "जब कृषि में आवश्यकता से अधिक लोग लगे हों और उनकी सीमांत उत्पादकता शून्य हो, तो उसे 'प्रच्छन्न या छुपी हुई बेरोजगारी' कहते हैं।", "In Disguised Unemployment, Marginal Productivity of Labour is Zero (MPL = 0)."],
+      [19, "Research and Development (R&D) and Information Technology (IT) are considered part of which sector in modern economics?", "अनुसंधान और विकास (R&D) तथा सूचना प्रौद्योगिकी (IT) को आधुनिक अर्थशास्त्र में किस क्षेत्र का हिस्सा माना जाता है?", ["Secondary Sector / द्वितीयक क्षेत्र", "Quinary Sector / पंचम क्षेत्र", "Quaternary Sector / चतुर्थक क्षेत्र", "Primary Sector / प्राथमिक क्षेत्र"], 2, "Knowledge-based intellectual activities like R&D and Information Technology (IT) belong to the Quaternary Sector.", "अनुसंधान एवं विकास (R&D) तथा सूचना प्रौद्योगिकी (IT) जैसी ज्ञान-आधारित गतिविधियों को चतुर्थक क्षेत्र (Quaternary Sector) में रखा जाता है।", "Quaternary Sector is known as the 'Knowledge Sector' of the economy."],
+      [20, "Workers doing manual labour in factories are categorized under which 'collar job'?", "कारखानों (Factories) में शारीरिक श्रम (Manual Labour) करने वाले मजदूरों को किस 'कॉलर जॉब' की श्रेणी में रखा जाता है?", ["Blue-Collar / ब्लू-कॉलर", "White-Collar / व्हाइट कॉलर", "Pink-Collar / पिंक कॉलर", "Grey-Collar / ग्रे-कॉलर"], 0, "Industrial and factory workers performing physical/manual labour are termed Blue-Collar workers.", "कारखानों में शारीरिक श्रम करने वाले औद्योगिक मजदूरों को 'ब्लू-कॉलर' (Blue-Collar) जॉब की श्रेणी में रखा जाता है।", "Blue-Collar = Factory manual workers; White-Collar = Salaried office professionals."],
+      [21, "CEOs of companies and top policy makers of the government come under which collar job?", "कंपनियों के CEO और सरकार के शीर्ष नीति निर्माता (Top Policy Makers) किस कॉलर जॉब के अंतर्गत आते हैं?", ["Pink-Collar / पिंक-कॉलर", "Red-Collar / रेड-कॉलर", "Green-Collar / ग्रीन-कॉलर", "Gold-Collar / गोल्ड-कॉलर"], 3, "Top-level Quinary sector decision-makers such as CEOs and senior government policy makers are classified as Gold-Collar workers.", "कंपनियों के CEO और सरकार के शीर्ष नीति निर्माताओं (पंचम क्षेत्र) को 'गोल्ड-कॉलर' (Gold-Collar) जॉब के अंतर्गत रखा जाता है।", "Quinary Sector high-level decision makers = Gold-Collar professionals."],
+      [22, "Historically female-dominated service and care jobs (like Nurses, Air Hostesses) are related to which collar job?", "ऐतिहासिक रूप से महिला प्रधान सेवा और देखभाल वाले काम (जैसे नर्स, एयर होस्टेस) किस कॉलर जॉब से संबंधित हैं?", ["Grey-Collar / ग्रे-कॉलर", "Pink-Collar / पिंक कॉलर", "White-Collar / व्हाइट-कॉलर", "Red-Collar / रेड-कॉलर"], 1, "Care-oriented and hospitality jobs historically dominated by women (nurses, air hostesses, receptionists) are called Pink-Collar jobs.", "ऐतिहासिक रूप से महिला प्रधान सेवा और देखभाल वाले कार्यों (नर्स, एयर होस्टेस आदि) को 'पिंक-कॉलर' जॉब कहा जाता है।", "Green-Collar = Environmental & renewable energy sector workers."],
+      [23, "What is the full form of the act 'FERA' introduced in 1973 to control foreign exchange transactions?", "1973 में विदेशी मुद्रा के लेन-देन पर सख्त नियंत्रण के लिए लाए गए अधिनियम 'FERA' का पूर्ण रूप क्या है?", ["Foreign Exchange Regulation Act", "Foreign Export Regulation Act", "Foreign Exchange Reserve Act", "Foreign Economy Regulation Act"], 0, "FERA stands for Foreign Exchange Regulation Act, enacted in 1973 to strictly regulate foreign exchange in India.", "1973 में लाए गए FERA का पूर्ण रूप 'Foreign Exchange Regulation Act' (विदेशी मुद्रा विनियमन अधिनियम) है।", "FERA (1973) was replaced by FEMA (Foreign Exchange Management Act) in 1999."],
+      [24, "All types of Government Employees are categorized under which collar job?", "सभी प्रकार के सरकारी कर्मचारियों (Government Employees) को किस कॉलर जॉब की श्रेणी में रखा जाता है?", ["Black-Collar / ब्लैक कॉलर", "White-Collar / व्हाइट-कॉलर", "Red-Collar / रेड-कॉलर", "Grey-Collar / ग्रे-कॉलर"], 2, "Government employees of all types (as well as primary agricultural workers) are categorized under Red-Collar jobs.", "सभी प्रकार के सरकारी कर्मचारियों को 'रेड-कॉलर' (Red-Collar) जॉब की श्रेणी में रखा जाता है।", "Black-Collar = Coal miners and oil-rig workers."],
+      [25, "Which committee was formed in 1955 for the protection and development of Small Scale Industries?", "1955 में लघु उद्योगों (Small Scale Industries) के संरक्षण और विकास के लिए किस समिति का गठन किया गया था?", ["Ferwani Committee / फेरवानी समिति", "Mahalanobis Committee / महालनोबिस समिति", "Narasimham Committee / नरसिम्हन समिति", "Karve Committee / कर्वे समिति"], 3, "The Village and Small-Scale Industries Committee, known as the Karve Committee (headed by D.G. Karve), was formed in 1955.", "1955 में लघु एवं कुटीर उद्योगों के संरक्षण और विकास के लिए 'कर्वे समिति' (Karve Committee) का गठन किया गया था।", "Karve Committee (1955) recommended reservation of items for Small-Scale Industries."],
+      [26, "What was the nature of the Planning Commission?", "योजना आयोग (Planning Commission) की प्रकृति (Nature) कैसी थी?", ["Constitutional body / संवैधानिक निकाय", "Statutory body / वैधानिक निकाय", "Non-Constitutional / गैर-संवैधानिक", "Autonomous body / स्वायत्त निकाय"], 2, "Established on 15 March 1950 by a Cabinet resolution, the Planning Commission was a Non-Constitutional (Extra-Constitutional) and Non-Statutory advisory body.", "15 मार्च 1950 को गठित योजना आयोग एक 'गैर-संवैधानिक' (संविधानेतर) और गैर-वैधानिक सलाहकार निकाय था।", "Both Planning Commission (1950) and NITI Aayog (2015) are Non-Constitutional bodies."],
+      [27, "Who was the architect of the 'Bombay Plan' presented in 1944?", "1944 में प्रस्तुत 'बॉम्बे प्लान' के सूत्रधार (Architect) कौन थे?", ["M.N. Roy / एम. एन. रॉय", "Ardeshir Dalal / अर्देशिर दलाल", "Jayaprakash Narayan / जयप्रकाश नारायण", "Shriman Narayan Agarwal / श्रीमन नारायण अग्रवाल"], 1, "Sir Ardeshir Dalal was the chief architect of the 1944 'Bombay Plan' prepared by 8 leading Indian industrialists.", "1944 में 8 प्रमुख उद्योगपतियों द्वारा प्रस्तुत 'बॉम्बे प्लान' के मुख्य सूत्रधार सर अर्देशिर दलाल थे।", "Gandhian Plan (1944) = S.N. Agarwal; People's Plan (1945) = M.N. Roy."],
+      [28, "The First Five Year Plan of India (1951-56) was based on which model?", "भारत की प्रथम पंचवर्षीय योजना (1951-56) किस मॉडल पर आधारित थी?", ["Harrod-Domar Model / हेरोड-डोमर मॉडल", "P.C. Mahalanobis Model / पी. सी. महालनोबिस मॉडल", "D.R. Gadgil Model / डी. आर. गाडगिल मॉडल", "John W. Miller Model / जॉन डब्ल्यू मिलर मॉडल"], 0, "India's First Five-Year Plan (1951-56) was based on the Harrod-Domar Model and focused primarily on agriculture and irrigation.", "भारत की प्रथम पंचवर्षीय योजना (1951-56) 'हेरोड-डोमर मॉडल' पर आधारित थी और इसका मुख्य फोकस कृषि पर था।", "Second Five-Year Plan (1956-61) was based on the P.C. Mahalanobis Model."],
+      [29, "Where was 'Panchayati Raj' started on October 2, 1959, during the Second Five Year Plan?", "द्वितीय पंचवर्षीय योजना के दौरान 2 अक्टूबर 1959 को 'पंचायती राज' की शुरुआत कहाँ से हुई थी?", ["Ballia, Uttar Pradesh / बलिया, उत्तर प्रदेश", "Champaran, Bihar / चंपारण, बिहार", "Sabarmati, Gujarat / साबरमती, गुजरात", "Nagaur, Rajasthan / नागौर, राजस्थान"], 3, "Prime Minister Jawaharlal Nehru inaugurated the three-tier Panchayati Raj system on 2 October 1959 at Bagdari village in Nagaur district, Rajasthan.", "2 अक्टूबर 1959 को प्रधानमंत्री जवाहरलाल नेहरू ने राजस्थान के नागौर जिले से त्रिस्तरीय पंचायती राज का शुभारंभ किया था।", "Balwant Rai Mehta Committee (1957) recommended the 3-tier Panchayati Raj system."],
+      [30, "What was the period of the first 'Plan Holiday' in India's economic history?", "भारत के आर्थिक इतिहास में प्रथम 'योजना अवकाश' (Plan Holiday) की अवधि क्या थी?", ["1965-1968", "1966-1969", "1969-1972", "1990-1992"], 1, "Following the Indo-China war (1962), Indo-Pak war (1965), and severe drought, the first 'Plan Holiday' lasted for three years from 1966 to 1969.", "तीसरी योजना की विफलता के बाद भारत में प्रथम 'योजना अवकाश' (Plan Holiday) की अवधि 1966 से 1969 तक रही।", "During 1966-1969, three Annual Plans were executed and the Green Revolution began."],
+      [31, "During which Five Year Plan were 14 major commercial banks nationalized?", "14 बड़े वाणिज्यिक बैंकों का राष्ट्रीयकरण (Nationalization) किस पंचवर्षीय योजना के दौरान किया गया था?", ["Second Five Year Plan / दूसरी पंचवर्षीय योजना", "Third Five Year Plan / तीसरी पंचवर्षीय योजना", "Fourth Five Year Plan / चौथी पंचवर्षीय योजना", "Fifth Five Year Plan / पांचवीं पंचवर्षीय योजना"], 2, "14 major commercial banks (with deposits >= ₹50 Cr) were nationalized on 19 July 1969 during the Fourth Five-Year Plan (1969-74).", "19 जुलाई 1969 को चौथी पंचवर्षीय योजना (1969-74) के दौरान 14 बड़े वाणिज्यिक बैंकों का राष्ट्रीयकरण किया गया था।", "6 more banks were nationalized on 15 April 1980 during the Sixth Five-Year Plan."],
+      [32, "Which was the only Five Year Plan that was terminated one year ahead of its schedule (in just 4 years)?", "कौन सी एकमात्र पंचवर्षीय योजना अपने निर्धारित समय से एक वर्ष पहले (केवल 4 वर्ष में) समाप्त कर दी गई थी?", ["Fifth Five Year Plan / पांचवीं पंचवर्षीय योजना", "Sixth Five Year Plan / छठीं पंचवर्षीय योजना", "Fourth Five Year Plan / चौथी पंचवर्षीय योजना", "Seventh Five Year Plan / सातवीं पंचवर्षीय योजना"], 0, "The Fifth Five-Year Plan (scheduled for 1974-79) was terminated one year early in 1978 (running only 4 years, 1974-78) by the Janata Party government.", "पांचवीं पंचवर्षीय योजना (1974-79) एकमात्र ऐसी योजना थी जिसे जनता पार्टी सरकार ने एक वर्ष पूर्व 1978 में ही समाप्त कर दिया था।", "The slogan 'Garibi Hatao' was given during the Fifth Five-Year Plan."],
+      [33, "Which government implemented the 'Rolling Plan' on Gunnar Myrdal's model between 1978 and 1980?", "1978 से 1980 के बीच गुन्नार मिर्डल के मॉडल पर 'अनवरत योजना' (Rolling Plan) किस सरकार द्वारा लागू की गई थी?", ["UPA Government / यूपीए सरकार", "Indira Gandhi Government / इंदिरा गांधी सरकार", "NDA Government / एनडीए सरकार", "Janata Party Government / जनता पार्टी सरकार"], 3, "The Morarji Desai-led Janata Party Government implemented the Rolling Plan between 1978 and 1980 based on Gunnar Myrdal's model.", "मोरारजी देसाई के नेतृत्व वाली जनता पार्टी सरकार ने 1978 से 1980 के बीच गुन्नार मिर्डल के मॉडल पर 'अनवरत योजना' (Rolling Plan) लागू की थी।", "Prof. D.T. Lakdawala is credited with implementing the Rolling Plan in India."],
+      [34, "The Seventh Five Year Plan (1985-1990) was based on which model?", "सातवीं पंचवर्षीय योजना (1985-1990) किस मॉडल पर आधारित थी?", ["Wage-Goods Model / मजदूरी वस्तु मॉडल", "Harrod-Domar Model / हेरोड-डोमर मॉडल", "Mahalanobis Model / महालनोबिस मॉडल", "Input-Output Model / आगत-निर्गत मॉडल"], 0, "The Seventh Five-Year Plan (1985-90) was based on the 'Wage-Goods Model' formulated by C.N. Vakil and P.R. Brahmananda.", "सातवीं पंचवर्षीय योजना (1985-90) सी.एन. वकील और पी.आर. ब्रह्मानंद के 'मजदूरी वस्तु मॉडल' (Wage-Goods Model) पर आधारित थी।", "The 7th Plan focused on 'Food, Work, and Productivity' (भोजन, काम और उत्पादकता)."],
+      [35, "Which Five Year Plan is also known as the 'Rao-Manmohan Model' due to the implementation of the LPG reforms of 1991?", "1991 के आर्थिक सुधारों (LPG) के लागू होने के कारण किस पंचवर्षीय योजना को 'राव-मनमोहन मॉडल' भी कहा जाता है?", ["Sixth Five Year Plan / छठीं पंचवर्षीय योजना", "Seventh Five Year Plan / सातवीं पंचवर्षीय योजना", "Eighth Five Year Plan / आठवीं पंचवर्षीय योजना", "Ninth Five Year Plan / नौवीं पंचवर्षीय योजना"], 2, "The Eighth Five-Year Plan (1992-97) operationalized the 1991 LPG reforms and is known as the 'Rao-Manmohan Model' (and John W. Miller Model).", "1991 के LPG सुधारों को लागू करने वाली आठवीं पंचवर्षीय योजना (1992-97) को 'राव-मनमोहन मॉडल' भी कहा जाता है।", "The core theme of the 8th Plan was 'Development of Human Resources'."],
+      [36, "During the tenure of which Five Year Plan was the 'Right to Education' (RTE Act - 2009) passed?", "'शिक्षा का अधिकार' (RTE Act - 2009) किस पंचवर्षीय योजना के कार्यकाल के दौरान पारित हुआ था?", ["Tenth Five Year Plan / दसवीं पंचवर्षीय योजना", "Eleventh Five Year Plan / ग्यारहवीं पंचवर्षीय योजना", "Twelfth Five Year Plan / बारहवीं पंचवर्षीय योजना", "Ninth Five Year Plan / नौवीं पंचवर्षीय योजना"], 1, "The Right to Education (RTE) Act was passed in 2009 (and enforced on 1 April 2010) during the Eleventh Five-Year Plan (2007-2012).", "'शिक्षा का अधिकार अधिनियम' (RTE Act - 2009) ग्यारहवीं पंचवर्षीय योजना (2007-2012) के कार्यकाल में पारित हुआ था।", "The 11th Plan (2007-12) had the theme 'Towards Faster and More Inclusive Growth'."],
+      [37, "Which approach does NITI Aayog follow for making plans?", "नीति आयोग (NITI Aayog) योजना बनाने के लिए किस दृष्टिकोण (Approach) का पालन करता है?", ["Top-down approach / टॉप-डाउन अप्रोच", "Centralized Planning / केंद्रीकृत नियोजन", "License Raj / लाइसेंस राज", "Bottom-up approach / बॉटम-अप अप्रोच"], 3, "NITI Aayog (formed 1 Jan 2015) follows a decentralized 'Bottom-Up approach' (village/state to centre) promoting Cooperative Federalism.", "नीति आयोग योजना निर्माण के लिए 'बॉटम-अप अप्रोच' (नीचे से ऊपर की ओर दृष्टिकोण) का पालन करता है, जबकि योजना आयोग 'टॉप-डाउन अप्रोच' पर काम करता था।", "Prime Minister of India is the Ex-Officio Chairperson of NITI Aayog."],
+      [38, "What was the main objective of the 'Karve Committee' formed in 1955?", "1955 में गठित 'कर्वे समिति' (Karve Committee) का मुख्य उद्देश्य क्या था?", ["Agricultural Reforms / कृषि सुधार", "Banking Reforms / बैंकिंग सुधार", "Protection and development of SSI / लघु और कुटीर उद्योगों का विकास", "Promoting Foreign Investment / विदेशी निवेश को बढ़ावा देना"], 2, "The Karve Committee (1955) was formed specifically for the protection and development of Small-Scale and Cottage Industries (SSI).", "1955 में गठित डी.जी. कर्वे समिति का मुख्य उद्देश्य लघु और कुटीर उद्योगों (SSI) का संरक्षण और विकास करना था।", "Small Scale Industries promote rural employment with low capital investment."],
+      [39, "Currently, among the 8 core industries of India, which has the highest weightage in the Index of Industrial Production (IIP)?", "वर्तमान में भारत के 8 कोर उद्योगों (Core Industries) में औद्योगिक उत्पादन सूचकांक (IIP) में सर्वाधिक भारांश (Highest Weightage) किसका है?", ["Refinery Products / रिफाइनरी उत्पाद", "Electricity / बिजली", "Steel / स्टील", "Coal / कोयला"], 0, "Among the 8 Core Industries (which carry 40.27% weight in IIP), Refinery Products has the highest weightage (28.04%), while Fertilizers has the lowest (2.63%).", "भारत के 8 कोर उद्योगों में सर्वाधिक भारांश 'रिफाइनरी उत्पाद' (28.04%) का है और सबसे कम भारांश 'उर्वरक' (Fertilizers) का है।", "Top 3 Core Industries by weight: 1. Refinery Products > 2. Electricity > 3. Steel."],
+      [40, "By which department is the 'Index of Eight Core Industries' released every month?", "'कोर उद्योगों का सूचकांक' (Index of Eight Core Industries) हर महीने किस विभाग द्वारा जारी किया जाता है?", ["NITI Aayog / नीति आयोग", "Office of the Economic Adviser (DPIIT) / आर्थिक सलाहकार कार्यालय (DPIIT)", "National Statistical Office (NSO) / राष्ट्रीय सांख्यिकी कार्यालय (NSO)", "Reserve Bank of India (RBI) / भारतीय रिजर्व बैंक (RBI)"], 1, "The Index of Eight Core Industries (ICI) is compiled and released monthly by the Office of the Economic Adviser (OEA), DPIIT (Ministry of Commerce & Industry).", "'आठ कोर उद्योगों का सूचकांक' हर महीने वाणिज्य एवं उद्योग मंत्रालय के आर्थिक सलाहकार कार्यालय (DPIIT) द्वारा जारी किया जाता है।", "Overall IIP is released monthly by NSO (MoSPI) with Base Year 2011-12."],
+      [41, "Who termed India's slow economic growth rate between 1950 and 1980 due to red-tapism as the 'Hindu Rate of Growth'?", "1950 से 1980 के बीच लालफीताशाही के कारण भारत की धीमी आर्थिक विकास दर को 'हिंदू विकास दर' (Hindu Rate of Growth) किसने कहा था?", ["Amartya Sen / अमर्त्य सेन", "Dr. Manmohan Singh / डॉ. मनमोहन सिंह", "John Maynard Keynes / जॉन मेनार्ड कीन्स", "Prof. Raj Krishna / प्रो. राजकृष्णा"], 3, "Prof. Raj Krishna coined the phrase 'Hindu Rate of Growth' in 1978 to describe India's slow ~3.5% annual growth between 1950 and 1980.", "1950 से 1980 के बीच लालफीताशाही के कारण भारत की ~3.5% की धीमी विकास दर को प्रो. राजकृष्णा ने 'हिंदू विकास दर' कहा था।", "India broke out of the Hindu Rate of Growth during the 1980s (6th & 7th Plans)."],
+      [42, "Who presented the 'Sarvodaya Plan' in 1950, which was mainly inspired by the ideas of Acharya Vinoba Bhave?", "1950 में 'सर्वोदय योजना' (Sarvodaya Plan) किसने पेश की थी, जो मुख्य रूप से आचार्य विनोबा भावे के विचारों से प्रेरित थी?", ["M.N. Roy / एम. एन. रॉय", "Shriman Narayan Agarwal / श्रीमन नारायण अग्रवाल", "Jayaprakash Narayan / जयप्रकाश नारायण", "Ardeshir Dalal / अर्देशिर दलाल"], 2, "Loknayak Jayaprakash Narayan presented the 'Sarvodaya Plan' in January 1950, inspired by Gandhian ideals and Acharya Vinoba Bhave.", "जनवरी 1950 में लोकनायक जयप्रकाश नारायण ने 'सर्वोदय योजना' पेश की थी, जो महात्मा गांधी और आचार्य विनोबा भावे के विचारों से प्रेरित थी।", "M. Visvesvaraya wrote 'Planned Economy for India' (1934), the first blueprint of Indian planning."],
+      [43, "Which act primarily gave the government the legal right to establish the 'License-Quota Raj' and fix production capacity in India?", "भारत में 'लाइसेंस-कोटा राज' स्थापित करने और सरकार को उत्पादन क्षमता तय करने का कानूनी अधिकार मुख्य रूप से किस अधिनियम से मिला?", ["IDRA, 1951", "MRTP Act, 1969", "FERA, 1973", "FEMA, 1999"], 0, "The Industries (Development and Regulation) Act, 1951 (IDRA, 1951) empowered the government to mandate industrial licenses and fix production capacities.", "'उद्योग (विकास और विनियमन) अधिनियम, 1951' (IDRA, 1951) से सरकार को लाइसेंस-कोटा राज स्थापित करने और उत्पादन क्षमता तय करने का अधिकार मिला।", "The New Industrial Policy of 24 July 1991 dismantled the License-Quota Raj."],
+      [44, "How many industries were defined as 'Core Industries' for the first time in the Industrial Policy of 1973?", "1973 की औद्योगिक नीति में पहली बार कितने उद्योगों को 'कोर उद्योग' (Core Industries) के रूप में परिभाषित किया गया था?", ["5", "6", "8", "10"], 1, "In the Industrial Policy of 1973, 6 basic and strategic industries were defined as 'Core Industries' for the first time (later expanded to 8).", "1973 की औद्योगिक नीति में पहली बार 6 बुनियादी उद्योगों को 'कोर उद्योग' के रूप में परिभाषित किया गया था (वर्तमान में इनकी संख्या 8 है)।", "The 8 Core Industries today are Refinery, Electricity, Steel, Coal, Crude Oil, Natural Gas, Cement, and Fertilizers."],
+      [45, "Which was the last Five Year Plan of India?", "भारत की अंतिम पंचवर्षीय योजना (Last Five Year Plan) कौन सी थी?", ["Ninth Five Year Plan / नौवीं पंचवर्षीय योजना", "Tenth Five Year Plan / दसवीं पंचवर्षीय योजना", "Eleventh Five Year Plan / ग्यारहवीं पंचवर्षीय योजना", "Twelfth Five Year Plan / बारहवीं पंचवर्षीय योजना"], 3, "The Twelfth Five-Year Plan (2012-2017) was the last Five-Year Plan of India, after which NITI Aayog replaced the five-year planning system.", "भारत की अंतिम पंचवर्षीय योजना 'बारहवीं पंचवर्षीय योजना' (2012-2017) थी।", "Theme of the 12th Five-Year Plan: 'Faster, Sustainable, and More Inclusive Growth'."],
+      [46, "Who was the first to use the term 'Green Revolution'?", "'हरित क्रांति' (Green Revolution) शब्द का सबसे पहली बार प्रयोग किसने किया था?", ["Norman Borlaug / नॉर्मन बोरलॉग", "Dr. M.S. Swaminathan / डॉ. एम. एस. स्वामीनाथन", "William S. Gaud / विलियम एस. गॉड", "C. Subramaniam / सी. सुब्रमण्यम"], 2, "Dr. William S. Gaud (Administrator of USAID) was the first to coin the term 'Green Revolution' in March 1968.", "'हरित क्रांति' शब्द का सर्वप्रथम प्रयोग 1968 में अमेरिकी वैज्ञानिक डॉ. विलियम एस. गॉड ने किया था।", "World Father of Green Revolution = Norman Borlaug; Indian Father = Dr. M.S. Swaminathan."],
+      [47, "During the Green Revolution, High Yielding Varieties (HYV) of dwarf 'wheat' seeds were brought to India from the institute of which country?", "हरित क्रांति के दौरान बौनेपन (Dwarf) वाले 'गेहूं' के उच्च उपज वाले बीज किस देश के संस्थान से भारत लाए गए थे?", ["Mexico / मेक्सिको", "Philippines / फिलीपींस", "USA / अमेरिका", "UK / ब्रिटेन"], 0, "High Yielding Varieties of dwarf wheat (like Sonora-64 and Lerma Rojo-64A) were imported from CIMMYT in Mexico.", "हरित क्रांति के दौरान बौने गेहूं के उच्च उपज वाले बीज (सोनोरा-64, लर्मा रोजो) मेक्सिको (CIMMYT संस्थान) से भारत लाए गए थे।", "International Rice Research Institute (IRRI) is located in Manila, Philippines."],
+      [48, "From where was the funding for the 'First Phase' (1970-1981) of the White Revolution mainly arranged?", "श्वेत क्रांति के 'प्रथम चरण' (1970-1981) के लिए धन (Funding) की व्यवस्था मुख्य रूप से कहाँ से की गई थी?", ["World Bank loan / विश्व बैंक का ऋण", "Reserve Bank of India / भारतीय रिजर्व बैंक", "Asian Development Bank / एशियाई विकास बैंक", "By selling milk powder gifted by EEC and WFP / EEC और WFP द्वारा उपहार में मिले दूध पाउडर को बेचकर"], 3, "Phase I of Operation Flood (1970-81) was funded by selling skimmed milk powder and butter oil gifted by the European Economic Community (EEC) via the World Food Programme (WFP).", "श्वेत क्रांति के प्रथम चरण (1970-81) के लिए धन की व्यवस्था EEC और WFP द्वारा उपहार में मिले स्किम्ड मिल्क पाउडर और बटर ऑयल को बेचकर की गई थी।", "Operation Flood was launched on 13 January 1970 by NDDB."],
+      [49, "Who is considered the father/mother of the 'Silver Revolution' related to egg and poultry production?", "अंडा और पोल्ट्री (मुर्गी) उत्पादन से संबंधित 'रजत/चांदी क्रांति' (Silver Revolution) का जनक किसे माना जाता है?", ["Sam Pitroda / सैम पित्रोदा", "Indira Gandhi / इंदिरा गांधी", "Dr. Verghese Kurien / डॉ. वर्गीज़ कुरियन", "Vishal Tiwari / विशाल तिवारी"], 1, "Former Prime Minister Indira Gandhi is regarded as the pioneer/mother of the Silver Revolution (Egg and Poultry production) in India.", "भारत में अंडा और मुर्गी (पोल्ट्री) उत्पादन से संबंधित 'रजत क्रांति' (Silver Revolution) का जनक श्रीमती इंदिरा गांधी को माना जाता है।", "Silver Revolution = Eggs/Poultry; Silver Fiber Revolution = Cotton."],
+      [50, "The 'Golden Fiber Revolution' is related to the production of which of the following crops?", "'स्वर्ण रेशा क्रांति' (Golden Fiber Revolution) का संबंध निम्नलिखित में से किस फसल के उत्पादन से है?", ["Cotton / कपास", "Jute / जूट", "Silk / रेशम", "Tea / चाय"], 1, "Jute is known as the 'Golden Fiber', and the Golden Fiber Revolution is associated with increasing Jute production.", "'स्वर्ण रेशा क्रांति' (Golden Fiber Revolution) का संबंध जूट (पटसन) के उत्पादन से है।", "West Bengal is the largest producer of Jute in India."],
+      [51, "During which plan period did the Green Revolution start in India?", "भारत में हरित क्रांति की शुरुआत किस योजना काल के दौरान हुई थी?", ["Third Five Year Plan / तीसरी पंचवर्षीय योजना", "Plan Holiday (1966-1969) / योजना अवकाश (1966-1969)", "Fourth Five Year Plan / चौथी पंचवर्षीय योजना", "Fifth Five Year Plan / पांचवीं पंचवर्षीय योजना"], 1, "The Green Revolution started in India in 1966-67 during the First Plan Holiday (1966-1969).", "भारत में हरित क्रांति की शुरुआत प्रथम 'योजना अवकाश' (1966-1969) के दौरान वर्ष 1966-67 में हुई थी।", "Wheat crop benefited the most from the Green Revolution."],
+      [52, "The National Dairy Development Board (NDDB) was established in 1965 during the tenure of which contemporary Prime Minister?", "राष्ट्रीय डेयरी विकास बोर्ड (NDDB) की स्थापना 1965 में किस तत्कालीन प्रधानमंत्री के कार्यकाल में हुई थी?", ["Jawaharlal Nehru / जवाहरलाल नेहरू", "Indira Gandhi / इंदिरा गांधी", "Lal Bahadur Shastri / लाल बहादुर शास्त्री", "Morarji Desai / मोरारजी देसाई"], 2, "NDDB was founded on 16 July 1965 at Anand, Gujarat during the tenure of Prime Minister Lal Bahadur Shastri.", "राष्ट्रीय डेयरी विकास बोर्ड (NDDB) की स्थापना जुलाई 1965 में तत्कालीन प्रधानमंत्री लाल बहादुर शास्त्री के कार्यकाल में आनंद (गुजरात) में हुई थी।", "Dr. Verghese Kurien was appointed the first Chairman of NDDB."],
+      [53, "Who is the father of the 'Pink Revolution' related to Prawn, Onion, and Pharmaceuticals production?", "झींगा मछली (Prawn), प्याज और औषधि उत्पादन से संबंधित 'गुलाबी क्रांति' (Pink Revolution) के जनक कौन हैं?", ["Arun Krishnan / अरुण कृष्णन", "Nirpakh Tutej / निरपख तुतेज", "Hiralal Chaudhuri / हीरालाल चौधरी", "Durgesh Patel / दुर्गेश पटेल"], 3, "Durgesh Patel is the Father of the Pink Revolution (Prawn, Onion, and Pharmaceuticals).", "झींगा मछली, प्याज और औषधि उत्पादन से संबंधित 'गुलाबी क्रांति' के जनक दुर्गेश पटेल हैं।", "Golden Revolution (Fruits/Honey) Father = Nirpakh Tutej."],
+      [54, "The country's first agricultural university played a major role in making the Green Revolution a success in India. Where was this university established?", "भारत में हरित क्रांति को सफल बनाने में देश के पहले कृषि विश्वविद्यालय की प्रमुख भूमिका थी। यह विश्वविद्यालय कहाँ स्थापित किया गया था?", ["Pantnagar, Uttarakhand / पंतनगर, उत्तराखंड", "Anand, Gujarat / आनंद, गुजरात", "Karnal, Haryana / करनाल, हरियाणा", "Pusa, New Delhi / पूसा, नई दिल्ली"], 0, "India's first agricultural university (G.B. Pant University of Agriculture and Technology) was established in 1960 at Pantnagar, Uttarakhand (then UP).", "भारत का पहला कृषि विश्वविद्यालय 17 नवंबर 1960 को पंतनगर, उत्तराखंड (तत्कालीन उत्तर प्रदेश) में स्थापित किया गया था।", "Norman Borlaug called Pantnagar University the 'Harbinger of Green Revolution in India'."],
+      [55, "Who is called the father of the 'Yellow Revolution', started to make India self-reliant in edible oil?", "भारत को खाद्य तेल में आत्मनिर्भर बनाने के लिए शुरू की गई 'पीली क्रांति' (Yellow Revolution) का जनक किसे कहा जाता है?", ["Vishal Tiwari / विशाल तिवारी", "Arun Krishnan / अरुण कृष्णन", "Sam Pitroda / सैम पित्रोदा", "Verghese Kurien / वर्गीज़ कुरियन"], 2, "Sam Pitroda is known as the Father of the Yellow Revolution (Oilseeds and Edible Oil production) in India.", "खाद्य तेल और तिलहन उत्पादन से संबंधित 'पीली क्रांति' (Yellow Revolution) का जनक सैम पित्रोदा को कहा जाता है।", "Technology Mission on Oilseeds (TMO) was launched in 1986."],
+      [56, "What is the name of the autobiography of India's 'Milkman' Dr. Verghese Kurien?", "भारत के 'मिल्कमैन' डॉ. वर्गीज़ कुरियन की आत्मकथा (Autobiography) का क्या नाम है?", ["The Dairy Story / द डेयरी स्टोरी", "I Too Had a Dream / मेरा भी एक सपना था", "Journey of White Revolution / श्वेत क्रांति का सफर", "Operation Flood / ऑपरेशन फ्लड"], 1, "Dr. Verghese Kurien's autobiography is titled 'I Too Had a Dream' (मेरा भी एक सपना था).", "डॉ. वर्गीज़ कुरियन की प्रसिद्ध आत्मकथा का नाम 'I Too Had a Dream' (मेरा भी एक सपना था) है।", "National Milk Day is celebrated on 26 November on Dr. Kurien's birthday."],
+      [57, "Which agricultural revolution is related to Petroleum (Crude oil), Coal, and Bio-diesel production?", "पेट्रोलियम (कच्चा तेल), कोयला और बायो-डीजल उत्पादन से कौन सी कृषि क्रांति संबंधित है?", ["Grey Revolution / धूसर क्रांति", "Brown Revolution / भूरी क्रांति", "Round Revolution / गोल क्रांति", "Black Revolution / काली या कृष्ण क्रांति"], 3, "The Black Revolution is associated with Petroleum (crude oil), Coal, and Bio-diesel/Ethanol production.", "पेट्रोलियम (कच्चा तेल), कोयला और बायो-डीजल उत्पादन से 'काली या कृष्ण क्रांति' (Black Revolution) संबंधित है।", "Grey Revolution = Fertilizers; Round Revolution = Potato."],
+      [58, "During the first phase of the Green Revolution, the production of which crop declined drastically (negative impact) due to lack of attention?", "हरित क्रांति के प्रथम चरण के दौरान किस फसल की खेती पर ध्यान न दिए जाने के कारण उसके उत्पादन में भारी गिरावट (नकारात्मक प्रभाव) आई थी?", ["Pulses and Oilseeds / दलहन और तिलहन", "Wheat / गेहूं", "Rice / चावल", "Sugarcane / गन्ना"], 0, "Due to intense focus on Wheat and Rice during the Green Revolution, land shifted away from Pulses and Oilseeds, causing a decline in their production.", "हरित क्रांति में गेहूं और चावल पर अत्यधिक ध्यान केंद्रित होने के कारण 'दलहन और तिलहन' के रकबे व उत्पादन में गिरावट आई थी।", "Green Revolution widened regional disparities and reduced pulse acreage."],
+      [59, "In the 3-tier 'Anand Model' of Operation Flood, which institution functions at 'Level-2' (District Level)?", "ऑपरेशन फ्लड के त्रि-स्तरीय 'आनंद मॉडल' (Anand Model) में 'स्तर-2' (जिला स्तर) पर कौन सी संस्था कार्य करती है?", ["Dairy Cooperative Society / डेयरी सहकारी समिति", "State Milk Federation / राज्य दुग्ध महासंघ", "District Milk Union / जिला दुग्ध संघ", "NDDB / राष्ट्रीय डेयरी विकास बोर्ड"], 2, "In the 3-tier Anand Model: Level-1 (Village) = Dairy Cooperative Society; Level-2 (District) = District Milk Union; Level-3 (State) = State Milk Federation.", "आनंद मॉडल के त्रि-स्तरीय ढांचे में स्तर-1 (ग्राम) पर सहकारी समिति, स्तर-2 (जिला स्तर) पर 'जिला दुग्ध संघ' और स्तर-3 (राज्य स्तर) पर राज्य दुग्ध महासंघ कार्य करता है।", "AMUL (Anand Milk Union Limited) was founded on 14 December 1946."],
+      [60, "The 'Badami Revolution' is related to the production of which of the following?", "'बादामी क्रांति' (Badami Revolution) का संबंध निम्नलिखित में से किसके उत्पादन से है?", ["Leather / चमड़ा", "Jute / जूट", "Coffee / कॉफी", "Spices / मसाला"], 3, "The Badami Revolution is related to the production and export of Spices.", "'बादामी क्रांति' (Badami Revolution) का संबंध मसाला उत्पादन से है।", "India is the world's largest producer, consumer, and exporter of spices."],
+      [61, "'IR-8', 'Jaya', and 'Padma' are High Yielding Varieties (HYV Seeds) of which crop developed during the Green Revolution?", "'IR-8', 'जया' और 'पद्मा' हरित क्रांति के दौरान विकसित की गई किस फसल की उन्नत किस्में (HYV Seeds) हैं?", ["Wheat / गेहूं", "Rice / चावल", "Maize / मक्का", "Cotton / कपास"], 1, "'IR-8' (Miracle Rice), 'Jaya', and 'Padma' are High Yielding Varieties (HYV) of Rice (Paddy).", "'IR-8' (मिरैकल राइस), 'जया' और 'पद्मा' चावल (धान) की उच्च उपज देने वाली (HYV) किस्में हैं।", "Kalyan Sona, Sonalika, Sonora-64, and Lerma Rojo are HYV seeds of Wheat."],
+      [62, "What was the time period of 'Phase III' of Operation Flood, which focused on strengthening infrastructure and heavy R&D on animal nutrition?", "ऑपरेशन फ्लड का 'तृतीय चरण' (Phase III), जो बुनियादी ढांचे को मजबूत करने और पशु पोषण पर भारी रिसर्च पर केंद्रित था, का समयकाल क्या था?", ["1985 to 1996 / 1985 से 1996 तक", "1970 to 1981 / 1970 से 1981 तक", "1981 to 1985 / 1981 से 1985 तक", "1996 to 2005 / 1996 से 2005 तक"], 0, "Operation Flood timelines: Phase I = 1970-1981; Phase II = 1981-1985; Phase III = 1985 to 1996.", "ऑपरेशन फ्लड के तीन चरण थे: प्रथम (1970-81), द्वितीय (1981-85), और तृतीय चरण 1985 से 1996 तक चला।", "In 1998, India surpassed the USA to become the world's largest milk producer."],
+      [63, "Which revolution was started under the New National Agriculture Policy of 2000 to monitor all agricultural revolutions simultaneously?", "वर्ष 2000 की नई राष्ट्रीय कृषि नीति के तहत सभी कृषि क्रांतियों पर एक साथ निगरानी रखने के लिए कौन सी क्रांति शुरू की गई थी?", ["Amrit Revolution / अमृत क्रांति", "Evergreen Revolution / सदाबहार क्रांति", "Rainbow Revolution / इंद्रधनुषी क्रांति", "Golden Revolution / स्वर्ण क्रांति"], 2, "The New National Agriculture Policy of July 2000 launched the 'Rainbow Revolution' to integrate all agricultural revolutions simultaneously.", "वर्ष 2000 की नई राष्ट्रीय कृषि नीति के तहत सभी कृषि क्रांतियों के समन्वित विकास के लिए 'इंद्रधनुषी क्रांति' (Rainbow Revolution) शुरू की गई थी।", "Amrit Revolution is related to River Linking Projects in India."],
+      [64, "Considering the environmental damage of the first Green Revolution, who gave the idea of an 'Evergreen Revolution' to increase production along with environmental protection and organic farming?", "प्रथम हरित क्रांति के पर्यावरणीय नुकसान को देखते हुए, पर्यावरण संरक्षण और जैविक खेती के साथ उत्पादन बढ़ाने के लिए 'सदाबहार क्रांति' (Evergreen Revolution) का विचार किसने दिया था?", ["Norman Borlaug / नॉर्मन बोरलॉग", "William S. Gaud / विलियम एस. गॉड", "Verghese Kurien / वर्गीज़ कुरियन", "Dr. M.S. Swaminathan / डॉ. एम. एस. स्वामीनाथन"], 3, "Dr. M.S. Swaminathan coined and championed the 'Evergreen Revolution' for sustainable productivity growth without ecological harm.", "पर्यावरण संरक्षण के साथ सतत कृषि उत्पादन बढ़ाने के लिए 'सदाबहार क्रांति' (Evergreen Revolution) का विचार डॉ. एम. एस. स्वामीनाथन ने दिया था।", "Dr. Swaminathan also chaired the National Commission on Farmers (2004)."],
+      [65, "Who is considered the father of the 'Red Revolution' related to Meat and Tomato production?", "मांस (Meat) और टमाटर उत्पादन से संबंधित 'लाल क्रांति' (Red Revolution) का जनक किसे माना जाता है?", ["Durgesh Patel / दुर्गेश पटेल", "Vishal Tiwari / विशाल तिवारी", "Nirpakh Tutej / निरपख तुतेज", "Arun Krishnan / अरुण कृष्णन"], 1, "Vishal Tiwari is recognized as the Father of the Red Revolution (Meat and Tomato production) in India.", "मांस और टमाटर उत्पादन से संबंधित 'लाल क्रांति' (Red Revolution) का जनक विशाल तिवारी को माना जाता है।", "Red Revolution = Meat & Tomato (Father: Vishal Tiwari)."],
+      [66, "In July 1991, by approximately what percentage was the value of the Rupee deliberately devalued against the US dollar to boost exports from India?", "जुलाई 1991 में भारत से निर्यात (Export) को बढ़ावा देने के लिए जानबूझकर रुपये की कीमत विदेशी डॉलर के मुकाबले लगभग कितने प्रतिशत तक गिरा दी गई (अवमूल्यन किया गया) थी?", ["10%", "15%", "25%", "20%"], 3, "In July 1991 (1 & 3 July), the RBI devalued the Indian Rupee by approximately 18-20% against major foreign currencies to boost exports.", "जुलाई 1991 में निर्यात को बढ़ावा देने के लिए भारतीय रुपये का दो चरणों में लगभग 18-20% (लगभग 20%) अवमूल्यन किया गया था।", "The 1991 two-step devaluation was codenamed 'Operation Hop, Skip and Jump'."],
+      [67, "Who was the then Prime Minister of India at the time of the announcement of the New Economic Policy (LPG model) in 1991?", "1991 में नई आर्थिक नीति (LPG मॉडल) की घोषणा के समय भारत के तत्कालीन प्रधानमंत्री कौन थे?", ["Dr. Manmohan Singh / डॉ. मनमोहन सिंह", "P. V. Narasimha Rao / पी. वी. नरसिम्हा राव", "Rajiv Gandhi / राजीव गांधी", "V. P. Singh / विश्वनाथ प्रताप सिंह"], 1, "P. V. Narasimha Rao was the Prime Minister of India (and Dr. Manmohan Singh was the Finance Minister) during the July 1991 LPG reforms.", "1991 में नई आर्थिक नीति (LPG) की घोषणा के समय भारत के प्रधानमंत्री पी. वी. नरसिम्हा राव थे (और वित्त मंत्री डॉ. मनमोहन सिंह थे)।", "P. V. Narasimha Rao also held the portfolio of Minister of Industry in July 1991."],
+      [68, "Which committee was formed in 1991 for Tax Reforms to simplify the direct and indirect tax system?", "1991 में प्रत्यक्ष और अप्रत्यक्ष कर प्रणाली को सरल बनाने के लिए (कर सुधारों हेतु) किस समिति का गठन किया गया था?", ["Vijay Kelkar Committee / विजय केलकर समिति", "Malhotra Committee / मल्होत्रा समिति", "Raja Chelliah Committee / राजा चेलैया समिति", "Abid Hussain Committee / आबिद हुसैन समिति"], 2, "The Raja J. Chelliah Committee (Tax Reforms Committee) was constituted in August 1991 to reform India's direct and indirect tax system.", "प्रत्यक्ष और अप्रत्यक्ष कर प्रणाली में सुधार के लिए 1991 में 'राजा चेलैया समिति' का गठन किया गया था।", "Service Tax was introduced in 1994 on the recommendation of the Raja Chelliah Committee."],
+      [69, "During the economic crisis of 1991, India's Forex Reserve had reduced to just how much?", "1991 के आर्थिक संकट के समय भारत का विदेशी मुद्रा भंडार (Forex Reserve) घटकर मात्र कितना रह गया था?", ["1.2 Billion Dollars / 1.2 बिलियन डॉलर", "5 Billion Dollars / 5 बिलियन डॉलर", "7 Billion Dollars / 7 बिलियन डॉलर", "10 Billion Dollars / 10 बिलियन डॉलर"], 0, "During the 1991 Balance of Payments crisis, India's Foreign Exchange Reserves fell to ~$1.2 Billion, barely enough for 2-3 weeks of imports.", "1991 के आर्थिक संकट के समय भारत का विदेशी मुद्रा भंडार घटकर मात्र 1.2 बिलियन डॉलर रह गया था (जो केवल 2 सप्ताह के आयात के लिए पर्याप्त था)।", "India pledged 67 tonnes of gold in 1991 to avoid sovereign default."],
+      [70, "Who was the President of India during the historic economic reforms of 1991?", "1991 के ऐतिहासिक आर्थिक सुधारों के समय भारत के राष्ट्रपति कौन थे?", ["Dr. Shankar Dayal Sharma / डॉ. शंकर दयाल शर्मा", "Neelam Sanjiva Reddy / नीलम संजीव रेड्डी", "Shri R. Venkataraman / श्री आर. वेंकटरमण", "K. R. Narayanan / के. आर. नारायणन"], 2, "Shri R. Venkataraman served as the 8th President of India from 1987 to 1992, including during the 1991 economic reforms.", "1991 के ऐतिहासिक आर्थिक सुधारों के समय भारत के राष्ट्रपति श्री आर. वेंकटरमण (कार्यकाल 1987-1992) थे।", "S. Venkitaramanan was the RBI Governor during the July 1991 crisis."],
+      [71, "Under the policy of globalization, which liberal law was introduced in 1999 to replace the strict foreign exchange law FERA (1973)?", "वैश्वीकरण की नीति के तहत, विदेशी मुद्रा के कड़े कानून FERA (1973) की जगह 1999 में कौन सा उदार कानून लाया गया?", ["MRTP", "IDRA", "WTO", "FEMA"], 3, "FEMA (Foreign Exchange Management Act, 1999, enforced in June 2000) replaced the strict FERA (1973) law.", "विदेशी मुद्रा के कड़े कानून FERA (1973) के स्थान पर 1999 में उदार कानून 'FEMA' (Foreign Exchange Management Act) लाया गया।", "FEMA turned foreign exchange violations from criminal offenses into civil offenses."],
+      [72, "Under liberalization, the MRTP Act of 1969 was abolished, and which new act was introduced in its place in 2002?", "उदारीकरण के तहत 1969 के MRTP एक्ट (एकाधिकार और प्रतिबंधात्मक व्यापार व्यवहार अधिनियम) को समाप्त कर, 2002 में इसकी जगह कौन सा नया अधिनियम लाया गया?", ["Competition Act / प्रतिस्पर्धा अधिनियम", "Companies Act / कंपनी अधिनियम", "Essential Commodities Act / आवश्यक वस्तु अधिनियम", "Consumer Protection Act / उपभोक्ता संरक्षण अधिनियम"], 0, "Based on the Raghavan Committee's recommendations, the MRTP Act (1969) was replaced by the Competition Act, 2002.", "राघवन समिति की सिफारिश पर 1969 के MRTP एक्ट को समाप्त कर 2002 में 'प्रतिस्पर्धा अधिनियम' (Competition Act, 2002) लाया गया।", "The Competition Commission of India (CCI) was established in 2003 under the Competition Act, 2002."],
+      [73, "Which committee was formed in 1991 and 1998 for reforms in the banking and financial sector (like reducing CRR/SLR and allowing private banks)?", "बैंकिंग और वित्तीय क्षेत्र में सुधारों (जैसे CRR/SLR कम करना और निजी बैंकों को अनुमति) के लिए 1991 और 1998 में किस समिति का गठन किया गया था?", ["Nachiket Mor Committee / नचिकेत मोर समिति", "Narasimham Committee / नरसिम्हन समिति", "Tarapore Committee / तारापोर समिति", "Urjit Patel Committee / उर्जित पटेल समिति"], 1, "The M. Narasimham Committee was constituted twice (1991 and 1998) for comprehensive banking and financial sector reforms.", "बैंकिंग और वित्तीय क्षेत्र में सुधारों (CRR/SLR घटाना, निजी बैंकों को लाइसेंस) के लिए 1991 और 1998 में 'नरसिम्हन समिति' का गठन किया गया था।", "M. Narasimham is known as the Father of Banking Reforms in India."],
+      [74, "To tackle the Balance of Payment crisis of 1991, what amount of loan was provided to India by the World Bank and IMF?", "1991 के भुगतान संतुलन संकट से निपटने के लिए विश्व बैंक और अंतर्राष्ट्रीय मुद्रा कोष (IMF) ने भारत को कितनी राशि का ऋण दिया था?", ["1.2 Billion Dollars / 1.2 बिलियन डॉलर", "7 Billion Dollars / 7 बिलियन डॉलर", "12 Billion Dollars / 12 बिलियन डॉलर", "20 Billion Dollars / 20 बिलियन डॉलर"], 1, "As per NCERT Economics, India received a $7 Billion bailout loan from the World Bank (IBRD) and IMF in 1991 to manage the BoP crisis.", "1991 के भुगतान संतुलन संकट से निपटने के लिए विश्व बैंक और IMF ने भारत को 7 बिलियन डॉलर का ऋण दिया था।", "The $7 Billion loan came with structural adjustment conditions leading to LPG reforms."],
+      [75, "Which committee was formed in 1993 for reforms and privatization in the Insurance Sector?", "1993 में बीमा क्षेत्र (Insurance Sector) में सुधार और निजीकरण के लिए किस समिति का गठन किया गया था?", ["G.V. Ramakrishna Committee / जी.वी. रामकृष्ण समिति", "Vijay Kelkar Committee / विजय केलकर समिति", "Malhotra Committee / मल्होत्रा समिति", "Raja Chelliah Committee / राजा चेलैया समिति"], 2, "The R.N. Malhotra Committee was formed in 1993 for reforms and opening up the Insurance Sector, leading to the creation of IRDA in 1999.", "बीमा क्षेत्र में सुधार और निजीकरण के लिए 1993 में पूर्व आरबीआई गवर्नर आर.एन. मल्होत्रा की अध्यक्षता में 'मल्होत्रा समिति' गठित की गई थी।", "IRDAI (Insurance Regulatory and Development Authority of India) is headquartered in Hyderabad."],
+      [76, "Even after liberalization and privatization, which sectors are currently fully reserved for the government?", "उदारीकरण और निजीकरण के बाद भी, वर्तमान में कौन से क्षेत्र पूरी तरह से सरकार के लिए आरक्षित (Reserved for Government) हैं?", ["Banking and Aviation / बैंकिंग और विमानन", "Telecom and Defence / टेलीकॉम और रक्षा", "Coal and Health / कोयला और स्वास्थ्य", "Atomic Energy and Railway Operations / परमाणु ऊर्जा और रेलवे परिचालन"], 3, "Currently, only 2 sectors remain exclusively reserved for the Government: Atomic Energy and core Railway Operations.", "वर्तमान में केवल 2 ही क्षेत्र पूरी तरह से सरकार के लिए आरक्षित हैं: परमाणु ऊर्जा और रेलवे परिचालन।", "In 1956, 17 industries were reserved for the government; today only 2 remain."],
+      [77, "Under the New Economic Policy (1991), the role of RBI in the financial sector was changed from 'Regulator' to what?", "नई आर्थिक नीति (1991) के तहत वित्तीय क्षेत्र में भारतीय रिज़र्व बैंक (RBI) की भूमिका को 'नियंत्रक' (Regulator) से बदलकर क्या कर दिया गया?", ["Facilitator / सुविधा प्रदाता", "Operator / संचालक", "Lender / ऋणदाता", "Owner / स्वामी"], 0, "Under the 1991 financial sector reforms (NCERT), RBI's role was shifted from a rigid 'Regulator' to a 'Facilitator' of the financial sector.", "नई आर्थिक नीति (1991) के तहत वित्तीय क्षेत्र में RBI की भूमिका को 'नियंत्रक' (Regulator) से बदलकर 'सुविधा प्रदाता' (Facilitator) कर दिया गया।", "This allowed commercial banks greater autonomy in branching and interest rate decisions."],
+      [78, "Under whose chairmanship was the 'Disinvestment Commission' formed in 1996 to outline the disinvestment of loss-making PSU?", "सार्वजनिक क्षेत्र की घाटे में चल रही कंपनियों के विनिवेश (Disinvestment) की रूपरेखा तय करने के लिए 1996 में किसकी अध्यक्षता में 'विनिवेश आयोग' का गठन किया गया था?", ["G.V. Ramakrishna / जी.वी. रामकृष्ण", "Abid Hussain / आबिद हुसैन", "Dr. Manmohan Singh / डॉ. मनमोहन सिंह", "Urjit Patel / उर्जित पटेल"], 0, "The first Disinvestment Commission was constituted in August 1996 under the chairmanship of G.V. Ramakrishna.", "सार्वजनिक उपक्रमों (PSUs) के विनिवेश की रूपरेखा तय करने के लिए 1996 में 'जी.वी. रामकृष्ण' की अध्यक्षता में विनिवेश आयोग का गठन किया गया था।", "Today, PSU disinvestment is handled by DIPAM under the Ministry of Finance."],
+      [79, "Which of the following has been a major 'Negative Impact' of the 1991 economic reforms?", "1991 के आर्थिक सुधारों का निम्नलिखित में से कौन सा एक प्रमुख 'नकारात्मक प्रभाव' (Negative Impact) रहा है?", ["Rapid growth of the service sector / सेवा क्षेत्र का तेजी से बढ़ना", "Record increase in Forex reserves / विदेशी मुद्रा भंडार में रिकॉर्ड वृद्धि", "Consumers getting better quality goods / ग्राहकों को बेहतर क्वालिटी की चीजें मिलना", "Jobless Growth / रोजगारविहीन संवृद्धि"], 3, "'Jobless Growth' (high GDP growth driven by services/capital without sufficient new employment generation) and neglect of agriculture have been major criticisms of the 1991 reforms.", "'रोजगारविहीन संवृद्धि' (Jobless Growth — जीडीपी बढ़ने के बावजूद पर्याप्त रोजगार न बढ़ना) 1991 के आर्थिक सुधारों का एक प्रमुख नकारात्मक प्रभाव रहा है।", "Options A, B, and C are positive achievements of the 1991 LPG reforms."],
+      [80, "On which date was the 'New Industrial Policy' (New Economic Policy - 1991) officially announced in India?", "भारत में 'नई औद्योगिक नीति' (New Economic Policy - 1991) की घोषणा आधिकारिक तौर पर किस तिथि को की गई थी?", ["1 July 1991 / 1 जुलाई 1991", "24 July 1991 / 24 जुलाई 1991", "15 August 1991 / 15 अगस्त 1991", "1 January 1992 / 1 जनवरी 1992"], 1, "The New Industrial Policy (LPG Policy) was officially announced in Parliament on 24 July 1991.", "भारत में 'नई औद्योगिक नीति' (New Economic Policy - 1991) की आधिकारिक घोषणा 24 जुलाई 1991 को की गई थी।", "Dr. Manmohan Singh also presented his historic Union Budget on 24 July 1991."],
+      [81, "Which committee was formed in 1997 and 2006 to chalk out the framework for Capital Account Convertibility of the Rupee?", "रुपये की पूर्ण परिवर्तनीयता (Capital Account Convertibility) की रूपरेखा तय करने के लिए 1997 और 2006 में किस समिति का गठन किया गया था?", ["Malhotra Committee / मल्होत्रा समिति", "Abid Hussain Committee / आबिद हुसैन समिति", "Tarapore Committee / तारापोर समिति", "Narasimham Committee / नरसिम्हन समिति"], 2, "The S.S. Tarapore Committee was appointed by RBI in 1997 and 2006 to lay out the roadmap for Capital Account Convertibility of the Rupee.", "रुपये की पूंजी खाते पर पूर्ण परिवर्तनीयता (Capital Account Convertibility) के लिए 1997 और 2006 में 'तारापोर समिति' का गठन किया गया था।", "The Indian Rupee is 100% convertible on the Current Account (since 1994) but only partially convertible on the Capital Account."],
+      [82, "Which committee was formed in 2013 for Financial Inclusion and the establishment of Small Finance/Payment Banks?", "वित्तीय समावेशन (Financial Inclusion) और स्मॉल फाइनेंस/पेमेंट बैंकों की स्थापना के लिए 2013 में किस समिति का गठन किया गया था?", ["Vijay Kelkar Committee / विजय केलकर समिति", "Raja Chelliah Committee / राजा चेलैया समिति", "Urjit Patel Committee / उर्जित पटेल समिति", "Nachiket Mor Committee / नचिकेत मोर समिति"], 3, "The Nachiket Mor Committee (Committee on Comprehensive Financial Services for Small Businesses and Low-Income Households) was formed in 2013.", "वित्तीय समावेशन और पेमेंट/स्मॉल फाइनेंस बैंकों की अवधारणा के लिए 2013 में 'नचिकेत मोर समिति' का गठन किया गया था।", "Airtel Payments Bank (2017) was India's first Payments Bank."],
+      [83, "Which committee was formed in 1995 for the development and reforms of Small Scale Industries (SSI)?", "1995 में लघु उद्योगों (Small Scale Industries - SSI) के विकास और सुधारों के लिए किस समिति का गठन किया गया था?", ["Abid Hussain Committee / आबिद हुसैन समिति", "G.V. Ramakrishna Committee / जी.वी. रामकृष्ण समिति", "Narasimham Committee / नरसिम्हन समिति", "Tarapore Committee / तारापोर समिति"], 0, "The Abid Hussain Committee was formed in December 1995 (report in 1997) for the modernization and de-reservation of Small Scale Industries (SSI).", "1995 में लघु उद्योगों (SSI) के विकास और सुधारों के लिए 'आबिद हुसैन समिति' का गठन किया गया था।", "Karve Committee (1955) & Abid Hussain Committee (1995) are both associated with Small Scale Industries."],
+      [84, "Under the policy of globalization, when did India become a founder member of the World Trade Organization (WTO)?", "वैश्वीकरण (Globalization) की नीति के तहत भारत विश्व व्यापार संगठन (WTO) का संस्थापक सदस्य कब बना था?", ["1 Jan 1991 / 1 जनवरी 1991", "1 Jan 1995 / 1 जनवरी 1995", "1 April 1999 / 1 अप्रैल 1999", "1 Jan 2001 / 1 जनवरी 2001"], 1, "WTO was established on 1 January 1995 (replacing GATT), and India became one of its founding members on 1 January 1995.", "विश्व व्यापार संगठन (WTO) की स्थापना 1 जनवरी 1995 को हुई और भारत इसी दिन से इसका संस्थापक सदस्य बना।", "WTO Headquarters is located in Geneva, Switzerland."],
+      [85, "To provide financial freedom and autonomy to Public Sector Undertakings (PSUs), from which year did the government start granting them 'Navratna' and 'Miniratna' status?", "सार्वजनिक क्षेत्र की कंपनियों (PSUs) को वित्तीय आज़ादी और स्वायत्तता देने के लिए सरकार ने किस वर्ष से उन्हें 'नवरत्न' (Navratna) और 'मिनीरत्न' का दर्जा देना शुरू किया था?", ["1991", "1995", "1997", "2001"], 2, "The Government of India introduced the 'Navratna' and 'Miniratna' status for profitable PSUs in 1997 (and 'Maharatna' status later in 2010).", "सार्वजनिक क्षेत्र की कंपनियों (PSUs) को वित्तीय स्वायत्तता देने के लिए सरकार ने वर्ष 1997 से 'नवरत्न' और 'मिनीरत्न' का दर्जा देना शुरू किया था।", "Maharatna status was introduced in 2010."],
+      [86, "What is the money issued by the order (law) of the government, which no one can refuse to accept, called?", "वह मुद्रा जो सरकार के आदेश (कानून) द्वारा जारी की जाती है और जिसे लेने से कोई मना नहीं कर सकता, क्या कहलाती है?", ["Hot Money / हॉट मनी", "Plastic Money / प्लास्टिक मनी", "Fiat Money / फिएट मनी (आदेश मुद्रा)", "Hard Currency / हार्ड करेंसी"], 2, "Fiat Money is currency issued by government order/law (Legal Tender) that cannot be legally refused for settling payments.", "सरकार के कानूनी आदेश द्वारा जारी मुद्रा जिसे स्वीकार करने से कोई मना नहीं कर सकता, 'फिएट मनी' (आदेश मुद्रा) कहलाती है।", "Currency notes and coins are Fiat Money and Legal Tender."],
+      [87, "Who designed the new symbol of the Indian Rupee (₹) in 2010?", "2010 में भारतीय रुपये का नया प्रतीक (₹) किसके द्वारा डिज़ाइन किया गया था?", ["D. Udaya Kumar / डी. उदय कुमार", "Raghuram Rajan / रघुराम राजन", "Urjit Patel / उर्जित पटेल", "M.S. Swaminathan / एम. एस. स्वामीनाथन"], 0, "Dr. D. Udaya Kumar designed the Indian Rupee symbol (₹), which was officially adopted on 15 July 2010.", "भारतीय रुपये का नया प्रतीक चिह्न (₹) डॉ. डी. उदय कुमार द्वारा डिज़ाइन किया गया था और इसे 15 जुलाई 2010 को अपनाया गया।", "The ₹ symbol combines Devanagari 'र' and Roman 'R'."],
+      [88, "Who was the Governor of the Reserve Bank of India (RBI) during the first demonetization in India in 1946?", "1946 में भारत में हुई पहली नोटबंदी के समय भारतीय रिज़र्व बैंक (RBI) के गवर्नर कौन थे?", ["I.G. Patel / आई. जी. पटेल", "Sir Osborne Smith / सर ओसबोर्न स्मिथ", "Urjit Patel / उर्जित पटेल", "C.D. Deshmukh / सी. डी. देशमुख"], 3, "During the first demonetization in January 1946, Sir C.D. Deshmukh (first Indian RBI Governor) was the Governor of RBI.", "जनवरी 1946 में हुई भारत की पहली नोटबंदी के समय RBI के गवर्नर सर सी. डी. देशमुख थे।", "RBI Governors during Demonetization: 1946 = C.D. Deshmukh; 1978 = I.G. Patel; 2016 = Urjit Patel."],
+      [89, "Which notes were banned in the second demonetization done by the Morarji Desai government in 1978?", "1978 में मोरारजी देसाई की सरकार द्वारा की गई दूसरी नोटबंदी में कौन-कौन से नोट बंद किए गए थे?", ["500, 1000, 5000 रुपये", "1000, 5000, 10000 रुपये", "500, 1000, 2000 रुपये", "100, 500, 1000 रुपये"], 1, "In the second demonetization on 16 January 1978, high-denomination notes of ₹1,000, ₹5,000, and ₹10,000 were demonetized.", "16 जनवरी 1978 को मोरारजी देसाई सरकार द्वारा की गई दूसरी नोटबंदी में 1000, 5000 और 10000 रुपये के नोट बंद किए गए थे।", "₹10,000 is the highest denomination note ever printed by RBI."],
+      [90, "Who was the Finance Minister of India during the third demonetization on November 8, 2016?", "8 नवंबर 2016 को हुई तीसरी नोटबंदी के समय भारत के वित्त मंत्री (Finance Minister) कौन थे?", ["Nirmala Sitharaman / निर्मला सीतारमण", "Dr. Manmohan Singh / डॉ. मनमोहन सिंह", "P. Chidambaram / पी. चिदंबरम", "Rajnath Singh / राजनाथ सिंह"], 4, "Shri Arun Jaitley was the Union Finance Minister during the third demonetization on 8 November 2016. Since Arun Jaitley is not in options A-D, Option (E) is correct.", "8 नवंबर 2016 की तीसरी नोटबंदी के समय भारत के वित्त मंत्री अरुण जेटली थे। अतः विकल्प (E) 'इनमें से कोई नहीं' सही है।", "On 8 Nov 2016, old ₹500 and ₹1,000 notes were demonetized."],
+      [91, "How many times has the Indian Rupee been devalued so far?", "भारत में अब तक कुल कितनी बार रुपये का अवमूल्यन (Devaluation) किया गया है?", ["2 Times / 2 बार", "3 Times / 3 बार", "4 Times / 4 बार", "5 Times / 5 बार"], 1, "The Indian Rupee has been officially devalued 3 times since independence: in 1949, 1966, and July 1991.", "भारत में अब तक कुल 3 बार (1949, 1966 और 1991 में) रुपये का आधिकारिक अवमूल्यन किया गया है।", "The largest single devaluation of the Rupee (~36.5%) occurred on 6 June 1966."],
+      [92, "By approximately what percentage was the rupee devalued during the P.V. Narasimha Rao government in 1991?", "1991 में पी.वी. नरसिम्हा राव की सरकार के दौरान रुपये का अवमूल्यन लगभग कितने प्रतिशत किया गया था?", ["10%", "15%", "25%", "20%"], 3, "During the P.V. Narasimha Rao government in July 1991, the Rupee was devalued by approximately 18-20% in two stages.", "जुलाई 1991 में पी.वी. नरसिम्हा राव सरकार के दौरान रुपये का लगभग 18-20% (लगभग 20%) अवमूल्यन किया गया था।", "Devaluation makes domestic exports cheaper and imports more expensive."],
+      [93, "Which was the first bank with limited liability managed by Indians?", "सीमित देयता (Limited Liability) वाला वह पहला बैंक कौन सा था जिसका प्रबंधन भारतीयों द्वारा किया गया था?", ["Oudh Commercial Bank / अवध वाणिज्यिक बैंक", "Punjab National Bank / पंजाब नेशनल बैंक", "Central Bank of India / सेंट्रल बैंक ऑफ इंडिया", "Bank of Hindustan / बैंक ऑफ हिंदुस्तान"], 0, "Established in 1881 in Faizabad, Oudh Commercial Bank was the first bank with limited liability managed by Indians.", "1881 में स्थापित 'अवध वाणिज्यिक बैंक' (Oudh Commercial Bank) सीमित देयता वाला पहला बैंक था जिसका प्रबंधन भारतीयों द्वारा किया गया था।", "Punjab National Bank (1894) was the first purely Indian bank that still operates today."],
+      [94, "On the recommendation of which commission was the Reserve Bank of India (RBI) established?", "भारतीय रिज़र्व बैंक (RBI) की स्थापना किस आयोग की सिफारिश पर की गई थी?", ["A.D. Gorwala Committee / ए. डी. गोरवाला समिति", "Narasimham Committee / नरसिम्हन समिति", "Hilton-Young Commission / हिल्टन-यंग आयोग", "B. Shivaraman Committee / बी. शिवरामन समिति"], 2, "RBI was established on 1 April 1935 (under RBI Act, 1934) on the recommendation of the Hilton-Young Commission (1926).", "भारतीय रिज़र्व बैंक (RBI) की स्थापना 1926 के 'हिल्टन-यंग आयोग' की सिफारिश पर 1 अप्रैल 1935 को हुई थी।", "RBI was nationalized on 1 January 1949."],
+      [95, "Who was the first Governor of the Reserve Bank of India (RBI)?", "भारतीय रिज़र्व बैंक (RBI) के प्रथम गवर्नर (First Governor) कौन थे?", ["C.D. Deshmukh / सी. डी. देशमुख", "I.G. Patel / आई. जी. पटेल", "Dr. Manmohan Singh / डॉ. मनमोहन सिंह", "Shaktikanta Das / शक्तिकांत दास"], 4, "Sir Osborne Smith (1935-37) was the first Governor of RBI (while C.D. Deshmukh was the first Indian Governor). Since Osborne Smith is not in A-D, Option (E) is correct.", "RBI के प्रथम गवर्नर 'सर ओसबोर्न स्मिथ' थे (जबकि सी.डी. देशमुख प्रथम भारतीय गवर्नर थे)। अतः विकल्प (E) सही है।", "1st RBI Governor = Sir Osborne Smith; 1st Indian RBI Governor = Sir C.D. Deshmukh."],
+      [96, "Under RBI's 'Minimum Reserve System', what should be the minimum value of gold in the reserve of Rs 200 crore?", "RBI की 'न्यूनतम आरक्षित प्रणाली' (Minimum Reserve System) के तहत 200 करोड़ रुपये के रिज़र्व में सोने (Gold) का न्यूनतम मूल्य कितना होना चाहिए?", ["115 Crores / 115 करोड़ रुपये", "85 Crores / 85 करोड़ रुपये", "200 Crores / 200 करोड़ रुपये", "100 Crores / 100 करोड़ रुपये"], 0, "Under RBI's Minimum Reserve System (adopted in 1956-57), out of the ₹200 crore minimum reserve, at least ₹115 crore must be in Gold and ₹85 crore in Foreign Securities.", "RBI की 'न्यूनतम आरक्षित प्रणाली' के तहत 200 करोड़ रुपये के कुल रिज़र्व में कम से कम 115 करोड़ रुपये का सोना (Gold) और 85 करोड़ रुपये की विदेशी मुद्रा होनी चाहिए।", "Minimum Reserve System (1956): ₹200 Cr = ₹115 Cr Gold + ₹85 Cr Foreign Securities."],
+      [97, "On the recommendation of which committee was NABARD established on July 12, 1982?", "12 जुलाई 1982 को नाबार्ड (NABARD) की स्थापना किस समिति की सिफारिश पर की गई थी?", ["Hilton-Young Commission / हिल्टन-यंग आयोग", "A.D. Gorwala Committee / ए. डी. गोरवाला समिति", "B. Shivaraman Committee / बी. शिवरामन समिति", "Nariman Committee / नरीमन समिति"], 2, "NABARD was established on 12 July 1982 (during the 6th Five-Year Plan) on the recommendation of the B. Shivaraman Committee (CRAFICARD).", "12 जुलाई 1982 को नाबार्ड (NABARD) की स्थापना 'बी. शिवरामन समिति' की सिफारिश पर की गई थी।", "NABARD Headquarters is located in Mumbai."],
+      [98, "Where is the headquarters of SIDBI, which provides loans to Micro, Small and Medium Enterprises (MSME), located?", "सूक्ष्म, लघु और मध्यम उद्योगों (MSME) को ऋण देने वाले सिडबी (SIDBI) का मुख्यालय कहाँ स्थित है?", ["Mumbai / मुंबई", "New Delhi / नई दिल्ली", "Kolkata / कोलकाता", "Chennai / चेन्नई"], 4, "SIDBI (established on 2 April 1990) is headquartered in Lucknow, Uttar Pradesh. Since Lucknow is not in options A-D, Option (E) is correct.", "सिडबी (SIDBI, स्थापना 2 अप्रैल 1990) का मुख्यालय लखनऊ (उत्तर प्रदेश) में स्थित है। अतः विकल्प (E) सही है।", "SIDBI Headquarters = Lucknow; NABARD, RBI & SEBI Headquarters = Mumbai."],
+      [99, "What is the percentage share of the State Government in the capital of Regional Rural Banks (RRBs)?", "क्षेत्रीय ग्रामीण बैंकों (RRBs) की पूंजी में राज्य सरकार (State Government) का हिस्सा कितने प्रतिशत होता है?", ["50%", "15%", "35%", "10%"], 1, "In Regional Rural Banks (RRBs), capital is shared in the ratio 50 : 35 : 15 — Central Govt (50%), Sponsor Bank (35%), and State Govt (15%).", "क्षेत्रीय ग्रामीण बैंकों (RRBs) में केंद्र सरकार (50%), प्रायोजक बैंक (35%) और राज्य सरकार का हिस्सा 15% होता है।", "First RRB was Prathama Grameen Bank (2 Oct 1975, Moradabad, UP)."],
+      [100, "What was the minimum deposit condition for the 14 banks selected in the first phase of nationalization on July 19, 1969?", "19 जुलाई 1969 को राष्ट्रीयकरण के प्रथम चरण में चुने गए 14 बैंकों के लिए न्यूनतम जमा राशि (Deposit) की शर्त क्या थी?", ["200 Crores / 200 करोड़ रुपये", "100 Crores / 100 करोड़ रुपये", "500 Crores / 500 करोड़ रुपये", "50 Crores / 50 करोड़ रुपये"], 3, "On 19 July 1969, 14 major commercial banks having minimum deposits of ₹50 Crore or more were nationalized.", "19 जुलाई 1969 को प्रथम चरण में उन 14 बैंकों का राष्ट्रीयकरण किया गया जिनकी जमा पूंजी 50 करोड़ रुपये या अधिक थी।", "In the 2nd phase (15 April 1980), the deposit threshold was ₹200 Crore."],
+      [101, "Immediately after nationalization (in 1969), on the recommendation of which committee/study group was the 'Lead Bank Scheme' launched?", "राष्ट्रीयकरण के तुरंत बाद (1969 में) किस समिति/अध्ययन समूह की सिफारिश पर 'अग्रणी बैंक योजना' (Lead Bank Scheme) शुरू की गई थी?", ["Shivaraman Committee / शिवरामन समिति", "Usha Thorat Committee / उषा थोराट समिति", "Nariman Committee / नरीमन समिति", "Nachiket Mor Committee / नचिकेत मोर समिति"], 2, "RBI launched the 'Lead Bank Scheme' in December 1969 on the recommendation of the F.K.F. Nariman Committee (and Gadgil Study Group).", "दिसंबर 1969 में 'एफ.के.एफ. नरीमन समिति' की सिफारिश पर RBI द्वारा 'अग्रणी बैंक योजना' (Lead Bank Scheme) शुरू की गई थी।", "Under the Lead Bank Scheme, one bank is assigned per district to lead credit planning."],
+      [102, "How many banks were nationalized in the Second Phase of bank nationalization on April 15, 1980?", "15 अप्रैल 1980 को हुए बैंकों के राष्ट्रीयकरण के द्वितीय चरण (Second Phase) में कितने बैंकों का राष्ट्रीयकरण किया गया था?", ["14", "10", "8", "12"], 4, "Exactly 6 commercial banks (with deposits >= ₹200 Cr) were nationalized on 15 April 1980. Since 6 is not in options A-D, Option (E) is correct.", "15 अप्रैल 1980 को दूसरे चरण में कुल 6 बैंकों का राष्ट्रीयकरण किया गया था। चूँकि विकल्पों में 6 नहीं है, अतः विकल्प (E) सही है।", "1st Phase (1969) = 14 Banks; 2nd Phase (1980) = 6 Banks."],
+      [103, "Small Finance Banks were established on the recommendation of which committee?", "स्मॉल फाइनेंस बैंक (Small Finance Banks) की स्थापना किस समिति की सिफारिश पर की गई थी?", ["Nachiket Mor Committee / नचिकेत मोर समिति", "Usha Thorat Committee / उषा थोराट समिति", "Hilton-Young Commission / हिल्टन-यंग आयोग", "Narasimham Committee / नरसिम्हन समिति"], 1, "While Nachiket Mor proposed differentiated banks conceptually, the Usha Thorat High-Level Committee specifically recommended/screened licenses for Small Finance Banks (SFBs).", "स्मॉल फाइनेंस बैंकों (Small Finance Banks) की लाइसेंसिंग एवं स्थापना विशिष्ट रूप से 'उषा थोराट समिति' की सिफारिश पर की गई थी।", "Capital Small Finance Bank (2016, Jalandhar) was India's first Small Finance Bank."],
+      [104, "What is the total number of members in the Monetary Policy Committee (MPC) in India?", "भारत में मौद्रिक नीति समिति (MPC) में कुल कितने सदस्य होते हैं?", ["6", "5", "7", "4"], 0, "Constituted in 2016 (Urjit Patel Committee), the Monetary Policy Committee (MPC) has 6 members (3 from RBI + 3 appointed by the Government of India).", "भारत में मौद्रिक नीति समिति (MPC, 2016) में कुल 6 सदस्य होते हैं (3 RBI से और 3 भारत सरकार द्वारा नियुक्त)।", "The RBI Governor is the ex-officio Chairperson of the 6-member MPC."],
+      [105, "The interest rate at which RBI provides short-term loans to commercial banks is called?", "वह ब्याज दर जिस पर RBI वाणिज्यिक बैंकों को अल्पकालिक (Short-term) लोन देता है, क्या कहलाती है?", ["Bank Rate / बैंक दर", "Reverse Repo Rate / रिवर्स रेपो दर", "MSF / सीमांत स्थायी सुविधा", "Repo Rate / रेपो दर"], 3, "Repo Rate is the interest rate at which RBI lends short-term funds to commercial banks against government securities.", "वह ब्याज दर जिस पर RBI वाणिज्यिक बैंकों को अल्पकालिक (Short-term) ऋण देता है, 'रेपो दर' (Repo Rate) कहलाती है।", "Bank Rate is the rate for long-term lending by RBI without repurchase collateral."],
+      [106, "All banks are required to keep a certain percentage of their total deposits with themselves in the form of liquid assets (gold, bonds, cash), what is this called?", "सभी बैंकों को अपनी कुल जमा राशि का एक निश्चित प्रतिशत स्वयं अपने पास तरल संपत्तियों (सोना, बांड, कैश) के रूप में रखना पड़ता है, इसे क्या कहते हैं?", ["Cash Reserve Ratio / नकद आरक्षित अनुपात (CRR)", "Repo Rate / रेपो दर", "Bank Rate / बैंक दर", "Marginal Standing Facility / सीमांत स्थायी सुविधा (MSF)"], 4, "The liquid reserve kept by banks WITH THEMSELVES in Cash, Gold, or Govt Bonds is called SLR (Statutory Liquidity Ratio). Since SLR is not in options A-D, Option (E) is correct.", "बैंकों द्वारा स्वयं अपने पास नकद, सोना या सरकारी बांड के रूप में रखे जाने वाले अनुपात को 'SLR' (वैधानिक तरलता अनुपात) कहते हैं। अतः विकल्प (E) सही है।", "CRR is kept in Cash WITH RBI; SLR is kept by the bank WITH ITSELF."],
+      [107, "To control inflation in the market, what step does RBI take under Open Market Operations (OMO)?", "बाज़ार में महंगाई (Inflation) को नियंत्रित करने के लिए खुले बाज़ार की क्रियाओं (OMO) के तहत RBI क्या कदम उठाता है?", ["Decreases CRR / CRR को कम करता है", "Buys government bonds / सरकारी बांड खरीदता है", "Decreases Repo Rate / रेपो रेट कम करता है", "Sells government bonds / सरकारी बांड बेचता है"], 3, "To control inflation, RBI sells government bonds under OMO to absorb excess liquidity (cash) from the market.", "बाज़ार में महंगाई (Inflation) को नियंत्रित करने और अतिरिक्त तरलता सोखने के लिए RBI खुले बाज़ार (OMO) में सरकारी बांड बेचता है।", "Selling bonds = Absorbs liquidity (curbs inflation); Buying bonds = Injects liquidity."],
+      [108, "Which of the following CANNOT be issued by Payment Banks?", "पेमेंट बैंक (Payment Banks) निम्नलिखित में से क्या जारी नहीं कर सकते हैं?", ["Debit Cards / डेबिट कार्ड", "Credit Cards and Loans / क्रेडिट कार्ड और लोन", "Saving Accounts / बचत खाते", "Check Books / चेक बुक"], 1, "Payments Banks can accept demand deposits (up to ₹2 lakh) and issue Debit Cards, but they CANNOT advance Loans or issue Credit Cards.", "पेमेंट बैंक बचत खाते खोल सकते हैं और डेबिट कार्ड जारी कर सकते हैं, लेकिन वे 'क्रेडिट कार्ड और लोन' (Credit Cards and Loans) जारी नहीं कर सकते।", "Payments Banks also cannot accept NRI deposits or term deposits (FD/RD)."],
+      [109, "Which mark is there for identification on the coins minted in the Noida Mint?", "नोएडा की टकसाल (Mint) में बने सिक्कों पर पहचान के लिए कौन सा निशान (Mark) होता है?", ["Star (★) / स्टार (★)", "Diamond (♦) / डायमंड (♦)", "Dot (•) / डॉट (•)", "No mark / कोई निशान नहीं"], 2, "Coins minted at the Noida Mint (established 1986) bear a solid Round Dot (•) below the year of minting.", "नोएडा की टकसाल में ढाले गए सिक्कों पर वर्ष के नीचे पहचान के लिए एक गोल बिंदु यानी 'डॉट' (•) का निशान होता है।", "Mumbai = Diamond (♦); Hyderabad = Star (★); Kolkata = No Mark; Noida = Dot (•)."],
+      [110, "Foreign currency that has a tendency to migrate to other countries as soon as possible is called?", "वह विदेशी मुद्रा जिसमें जल्द से जल्द दूसरे देश में पलायन कर जाने की प्रवृत्ति होती है, उसे क्या कहा जाता है?", ["Hot Money / हॉट मनी", "Hard Currency / हार्ड करेंसी", "Fiat Money / फिएट मनी", "Plastic Money / प्लास्टिक मनी"], 0, "Foreign currency/capital (like FPI in stock markets) that has a strong tendency for rapid migration in search of quick returns is called Hot Money.", "जिस विदेशी मुद्रा में शीघ्र पलायन कर जाने की प्रवृत्ति होती है (जैसे FPI निवेश), उसे 'हॉट मनी' (Hot Money) कहा जाता है।", "Hard Currency is a globally trusted currency with high demand (e.g., US Dollar)."],
+      [111, "What is the primary impact of devaluation of domestic currency on the country's exports?", "घरेलू मुद्रा के अवमूल्यन (Devaluation) का देश के निर्यात (Exports) पर क्या प्राथमिक प्रभाव पड़ता है?", ["Exports decrease / निर्यात घट जाता है", "Exports stop / निर्यात रुक जाता है", "No effect on exports / निर्यात पर कोई प्रभाव नहीं पड़ता", "Exports become expensive / निर्यात महंगा हो जाता है"], 4, "Devaluation makes domestic goods cheaper for foreign buyers, so Exports become cheaper and INCREASE. Since none of A-D state this, Option (E) is correct.", "अवमूल्यन से देश का निर्यात सस्ता हो जाता है और बढ़ जाता है (तथा आयात महंगा होकर घटता है)। अतः विकल्प (E) सही है।", "Devaluation -> Exports cheaper & rise; Imports costlier & fall."],
+      [112, "Which bank established in 1911 is called India's first fully 'Swadeshi' bank?", "1911 में स्थापित किस बैंक को भारत का पहला पूर्ण 'स्वदेशी' बैंक कहा जाता है?", ["Punjab National Bank / पंजाब नेशनल बैंक", "Oudh Commercial Bank / अवध वाणिज्यिक बैंक", "Bank of India / बैंक ऑफ इंडिया", "Central Bank of India / सेंट्रल बैंक ऑफ इंडिया"], 3, "Established in 1911 by Sir Sorabji Pochkhanawala, the Central Bank of India was the first commercial bank completely owned and managed by Indians (first 100% Swadeshi bank).", "1911 में स्थापित 'सेंट्रल बैंक ऑफ इंडिया' को भारत का पहला पूर्ण 'स्वदेशी बैंक' कहा जाता है (जिसकी पूंजी और प्रबंधन दोनों पूर्णतः भारतीय थे)।", "Sir Pherozeshah Mehta was the first Chairman of Central Bank of India."],
+      [113, "On the recommendation of which committee was the 'Imperial Bank of India' renamed as 'State Bank of India (SBI)' on July 1, 1955?", "1 जुलाई 1955 को 'इंपीरियल बैंक ऑफ इंडिया' का नाम बदलकर 'स्टेट बैंक ऑफ इंडिया (SBI)' किस समिति की सिफारिश पर किया गया था?", ["Hilton-Young Commission / हिल्टन-यंग आयोग", "Narasimham Committee / नरसिम्हन समिति", "A.D. Gorwala Committee / ए. डी. गोरवाला समिति", "Shivaraman Committee / शिवरामन समिति"], 2, "On the recommendation of the A.D. Gorwala Committee (All India Rural Credit Survey Committee), Imperial Bank of India was nationalized and renamed SBI on 1 July 1955.", "1 जुलाई 1955 को 'ए. डी. गोरवाला समिति' की सिफारिश पर इंपीरियल बैंक ऑफ इंडिया का राष्ट्रीयकरण कर उसे 'स्टेट बैंक ऑफ इंडिया (SBI)' नाम दिया गया।", "Imperial Bank of India was formed in 1921 by merging the 3 Presidency Banks."],
+      [114, "In 1993, due to heavy losses, 'New Bank of India' was merged with which bank?", "1993 में भारी घाटे के कारण 'न्यू बैंक ऑफ इंडिया' का विलय (Merger) किस बैंक में कर दिया गया था?", ["State Bank of India / स्टेट बैंक ऑफ इंडिया", "Punjab National Bank / पंजाब नेशनल बैंक", "Bank of Baroda / बैंक ऑफ बड़ौदा", "Central Bank of India / सेंट्रल बैंक ऑफ इंडिया"], 1, "In September 1993, New Bank of India was merged with Punjab National Bank (PNB)—the first merger between two nationalized banks in India.", "वर्ष 1993 में भारी घाटे के कारण 'न्यू बैंक ऑफ इंडिया' का विलय 'पंजाब नेशनल बैंक' (PNB) में कर दिया गया था।", "This merger reduced the number of nationalized banks from 20 to 19 in 1993."],
+      [115, "In which year was the 'Marginal Standing Facility' (MSF) introduced to provide emergency cash to banks for only 1 day (overnight)?", "बैंकों को केवल 1 दिन (Overnight) के लिए आपातकालीन नकद पैसा देने वाली 'सीमांत स्थायी सुविधा' (MSF) किस वर्ष शुरू की गई थी?", ["2011", "2016", "1991", "1980"], 0, "The Reserve Bank of India (RBI) introduced the Marginal Standing Facility (MSF) in May 2011 (Monetary Policy 2011-12) for overnight emergency borrowing by banks.", "बैंकों को 1 दिन (Overnight) के लिए आपातकालीन नकदी देने वाली 'सीमांत स्थायी सुविधा' (MSF) वर्ष 2011 में शुरू की गई थी।", "MSF Rate is always aligned with the Bank Rate (typically Repo Rate + 0.25%)."],
+      [116, "The 'e-NAM' portal is primarily related to the digitalization of which sector?", "\"ई-नाम\" (e-NAM) पोर्टल मुख्य रूप से किस क्षेत्र के डिजिटलीकरण से संबंधित है?", ["Share Market / शेयर बाज़ार", "Foreign Exchange / विदेशी मुद्रा", "Money Market / मुद्रा बाज़ार", "Cryptocurrency / क्रिप्टोकरेंसी"], 4, "e-NAM (Electronic National Agriculture Market, launched 14 April 2016) is related to the digitalization of Agricultural Mandis (APMC). Since Agriculture is not in A-D, Option (E) is correct.", "'ई-नाम' (e-NAM) पोर्टल कृषि मंडियों (Agricultural Marketing) के डिजिटलीकरण से संबंधित है। अतः विकल्प (E) 'इनमें से कोई नहीं' सही है।", "e-NAM was launched on 14 April 2016 and is implemented by SFAC."],
+      [117, "What is the annual financial assistance provided to farmers under the PM-KISAN Samman Nidhi?", "पीएम-किसान सम्मान निधि (PM-KISAN) के तहत किसानों को प्रतिवर्ष कितनी वित्तीय सहायता प्रदान की जाती है?", ["₹6,000 / 6,000 रुपये", "₹10,000 / 10,000 रुपये", "₹12,000 / 12,000 रुपये", "₹4,000 / 4,000 रुपये"], 0, "Under PM-KISAN (launched 24 Feb 2019), eligible farmers receive ₹6,000 per year in three equal installments of ₹2,000 each via DBT.", "पीएम-किसान सम्मान निधि के तहत किसानों को प्रतिवर्ष 6,000 रुपये (2,000 रुपये की 3 समान किस्तों में) दिए जाते हैं।", "PM-KISAN was launched on 24 February 2019 from Gorakhpur, Uttar Pradesh."],
+      [118, "What is the 'KAVACH' system currently being rapidly implemented by Indian Railways?", "भारतीय रेलवे द्वारा हाल ही में तेजी से लागू की जा रही 'कवच' (KAVACH) प्रणाली क्या है?", ["New ticket booking system / नई टिकट बुकिंग प्रणाली", "Freight tracking / माल ढुलाई ट्रैकिंग", "Train Collision Avoidance System / ट्रेन टक्कर रोधी प्रणाली", "Railway Wi-Fi service / रेलवे वाई-फाई सेवा"], 2, "KAVACH is India's indigenously developed Automatic Train Protection (ATP) / Train Collision Avoidance System developed by RDSO.", "'कवच' (KAVACH) भारतीय रेलवे की स्वदेशी 'ट्रेन टक्कर रोधी प्रणाली' (Train Collision Avoidance System) है।", "KAVACH is certified for Safety Integrity Level-4 (SIL-4)."],
+      [119, "What is the main objective of the 'PM-AASHA' scheme?", "'पीएम-आशा' (PM-AASHA) योजना का मुख्य उद्देश्य क्या है?", ["Providing health insurance / स्वास्थ्य बीमा देना", "Paying price deficiency to farmers if market price falls below MSP / बाज़ार मूल्य MSP से नीचे गिरने पर किसानों को कीमत के अंतर का भुगतान", "Providing free electricity to all / सभी को मुफ्त बिजली देना", "Providing crop insurance / फसल बीमा प्रदान करना"], 1, "Launched in September 2018, PM-AASHA ensures remunerative MSP to farmers and pays the price deficiency if market prices of oilseeds/pulses fall below MSP.", "'पीएम-आशा' (PM-AASHA, 2018) का मुख्य उद्देश्य किसानों को MSP सुनिश्चित करना और बाज़ार मूल्य MSP से नीचे गिरने पर कीमत के अंतर का भुगतान करना है।", "PM-AASHA = Pradhan Mantri Annadata Aay SanraksHan Abhiyan."],
+      [120, "What is the most prominent provision of the 'Wage Code, 2019'?", "'मजदूरी संहिता' (Wage Code, 2019) का सबसे प्रमुख प्रावधान क्या है?", ["Pension guarantee / पेंशन की गारंटी", "Fixing a 'National Floor Wage' for the whole country / पूरे देश के लिए एक 'राष्ट्रीय न्यूनतम मजदूरी' तय करना", "Banning overtime / ओवरटाइम बंद करना", "Employment guarantee / रोजगार की गारंटी"], 1, "The Code on Wages, 2019 introduces a statutory 'National Floor Wage' across India, below which no State Government can fix its minimum wages.", "'मजदूरी संहिता, 2019' का सबसे प्रमुख प्रावधान पूरे देश के लिए एक 'राष्ट्रीय न्यूनतम मजदूरी' (National Floor Wage) तय करना है।", "29 central labour laws were consolidated into 4 new Labour Codes."],
+      [121, "By which year has the Government of India set the target of blending 20% ethanol (E20) in petrol?", "भारत सरकार ने पेट्रोल में 20% एथेनॉल (E20) मिलाने का लक्ष्य किस वर्ष तक के लिए निर्धारित किया है?", ["2030-31", "2028-29", "2023-24", "2025-26"], 3, "India advanced its target for 20% ethanol blending in petrol (E20) by 5 years from 2030 to 2025-26.", "भारत सरकार ने पेट्रोल में 20% एथेनॉल (E20) मिलाने का लक्ष्य वर्ष 2030 से घटाकर 2025-26 कर दिया है।", "Ethanol blending reduces crude oil imports and boosts farmers' income."],
+      [122, "'To make the food provider an energy provider' is the main objective of which scheme under which solar pumps are being installed in farms?", "'अन्नदाता को ऊर्जादाता बनाना' किस योजना का मुख्य उद्देश्य है, जिसके तहत खेतों में सोलर पंप लगाए जा रहे हैं?", ["PM-KUSUM Yojana / पीएम-कुसुम योजना", "PM Surya Ghar Yojana / पीएम सूर्य घर योजना", "Saubhagya Yojana / सौभाग्य योजना", "PMKSY / पीएम कृषि सिंचाई योजना"], 0, "Launched in March 2019, PM-KUSUM installs solar agricultural pumps and grid-connected solar plants on farms to turn the 'Annadata into an Urjadata'.", "खेतों में सोलर पंप लगाकर 'अन्नदाता को ऊर्जादाता बनाना' मार्च 2019 में शुरू की गई 'पीएम-कुसुम योजना' का मुख्य उद्देश्य है।", "PM-KUSUM is implemented by the Ministry of New and Renewable Energy (MNRE)."],
+      [123, "Through India's efforts, the United Nations (UN) declared 2023 as the 'International Year' for which crop?", "भारत के प्रयासों से संयुक्त राष्ट्र (UN) ने वर्ष 2023 को किस फसल के लिए 'अंतर्राष्ट्रीय वर्ष' घोषित किया था?", ["Wheat / गेहूं", "Rice / चावल", "Pulses / दलहन", "Cotton / कपास"], 4, "On India's proposal, the UN declared 2023 as the 'International Year of Millets' (मोटे अनाज / श्री अन्न). Since Millets is not in A-D, Option (E) is correct.", "भारत के प्रयासों से संयुक्त राष्ट्र ने 2023 को 'मोटे अनाज / मिलेट्स (श्री अन्न)' का अंतर्राष्ट्रीय वर्ष घोषित किया था। अतः विकल्प (E) सही है।", "Millets have been named 'Shree Anna' in India."],
+      [124, "\"Swasth Dhara, Khet Hara\" is the official slogan of which scheme?", "\"स्वस्थ धरा, खेत हरा\" किस योजना का आधिकारिक नारा (Slogan) है?", ["PM-KISAN / पीएम-किसान", "PMFBY / फसल बीमा योजना", "PKVY / परंपरागत कृषि विकास योजना", "Soil Health Card Scheme / सॉयल हेल्थ कार्ड योजना"], 3, "'Swasth Dhara, Khet Hara' is the official slogan of the Soil Health Card Scheme launched on 19 February 2015 from Suratgarh, Rajasthan.", "'स्वस्थ धरा, खेत हरा' 19 फरवरी 2015 को सूरतगढ़ (राजस्थान) से शुरू की गई 'सॉयल हेल्थ कार्ड योजना' का आधिकारिक नारा है।", "Soil Health Card tests soil across 12 parameters."],
+      [125, "As per the historic announcement of the 2018-19 Union Budget, the Minimum Support Price (MSP) of all notified crops has been fixed at least how many times their cost of production?", "2018-19 के केंद्रीय बजट की ऐतिहासिक घोषणा के अनुसार, सभी अधिसूचित फसलों का न्यूनतम समर्थन मूल्य (MSP) उनकी उत्पादन लागत का कम से कम कितना गुना तय किया गया है?", ["2 times / 2 गुना", "1.25 times / 1.25 गुना", "1.5 times / 1.5 गुना", "3 times / 3 गुना"], 2, "Since the 2018-19 Union Budget, MSP for all 22 mandated crops is fixed at a minimum of 1.5 times (150%) of the all-India weighted average cost of production (A2+FL).", "बजट 2018-19 की घोषणा के अनुसार, सभी अधिसूचित फसलों का MSP उनकी उत्पादन लागत का कम से कम 1.5 गुना (डेढ़ गुना) तय किया गया है।", "CACP recommends MSP for 22 crops (and FRP for Sugarcane)."],
+      [126, "The 'Bharatmala Pariyojana', related to laying a network of economic corridors and coastal roads, is associated with which sector?", "आर्थिक गलियारों और तटीय सड़कों का जाल बिछाने से संबंधित 'भारतमाला परियोजना' (Bharatmala Pariyojana) का संबंध किस क्षेत्र से है?", ["Roads & Highways / सड़क और राजमार्ग", "Port Development / बंदरगाह विकास", "Railway Modernization / रेलवे आधुनिकीकरण", "Inland Waterways / अंतर्देशीय जलमार्ग"], 0, "Launched in 2017, Bharatmala Pariyojana is an umbrella highway development programme related to Roads & Highways.", "'भारतमाला परियोजना' (2017) का संबंध देश भर में सड़क और राष्ट्रीय राजमार्गों (Roads & Highways) के विकास से है।", "Bharatmala = Roads & Highways; Sagarmala = Port Development."],
+      [127, "Under the 'National Infrastructure Pipeline' (NIP, 2019), a roadmap of approximately what amount has been prepared to be spent on infrastructure over 5 years?", "'राष्ट्रीय अवसंरचना पाइपलाइन' (NIP, 2019) के तहत 5 वर्षों में बुनियादी ढांचे पर खर्च करने के लिए लगभग कितनी राशि का रोडमैप तैयार किया गया है?", ["50 lakh crore / 50 लाख करोड़ रुपये", "111 lakh crore / 111 लाख करोड़ रुपये", "200 lakh crore / 200 लाख करोड़ रुपये", "75 lakh crore / 75 लाख करोड़ रुपये"], 1, "Under the National Infrastructure Pipeline (NIP, 2019-20 to 2024-25), an investment roadmap of ₹111 Lakh Crore was prepared.", "'राष्ट्रीय अवसंरचना पाइपलाइन' (NIP, 2019) के तहत 5 वर्षों (2020-25) में बुनियादी ढांचे पर 111 लाख करोड़ रुपये खर्च करने का रोडमैप तैयार किया गया।", "Atanu Chakraborty chaired the Task Force on National Infrastructure Pipeline."],
+      [128, "How many central ministries have been brought together for integrated planning in the 'PM GatiShakti National Master Plan'?", "'पीएम गतिशक्ति नेशनल मास्टर प्लान' में समन्वित योजना के लिए कितने केंद्रीय मंत्रालयों को एक साथ जोड़ा गया है?", ["10", "12", "20", "25"], 4, "Launched on 13 October 2021, PM GatiShakti originally integrated 16 Central Ministries on a single GIS digital platform. Since 16 is not in A-D, Option (E) is correct.", "'पीएम गतिशक्ति नेशनल मास्टर प्लान' (2021) में 16 केंद्रीय मंत्रालयों को एक साथ जोड़ा गया था। विकल्पों में 16 न होने से विकल्प (E) सही है।", "PM GatiShakti is powered by 7 Engines of multi-modal transport connectivity."],
+      [129, "The goal of the 'National Logistics Policy' (NLP) is to reduce the Logistics Cost in India to what percentage?", "'राष्ट्रीय लॉजिस्टिक्स नीति' (NLP) का लक्ष्य भारत में माल ढुलाई की लागत (Logistics Cost) को घटाकर कितने प्रतिशत तक लाना है?", ["4-5%", "15-16%", "2-3%", "8-9%"], 3, "Launched in September 2022, the National Logistics Policy (NLP) aims to reduce India's logistics cost from ~13-14% of GDP down to single digits (8-9% of GDP).", "'राष्ट्रीय लॉजिस्टिक्स नीति' (2022) का लक्ष्य भारत में माल ढुलाई की लागत को GDP के 13-14% से घटाकर 8-9% तक लाना है।", "NLP also aims to bring India into the top 25 countries in the Logistics Performance Index."],
+      [130, "Unorganized sector workers registered on the e-Shram portal get free accident insurance of how many rupees under the 'PM Suraksha Bima Yojana'?", "ई-श्रम (e-Shram) पोर्टल पर पंजीकृत असंगठित क्षेत्र के मज़दूरों को 'पीएम सुरक्षा बीमा योजना' के तहत कितने रुपये का मुफ्त दुर्घटना बीमा मिलता है?", ["₹5 Lakh / 5 लाख रुपये", "₹1 Lakh / 1 लाख रुपये", "₹2 Lakh / 2 लाख रुपये", "₹10 Lakh / 10 लाख रुपये"], 2, "Workers registered on the e-Shram portal receive free accidental death/full disability insurance cover of ₹2 Lakh under PMSBY.", "ई-श्रम पोर्टल पर पंजीकृत असंगठित श्रमिकों को पीएम सुरक्षा बीमा योजना के तहत 2 लाख रुपये का दुर्घटना बीमा कवर मिलता है।", "e-Shram portal was launched on 26 August 2021 for workers aged 16-59 years."],
+      [131, "Under the Child Labour (Prohibition and Regulation) Amendment Act, 2016, a complete ban on employment in all types of occupations has been imposed for children below what age?", "बाल श्रम (निषेध और विनियमन) संशोधन अधिनियम, 2016 के तहत कितने वर्ष से कम आयु के बच्चों के लिए सभी प्रकार के व्यवसायों में रोजगार पर पूर्ण प्रतिबंध लगा दिया गया है?", ["18 years / 18 वर्ष", "12 years / 12 वर्ष", "16 years / 16 वर्ष", "14 years / 14 वर्ष"], 3, "The Child Labour Amendment Act, 2016 imposes a complete ban on employment of children below 14 years of age in all occupations.", "बाल श्रम संशोधन अधिनियम, 2016 के तहत 14 वर्ष से कम आयु के बच्चों के सभी प्रकार के व्यवसायों में काम करने पर पूर्ण प्रतिबंध है।", "Adolescents (14-18 years) are banned from working in hazardous industries."],
+      [132, "The world's first 'Liquid Nano Urea' has been developed by which organization?", "विश्व का पहला 'तरल नैनो यूरिया' (Liquid Nano Urea) किस संस्था द्वारा विकसित किया गया है?", ["ICAR", "DRDO", "IFFCO / इफको", "CSIR"], 2, "The world's first Liquid Nano Urea was indigenously developed in 2021 by IFFCO (Indian Farmers Fertiliser Cooperative Limited) at Kalol, Gujarat.", "विश्व का पहला 'तरल नैनो यूरिया' इफको (IFFCO) द्वारा कलोल, गुजरात में विकसित किया गया है।", "One 500 ml bottle of Nano Urea replaces one 45-kg bag of conventional urea."],
+      [133, "Under the 'PM Surya Ghar: Muft Bijli Yojana', how many units of free electricity per month will families installing rooftop solar panels get?", "'पीएम सूर्य घरः मुफ्त बिजली योजना' के तहत रूफटॉप सोलर पैनल लगाने वाले परिवारों को प्रतिमाह कितनी यूनिट मुफ्त बिजली मिलेगी?", ["100 Units / 100 यूनिट", "200 Units / 200 यूनिट", "400 Units / 400 यूनिट", "500 Units / 500 यूनिट"], 4, "Launched in February 2024, 'PM Surya Ghar: Muft Bijli Yojana' provides up to 300 Units of free electricity per month to 1 crore households. Since 300 is not in A-D, Option (E) is correct.", "'पीएम सूर्य घर: मुफ्त बिजली योजना' (2024) के तहत परिवारों को प्रतिमाह 300 यूनिट तक मुफ्त बिजली मिलती है। अतः विकल्प (E) सही है।", "PM Surya Ghar provides subsidy up to ₹78,000 for 3 kW rooftop solar panels."],
+      [134, "The slogan \"Per Drop More Crop\" is related to which scheme?", "\"पर ड्रॉप, मोर क्रॉप\" (Per Drop More Crop) का नारा किस योजना से संबंधित है?", ["Jal Jeevan Mission / जल जीवन मिशन", "PMKSY / पीएम कृषि सिंचाई योजना", "e-NAM / ई-नाम", "PM-AASHA / पीएम-आशा"], 1, "'Per Drop More Crop' (promoting drip and sprinkler micro-irrigation) is a key component and slogan of the Pradhan Mantri Krishi Sinchayee Yojana (PMKSY, 2015).", "'पर ड्रॉप, मोर क्रॉप' (प्रति बूंद अधिक फसल) का नारा प्रधानमंत्री कृषि सिंचाई योजना (PMKSY, 2015) से संबंधित है।", "PMKSY also carries the motto 'Har Khet Ko Pani'."],
+      [135, "For the first time in India, who have been brought under the ambit of legal recognition and insurance cover under the 'Social Security Code, 2020'?", "भारत में पहली बार 'सामाजिक सुरक्षा संहिता, 2020' के तहत किन्हें कानूनी मान्यता और बीमा सुरक्षा के दायरे में लाया गया है?", ["Gig & Platform Workers / गिग और प्लेटफॉर्म वर्कर्स", "Govt Employees / सरकारी कर्मचारी", "CEOs of MNCs / बहुराष्ट्रीय कंपनियों के CEO", "Foreign Diplomats / विदेशी राजनयिक"], 0, "The Code on Social Security, 2020 formally defined and included Gig Workers and Platform Workers (delivery/cab aggregator partners) under social security for the first time.", "'सामाजिक सुरक्षा संहिता, 2020' के तहत भारत में पहली बार 'गिग और प्लेटफॉर्म वर्कर्स' को कानूनी मान्यता और सामाजिक सुरक्षा के दायरे में लाया गया है।", "The Code on Social Security, 2020 subsumed 9 existing central labour laws."],
+      [136, "After the Mega Merger of Public Sector Banks, how many Public Sector Banks (PSBs) are currently left in India?", "सार्वजनिक क्षेत्र के बैंकों के महा-विलय (Mega Merger) के बाद, वर्तमान में भारत में कुल कितने सार्वजनिक क्षेत्र के बैंक (PSBs) बचे हैं?", ["27", "19", "12", "15"], 2, "Following the Mega Merger effective 1 April 2020, India currently has 12 Public Sector Banks (1 SBI + 11 Nationalized Banks).", "बैंकों के महा-विलय (1 अप्रैल 2020) के बाद वर्तमान में भारत में कुल 12 सार्वजनिक क्षेत्र के बैंक (PSBs) बचे हैं।", "12 PSBs = State Bank of India + 11 Nationalized Banks."],
+      [137, "Under the 'PM Shram Yogi Maandhan Yojana' (PM-SYM), what is the assured monthly pension for unorganized sector workers after the age of 60 years?", "'पीएम श्रम योगी मानधन योजना' (PM-SYM) के तहत 60 वर्ष की आयु के बाद असंगठित क्षेत्र के मज़दूरों को प्रति माह कितनी सुनिश्चित पेंशन मिलती है?", ["₹1,000 / 1,000 रुपये", "₹2,000 / 2,000 रुपये", "₹5,000 / 5,000 रुपये", "₹10,000 / 10,000 रुपये"], 4, "Under PM-SYM (launched in 2019), unorganized workers get an assured monthly pension of ₹3,000 after age 60. Since ₹3,000 is not in A-D, Option (E) is correct.", "पीएम श्रम योगी मानधन योजना के तहत 60 वर्ष की आयु के बाद ₹3,000 प्रतिमाह पेंशन मिलती है। विकल्पों में ₹3,000 न होने से विकल्प (E) सही है।", "Entry age for PM-SYM is 18 to 40 years with monthly income up to ₹15,000."],
+      [138, "The main objective of the 'PM Matsya Sampada Yojana' (PMMSY) is to promote which revolution?", "'पीएम मत्स्य संपदा योजना' (PMMSY) का मुख्य उद्देश्य किस क्रांति को बढ़ावा देना है?", ["Blue Revolution / नीली क्रांति", "White Revolution / श्वेत क्रांति", "Yellow Revolution / पीली क्रांति", "Green Revolution / हरित क्रांति"], 0, "Launched on 10 September 2020, PM Matsya Sampada Yojana (PMMSY) aims to boost fish production and promote the Blue Revolution.", "10 सितंबर 2020 को शुरू की गई 'पीएम मत्स्य संपदा योजना' का मुख्य उद्देश्य मत्स्य पालन अर्थात 'नीली क्रांति' (Blue Revolution) को बढ़ावा देना है।", "PMMSY was launched with an outlay of ₹20,050 crore over 5 years."],
+      [139, "Under the Maternity Benefit (Amendment) Act, 2017, the 'Paid Maternity Leave' for working women has been increased from 12 weeks to how much?", "मातृत्व लाभ (संशोधन) अधिनियम, 2017 के तहत कामकाजी महिलाओं के लिए 'सवेतन मातृत्व अवकाश' (Paid Maternity Leave) को 12 सप्ताह से बढ़ाकर कितना कर दिया गया है?", ["20 weeks / 20 सप्ताह", "26 weeks / 26 सप्ताह", "24 weeks / 24 सप्ताह", "32 weeks / 32 सप्ताह"], 1, "The Maternity Benefit (Amendment) Act, 2017 increased paid maternity leave from 12 weeks to 26 weeks for the first two surviving children.", "मातृत्व लाभ (संशोधन) अधिनियम, 2017 के तहत कामकाजी महिलाओं के लिए सवेतन मातृत्व अवकाश 12 सप्ताह से बढ़ाकर 26 सप्ताह कर दिया गया है।", "For the third child onwards, paid maternity leave remains 12 weeks."],
+      [140, "What is the full form of 'JAM Trinity' which laid the foundation of Direct Benefit Transfer (DBT) in India?", "भारत में प्रत्यक्ष लाभ हस्तांतरण (DBT) की नींव रखने वाली 'JAM ट्रिनिटी' (JAM Trinity) का पूर्ण रूप क्या है?", ["Jan-Dhan, Awas, Mobile / जन-धन, आवास, मोबाइल", "Jeevan, Aadhaar, Money / जीवन, आधार, मनी", "Jan-Dhan, Aadhaar, Money / जन-धन, आधार, मनी", "Jan-Dhan, Aadhaar, Mobile / जन-धन, आधार, मोबाइल"], 3, "JAM Trinity stands for Jan-Dhan, Aadhaar, and Mobile, which forms the backbone of India's Direct Benefit Transfer (DBT) ecosystem.", "DBT की नींव रखने वाली 'JAM ट्रिनिटी' का पूर्ण रूप 'Jan-Dhan, Aadhaar, Mobile' (जन-धन, आधार, मोबाइल) है।", "The term JAM Trinity was first introduced in the Economic Survey 2014-15."],
+      [141, "To make India a global manufacturing hub, the 'Production-Linked Incentive Scheme' (PLI Scheme) has been implemented in how many key sectors?", "भारत को ग्लोबल मैन्युफैक्चरिंग हब बनाने के लिए 'उत्पादन-लिंक्ड प्रोत्साहन योजना' (PLI Scheme) को कितने प्रमुख क्षेत्रों में लागू किया गया है?", ["5", "10", "20", "25"], 4, "The PLI Scheme (outlay ₹1.97 lakh crore) has been implemented across 14 key manufacturing sectors. Since 14 is not in options A-D, Option (E) is correct.", "उत्पादन-लिंक्ड प्रोत्साहन योजना (PLI Scheme) को 14 प्रमुख क्षेत्रों में लागू किया गया है। विकल्पों में 14 न होने के कारण विकल्प (E) सही है।", "PLI Scheme covers 14 sectors with an outlay of ~₹1.97 Lakh Crore."],
+      [142, "Under the 'Industrial Relations Code, 2020', the limit for companies to hire and fire employees without government permission has been increased from 100 employees to how much?", "'औद्योगिक संबंध संहिता, 2020' के तहत कंपनियों को सरकारी अनुमति के बिना कर्मचारियों को रखने और निकालने (Hire & Fire) की सीमा 100 कर्मचारियों से बढ़ाकर कितनी कर दी गई है?", ["500 employees / 500 कर्मचारी", "150 employees / 150 कर्मचारी", "1000 employees / 1000 कर्मचारी", "300 employees / 300 कर्मचारी"], 3, "Under the Industrial Relations Code, 2020, the threshold for prior government permission for lay-offs/retrenchment was increased from 100 to 300 employees.", "'औद्योगिक संबंध संहिता, 2020' के तहत सरकारी अनुमति के बिना छंटनी (Hire & Fire) की सीमा 100 कर्मचारियों से बढ़ाकर 300 कर्मचारी कर दी गई है।", "This reform was introduced to improve Ease of Doing Business and labour flexibility."],
+      [143, "Under the Pradhan Mantri Fasal Bima Yojana (PMFBY), what percentage of premium do farmers have to pay for 'Kharif crops'?", "प्रधानमंत्री फसल बीमा योजना (PMFBY) के तहत 'खरीफ फसलों' (Kharif crops) के लिए किसानों को कितना प्रतिशत प्रीमियम देना होता है?", ["1.5%", "5%", "2%", "3%"], 2, "Under PMFBY (launched 18 Feb 2016), farmers pay a uniform premium of 2% for Kharif crops, 1.5% for Rabi crops, and 5% for Annual Commercial/Horticultural crops.", "प्रधानमंत्री फसल बीमा योजना (PMFBY) के तहत किसानों को खरीफ फसलों के लिए 2% (रबी के लिए 1.5% और बागवानी/वाणिज्यिक के लिए 5%) प्रीमियम देना होता है।", "PMFBY Premium rates: Kharif = 2%, Rabi = 1.5%, Horticulture/Commercial = 5%."],
+      [144, "After the historic corporate tax cut in 2019, what has been the tax rate set for 'New Manufacturing Companies'?", "2019 में कॉर्पोरेट टैक्स में की गई ऐतिहासिक कटौती के बाद, 'नई विनिर्माण कंपनियों' (New Manufacturing Companies) के लिए कर की दर कितनी कर दी गई है?", ["15%", "22%", "25%", "30%"], 0, "In September 2019, the basic Corporate Tax rate was slashed to 15% for New Domestic Manufacturing Companies (and 22% for existing domestic companies).", "सितंबर 2019 की कटौती के बाद 'नई विनिर्माण कंपनियों' (New Manufacturing Companies) के लिए मूल कॉर्पोरेट टैक्स की दर 15% (और मौजूदा कंपनियों के लिए 22%) कर दी गई है।", "Effective rate including surcharge and cess is ~17.16% for new manufacturing units."],
+      [145, "What is the main objective of the 'Jan Vishwas Act, 2023'?", "'जन विश्वास अधिनियम, 2023' (Jan Vishwas Act) का मुख्य उद्देश्य क्या है?", ["Introducing a new tax / नया कर लागू करना", "Decriminalization of minor economic offences / छोटे आर्थिक अपराधों को अपराध की श्रेणी से बाहर करना", "Nationalization of Banks / बैंकों का राष्ट्रीयकरण", "Banning foreign investment / विदेशी निवेश पर रोक"], 1, "The Jan Vishwas (Amendment of Provisions) Act, 2023 decriminalized 183 minor/procedural economic offences across 42 Central Acts to boost Ease of Doing Business.", "'जन विश्वास अधिनियम, 2023' का मुख्य उद्देश्य 42 कानूनों में संशोधन कर छोटे आर्थिक और प्रक्रियात्मक अपराधों को अपराध की श्रेणी से बाहर करना (Decriminalization) है।", "It replaced colonial-era imprisonment clauses for minor technical defaults with monetary penalties."],
+      [146, "What percentage of subsidy is given to farmers to install solar pumps under 'PM-KUSUM Yojana'?", "'पीएम-कुसुम योजना' के तहत किसानों को खेतों में सोलर पंप लगाने के लिए कितने प्रतिशत सब्सिडी दी जाती है?", ["40%", "60%", "50%", "75%"], 1, "Under PM-KUSUM Yojana, farmers receive a total of 60% subsidy (30% Central Govt + 30% State Govt), along with a 30% bank loan and 10% farmer contribution.", "'पीएम-कुसुम योजना' के तहत सोलर पंप लगाने के लिए किसानों को कुल 60% सब्सिडी (30% केंद्र + 30% राज्य सरकार द्वारा) दी जाती है।", "Farmers only need to pay 10% upfront cost (60% Subsidy + 30% Loan + 10% Farmer)."],
+      [147, "In the money market, when banks borrow money from each other for only 1 day (overnight), what is it called?", "मुद्रा बाज़ार में, जब बैंक एक-दूसरे से केवल 1 दिन (Overnight) के लिए पैसा उधार लेते हैं, तो उसे क्या कहा जाता है?", ["Notice Money / नोटिस मनी", "Term Money / टर्म मनी", "T-Bill / ट्रेजरी बिल", "Call Money / कॉल मनी"], 3, "Inter-bank borrowing and lending for just 1 day (overnight) in the money market is called Call Money (2-14 days is Notice Money; >14 days is Term Money).", "मुद्रा बाज़ार में जब बैंक एक-दूसरे से केवल 1 दिन (Overnight) के लिए पैसा उधार लेते हैं, तो उसे 'कॉल मनी' (Call Money) कहा जाता है।", "Call Money = 1 day; Notice Money = 2 to 14 days; Term Money = 15 to 364 days."],
+      [148, "In which year did the Securities and Exchange Board of India (SEBI) get statutory (legal) status?", "भारतीय प्रतिभूति एवं विनिमय बोर्ड (SEBI) को किस वर्ष वैधानिक (कानूनी) दर्जा प्राप्त हुआ था?", ["1992", "1988", "1990", "1995"], 0, "Established in 1988, SEBI was granted statutory (legal) status on 30 January 1992 under the SEBI Act, 1992.", "1988 में स्थापित सेबी (SEBI) को 30 जनवरी 1992 में सेबी अधिनियम के तहत वैधानिक (कानूनी) दर्जा प्राप्त हुआ था।", "SEBI is headquartered in Mumbai with regional offices in Delhi, Kolkata, Chennai, and Ahmedabad."],
+      [149, "Which is the oldest stock exchange in Asia?", "एशिया का सबसे पुराना शेयर बाज़ार कौन सा है?", ["नेशनल स्टॉक एक्सचेंज (NSE)", "टोक्यो स्टॉक एक्सचेंज (Tokyo Stock Exchange)", "शंघाई स्टॉक एक्सचेंज (Shanghai Stock Exchange)", "कलकत्ता स्टॉक एक्सचेंज (Calcutta Stock Exchange)"], 4, "Established on 9 July 1875, the Bombay Stock Exchange (BSE) is the oldest stock exchange in Asia. Since BSE is not in options A-D, Option (E) is correct.", "एशिया का सबसे पुराना शेयर बाज़ार 'बॉम्बे स्टॉक एक्सचेंज' (BSE, 1875) है। विकल्पों में BSE न होने के कारण विकल्प (E) सही है।", "Bombay Stock Exchange (BSE) was founded in 1875 by Premchand Roychand."],
+      [150, "How many digits 'Universal Account Number' (UAN) do the unorganized sector workers registered on the e-Shram portal get?", "ई-श्रम पोर्टल पर पंजीकृत असंगठित क्षेत्र के मज़दूरों को कितने अंकों का 'यूनिवर्सल अकाउंट नंबर' (UAN) मिलता है?", ["10", "14", "12", "16"], 2, "Workers registering on the e-Shram portal receive a unique 12-digit Universal Account Number (UAN) card valid across India.", "ई-श्रम पोर्टल पर पंजीकृत असंगठित क्षेत्र के मज़दूरों को 12 अंकों का 'यूनिवर्सल अकाउंट नंबर' (UAN) मिलता है।", "Both e-Shram UAN and EPFO UAN are 12-digit numbers."],
+      [151, "If the market price of pulses or oilseeds falls below MSP, under which scheme does the government pay the 'price deficiency' directly into the farmer's account?", "यदि बाज़ार में दलहन या तिलहन की कीमत MSP से नीचे गिर जाती है, तो सरकार किस योजना के तहत 'कीमत के अंतर' का भुगतान सीधे किसान के खाते में करती है?", ["PM-KISAN / पीएम-किसान", "PMFBY / फसल बीमा योजना", "PM-AASHA / पीएम-आशा", "e-NAM / ई-नाम"], 2, "Under the Price Deficiency Payment Scheme (PDPS) component of PM-AASHA (2018), the government pays the difference between MSP and market price directly to farmers.", "यदि बाज़ार में दलहन या तिलहन की कीमत MSP से नीचे गिर जाती है, तो सरकार 'पीएम-आशा' (PM-AASHA) योजना के तहत कीमत के अंतर का भुगतान करती है।", "PM-AASHA comprises PSS, PDPS, and PPSS components."],
+      [152, "Currently, for what tenures are 'Treasury Bills' (T-Bills) issued by the Government of India?", "वर्तमान में भारत सरकार द्वारा 'ट्रेजरी बिल' (T-Bills) कितनी अवधियों (Tenures) के लिए जारी किए जाते हैं?", ["91, 182, 364 days / 91 दिन, 182 दिन, 364 दिन", "14, 91, 364 days / 14 दिन, 91 दिन, 364 दिन", "30, 60, 90 days / 30 दिन, 60 दिन, 90 दिन", "182, 364, 728 days / 182 दिन, 364 दिन, 728 दिन"], 0, "Currently, Treasury Bills (T-Bills) are issued by RBI on behalf of the Central Government for three tenures: 91 days, 182 days, and 364 days.", "वर्तमान में भारत सरकार द्वारा 'ट्रेजरी बिल' (T-Bills) तीन अवधियों—91 दिन, 182 दिन और 364 दिन—के लिए जारी किए जाते हैं।", "T-Bills are Zero-Coupon short-term debt instruments issued at a discount."],
+      [153, "What is the Base Year of the 'SENSEX' index of the Bombay Stock Exchange (BSE)?", "बॉम्बे स्टॉक एक्सचेंज (BSE) के सूचकांक 'SENSEX' का आधार वर्ष (Base Year) क्या है?", ["1990-91", "1978-79", "1995-96", "2011-12"], 1, "The Base Year of BSE's 30-share benchmark index 'SENSEX' (launched in 1986) is 1978-79 (with a base value of 100).", "बॉम्बे स्टॉक एक्सचेंज (BSE) के सूचकांक 'सेंसेक्स' (SENSEX) का आधार वर्ष 1978-79 है।", "Base Year of NSE's NIFTY-50 is 1995."],
+      [154, "Under the 'Industrial Relations Code, 2020', the limit for companies to hire and fire employees without government permission has been increased from 100 employees to?", "'औद्योगिक संबंध संहिता, 2020' के तहत कंपनियों को सरकारी अनुमति के बिना कर्मचारियों को रखने और निकालने (Hire & Fire) की सीमा 100 कर्मचारियों से बढ़ाकर कितनी कर दी गई है?", ["200", "500", "1000", "400"], 4, "The threshold limit under the Industrial Relations Code, 2020 was increased from 100 to 300 employees. Since 300 is not in options A-D, Option (E) is correct.", "यह सीमा 100 कर्मचारियों से बढ़ाकर 300 कर्मचारी की गई है। विकल्पों (A-D) में 300 न होने के कारण विकल्प (E) सही है।", "Establishments with up to 300 workers do not require prior government approval for retrenchment."],
+      [155, "In the stock market, companies that perform very well and consistently pay dividends are called?", "शेयर बाज़ार में ऐसी कंपनियाँ जिनका प्रदर्शन बहुत अच्छा होता है और जो लगातार लाभांश (Dividend) देती हैं, उन्हें क्या कहा जाता है?", ["Penny Stocks / पेनी स्टॉक्स", "Bull Stocks / बुल स्टॉक्स", "Unicorn / यूनिकॉर्न", "Blue Chip Company / ब्लू चिप कंपनी"], 3, "Well-established, financially strong large-cap companies with a history of consistent dividend payments are called Blue Chip Companies.", "शेयर बाज़ार में मजबूत आर्थिक स्थिति और लगातार लाभांश देने वाली शीर्ष कंपनियों को 'ब्लू चिप कंपनी' (Blue Chip Company) कहा जाता है।", "Unicorn = A private startup company with a valuation of $1 Billion or more."],
+      [156, "When was the 'Start-Up India' scheme launched with the aim of making youth 'Job Creators' instead of 'Job Seekers'?", "युवाओं को 'जॉब सीकर' की जगह 'जॉब क्रिएटर' बनाने के उद्देश्य से 'स्टार्ट-अप इंडिया' (Start-Up India) योजना कब शुरू की गई थी?", ["15 अगस्त 2014", "2 अक्टूबर 2015", "8 अप्रैल 2015", "16 जनवरी 2016"], 3, "The Startup India scheme was officially launched on 16 January 2016 to foster entrepreneurship and innovation.", "युवाओं को 'जॉब क्रिएटर' बनाने के उद्देश्य से 'स्टार्ट-अप इंडिया' योजना 16 जनवरी 2016 को शुरू की गई थी।", "16 January is celebrated annually as 'National Startup Day' in India."],
+      [157, "The National Stock Exchange (NSE) index 'NIFTY 50' measures the performance of how many top companies of the country?", "नेशनल स्टॉक एक्सचेंज (NSE) का सूचकांक 'NIFTY 50' देश की कितनी सबसे बड़ी कंपनियों के प्रदर्शन को मापता है?", ["30", "100", "50", "25"], 2, "NSE's benchmark index 'NIFTY 50' measures the weighted performance of the 50 largest and most liquid Indian companies listed on NSE.", "नेशनल स्टॉक एक्सचेंज (NSE) का सूचकांक 'निफ्टी 50' देश की 50 सबसे बड़ी सूचीबद्ध कंपनियों के प्रदर्शन को मापता है।", "SENSEX (BSE) = 30 companies; NIFTY (NSE) = 50 companies."],
+      [158, "Who has been granted legal recognition and insurance cover for the first time in India under the 'Social Security Code, 2020'?", "भारत में 'सामाजिक सुरक्षा संहिता, 2020' के तहत पहली बार किन्हें कानूनी मान्यता और बीमा सुरक्षा प्रदान की गई है?", ["Govt Employees / सरकारी कर्मचारियों को", "Farmers / किसानों को", "CEOs of MNCs / बहुराष्ट्रीय कंपनियों के CEO को", "Students / छात्रों को"], 4, "Gig Workers and Platform Workers were granted legal recognition and social security cover for the first time under the Social Security Code, 2020. Since they are not in A-D, Option (E) is correct.", "सामाजिक सुरक्षा संहिता, 2020 के तहत पहली बार 'गिग और प्लेटफॉर्म वर्कर्स' को कानूनी मान्यता दी गई है। अतः विकल्प (E) सही है।", "Platform workers include delivery and ride-hailing app partners."],
+      [159, "The 'Gilt-Edged Market' is related to which of the following?", "'गिल्ट-एज्ड बाज़ार' (Gilt-Edged Market) का संबंध निम्नलिखित में से किससे है?", ["Gold and silver market / सोने और चांदी का बाज़ार", "Government securities market / सरकारी प्रतिभूतियों का बाज़ार", "Foreign exchange market / विदेशी मुद्रा बाज़ार", "Startup companies market / स्टार्टअप कंपनियों का बाज़ार"], 1, "The Gilt-Edged Market is the market for Government and semi-government securities (bonds), which carry zero default risk.", "'गिल्ट-एज्ड बाज़ार' (Gilt-Edged Market) का संबंध जोखिम-मुक्त 'सरकारी प्रतिभूतियों के बाज़ार' (Government Securities Market) से है।", "Bullion Market = Gold & Silver market; Gilt-Edged Market = Govt. Securities market."],
+      [160, "When a foreign investor invests less than 10% in an Indian company, which is also called 'Hot Money', what is it called?", "जब कोई विदेशी निवेशक भारत की किसी कंपनी में 10% से कम का निवेश करता है, जिसे 'हॉट मनी' भी कहा जाता है, तो उसे क्या कहते हैं?", ["FPI (Foreign Portfolio Investment)", "FDI (Foreign Direct Investment)", "Venture Capital / वेंचर कैपिटल", "ECB / बाहरी वाणिज्यिक उधार"], 0, "As per the Arvind Mayaram Committee, foreign investment of less than 10% in a listed company's equity is called FPI (Foreign Portfolio Investment), while 10% or more is FDI.", "जब कोई विदेशी निवेशक किसी भारतीय कंपनी में 10% से कम का निवेश करता है, तो उसे 'FPI' (Foreign Portfolio Investment) कहते हैं।", "FPI (<10%) is short-term 'Hot Money'; FDI (>=10%) is long-term stable capital."],
+      [161, "Under 'ABRY', what total percentage of EPF contribution of both employees and the company is borne by the govt for providing new jobs?", "'आत्मनिर्भर भारत रोजगार योजना' (ABRY) के तहत नई नौकरी देने पर कर्मचारियों और कंपनी दोनों का कुल कितना प्रतिशत EPF अंशदान सरकार द्वारा वहन किया जाता है?", ["24%", "10%", "12%", "18%"], 0, "Under Atmanirbhar Bharat Rojgar Yojana (ABRY, 2020), for establishments up to 1000 employees, the government bears 24% of wages (12% employee share + 12% employer share) towards EPF.", "'आत्मनिर्भर भारत रोजगार योजना' (ABRY) के तहत सरकार कर्मचारियों (12%) और कंपनी (12%) दोनों का कुल 24% EPF अंशदान वहन करती है।", "12% Employee EPF + 12% Employer EPF = 24% Total EPF contribution."],
+      [162, "Under the Maternity Benefit (Amendment) Act, 2017, Paid Maternity Leave for working women has been increased from 12 weeks to?", "मातृत्व लाभ (संशोधन) अधिनियम, 2017 के तहत कामकाजी महिलाओं के लिए 'सवेतन मातृत्व अवकाश' (Paid Maternity Leave) को 12 सप्ताह से बढ़ाकर कितना कर दिया गया है?", ["14 weeks / 14 सप्ताह", "20 weeks / 20 सप्ताह", "24 weeks / 24 सप्ताह", "30 weeks / 30 सप्ताह"], 4, "Paid maternity leave was increased from 12 weeks to 26 weeks under the 2017 Amendment Act. Since 26 weeks is not in options A-D, Option (E) is correct.", "मातृत्व लाभ संशोधन अधिनियम, 2017 के तहत सवेतन अवकाश 12 सप्ताह से बढ़ाकर 26 सप्ताह किया गया है। विकल्पों में 26 न होने से विकल्प (E) सही है।", "Paid Maternity Leave = 26 weeks for the first two children."],
+      [163, "What is an investor in the stock market called who thinks the market will fall and therefore sells his shares?", "शेयर बाज़ार में उस निवेशक को क्या कहा जाता है जो सोचता है कि बाज़ार नीचे गिरेगा (सस्ता होगा) और इसलिए वह अपने शेयर बेचता है?", ["Bull / बुल", "Broker / ब्रोकर", "Unicorn / यूनिकॉर्न", "Bear / बियर (मंदरिया)"], 3, "A pessimistic investor who expects share prices to fall and sells shares is called a Bear (मंदरिया), whereas an optimistic buyer is called a Bull (तेजड़िया).", "शेयर बाज़ार में गिरने की उम्मीद कर शेयर बेचने वाले निवेशक को 'बियर' (Bear / मंदरिया) कहा जाता है।", "Bull (तेजड़िया) = Expects rise; Bear (मंदरिया) = Expects fall."],
+      [164, "Introduced in 1990, 'Commercial Paper' is issued in the money market to raise funds by whom?", "1990 में शुरू किया गया 'वाणिज्यिक पत्र' (Commercial Paper) मुद्रा बाज़ार में किसके द्वारा धन जुटाने के लिए जारी किया जाता है?", ["Only Govt of India / केवल भारत सरकार", "Only RBI / केवल रिज़र्व बैंक", "High credit rating private companies / उच्च साख वाली प्राइवेट कंपनियाँ", "Common citizens / आम नागरिक"], 2, "Introduced in 1990 (Vaghul Committee), Commercial Paper (CP) is an unsecured money market instrument issued by high-credit-rating corporate companies to raise short-term funds.", "1990 में शुरू किया गया 'वाणिज्यिक पत्र' (Commercial Paper) उच्च साख वाली बड़ी कंपनियों द्वारा अल्पकालिक धन जुटाने के लिए जारी किया जाता है।", "Minimum denomination of a Commercial Paper (CP) is ₹5 Lakh."],
+      [165, "Under 'PM Vishwakarma Yojana' (2023), up to 3 lakh loan is given to 18 types of traditional artisans at what interest rate?", "'पीएम विश्वकर्मा योजना' (2023) के तहत 18 प्रकार के पारंपरिक कारीगरों को किस ब्याज दर पर 3 लाख रुपये तक का लोन दिया जाता है?", ["0% (Interest-free / ब्याज मुक्त)", "5%", "8%", "12%"], 1, "Launched on 17 September 2023, PM Vishwakarma Yojana provides collateral-free loans up to ₹3 lakh (₹1L + ₹2L) to 18 traditional artisan trades at a concessional 5% interest rate.", "'पीएम विश्वकर्मा योजना' (17 सितंबर 2023) के तहत 18 पारंपरिक कारीगरों को मात्र 5% की रियायती ब्याज दर पर 3 लाख रुपये तक का लोन दिया जाता है।", "Artisans also get a ₹15,000 toolkit e-voucher under PM Vishwakarma."],
+      [166, "Which is the main regulatory body that controls Mutual Funds and the Stock Market in India?", "भारत में म्यूचुअल फंड (Mutual Funds) और शेयर बाज़ार पर नियंत्रण रखने वाला प्रमुख नियामक निकाय (Regulator) कौन सा है?", ["RBI", "Finance Ministry / वित्त मंत्रालय", "IRDAI", "NITI Aayog / नीति आयोग"], 4, "SEBI (Securities and Exchange Board of India) regulates Mutual Funds and the Stock Market in India. Since SEBI is not in options A-D, Option (E) is correct.", "भारत में म्यूचुअल फंड और शेयर बाज़ार का मुख्य नियामक 'सेबी' (SEBI) है। विकल्पों में SEBI न होने के कारण विकल्प (E) सही है।", "SEBI regulates Capital Market & Mutual Funds; RBI regulates Money Market & Banks."],
+      [167, "Under 'Lakhpati Didi Yojana', what is the target number of SHG women whose annual income is to be increased to more than 1 lakh?", "'लखपति दीदी योजना' के तहत स्वयं सहायता समूह (SHG) की कितनी महिलाओं की वार्षिक आय 1 लाख रुपये से अधिक करने का लक्ष्य है?", ["1 Crore / 1 करोड़", "3 Crore / 3 करोड़", "5 Crore / 5 करोड़", "10 Crore / 10 करोड़"], 1, "In the Union Budget 2024-25, the target for the 'Lakhpati Didi Yojana' (empowering SHG women to earn >= ₹1 lakh/year) was increased from 2 Crore to 3 Crore women.", "'लखपति दीदी योजना' के तहत स्वयं सहायता समूह (SHG) की 3 करोड़ महिलाओं की वार्षिक आय 1 लाख रुपये से अधिक करने का लक्ष्य रखा गया है।", "Lakhpati Didi is part of the DAY-NRLM under the Ministry of Rural Development."],
+      [168, "When an unlisted company issues its shares to the general public for the first time to raise money, what is it called?", "जब कोई अनलिस्टेड (Unlisted) कंपनी पहली बार आम जनता के लिए अपने शेयर जारी कर पैसा जुटाती है, तो उसे क्या कहा जाता है?", ["IPO (Initial Public Offering)", "FPO (Follow-on Public Offer)", "T-Bill / ट्रेजरी बिल", "Venture Capital / वेंचर कैपिटल"], 0, "When an unlisted company offers its shares to the public for the first time in the primary market, it is called an IPO (Initial Public Offering).", "जब कोई गैर-सूचीबद्ध कंपनी पहली बार आम जनता के लिए अपने शेयर जारी करती है, तो उसे 'IPO' (Initial Public Offering) कहा जाता है।", "When an already listed company issues fresh shares to the public, it is called an FPO."],
+      [169, "Which scheme was launched in 2020 to provide collateral-free loans to Street Vendors?", "रेहड़ी-पटरी वालों (Street Vendors) को संपार्श्विक-मुक्त (Collateral-free) लोन देने के लिए 2020 में कौन सी योजना शुरू की गई थी?", ["PM-SYM / पीएम श्रम योगी मानधन", "Stand-Up India / स्टैंड-अप इंडिया", "PM Vishwakarma / पीएम विश्वकर्मा", "PM SVANidhi / पीएम स्वनिधि"], 3, "Launched on 1 June 2020, PM SVANidhi provides collateral-free working capital loans (₹10k, ₹20k, ₹50k) to urban Street Vendors.", "रेहड़ी-पटरी वालों (Street Vendors) को बिना गारंटी कार्यशील पूंजी ऋण देने के लिए 1 जून 2020 को 'पीएम स्वनिधि' (PM SVANidhi) योजना शुरू की गई थी।", "PM SVANidhi is administered by the Ministry of Housing and Urban Affairs (MoHUA)."],
+      [170, "When an officer of a company makes illegal profit in the stock market by taking advantage of his company's confidential information, what is it called?", "जब कंपनी का ही कोई अधिकारी अपनी कंपनी की गुप्त जानकारी का फायदा उठाकर शेयर बाज़ार में अवैध मुनाफा कमाता है, तो उसे क्या कहते हैं?", ["Bull Trading / बुल ट्रेडिंग", "Venture Capital / वेंचर कैपिटल", "Insider Trading / इंसाइडर ट्रेडिंग", "Money Laundering / मनी लॉन्ड्रिंग"], 2, "Trading a company's shares using confidential, unpublished price-sensitive information is an illegal offense known as Insider Trading.", "कंपनी की आंतरिक गुप्त जानकारी का फायदा उठाकर शेयर बाज़ार में अवैध मुनाफा कमाने को 'इंसाइडर ट्रेडिंग' (भेदिया कारोबार) कहते हैं।", "Insider Trading in India is strictly prohibited and penalized by SEBI."],
+      [171, "Under 'PM Shram Yogi Maandhan Yojana', the assured monthly pension of ₹3000 starts after what age?", "'पीएम श्रम योगी मानधन योजना' (PM-SYM) के तहत 3000 रुपये की सुनिश्चित मासिक पेंशन किस आयु के बाद मिलनी शुरू होती है?", ["50 Years / 50 वर्ष", "60 Years / 60 वर्ष", "65 Years / 65 वर्ष", "55 Years / 55 वर्ष"], 1, "Under PM Shram Yogi Maandhan Yojana (PM-SYM), the assured monthly pension of ₹3,000 begins after attaining the age of 60 years.", "'पीएम श्रम योगी मानधन योजना' के तहत 3,000 रुपये की मासिक पेंशन 60 वर्ष की आयु पूरी होने के बाद मिलनी शुरू होती है।", "Family pension (to spouse on death of subscriber) under PM-SYM is 50% (₹1,500/month)."],
+      [172, "What is the general duration of transaction of funds in the 'Capital Market'?", "'पूंजी बाज़ार' (Capital Market) में धन के लेन-देन की अवधि सामान्यतः कितनी होती है?", ["1 Day / 1 दिन", "14 to 90 days / 14 दिन से 90 दिन", "Maximum 365 days / अधिकतम 365 दिन", "More than 1 year / 1 वर्ष से अधिक"], 3, "The Capital Market deals in medium- and long-term funds with a maturity duration of more than 1 year (whereas the Money Market is up to 1 year).", "'पूंजी बाज़ार' (Capital Market) में दीर्घकालिक धन का लेन-देन होता है जिसकी अवधि सामान्यतः 1 वर्ष से अधिक होती है।", "Money Market = Up to 1 year (RBI); Capital Market = More than 1 year (SEBI)."],
+      [173, "According to the Child Labour Amendment Act 2016, adolescents up to what age are prohibited from working in 'hazardous industries'?", "बाल श्रम संशोधन अधिनियम 2016 के अनुसार, कितने वर्ष तक के किशोरों (Adolescents) को 'खतरनाक उद्योगों' (जैसे खदानें, विस्फोटक) में काम करने से रोका गया है?", ["14 Years / 14 वर्ष", "16 Years / 16 वर्ष", "14 to 18 Years / 14 से 18 वर्ष", "21 Years / 21 वर्ष"], 2, "Under the Child and Adolescent Labour Amendment Act, 2016, adolescents aged 14 to 18 years are prohibited from working in hazardous occupations and processes.", "बाल श्रम संशोधन अधिनियम, 2016 के अनुसार 14 से 18 वर्ष की आयु के किशोरों (Adolescents) को खतरनाक उद्योगों में काम करने से रोका गया है।", "Below 14 years = Complete ban in all occupations; 14 to 18 years = Ban in hazardous industries."],
+      [174, "The 'National Stock Exchange' (NSE) was established in 1992 on the recommendation of which committee?", "1992 में 'नेशनल स्टॉक एक्सचेंज' (NSE) की स्थापना किस समिति की सिफारिश पर की गई थी?", ["Ferwani Committee / फेरवानी समिति", "Narasimham Committee / नरसिम्हन समिति", "Kelkar Committee / केलकर समिति", "Nachiket Mor Committee / नचिकेत मोर समिति"], 0, "The National Stock Exchange (NSE) was established in November 1992 on the recommendation of the M.J. Pherwani Committee (1991).", "1992 में 'नेशनल स्टॉक एक्सचेंज' (NSE) की स्थापना 'एम. जे. फेरवानी समिति' की सिफारिश पर की गई थी।", "NSE introduced nationwide automated screen-based electronic trading in India in 1994."],
+      [175, "Which loan fund of ₹1 lakh crore was established in 2020 to reduce post-harvest losses and build cold storages etc.?", "फसल कटाई के बाद के नुकसान को कम करने और कोल्ड स्टोरेज आदि बनाने के लिए 2020 में 1 लाख करोड़ रुपये का कौन सा ऋण कोष स्थापित किया गया?", ["NIP / राष्ट्रीय अवसंरचना पाइपलाइन", "PM-AASHA / पीएम-आशा", "NABARD Fund / नाबार्ड कोष", "PM KISAN Fund / पीएम किसान फंड"], 4, "The ₹1 Lakh Crore fund launched in 2020 for post-harvest cold storages and warehouses is the Agriculture Infrastructure Fund (AIF). Since AIF is not in A-D, Option (E) is correct.", "फसल कटाई के बाद के नुकसान को कम करने और कोल्ड स्टोरेज बनाने के लिए 2020 में ₹1 लाख करोड़ का 'कृषि अवसंरचना कोष' (Agriculture Infrastructure Fund - AIF) बनाया गया था। अतः विकल्प (E) सही है।", "AIF provides 3% interest subvention on loans up to ₹2 Crore for up to 7 years."]
+    ];
+
+    const questions = rawData.map(item => ({
+      id: item[0],
+      en: item[1],
+      hi: item[2],
+      options: [...item[3], NONE_OPTION],
+      correctIndex: item[4],
+      expEn: item[5],
+      expHi: item[6],
+      fact: item[7]
+    }));
+
+    let currentIndex = 0;
+    let userAnswers = [];
+
+    function initState() {
+      currentIndex = 0;
+      userAnswers = questions.map((_, idx) => ({
+        visited: idx === 0,
+        answered: false,
+        selectedOption: null,
+        isCorrect: null,
+        isSkipped: false,
+        markedForReview: false
+      }));
+    }
+
+    // Required Dynamic Mathematical Scoring Engine
+    function calculateScore() {
+      let correctCount = userAnswers.filter(q => q.answered && q.isCorrect === true).length;
+      let incorrectCount = userAnswers.filter(q => q.answered && q.isCorrect === false && !q.isSkipped).length;
+      let netScore = (correctCount * 1.0) - (incorrectCount * 0.25);
+      return {
+        correctCount,
+        incorrectCount,
+        netScore: netScore.toFixed(2)
+      };
+    }
+
+    function updateHeader() {
+      const scoreObj = calculateScore();
+      document.getElementById('header-progress').textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+      document.getElementById('header-score').textContent = `Net Score: ${scoreObj.netScore}`;
+    }
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      const state = userAnswers[currentIndex];
+      state.visited = true;
+
+      document.getElementById('q-num-label').textContent = `Question ${q.id} of ${questions.length}`;
+      document.getElementById('q-en').textContent = `Q${q.id}. ${q.en}`;
+      document.getElementById('q-hi').textContent = q.hi;
+
+      const letters = ['A', 'B', 'C', 'D', 'E'];
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-card';
+        if (state.answered) {
+          btn.classList.add('locked');
+          if (idx === q.correctIndex) {
+            btn.classList.add(state.selectedOption === idx ? 'correct-selected' : 'correct-outline');
+          } else if (state.selectedOption === idx) {
+            btn.classList.add('wrong-selected');
+          }
+        }
+
+        btn.innerHTML = `
+          <span class="opt-letter">${letters[idx]}</span>
+          <span>${optText}</span>
+        `;
+
+        if (!state.answered) {
+          btn.onclick = () => selectOption(idx);
+        }
+        container.appendChild(btn);
+      });
+
+      // Explanation visibility
+      const expCard = document.getElementById('exp-card');
+      if (state.answered) {
+        const correctLetter = letters[q.correctIndex];
+        const verdictEl = document.getElementById('exp-verdict');
+        if (state.isCorrect) {
+          verdictEl.innerHTML = `<span style="color:var(--green);">✔ Correct Answer! (+1.00) — Correct Option: (${correctLetter})</span>`;
+        } else {
+          verdictEl.innerHTML = `<span style="color:var(--red);">✘ Incorrect Answer (-0.25) — Correct Option: (${correctLetter})</span>`;
+        }
+        document.getElementById('exp-en').textContent = q.expEn;
+        document.getElementById('exp-hi').textContent = q.expHi;
+        document.getElementById('exp-fact').textContent = q.fact;
+        expCard.classList.add('visible');
+      } else {
+        expCard.classList.remove('visible');
+      }
+
+      // Update action buttons
+      document.getElementById('btn-prev').disabled = currentIndex === 0;
+      const reviewBtn = document.getElementById('btn-review');
+      if (state.markedForReview) {
+        reviewBtn.classList.add('active');
+        reviewBtn.textContent = '🟣 Marked for Review';
+      } else {
+        reviewBtn.classList.remove('active');
+        reviewBtn.textContent = '🟣 Mark for Review';
+      }
+
+      const nextBtn = document.getElementById('btn-next');
+      if (currentIndex === questions.length - 1) {
+        nextBtn.textContent = 'Finish & View Report ➔';
+      } else {
+        nextBtn.textContent = 'Next Question ➔';
+      }
+
+      updateHeader();
+      renderPaletteGrid();
+    }
+
+    function selectOption(idx) {
+      const state = userAnswers[currentIndex];
+      if (state.answered) return; // One-tap selection lock
+
+      const q = questions[currentIndex];
+      state.answered = true;
+      state.isSkipped = false;
+      state.selectedOption = idx;
+      state.isCorrect = (idx === q.correctIndex);
+
+      renderQuestion();
+    }
+
+    function skipQuestion() {
+      const state = userAnswers[currentIndex];
+      if (!state.answered) {
+        state.isSkipped = true;
+      }
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showFinalReport();
+      }
+    }
+
+    function toggleReview() {
+      const state = userAnswers[currentIndex];
+      state.markedForReview = !state.markedForReview;
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        showFinalReport();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function getQuestionStatus(idx) {
+      const s = userAnswers[idx];
+      if (s.markedForReview) return 'status-review';
+      if (s.answered && s.isCorrect) return 'status-correct';
+      if (s.answered && !s.isCorrect) return 'status-incorrect';
+      if (s.isSkipped) return 'status-skipped';
+      if (s.visited && !s.answered) return 'status-unanswered';
+      return 'status-not-visited';
+    }
+
+    function renderPaletteGrid() {
+      const grid = document.getElementById('palette-grid');
+      grid.innerHTML = '';
+
+      let counts = {
+        correct: 0,
+        wrong: 0,
+        unanswered: 0,
+        skipped: 0,
+        review: 0,
+        notVisited: 0
+      };
+
+      questions.forEach((q, idx) => {
+        const statusClass = getQuestionStatus(idx);
+        if (statusClass === 'status-correct') counts.correct++;
+        else if (statusClass === 'status-incorrect') counts.wrong++;
+        else if (statusClass === 'status-review') counts.review++;
+        else if (statusClass === 'status-skipped') counts.skipped++;
+        else if (statusClass === 'status-unanswered') counts.unanswered++;
+        else counts.notVisited++;
+
+        const btn = document.createElement('button');
+        btn.className = `p-node ${statusClass} ${idx === currentIndex ? 'current' : ''}`;
+        btn.textContent = q.id;
+        btn.onclick = () => {
+          currentIndex = idx;
+          document.getElementById('report-view').style.display = 'none';
+          document.getElementById('exam-view').style.display = 'block';
+          renderQuestion();
+          togglePalette(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        grid.appendChild(btn);
+      });
+
+      document.getElementById('leg-correct').textContent = counts.correct;
+      document.getElementById('leg-wrong').textContent = counts.wrong;
+      document.getElementById('leg-unanswered').textContent = counts.unanswered;
+      document.getElementById('leg-skipped').textContent = counts.skipped;
+      document.getElementById('leg-review').textContent = counts.review;
+      document.getElementById('leg-notvisited').textContent = counts.notVisited;
+    }
+
+    function togglePalette(open) {
+      const modal = document.getElementById('palette-modal');
+      if (open) {
+        renderPaletteGrid();
+        modal.classList.add('open');
+      } else {
+        modal.classList.remove('open');
+      }
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target.id === 'palette-modal') {
+        togglePalette(false);
+      }
+    }
+
+    function showFinalReport() {
+      togglePalette(false);
+      document.getElementById('exam-view').style.display = 'none';
+      document.getElementById('report-view').style.display = 'block';
+
+      const scoreObj = calculateScore();
+      const attempted = scoreObj.correctCount + scoreObj.incorrectCount;
+      const accuracy = attempted > 0 ? ((scoreObj.correctCount / attempted) * 100).toFixed(1) : '0.0';
+      const skippedCount = userAnswers.filter(q => q.isSkipped && !q.answered).length;
+      const unansweredCount = userAnswers.filter(q => !q.answered && !q.isSkipped).length;
+      const reviewCount = userAnswers.filter(q => q.markedForReview).length;
+
+      document.getElementById('report-stats').innerHTML = `
+        <div class="stat-box">
+          <div class="val" style="color:#60a5fa;">${scoreObj.netScore} / ${questions.length}</div>
+          <div class="lbl">Net Scored Marks</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="color:var(--green);">${scoreObj.correctCount}</div>
+          <div class="lbl">Correct (+1.00)</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="color:var(--red);">${scoreObj.incorrectCount}</div>
+          <div class="lbl">Incorrect (-0.25)</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="color:var(--slate);">${skippedCount}</div>
+          <div class="lbl">Skipped</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="color:var(--orange);">${unansweredCount}</div>
+          <div class="lbl">Unanswered</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="color:var(--purple);">${reviewCount}</div>
+          <div class="lbl">Marked for Review</div>
+        </div>
+        <div class="stat-box">
+          <div class="val" style="color:#fbbf24;">${accuracy}%</div>
+          <div class="lbl">Accuracy Rate</div>
+        </div>
+      `;
+
+      const letters = ['A', 'B', 'C', 'D', 'E'];
+      const matrixEl = document.getElementById('review-matrix');
+      matrixEl.innerHTML = questions.map((q, idx) => {
+        const st = userAnswers[idx];
+        let badgeHtml = '';
+        if (st.answered && st.isCorrect) {
+          badgeHtml = `<span class="review-status-pill" style="background:var(--green-bg); color:var(--green); border:1px solid var(--green);">🟢 Correct (+1.00) | Your Answer: (${letters[st.selectedOption]})</span>`;
+        } else if (st.answered && !st.isCorrect) {
+          badgeHtml = `<span class="review-status-pill" style="background:var(--red-bg); color:var(--red); border:1px solid var(--red);">🔴 Incorrect (-0.25) | Your Answer: (${letters[st.selectedOption]})</span>`;
+        } else if (st.isSkipped) {
+          badgeHtml = `<span class="review-status-pill" style="background:#334155; color:#cbd5e1;">⚪ Skipped (0.00)</span>`;
+        } else {
+          badgeHtml = `<span class="review-status-pill" style="background:rgba(249,115,22,0.18); color:var(--orange);">🟠 Unanswered (0.00)</span>`;
+        }
+
+        return `
+          <div class="review-item">
+            ${badgeHtml}
+            <div style="font-weight:700; color:#fff; margin-bottom:4px;">Q${q.id}. ${q.en}</div>
+            <div style="color:#cbd5e1; margin-bottom:10px;">${q.hi}</div>
+            <div style="color:var(--green); font-weight:700; margin-bottom:8px;">✔ Correct Option: (${letters[q.correctIndex]}) ${q.options[q.correctIndex]}</div>
+            <div style="font-size:0.9rem; color:#e2e8f0; margin-bottom:6px;"><strong>English Explanation:</strong> ${q.expEn}</div>
+            <div style="font-size:0.9rem; color:#e2e8f0; margin-bottom:8px;"><strong>हिंदी व्याख्या:</strong> ${q.expHi}</div>
+            <div class="key-fact-box"><strong>💡 Key Exam Fact:</strong> ${q.fact}</div>
+          </div>
+        `;
+      }).join('');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function retakeExam() {
+      initState();
+      document.getElementById('report-view').style.display = 'none';
+      document.getElementById('exam-view').style.display = 'block';
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Boot simulator
+    initState();
+    renderQuestion();
+  </script>
+</body>
+</html>

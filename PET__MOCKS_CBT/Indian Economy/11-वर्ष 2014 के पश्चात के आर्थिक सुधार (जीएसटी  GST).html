@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSSSC PET CBT Simulator - GST (100 Questions)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #121316;
+    --card-bg: #1e2024;
+    --card-border: #2a2d33;
+    --card-hover: #26292f;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --correct-bg: rgba(16, 185, 129, 0.16);
+    --correct-border: #10b981;
+    --incorrect-bg: rgba(239, 68, 68, 0.16);
+    --incorrect-border: #ef4444;
+    --purple: #8b5cf6;
+    --orange: #f59e0b;
+    --slate: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .exam-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .exam-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .score-badge {
+    background: #111827;
+    border: 1px solid var(--card-border);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  .score-badge span { color: #10b981; }
+  .btn-palette-open {
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+  }
+  .btn-palette-open:hover { background-color: var(--accent-hover); }
+
+  main {
+    max-width: 900px;
+    width: 100%;
+    margin: 28px auto;
+    padding: 0 20px 40px;
+    flex: 1;
+  }
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  .q-tag {
+    background: #1f2937;
+    border: 1px solid var(--card-border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: #93c5fd;
+  }
+  .question-box {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .q-en {
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    color: #ffffff;
+  }
+  .q-hi {
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: #d1d5db;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .option-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.15s ease;
+  }
+  .option-card:hover:not(.locked) {
+    background: var(--card-hover);
+    border-color: #4b5563;
+  }
+  .option-card.locked { cursor: default; }
+  .option-card.correct {
+    background: var(--correct-bg) !important;
+    border-color: var(--correct-border) !important;
+  }
+  .option-card.incorrect {
+    background: var(--incorrect-bg) !important;
+    border-color: var(--incorrect-border) !important;
+  }
+  .opt-key {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: #2b3038;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.88rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .option-card.correct .opt-key { background: var(--correct-border); color: #fff; }
+  .option-card.incorrect .opt-key { background: var(--incorrect-border); color: #fff; }
+  .opt-text {
+    font-size: 0.98rem;
+    line-height: 1.45;
+    color: #e5e7eb;
+  }
+
+  .explanation-card {
+    background: #17191d;
+    border: 1px solid #374151;
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 18px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .exp-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #60a5fa;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .exp-section { margin-bottom: 12px; }
+  .exp-section strong { color: #f9fafb; font-size: 0.92rem; }
+  .exp-section p { font-size: 0.92rem; color: #d1d5db; line-height: 1.6; margin-top: 4px; }
+  .key-fact-box {
+    background: rgba(37, 99, 235, 0.12);
+    border: 1px dashed #3b82f6;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-top: 14px;
+    font-size: 0.88rem;
+    color: #bfdbfe;
+    line-height: 1.5;
+  }
+
+  .nav-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .btn-action-group {
+    display: flex;
+    gap: 10px;
+  }
+  .btn-sec {
+    background: #23272e;
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-sec:hover { background: #2f343d; }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+
+  /* Slide-Over Palette */
+  .palette-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 200;
+    display: none;
+  }
+  .palette-drawer {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    max-width: 90vw;
+    height: 100vh;
+    background: var(--card-bg);
+    border-left: 1px solid var(--card-border);
+    z-index: 210;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.28s ease;
+  }
+  .palette-drawer.open { right: 0; }
+  .drawer-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .drawer-title { font-size: 1.05rem; font-weight: 700; color: #fff; }
+  .btn-close-palette {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .btn-close-palette:hover { color: #fff; }
+  .legend-grid {
+    padding: 12px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    background: #17181c;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.75rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .palette-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 20px;
+  }
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .grid-btn {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    border: 1px solid #333842;
+    background: #23272e;
+    color: #e5e7eb;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .grid-btn:hover { transform: scale(1.05); }
+  .grid-btn.active { outline: 2px solid #60a5fa; outline-offset: 1px; }
+
+  /* 6 Live Status Colors */
+  .st-not-visited { background: #23272e; color: #9ca3af; }
+  .st-correct { background: #10b981 !important; color: #fff !important; border-color: #059669; }
+  .st-incorrect { background: #ef4444 !important; color: #fff !important; border-color: #dc2626; }
+  .st-unanswered { background: #f59e0b !important; color: #111827 !important; border-color: #d97706; }
+  .st-skipped { background: #64748b !important; color: #fff !important; border-color: #475569; }
+  .st-review { background: #8b5cf6 !important; color: #fff !important; border-color: #7c3aed; }
+
+  /* Result Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+  }
+  .report-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 30px;
+    max-width: 520px;
+    width: 90%;
+    text-align: center;
+  }
+  .report-title { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 20px; }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+  .stat-item {
+    background: #17181c;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+  }
+  .stat-label { font-size: 0.78rem; color: var(--text-secondary); text-transform: uppercase; }
+  .stat-val { font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 4px; }
+  .net-score-box {
+    background: rgba(37,99,235,0.15);
+    border: 1px solid var(--accent);
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+  }
+  .net-score-val { font-size: 2.2rem; font-weight: 800; color: #60a5fa; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="exam-title">UPSSSC PET CBT Simulator • भारतीय अर्थव्यवस्था</div>
+    <div class="exam-subtitle">विषय: वर्ष 2014 के पश्चात के आर्थिक सुधार (जीएसटी / GST)</div>
+  </div>
+  <div class="header-right">
+    <div class="score-badge">Net Score: <span id="topScore">0.00</span></div>
+    <button class="btn-palette-open" onclick="openPalette()">📋 Open Palette</button>
+  </div>
+</header>
+
+<main>
+  <div class="q-meta">
+    <span class="q-tag" id="qCategory">UPSSSC PET Standard (Marking: +1.00 / -0.25)</span>
+    <span id="qProgress">Question 1 of 100</span>
+  </div>
+
+  <div class="question-box">
+    <div class="q-en" id="qStemEn">Loading question...</div>
+    <div class="q-hi" id="qStemHi">लोड हो रहा है...</div>
+  </div>
+
+  <div class="options-container" id="optionsBox"></div>
+
+  <div class="explanation-card" id="expBox">
+    <div class="exp-title">Fact Analysis & Verified Explanation</div>
+    <div class="exp-section">
+      <strong>English:</strong>
+      <p id="expEn"></p>
+    </div>
+    <div class="exp-section">
+      <strong>हिंदी व्याख्या:</strong>
+      <p id="expHi"></p>
+    </div>
+    <div class="key-fact-box" id="expFact"></div>
+  </div>
+
+  <div class="nav-controls">
+    <div class="btn-action-group">
+      <button class="btn-sec" onclick="markForReview()">🟣 Mark for Review</button>
+      <button class="btn-sec" onclick="skipQuestion()">⚪ Skip Question</button>
+    </div>
+    <div class="btn-action-group">
+      <button class="btn-sec" id="prevBtn" onclick="prevQuestion()">Previous</button>
+      <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">Next Question ➔</button>
+      <button class="btn-sec" style="background:#dc2626; color:#fff; border:none;" onclick="showFinalReport()">Submit Exam</button>
+    </div>
+  </div>
+</main>
+
+<!-- Slide-Over Palette -->
+<div class="palette-overlay" id="paletteOverlay" onclick="closePalette()"></div>
+<div class="palette-drawer" id="paletteDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">Question Palette (100 Qs)</div>
+    <button class="btn-close-palette" onclick="closePalette()">✕</button>
+  </div>
+  <div class="legend-grid">
+    <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div>Correct (+1.00)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>Incorrect (-0.25)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div>Unanswered</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#64748b;"></div>Skipped (0.00)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6;"></div>Marked Review</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#374151;"></div>Not Visited</div>
+  </div>
+  <div class="palette-body">
+    <div class="palette-grid" id="paletteGrid"></div>
+  </div>
+</div>
+
+<!-- Score Modal -->
+<div class="modal-overlay" id="reportModal">
+  <div class="report-card">
+    <div class="report-title">Final Examination Summary</div>
+    <div class="net-score-box">
+      <div style="font-size:0.85rem; color:#9ca3af; text-transform:uppercase;">Net Marks Obtained</div>
+      <div class="net-score-val" id="finalNetScore">0.00</div>
+      <div style="font-size:0.82rem; color:#93c5fd; margin-top:4px;">(Out of 100.00 Marks)</div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-item">
+        <div class="stat-label">Correct Answers</div>
+        <div class="stat-val" id="repCorrect" style="color:#10b981;">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Incorrect Answers</div>
+        <div class="stat-val" id="repIncorrect" style="color:#ef4444;">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Skipped / Left</div>
+        <div class="stat-val" id="repSkipped" style="color:#64748b;">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Accuracy Rate</div>
+        <div class="stat-val" id="repAccuracy">0%</div>
+      </div>
+    </div>
+    <button class="btn-primary" style="width:100%;" onclick="closeReport()">Review Questions via Palette</button>
+  </div>
+</div>
+
+<script>
+const questionsData = [
+  // 1 to 25
+  {
+    stemEn: "On which date did the Goods and Services Tax (GST) officially come into effect across India?",
+    stemHi: "वस्तु एवं सेवा कर (जीएसटी) आधिकारिक तौर पर पूरे भारत में किस तिथि को लागू हुआ?",
+    options: ["1st April 2017 / 1 अप्रैल 2017", "1st July 2017 / 1 जुलाई 2017", "8th November 2016 / 8 नवंबर 2016", "1st January 2018 / 1 जनवरी 2018", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "GST was launched at a midnight session of Parliament on 30th June – 1st July 2017, and came into force nationwide on 1st July 2017 (except in Jammu & Kashmir, where it was implemented on 8th July 2017).",
+    expHi: "भारत में जीएसटी 30 जून - 1 जुलाई 2017 की मध्यरात्रि को संसद के सेंट्रल हॉल से शुरू किया गया था तथा 1 जुलाई 2017 से पूरे देश में प्रभावी रूप से लागू हुआ।",
+    fact: "1st July is observed annually in India as 'GST Day' (जीएसटी दिवस)."
+  },
+  {
+    stemEn: "Which Constitutional Amendment Act paved the way for the introduction of GST in India?",
+    stemHi: "भारत में जीएसटी लागू करने के लिए कौन सा संविधान संशोधन अधिनियम पारित किया गया था?",
+    options: ["100th Constitutional Amendment Act / 100वाँ संविधान संशोधन अधिनियम", "102nd Constitutional Amendment Act / 102वाँ संविधान संशोधन अधिनियम", "101st Constitutional Amendment Act / 101वाँ संविधान संशोधन अधिनियम", "103rd Constitutional Amendment Act / 103वाँ संविधान संशोधन अधिनियम", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "The 101st Constitutional Amendment Act, 2016 (introduced as the 122nd Constitutional Amendment Bill) provided the constitutional framework for the rollout of GST across India.",
+    expHi: "101वां संविधान संशोधन अधिनियम, 2016 (विधेयक संख्या 122वां) संसद द्वारा पारित होकर जीएसटी व्यवस्था को लागू करने का वैधानिक आधार बना।",
+    fact: "101st Amendment Act received the President's assent on 8th September 2016."
+  },
+  {
+    stemEn: "What type of tax is the Goods and Services Tax (GST)?",
+    stemHi: "वस्तु एवं सेवा कर (जीएसटी) किस प्रकार का कर है?",
+    options: ["Comprehensive Indirect Destination-based Tax / व्यापक अप्रत्यक्ष गंतव्य-आधारित कर", "Progressive Direct Origin-based Tax / प्रगतिशील प्रत्यक्ष मूल-आधारित कर", "Direct Income-based Tax / प्रत्यक्ष आय-आधारित कर", "Regressive Specific Excise Duty / प्रतिगामी विशिष्ट उत्पाद शुल्क", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "GST is a comprehensive, multi-stage, destination-based indirect tax levied on every value addition, replacing numerous central and state indirect taxes.",
+    expHi: "जीएसटी एक व्यापक, बहु-स्तरीय, गंतव्य-आधारित (डेस्टिनेशन-बेस्ड) अप्रत्यक्ष कर है जो मूल्यवर्धन (Value Addition) पर लगाया जाता है।",
+    fact: "GST is known as a 'destination-based consumption tax' because revenue accrues to the state where goods/services are consumed."
+  },
+  {
+    stemEn: "Which article of the Constitution of India provides for the establishment and constitution of the GST Council?",
+    stemHi: "भारतीय संविधान का कौन सा अनुच्छेद जीएसटी परिषद (GST Council) के गठन का प्रावधान करता है?",
+    options: ["Article 246A / अनुच्छेद 246A", "Article 269A / अनुच्छेद 269A", "Article 280 / अनुच्छेद 280", "Article 279A / अनुच्छेद 279A", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Article 279A was inserted into the Indian Constitution by the 101st Amendment Act, empowering the President to constitute the GST Council.",
+    expHi: "101वें संविधान संशोधन द्वारा अनुच्छेद 279A जोड़ा गया, जिसके तहत भारत के राष्ट्रपति को जीएसटी परिषद का गठन करने का अधिकार प्राप्त है।",
+    fact: "Article 246A gives simultaneous taxation power to Parliament and State Legislatures, while 279A governs the GST Council."
+  },
+  {
+    stemEn: "Who serves as the ex-officio Chairperson of the GST Council?",
+    stemHi: "जीएसटी परिषद का पदेन अध्यक्ष (Ex-officio Chairperson) कौन होता है?",
+    options: ["The Prime Minister of India / भारत के प्रधानमंत्री", "The Union Finance Minister / केंद्रीय वित्त मंत्री", "The Governor of the Reserve Bank of India / भारतीय रिजर्व बैंक के गवर्नर", "The Union Commerce Minister / केंद्रीय वाणिज्य मंत्री", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Article 279A(2), the Union Finance Minister serves as the ex-officio Chairperson of the GST Council, with state finance ministers acting as members.",
+    expHi: "अनुच्छेद 279A के अनुसार, भारत के केंद्रीय वित्त मंत्री जीएसटी परिषद के पदेन अध्यक्ष के रूप में कार्य करते हैं।",
+    fact: "Union Minister of State in-charge of Revenue or Finance and State Finance Ministers are members of the GST Council."
+  },
+  {
+    stemEn: "Which country was the first in the world to implement a Goods and Services Tax (GST)?",
+    stemHi: "विश्व में वस्तु एवं सेवा कर (जीएसटी) लागू करने वाला पहला देश कौन सा था?",
+    options: ["Germany (1958) / जर्मनी (1958)", "Canada (1991) / कनाडा (1991)", "France (1954) / फ्रांस (1954)", "United Kingdom (1973) / यूनाइटेड किंगडम (1973)", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "France was the first country to introduce GST (VAT) in the year 1954 to eliminate tax cascading and simplify indirect taxation.",
+    expHi: "वर्ष 1954 में फ्रांस विश्व का पहला ऐसा देश था जिसने करों के सोपानी प्रभाव (Cascading Effect) को समाप्त करने के लिए जीएसटी/वैट लागू किया था।",
+    fact: "More than 160 countries across the globe currently operate under a GST/VAT system."
+  },
+  {
+    stemEn: "India's dual GST model (CGST + SGST) is primarily modeled on the dual framework of which country?",
+    stemHi: "भारत का दोहरा जीएसटी मॉडल (CGST + SGST) मुख्य रूप से किस देश के दोहरे ढांचे पर आधारित है?",
+    options: ["Australia / ऑस्ट्रेलिया", "Canada / कनाडा", "United States of America / संयुक्त राज्य अमेरिका", "Singapore / सिंगापुर", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "India adopted a dual GST model where both the Union and the States concurrently levy tax on supply of goods and services, modeled primarily after Canada's federal structure.",
+    expHi: "भारत ने कनाडा के संघीय जीएसटी मॉडल का अनुसरण किया है, जहाँ केंद्र और राज्य दोनों स्वतंत्र रूप से समानांतर कर लगाते हैं।",
+    fact: "The United States does not have a national GST; it levies state-level retail sales taxes instead."
+  },
+  {
+    stemEn: "Which committee first recommended the implementation of a comprehensive Goods and Services Tax (GST) in India in 2002–2003?",
+    stemHi: "2002-2003 में भारत में व्यापक वस्तु एवं सेवा कर (जीएसटी) की सिफारिश सबसे पहले किस समिति ने की थी?",
+    options: ["Raja Chelliah Committee / राजा चेलैया समिति", "Y. V. Reddy Committee / वाई. वी. रेड्डी समिति", "Kelkar Task Force on Fiscal Reforms / राजकोषीय सुधारों पर केलकर टास्क फोर्स", "Rangarajan Committee / रंगराजन समिति", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "The Kelkar Task Force on the Implementation of the Fiscal Responsibility and Budget Management (FRBM) Act (headed by Vijay Kelkar in 2003) strongly recommended a national comprehensive GST.",
+    expHi: "वर्ष 2002-2003 में विजय केलकर की अध्यक्षता वाले केलकर टास्क फोर्स ने भारत में राष्ट्रीय स्तर पर एकीकृत जीएसटी लागू करने की पुरजोर सिफारिश की थी।",
+    fact: "Vijay Kelkar is widely regarded as one of the conceptual architects of Indian GST."
+  },
+  {
+    stemEn: "Who was appointed as the Chairman of the first 'Empowered Committee of State Finance Ministers' set up to design the GST framework in 2000?",
+    stemHi: "वर्ष 2000 में जीएसटी ढांचे को डिजाइन करने के लिए गठित पहले 'राज्य वित्त मंत्रियों की अधिकार प्राप्त समिति' के अध्यक्ष कौन थे?",
+    options: ["Arun Jaitley / अरुण जेटली", "Asim Dasgupta / असीम दासगुप्ता", "P. Chidambaram / पी. चिदंबरम", "Amit Mitra / अमित मित्रा", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "In the year 2000, Prime Minister Atal Bihari Vajpayee set up the Empowered Committee of State Finance Ministers to design the GST structure, headed by West Bengal Finance Minister Asim Dasgupta.",
+    expHi: "वर्ष 2000 में तत्कालीन प्रधानमंत्री अटल बिहारी वाजपेयी ने पश्चिम बंगाल के तत्कालीन वित्त मंत्री असीम दासगुप्ता की अध्यक्षता में अधिकार प्राप्त समिति का गठन किया था।",
+    fact: "Asim Dasgupta remained the head of this empowered committee until 2011."
+  },
+  {
+    stemEn: "What is the full form of 'IGST' under the Indian Goods and Services Tax framework?",
+    stemHi: "भारतीय जीएसटी व्यवस्था के तहत 'IGST' का पूर्ण रूप क्या है?",
+    options: ["Internal Goods and Services Tax / इंटरनल गुड्स एंड सर्विसेज टैक्स", "Indian Goods and Services Tax / इंडियन गुड्स एंड सर्विसेज टैक्स", "Integrated Goods and Services Tax / इंटीग्रेटेड गुड्स एंड सर्विसेज टैक्स", "Inter-State Goods and Services Tax / इंटर-स्टेट गुड्स एंड सर्विसेज टैक्स", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "IGST stands for Integrated Goods and Services Tax, which is levied under the IGST Act, 2017 on all inter-state supplies of goods and/or services as well as on imports into India.",
+    expHi: "IGST का पूर्ण रूप 'Integrated Goods and Services Tax' (एकीकृत वस्तु एवं सेवा कर) है। यह अंतर-राज्यीय (Inter-State) व्यापार तथा आयात पर लगाया जाता है।",
+    fact: "IGST is collected by the Central Government and apportioned between the Union and the destination State."
+  },
+  {
+    stemEn: "Which Article of the Indian Constitution governs the levy and collection of GST in the course of Inter-State trade or commerce?",
+    stemHi: "भारतीय संविधान का कौन सा अनुच्छेद अंतर-राज्यीय व्यापार या वाणिज्य के दौरान जीएसटी के उद्ग्रहण और संग्रह को नियंत्रित करता है?",
+    options: ["Article 246A / अनुच्छेद 246A", "Article 268 / अनुच्छेद 268", "Article 368 / अनुच्छेद 368", "Article 269A / अनुच्छेद 269A", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Article 269A explicitly mandates that Goods and Services Tax on supplies in the course of inter-state trade or commerce shall be levied and collected by the Government of India and apportioned between the Union and the States.",
+    expHi: "संविधान का अनुच्छेद 269A अंतर-राज्यीय व्यापार अथवा वाणिज्य के अनुक्रम में वस्तु एवं सेवा कर के उद्ग्रहण और केंद्र तथा राज्यों के बीच उसके बंटवारे का प्रावधान करता है।",
+    fact: "Under Article 269A, import of goods or services into India is deemed to be supply in the course of inter-state trade."
+  },
+  {
+    stemEn: "What was the official Constitutional Amendment Bill number introduced in the Lok Sabha that later became the GST Act?",
+    stemHi: "लोकसभा में प्रस्तुत किए गए उस संविधान संशोधन विधेयक का आधिकारिक क्रमांक क्या था जो बाद में जीएसटी अधिनियम बना?",
+    options: ["115th Amendment Bill / 115वाँ संशोधन विधेयक", "120th Amendment Bill / 120वाँ संशोधन विधेयक", "121st Amendment Bill / 121वाँ संशोधन विधेयक", "123rd Amendment Bill / 123वाँ संशोधन विधेयक", "None of these / इनमें से कोई नहीं"],
+    correct: 4,
+    expEn: "Options A, B, C, and D are factually incorrect. The bill introduced was the 122nd Constitutional Amendment Bill, 2014, which upon enactment became the 101st Constitutional Amendment Act, 2016.",
+    expHi: "विकल्प (A), (B), (C) तथा (D) गलत हैं। संसद में प्रस्तुत विधेयक का आधिकारिक क्रमांक 122वाँ संविधान संशोधन विधेयक, 2014 था, जो पारित होने के उपरांत 101वाँ संविधान संशोधन अधिनियम, 2016 बना। अतः सही उत्तर विकल्प (E) है।",
+    fact: "Candidates must strictly distinguish between Bill Number (122nd) and Act Number (101st)."
+  },
+  {
+    stemEn: "How many total digits/characters comprise a standard Goods and Services Tax Identification Number (GSTIN)?",
+    stemHi: "एक मानक वस्तु एवं सेवा कर पहचान संख्या (GSTIN) में कुल कितने अंक/वर्ण होते हैं?",
+    options: ["12 digits / 12 अंक", "15 alphanumeric characters / 15 अल्फ़ान्यूमेरिक वर्ण", "10 alphanumeric characters / 10 अल्फ़ान्यूमेरिक वर्ण", "16 digits / 16 अंक", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "A GSTIN is a 15-digit alphanumeric state-wise identifier assigned to every registered taxpayer under GST.",
+    expHi: "जीएसटी पहचान संख्या (GSTIN) कुल 15 अंकों/अक्षरों का एक राज्य-वार अल्फ़ान्यूमेरिक कोड होता है।",
+    fact: "The first 2 digits of GSTIN represent the State Code, followed by the 10-character PAN of the business entity."
+  },
+  {
+    stemEn: "In a 15-digit GSTIN, what do the first two digits represent?",
+    stemHi: "15 अंकों वाले GSTIN में पहले दो अंक क्या दर्शाते हैं?",
+    options: ["Entity Code / इकाई कोड", "Year of Registration / पंजीकरण का वर्ष", "State Code / राज्य कोड", "Business PAN / व्यावसायिक पैन", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "The first two digits of a GSTIN represent the 2-digit Indian Census State Code (e.g., 09 for Uttar Pradesh, 07 for Delhi, 27 for Maharashtra).",
+    expHi: "GSTIN के प्रथम दो अंक संबंधित राज्य या केंद्र शासित प्रदेश का आधिकारिक 'राज्य कोड' (State Code) दर्शाते हैं (जैसे उत्तर प्रदेश का कोड 09 है)।",
+    fact: "Uttar Pradesh's GST state code is 09; Bihar's is 10."
+  },
+  {
+    stemEn: "Which of the following taxes was NOT subsumed under the Goods and Services Tax (GST)?",
+    stemHi: "निम्नलिखित में से कौन सा कर वस्तु एवं सेवा कर (जीएसटी) के अंतर्गत समाहित (Subsumed) नहीं किया गया था?",
+    options: ["Central Excise Duty / केंद्रीय उत्पाद शुल्क", "Service Tax / सेवा कर", "State Value Added Tax (VAT) / राज्य मूल्य संवर्धित कर (वैट)", "Customs Basic Duty / सीमा शुल्क (बेसिक कस्टम्स ड्यूटी)", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Basic Customs Duty (BCD) on imported goods was retained outside GST to safeguard domestic industries, whereas Central Excise Duty, Service Tax, and State VAT were subsumed.",
+    expHi: "आयात पर लगने वाला मूल सीमा शुल्क (Basic Customs Duty) जीएसटी में समाहित नहीं किया गया था और इसे स्वतंत्र रूप से जारी रखा गया है, जबकि उत्पाद शुल्क, सेवा कर और वैट को जीएसटी में समाहित कर दिया गया।",
+    fact: "Countervailing Duty (CVD) and Special Additional Duty (SAD) of customs were subsumed into IGST, but Basic Customs Duty remains separate."
+  },
+  {
+    stemEn: "Which Indian state was the very first to ratify the GST Constitutional Amendment Bill?",
+    stemHi: "जीएसटी संविधान संशोधन विधेयक की पुष्टि (अनुमोदन) करने वाला पहला भारतीय राज्य कौन सा था?",
+    options: ["Bihar / बिहार", "Assam / असम", "Uttar Pradesh / उत्तर प्रदेश", "Maharashtra / महाराष्ट्र", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Assam was the first state legislative assembly to unanimously ratify the Constitution (122nd Amendment) GST Bill on 12th August 2016.",
+    expHi: "असम विधानसभा ने 12 अगस्त 2016 को सबसे पहले जीएसटी संविधान संशोधन विधेयक को सर्वसम्मति से अनुमोदित किया था।",
+    fact: "Bihar was the second state to ratify the GST Bill."
+  },
+  {
+    stemEn: "Which was the last Indian state to implement the Goods and Services Tax (GST) in July 2017?",
+    stemHi: "जुलाई 2017 में वस्तु एवं सेवा कर (जीएसटी) लागू करने वाला अंतिम भारतीय राज्य कौन सा था?",
+    options: ["Sikkim / सिक्किम", "Arunachal Pradesh / अरुणाचल प्रदेश", "Jammu and Kashmir / जम्मू और कश्मीर", "Goa / गोवा", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Jammu and Kashmir passed the State GST Bill on 7th July 2017, and the President issued an ordinance making GST effective in the state on 8th July 2017.",
+    expHi: "जम्मू और कश्मीर विधानसभा द्वारा 7 जुलाई को विधेयक पारित करने के बाद, वहां 8 जुलाई 2017 से जीएसटी लागू हुआ, जिससे यह इसे अपनाने वाला अंतिम राज्य बना।",
+    fact: "Rest of India implemented GST on 1st July 2017; J&K adopted it a week later on 8th July 2017."
+  },
+  {
+    stemEn: "What voting weightage does the Central Government hold in decisions taken by the GST Council?",
+    stemHi: "जीएसटी परिषद द्वारा लिए जाने वाले निर्णयों में केंद्र सरकार के पास कितना मत भार (वोटिंग वेटेज) होता है?",
+    options: ["One-fourth (1/4) of the total votes cast / कुल डाले गए मतों का एक-चौथाई (1/4)", "One-half (1/2) of the total votes cast / कुल डाले गए मतों का आधा (1/2)", "Three-fourth (3/4) of the total votes cast / कुल डाले गए मतों का तीन-चौथाई (3/4)", "One-third (1/3) of the total votes cast / कुल डाले गए मतों का एक-तिहाई (1/3)", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Under Article 279A(9), the vote of the Central Government has a weightage of one-third (33.33%) of the total votes cast in the GST Council meeting.",
+    expHi: "संविधान के अनुच्छेद 279A(9) के तहत, जीएसटी परिषद में केंद्र सरकार के मत का भार डाले गए कुल मतों का एक-तिहाई (1/3) होता है।",
+    fact: "State Governments collectively hold two-thirds (2/3) weightage in the GST Council."
+  },
+  {
+    stemEn: "What majority of weighted votes is required for the GST Council to pass any decision or resolution?",
+    stemHi: "जीएसटी परिषद में किसी भी निर्णय या प्रस्ताव को पारित करने के लिए भारित मतों के कितने बहुमत की आवश्यकता होती है?",
+    options: ["Simple Majority (more than 50%) / साधारण बहुमत (50% से अधिक)", "Not less than three-fourths (75%) / कम से कम तीन-चौथाई (75%)", "Two-thirds (66.66%) / दो-तिहाई (66.66%)", "Absolute Unanimous Consensus (100%) / पूर्ण सर्वसम्मति (100%)", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Every decision of the GST Council is taken by a majority of not less than three-fourths (75%) of the weighted votes of the members present and voting.",
+    expHi: "जीएसटी परिषद की किसी भी बैठक में प्रत्येक निर्णय उपस्थित और मतदान करने वाले सदस्यों के भारित मतों के कम से कम तीन-चौथाई (75%) बहुमत से लिया जाता है।",
+    fact: "To constitute a valid meeting (quorum) of the GST Council, at least one-half (50%) of the total members must be present."
+  },
+  {
+    stemEn: "What is the standard minimum quorum required to conduct a valid meeting of the GST Council?",
+    stemHi: "जीएसटी परिषद की किसी भी वैध बैठक को आयोजित करने के लिए आवश्यक न्यूनतम गणपूर्ति (कोरम) क्या है?",
+    options: ["One-third of the total members / कुल सदस्यों का एक-तिहाई", "One-fourth of the total members / कुल सदस्यों का एक-चौथाई", "Two-thirds of the total members / कुल सदस्यों का दो-तिहाई", "Two-fifths of the total members / कुल सदस्यों का दो-पांचवां", "None of these / इनमें से कोई नहीं"],
+    correct: 4,
+    expEn: "Options A, B, C, and D are incorrect. As per Article 279A(7), one-half (1/2 or 50%) of the total number of members of the GST Council constitutes the quorum for its meetings.",
+    expHi: "विकल्प (A), (B), (C) तथा (D) गलत हैं। अनुच्छेद 279A(7) के अनुसार, जीएसटी परिषद की बैठक का कोरम (गणपूर्ति) कुल सदस्यों की संख्या का आधा (1/2 अथवा 50%) होना अनिवार्य है। अतः सही उत्तर विकल्प (E) है।",
+    fact: "Quorum = 1/2 of total members; Passing majority = 3/4 of weighted votes cast."
+  },
+  {
+    stemEn: "What does the abbreviation 'HSN' stand for in GST billing and taxation codes?",
+    stemHi: "जीएसटी बिलिंग और कराधान कोड में 'HSN' का संक्षिप्त नाम क्या दर्शाता है?",
+    options: ["Harmonized System of Nomenclature / हार्मोनाइज्ड सिस्टम ऑफ नोमेनक्लेचर", "High Security Network / हाई सिक्योरिटी नेटवर्क", "Household Supply Number / हाउसहोल्ड सप्लाई नंबर", "Homogeneous System of Numbering / होमोजेनियस सिस्टम ऑफ नंबरिंग", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "HSN stands for 'Harmonized System of Nomenclature', a globally standardized 6-digit taxonomy developed by the World Customs Organization (WCO) to classify goods systematically.",
+    expHi: "HSN का पूर्ण रूप 'Harmonized System of Nomenclature' (नामकरण की सामंजस्यपूर्ण प्रणाली) है। इसका उपयोग वस्तुओं के अंतर्राष्ट्रीय वर्गीकरण के लिए किया जाता है।",
+    fact: "Services are classified using SAC (Services Accounting Code), while goods use HSN codes."
+  },
+  {
+    stemEn: "What code system is specifically used for the classification of 'Services' under the GST regime?",
+    stemHi: "जीएसटी व्यवस्था के तहत 'सेवाओं' (Services) के वर्गीकरण के लिए विशेष रूप से किस कोड प्रणाली का उपयोग किया जाता है?",
+    options: ["HSN Code / एचएसएन कोड", "NIC Code / एनआईसी कोड", "SAC (Services Accounting Code) / एसएसी (सर्विसेज अकाउंटिंग कोड)", "SIC Code / एसआईसी कोड", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Services Accounting Code (SAC) is issued by the Central Board of Indirect Taxes and Customs (CBIC) specifically to classify and tax different services under GST.",
+    expHi: "जीएसटी में सेवाओं की पहचान, वर्गीकरण और कर निर्धारण के लिए 'SAC' (सर्विसेज अकाउंटिंग कोड) का प्रयोग किया जाता है।",
+    fact: "All service codes under SAC uniformly start with the digits '99'."
+  },
+  {
+    stemEn: "Which non-profit, non-government private limited company was originally established to provide IT backbone infrastructure for GST in India?",
+    stemHi: "भारत में जीएसटी के लिए आईटी अवसंरचना सहायता प्रदान करने हेतु मूल रूप से किस गैर-लाभकारी कंपनी की स्थापना की गई थी?",
+    options: ["National Informatics Centre (NIC) / राष्ट्रीय सूचना विज्ञान केंद्र", "Goods and Services Tax Network (GSTN) / वस्तु एवं सेवा कर नेटवर्क (जीएसटीएन)", "Centre for Railway Information Systems (CRIS) / सेंटर फॉर रेलवे इंफॉर्मेशन सिस्टम्स", "NSDL Database Management Limited / एनएसडीएल डेटाबेस मैनेजमेंट लिमिटेड", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "GSTN (Goods and Services Tax Network) is the special purpose IT vehicle incorporated in 2013 under Section 25 (now Section 8) of the Companies Act to manage the GST technological portal.",
+    expHi: "जीएसटी व्यवस्था के आईटी अवसंरचना, पोर्टल और रिटर्न फाइलिंग को संचालित करने के लिए जीएसटीएन (Goods and Services Tax Network) की स्थापना की गई थी।",
+    fact: "The Union and State governments together previously held 49% equity in GSTN, which was later transitioned into a 100% government-owned company."
+  },
+  {
+    stemEn: "What are the four primary standard tax slabs prescribed under the Indian GST system?",
+    stemHi: "भारतीय जीएसटी प्रणाली के तहत निर्धारित चार प्राथमिक मानक कर स्लैब कौन से हैं?",
+    options: ["4%, 10%, 16%, and 24% / 4%, 10%, 16%, और 24%", "5%, 12%, 18%, and 28% / 5%, 12%, 18%, और 28%", "6%, 12%, 18%, and 26% / 6%, 12%, 18%, और 26%", "5%, 10%, 15%, and 25% / 5%, 10%, 15%, और 25%", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "The Indian GST framework operates broadly under four core tax rate slabs: 5%, 12%, 18%, and 28% (along with a 0% exempt category and special rates on items like gold and rough diamonds).",
+    expHi: "भारत में जीएसटी की चार मुख्य दरें 5%, 12%, 18% और 28% हैं। इसके अतिरिक्त 0% (कर मुक्त) श्रेणी तथा सोने/रत्नों के लिए विशेष दरें हैं।",
+    fact: "Precious metals like Gold and Silver are taxed at a special rate of 3%, and rough diamonds at 0.25%."
+  },
+  {
+    stemEn: "Under the Goods and Services Tax (Compensation to States) Act, 2017, for how many years was the Central Government initially mandated to compensate States for revenue loss?",
+    stemHi: "वस्तु एवं सेवा कर (राज्यों को क्षतिपूर्ति) अधिनियम, 2017 के तहत, केंद्र सरकार को शुरू में कितने वर्षों के लिए राजस्व हानि की भरपाई करने का दायित्व दिया गया था?",
+    options: ["3 years / 3 वर्ष", "10 years / 10 वर्ष", "7 years / 7 वर्ष", "5 years / 5 वर्ष", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "The GST Compensation Act guaranteed that any state suffering a shortfall in revenue collection below a projected 14% annual growth rate would be compensated by the Centre for an initial period of 5 years (until June 2022).",
+    expHi: "संसद द्वारा पारित अधिनियम के अनुसार, जीएसटी लागू होने से राज्यों को होने वाली किसी भी राजस्व हानि की क्षतिपूर्ति केंद्र सरकार द्वारा 5 वर्षों (2017 से 2022) तक करने का प्रावधान किया गया था।",
+    fact: "The base year for calculating revenue shortfall was 2015-16, assuming an annual growth rate of 14%."
+  },
+
+  // 26 to 50
+  {
+    stemEn: "Which of the following items is completely kept outside the ambit of the GST regime by virtue of the Constitutional definition of Goods and Services Tax?",
+    stemHi: "निम्नलिखित में से कौन सी वस्तु वस्तु एवं सेवा कर (जीएसटी) की संवैधानिक परिभाषा के तहत पूरी तरह से इसके दायरे से बाहर रखी गई है?",
+    options: ["Natural Gas / प्राकृतिक गैस", "Alcoholic liquor for human consumption / मानव उपभोग के लिए मादक शराब", "High-speed Diesel / हाई-स्पीड डीजल", "Aviation Turbine Fuel / एविएशन टर्बाइन फ्यूल (विमानन ईंधन)", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Article 366(12A) of the Constitution of India, Goods and Services Tax is defined as a tax on the supply of goods, or services or both, except taxes on the supply of alcoholic liquor for human consumption.",
+    expHi: "भारतीय संविधान के अनुच्छेद 366(12A) के तहत जीएसटी की परिभाषा से 'मानव उपभोग के लिए मादक शराब' (अल्कोहलिक लिकर) को स्पष्ट रूप से बाहर रखा गया है। इस पर राज्य उत्पाद शुल्क और राज्य वैट लागू रहता है।",
+    fact: "Petroleum products can be brought under GST by a recommendation of the GST Council, but alcohol requires a Constitutional Amendment to be included."
+  },
+  {
+    stemEn: "How many specified petroleum products are temporarily kept out of GST until a date recommended by the GST Council under Article 279A(5)?",
+    stemHi: "अनुच्छेद 279A(5) के तहत जीएसटी परिषद द्वारा अनुशंसित तिथि तक कितने विशिष्ट पेट्रोलियम उत्पादों को अस्थायी रूप से जीएसटी के दायरे से बाहर रखा गया है?",
+    options: ["3 products / 3 उत्पाद", "4 products / 4 उत्पाद", "5 products / 5 उत्पाद", "6 products / 6 उत्पाद", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Exactly 5 petroleum products are deferred from GST: Crude Petroleum, High-Speed Diesel (HSD), Motor Spirit (commonly known as Petrol), Natural Gas, and Aviation Turbine Fuel (ATF).",
+    expHi: "संविधान के अनुच्छेद 279A(5) के अंतर्गत 5 विशिष्ट पेट्रोलियम उत्पाद (कच्चा तेल, पेट्रोल, डीजल, प्राकृतिक गैस और विमानन ईंधन) अस्थायी रूप से जीएसटी से बाहर हैं।",
+    fact: "Central Excise Duty and State VAT continue to be levied on these five petroleum items."
+  },
+  {
+    stemEn: "What is the standard GST rate levied on gold and silver jewellery in India?",
+    stemHi: "भारत में सोने और चांदी के आभूषणों पर लगाया जाने वाला मानक जीएसटी दर क्या है?",
+    options: ["1% / 1%", "1.5% / 1.5%", "5% / 5%", "3% / 3%", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Gold, silver, and platinum attract a special GST rate of 3% across India (split as 1.5% CGST + 1.5% SGST, or 3% IGST), distinct from the four primary tax slabs.",
+    expHi: "बहुमूल्य धातुओं जैसे सोना, चांदी और इनसे बने आभूषणों पर 3% की विशेष जीएसटी दर लागू की गई है (1.5% CGST + 1.5% SGST)।",
+    fact: "Making charges on jewellery are treated as supply of service and attract 5% GST."
+  },
+  {
+    stemEn: "What is the special concessional GST rate applied to rough (unworked) diamonds?",
+    stemHi: "तराशे न गए (कच्चे/रफ) हीरों पर लागू विशेष रियायती जीएसटी दर क्या है?",
+    options: ["0.25% / 0.25%", "0.5% / 0.5%", "1% / 1%", "3% / 3%", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "Rough diamonds and unworked precious stones attract a special nominal GST rate of 0.25% to support the diamond cutting and polishing export sector.",
+    expHi: "कच्चे (अनगढ़े) हीरों और रत्नों के व्यापार को बढ़ावा देने के लिए इन पर 0.25% की न्यूनतम विशिष्ट जीएसटी दर निर्धारित की गई है।",
+    fact: "Cut and polished diamonds are taxed at the higher rate of 1.5% under GST."
+  },
+  {
+    stemEn: "What was the original annual aggregate turnover threshold for mandatory GST registration of goods suppliers in normal category states?",
+    stemHi: "सामान्य श्रेणी के राज्यों में वस्तुओं के आपूर्तिकर्ताओं के लिए अनिवार्य जीएसटी पंजीकरण हेतु मूल वार्षिक कुल टर्नओवर सीमा क्या थी?",
+    options: ["₹10 Lakh / ₹10 लाख", "₹15 Lakh / ₹15 लाख", "₹20 Lakh / ₹20 लाख", "₹40 Lakh / ₹40 लाख", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "At the inception of GST in 2017, the mandatory turnover threshold was ₹20 lakh for normal category states (later raised to ₹40 lakh for exclusive suppliers of goods), and ₹10 lakh for special category states.",
+    expHi: "जुलाई 2017 में जीएसटी लागू होने के समय सामान्य राज्यों में वस्तुओं के व्यापारियों के लिए पंजीकरण की मूल सीमा ₹20 लाख थी, जिसे बाद में बढ़ाकर ₹40 लाख किया गया।",
+    fact: "For service providers in normal states, the threshold remains ₹20 lakh per annum."
+  },
+  {
+    stemEn: "Which of the following is an apex statutory body created under GST to examine whether reductions in tax rates or input tax credits have resulted in a commensurate reduction in consumer prices?",
+    stemHi: "जीएसटी के तहत कर दरों में कटौती या इनपुट टैक्स क्रेडिट का लाभ उपभोक्ताओं तक पहुंचाने की निगरानी करने वाला वैधानिक निकाय कौन सा था?",
+    options: ["Competition Commission of India (CCI) / भारतीय प्रतिस्पर्धा आयोग", "National Anti-Profiteering Authority (NAA) / राष्ट्रीय मुनाफाखोरी-रोधी प्राधिकरण", "Directorate General of GST Intelligence (DGGI) / जीएसटी आसूचना महानिदेशालय", "Central Consumer Protection Authority (CCPA) / केंद्रीय उपभोक्ता संरक्षण प्राधिकरण", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "The National Anti-Profiteering Authority (NAA) was constituted under Section 171 of the CGST Act to ensure that the benefits of input tax credit and tax rate reductions reach consumers.",
+    expHi: "धारा 171 के अंतर्गत गठित 'राष्ट्रीय मुनाफाखोरी-रोधी प्राधिकरण' (NAA) यह सुनिश्चित करता था कि कंपनियां जीएसटी में मिली कर रियायतों का लाभ उपभोक्ताओं को कम कीमतों के रूप में दें।",
+    fact: "From 1st December 2022, NAA's anti-profiteering mandates were transferred to the Competition Commission of India (CCI)."
+  },
+  {
+    stemEn: "What is the current upper aggregate annual turnover limit for small businesses (manufacturers and traders) to opt for the GST Composition Scheme in normal states?",
+    stemHi: "सामान्य राज्यों में छोटे व्यवसायों (निर्माताओं और व्यापारियों) के लिए जीएसटी कंपोजिशन स्कीम चुनने की वर्तमान अधिकतम वार्षिक टर्नओवर सीमा क्या है?",
+    options: ["₹50 Lakh / ₹50 लाख", "₹75 Lakh / ₹75 लाख", "₹1.0 Crore / ₹1.0 करोड़", "₹1.5 Crore / ₹1.5 करोड़", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "The annual turnover limit for eligible manufacturers and traders to opt for the Composition Scheme in normal category states is ₹1.5 crore (₹75 lakh for specified Special Category States).",
+    expHi: "सामान्य राज्यों में छोटे व्यापारियों एवं निर्माताओं के लिए कंपोजिशन योजना चुनने की अधिकतम वार्षिक कारोबार सीमा ₹1.5 करोड़ निर्धारित की गई है।",
+    fact: "Composition taxpayers pay tax at a nominal flat rate and cannot issue a 'Tax Invoice' or collect GST from customers."
+  },
+  {
+    stemEn: "What flat aggregate GST rate is payable by eligible manufacturers opting for the Composition Scheme?",
+    stemHi: "कंपोजिशन योजना का विकल्प चुनने वाले पात्र निर्माताओं द्वारा देय कुल फ्लैट जीएसटी दर क्या है?",
+    options: ["0.5% / 0.5%", "1% / 1%", "2% / 2%", "5% / 5%", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Manufacturers under the composition scheme pay an aggregate tax of 1% of turnover (0.5% CGST + 0.5% SGST).",
+    expHi: "कंपोजिशन योजना के अंतर्गत आने वाले निर्माताओं को अपने कुल कारोबार पर 1% (0.5% CGST + 0.5% SGST) की दर से एकमुश्त कर देना होता है।",
+    fact: "Restaurants not serving alcohol pay 5% flat GST under the composition scheme."
+  },
+  {
+    stemEn: "Can a taxpayer registered under the GST Composition Scheme claim Input Tax Credit (ITC)?",
+    stemHi: "क्या जीएसटी कंपोजिशन योजना के तहत पंजीकृत करदाता इनपुट टैक्स क्रेडिट (ITC) का दावा कर सकता है?",
+    options: ["Yes, up to a maximum of 50% / हाँ, अधिकतम 50% तक", "Yes, on all capital goods only / हाँ, केवल पूंजीगत वस्तुओं पर", "No, composition taxpayers cannot claim ITC / नहीं, कंपोजिशन करदाता ITC का दावा नहीं कर सकते", "Yes, if turnover is below ₹50 Lakh / हाँ, यदि टर्नओवर ₹50 लाख से कम हो", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under Section 10(4) of the CGST Act, a registered person opting for the Composition Scheme is strictly prohibited from claiming any Input Tax Credit (ITC).",
+    expHi: "केंद्रीय जीएसटी अधिनियम की धारा 10(4) के अनुसार, कंपोजिशन स्कीम चुनने वाला करदाता अपनी इनपुट खरीद पर कोई इनपुट टैक्स क्रेडिट (ITC) प्राप्त नहीं कर सकता।",
+    fact: "Composition dealers also cannot make inter-state outward supplies of goods."
+  },
+  {
+    stemEn: "What is the mandatory monetary threshold of consignment value for the generation of an E-Way Bill for inter-state movement of goods?",
+    stemHi: "वस्तुओं के अंतर-राज्यीय परिवहन के लिए ई-वे बिल (E-Way Bill) तैयार करने हेतु खेप के मूल्य की अनिवार्य सीमा क्या है?",
+    options: ["Consignment value exceeding ₹20,000 / ₹20,000 से अधिक का माल मूल्य", "Consignment value exceeding ₹50,000 / ₹50,000 से अधिक का माल मूल्य", "Consignment value exceeding ₹1,00,000 / ₹1,00,000 से अधिक का माल मूल्य", "Consignment value exceeding ₹2,50,000 / ₹2,50,000 से अधिक का माल मूल्य", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "An Electronic Way Bill (E-Way Bill) is mandatory under Rule 138 of CGST Rules for any movement of goods where the consignment value exceeds ₹50,000.",
+    expHi: "नियम 138 के तहत, जब भी ₹50,000 से अधिक मूल्य के माल का एक राज्य से दूसरे राज्य या निर्दिष्ट सीमा में परिवहन किया जाता है, तो ई-वे बिल जनरेट करना अनिवार्य होता है।",
+    fact: "An E-Way Bill contains Part A (details of supplier, recipient, and invoice) and Part B (vehicle and transporter details)."
+  },
+  {
+    stemEn: "Which constitutional amendment inserted Article 246A conferring simultaneous taxation powers on Parliament and State Legislatures?",
+    stemHi: "किस संविधान संशोधन ने अनुच्छेद 246A जोड़कर संसद और राज्य विधानसभाओं को एक साथ कर लगाने की शक्ति प्रदान की?",
+    options: ["86th Constitutional Amendment Act / 86वाँ संविधान संशोधन अधिनियम", "91st Constitutional Amendment Act / 91वाँ संविधान संशोधन अधिनियम", "100th Constitutional Amendment Act / 100वाँ संविधान संशोधन अधिनियम", "101st Constitutional Amendment Act / 101वाँ संविधान संशोधन अधिनियम", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "The 101st Constitutional Amendment Act, 2016 introduced Article 246A, which granted simultaneous power to Parliament and State legislatures to make laws with respect to Goods and Services Tax.",
+    expHi: "101वें संविधान संशोधन अधिनियम द्वारा अनुच्छेद 246A जोड़ा गया, जिसने केंद्र और राज्यों दोनों को जीएसटी पर कानून बनाने की समवर्ती/समानांतर शक्ति प्रदान की।",
+    fact: "Prior to Article 246A, the Constitution strictly divided indirect tax powers between Union List and State List in the 7th Schedule."
+  },
+  {
+    stemEn: "Under which model of GST does the revenue collected from Inter-State supplies (IGST) get apportioned between the Union and the States?",
+    stemHi: "जीएसटी के किस मॉडल के तहत अंतर-राज्यीय आपूर्ति (IGST) से प्राप्त राजस्व को केंद्र और राज्यों के बीच विभाजित किया जाता है?",
+    options: ["As determined by the Reserve Bank of India / भारतीय रिजर्व बैंक द्वारा निर्धारित अनुसार", "As per recommendations of the GST Council under Article 269A / अनुच्छेद 269A के तहत जीएसटी परिषद की सिफारिशों के अनुसार", "As fixed permanently at 90:10 ratio by Finance Commission / वित्त आयोग द्वारा 90:10 अनुपात में स्थायी रूप से", "Entirely retained by the producing state / पूरी तरह से उत्पादक राज्य द्वारा रखा जाता है", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Article 269A, IGST is collected by the Union and apportioned between the Union and the respective consuming State on the basis of recommendations made by the GST Council.",
+    expHi: "अनुच्छेद 269A के तहत, केंद्र सरकार द्वारा वसूले गए IGST को जीएसटी परिषद की सिफारिशों के आधार पर संसद द्वारा बनाए गए कानून के अनुसार केंद्र और उपभोक्ता राज्य के मध्य बांटा जाता है।",
+    fact: "The state share of IGST goes to the destination (consuming) state, not the originating manufacturing state."
+  },
+  {
+    stemEn: "What was the central excise duty replaced by in the intra-state supply of goods?",
+    stemHi: "वस्तुओं की राज्य के भीतर (Intra-State) आपूर्ति में केंद्रीय उत्पाद शुल्क का स्थान किसने लिया?",
+    options: ["Integrated GST (IGST) / एकीकृत जीएसटी (IGST)", "State GST (SGST) / राज्य जीएसटी (SGST)", "Central GST (CGST) / केंद्रीय जीएसटी (CGST)", "Union Territory GST (UTGST) / संघ राज्य क्षेत्र जीएसटी (UTGST)", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "On every intra-state supply of goods or services, two taxes are levied simultaneously: Central GST (CGST), which replaced Central Excise/Service tax, and State GST (SGST), which replaced State VAT.",
+    expHi: "राज्य के भीतर होने वाले व्यापार पर केंद्रीय उत्पाद शुल्क और सेवा कर के स्थान पर 'केंद्रीय वस्तु एवं सेवा कर' (CGST) लगाया जाता है।",
+    fact: "On an intra-state 18% GST supply, 9% is CGST and 9% is SGST."
+  },
+  {
+    stemEn: "What is the standard rate of Compensation Cess levied on certain demerit and luxury goods under GST?",
+    stemHi: "जीएसटी के तहत कुछ अवांछित (demerit) और विलासिता की वस्तुओं पर क्षतिपूर्ति उपकर किस अधिकतम स्लैब के ऊपर लगाया जाता है?",
+    options: ["5% slab / 5% स्लैब", "12% slab / 12% स्लैब", "18% slab / 18% स्लैब", "28% slab / 28% स्लैब", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Compensation Cess is levied over and above the peak GST rate of 28% on specified sin goods, demerit items, and luxury goods like pan masala, tobacco, luxury cars, and aerated drinks.",
+    expHi: "जीएसटी क्षतिपूर्ति उपकर (Compensation Cess) 28% के उच्चतम कर स्लैब के ऊपर विलासिता और अवांछित वस्तुओं (जैसे तंबाकू, सिगरेट, वातित पेय और लग्जरी कारों) पर लगाया जाता है।",
+    fact: "Revenue collected via this cess is credited to the GST Compensation Fund to compensate states."
+  },
+  {
+    stemEn: "What is the threshold turnover limit for small service providers to register under the GST Composition-like scheme at a flat 6% rate?",
+    stemHi: "छोटे सेवा प्रदाताओं के लिए 6% की फ्लैट दर पर जीएसटी कंपोजिशन योजना का लाभ लेने हेतु अधिकतम टर्नओवर सीमा क्या है?",
+    options: ["₹20 Lakh / ₹20 लाख", "₹40 Lakh / ₹40 लाख", "₹50 Lakh / ₹50 लाख", "₹75 Lakh / ₹75 लाख", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Small service providers with an annual aggregate turnover up to ₹50 lakh in the preceding financial year can opt for the simplified scheme paying 6% GST (3% CGST + 3% SGST).",
+    expHi: "ऐसे छोटे सेवा प्रदाता जिनका पिछले वित्तीय वर्ष में कुल कारोबार ₹50 लाख तक रहा हो, वे 6% (3% CGST + 3% SGST) की रियायती दर पर समाधान योजना का लाभ उठा सकते हैं।",
+    fact: "This scheme for service providers was introduced via Notification No. 2/2019-Central Tax (Rate)."
+  },
+  {
+    stemEn: "What official document must a regular registered taxable person issue when supplying taxable goods or services to customers?",
+    stemHi: "जीएसटी में एक नियमित पंजीकृत करदाता को कर-योग्य वस्तुओं या सेवाओं की आपूर्ति करते समय कौन सा आधिकारिक दस्तावेज जारी करना होता है?",
+    options: ["Delivery Challan / डिलीवरी चालान", "Bill of Supply / आपूर्ति का बिल (बिल ऑफ सप्लाई)", "Tax Invoice / कर चालान (टैक्स इनवॉइस)", "Debit Note / डेबिट नोट", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "A registered person supplying taxable goods or services is legally required to issue a 'Tax Invoice' showing the description, quantity, value, tax rate, and tax charged.",
+    expHi: "कर योग्य वस्तुओं अथवा सेवाओं की आपूर्ति करने वाले पंजीकृत डीलर को धारा 31 के तहत एक 'टैक्स इनवॉइस' (Tax Invoice) जारी करना अनिवार्य होता है।",
+    fact: "Composition dealers and suppliers of exempt goods issue a 'Bill of Supply' instead of a Tax Invoice."
+  },
+  {
+    stemEn: "Which monthly return form must be filed by regular GST taxpayers to summarize their outward supplies, inward supplies, and net tax liability?",
+    stemHi: "नियमित जीएसटी करदाताओं द्वारा अपनी जावक आपूर्ति, आवक आपूर्ति और शुद्ध कर देयता का सारांश प्रस्तुत करने के लिए कौन सा मासिक रिटर्न फॉर्म दाखिल किया जाता है?",
+    options: ["GSTR-1 / जीएसटीआर-1", "GSTR-3B / जीएसटीआर-3B", "GSTR-4 / जीएसटीआर-4", "GSTR-9 / जीएसटीआर-9", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "GSTR-3B is a monthly self-declaration summary return filed by regular taxpayers declaring overall sales, claimed Input Tax Credit (ITC), and paying net tax liability.",
+    expHi: "जीएसटीआर-3बी (GSTR-3B) एक मासिक स्व-घोषणा सारांश रिटर्न है जिसके माध्यम से करदाता अपनी कुल बिक्री, इनपुट क्रेडिट और देय कर का भुगतान करते हैं।",
+    fact: "GSTR-1 contains invoice-wise details of outward supplies (sales), whereas GSTR-3B is the summary payment return."
+  },
+  {
+    stemEn: "Which form is used under GST for filing the consolidated Annual Return by regular taxpayers?",
+    stemHi: "नियमित करदाताओं द्वारा समेकित वार्षिक रिटर्न (Annual Return) दाखिल करने के लिए किस फॉर्म का उपयोग किया जाता है?",
+    options: ["GSTR-2A / जीएसटीआर-2A", "GSTR-7 / जीएसटीआर-7", "GSTR-9 / जीएसटीआर-9", "GSTR-10 / जीएसटीआर-10", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "GSTR-9 is the annual return form to be filed by all regular taxpayers registered under GST, consolidating monthly/quarterly filings for the entire financial year.",
+    expHi: "जीएसटीआर-9 (GSTR-9) सभी नियमित पंजीकृत करदाताओं द्वारा वित्तीय वर्ष की समाप्ति के बाद दाखिल किया जाने वाला अनिवार्य वार्षिक रिटर्न फॉर्म है।",
+    fact: "GSTR-9A was the annual return for composition dealers, later substituted by simplified processes."
+  },
+  {
+    stemEn: "What is the mechanism known as when the liability to pay GST is shifted from the supplier of goods/services to the recipient?",
+    stemHi: "वह व्यवस्था क्या कहलाती है जिसमें जीएसटी का भुगतान करने का दायित्व वस्तुओं/सेवाओं के आपूर्तिकर्ता के बजाय प्राप्तकर्ता (खरीदार) पर स्थानांतरित हो जाता है?",
+    options: ["Forward Charge Mechanism / फॉरवर्ड चार्ज मैकेनिज्म", "Equalization Levy / समकारी लेवी", "Reverse Charge Mechanism (RCM) / रिवर्स चार्ज मैकेनिज्म (आरसीएम)", "Destination Surcharge / गंतव्य अधिभार", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under the Reverse Charge Mechanism (RCM), the recipient of goods or services becomes legally liable to pay the GST directly to the government instead of the supplier.",
+    expHi: "रिवर्स चार्ज मैकेनिज्म (RCM) के तहत, कर का भुगतान करने की वैधानिक जिम्मेदारी माल या सेवा प्रदाता की न होकर खरीदार/प्राप्तकर्ता की होती है।",
+    fact: "RCM commonly applies to goods transport agency (GTA) services, legal services by advocates, and imports of services."
+  },
+  {
+    stemEn: "Who was the Union Finance Minister of India when the GST was officially launched on 1st July 2017?",
+    stemHi: "1 जुलाई 2017 को जब जीएसटी आधिकारिक तौर पर लॉन्च किया गया था, तब भारत के केंद्रीय वित्त मंत्री कौन थे?",
+    options: ["P. Chidambaram / पी. चिदंबरम", "Pranab Mukherjee / प्रणब मुखर्जी", "Nirmala Sitharaman / निर्मला सीतारमण", "Jaswant Singh / जसवंत सिंह", "None of these / इनमें से कोई नहीं"],
+    correct: 4,
+    expEn: "Options A, B, C, and D are factually incorrect. The Union Finance Minister who steered and launched the GST on 1st July 2017 was Arun Jaitley.",
+    expHi: "विकल्प (A), (B), (C) तथा (D) गलत हैं। 1 जुलाई 2017 को जीएसटी के ऐतिहासिक शुभारंभ के समय भारत के केंद्रीय वित्त मंत्री श्री अरुण जेटली थे। अतः सही उत्तर विकल्प (E) है।",
+    fact: "Late Arun Jaitley presided over the first 35 consecutive meetings of the GST Council."
+  },
+  {
+    stemEn: "What is the base year designated under the GST Compensation Law for calculating the revenue shortfall of States?",
+    stemHi: "राज्यों के राजस्व घाटे की गणना के लिए जीएसटी क्षतिपूर्ति कानून के तहत किस वर्ष को आधार वर्ष (Base Year) निर्धारित किया गया था?",
+    options: ["Financial Year 2014-15 / वित्तीय वर्ष 2014-15", "Financial Year 2016-17 / वित्तीय वर्ष 2016-17", "Financial Year 2015-16 / वित्तीय वर्ष 2015-16", "Financial Year 2017-18 / वित्तीय वर्ष 2017-18", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under the Goods and Services Tax (Compensation to States) Act, 2017, the financial year 2015-16 was chosen as the base year with an assumed annual revenue growth rate of 14%.",
+    expHi: "जीएसटी क्षतिपूर्ति अधिनियम के तहत राज्यों के राजस्व घाटे का आकलन करने के लिए वित्तीय वर्ष 2015-16 को आधार वर्ष (Base Year) स्वीकार किया गया था।",
+    fact: "If a state's revenue grew less than 14% compounded annually over the base year 2015-16, the shortfall was made good by Compensation Cess."
+  },
+  {
+    stemEn: "Under which Article of the Constitution did the President of India issue an order to formally constitute the GST Council in September 2016?",
+    stemHi: "सितंबर 2016 में भारत के राष्ट्रपति ने संविधान के किस अनुच्छेद के तहत औपचारिक रूप से जीएसटी परिषद का गठन करने का आदेश जारी किया था?",
+    options: ["Article 279A(1) / अनुच्छेद 279A(1)", "Article 280 / अनुच्छेद 280", "Article 265 / अनुच्छेद 265", "Article 300A / अनुच्छेद 300A", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "Article 279A(1) mandated the President of India to constitute the GST Council within 60 days from the commencement of the 101st Constitutional Amendment Act, which was done on 15th September 2016.",
+    expHi: "101वें संशोधन की धारा 12 द्वारा जोड़े गए अनुच्छेद 279A(1) के तहत राष्ट्रपति ने 15 सितंबर 2016 को जीएसटी परिषद का विधिवत गठन किया था।",
+    fact: "The Secretariat of the GST Council is located in New Delhi."
+  },
+  {
+    stemEn: "Which among the following state-level taxes was NOT subsumed under the Goods and Services Tax (GST)?",
+    stemHi: "निम्नलिखित में से कौन सा राज्य-स्तरीय कर वस्तु एवं सेवा कर (जीएसटी) में समाहित नहीं किया गया था?",
+    options: ["State VAT / Sales Tax / राज्य वैट / बिक्री कर", "Luxury Tax / विलासिता कर", "Taxes on Lottery, Betting and Gambling / लॉटरी, सट्टेबाजी और जुए पर कर", "Stamp Duty and Registration Fee / स्टाम्प शुल्क और पंजीकरण शुल्क", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Stamp Duty, Property Tax, and Land Registration Fees levied on real estate transactions were kept completely out of GST and continue to be levied independently by State Governments.",
+    expHi: "अचल संपत्ति की खरीद-बिक्री पर लगने वाला 'स्टाम्प शुल्क और पंजीकरण शुल्क' जीएसटी में शामिल नहीं किया गया; इसे राज्य सरकारें स्वतंत्र रूप से वसूलती हैं।",
+    fact: "Electricity duty is another major state revenue source kept outside the GST structure."
+  },
+  {
+    stemEn: "What is the fundamental economic benefit of the Input Tax Credit (ITC) mechanism in GST?",
+    stemHi: "जीएसटी में इनपुट टैक्स क्रेडिट (ITC) प्रणाली का मूलभूत आर्थिक लाभ क्या है?",
+    options: ["Elimination of the cascading effect of 'tax on tax' / 'कर पर कर' के सोपानी (कैस्केडिंग) प्रभाव को समाप्त करना", "Increasing the corporate tax liability on exporters / निर्यातकों पर कॉर्पोरेट कर दायित्व को बढ़ाना", "Complete exemption of luxury items from all duties / विलासिता की वस्तुओं को सभी शुल्कों से पूर्ण छूट देना", "Banning inter-state trade of consumer durables / उपभोक्ता टिकाऊ वस्तुओं के अंतर-राज्यीय व्यापार पर प्रतिबंध लगाना", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "Input Tax Credit allows businesses to deduct the tax already paid on purchases (inputs) from the tax due on their sales (outputs), eliminating the cascading effect or 'tax on tax'.",
+    expHi: "इनपुट टैक्स क्रेडिट (ITC) व्यापारियों को खरीद पर पहले से चुकाए गए कर को बिक्री पर देय कर से घटाने की अनुमति देता है, जिससे कर पर कर (Cascading Effect) समाप्त हो जाता है।",
+    fact: "Under GST, unutilized ITC can generally be carried forward to the subsequent tax period."
+  },
+  {
+    stemEn: "Under the GST mechanism, in what sequence must Input Tax Credit of IGST be utilized first?",
+    stemHi: "जीएसटी व्यवस्था के तहत, सबसे पहले IGST के इनपुट टैक्स क्रेडिट (ITC) का उपयोग किस क्रम में किया जाना अनिवार्य है?",
+    options: ["SGST first, then CGST, and lastly IGST / पहले SGST, फिर CGST, और अंत में IGST", "CGST first, then SGST, and lastly IGST / पहले CGST, फिर SGST, और अंत में IGST", "IGST liability first, then towards CGST and/or SGST in any order / पहले IGST देयता के विरुद्ध, फिर CGST और/या SGST के विरुद्ध किसी भी क्रम में", "Equally distributed between CGST and SGST only / केवल CGST और SGST के बीच समान रूप से", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under the amended Section 49 of the CGST Act, Input Tax Credit of IGST must first be completely exhausted against output IGST liability, and any remaining balance can be utilized towards CGST and SGST in any proportion.",
+    expHi: "धारा 49 के तहत, IGST क्रेडिट का उपयोग सबसे पहले देय IGST के भुगतान के लिए किया जाना चाहिए; शेष राशि को CGST या SGST की देयता चुकाने में किसी भी अनुपात में प्रयोग किया जा सकता है।",
+    fact: "CGST credit can never be utilized for payment of SGST, and vice-versa."
+  },
+
+  // 51 to 75
+  {
+    stemEn: "What is the current aggregate annual turnover threshold above which business entities must mandatorily generate E-Invoices (Electronic Invoicing) for B2B supplies?",
+    stemHi: "वर्तमान में वह कुल वार्षिक टर्नओवर सीमा क्या है जिसके ऊपर व्यावसायिक संस्थाओं के लिए B2B आपूर्ति हेतु अनिवार्य रूप से ई-इनवॉइस (इलेक्ट्रॉनिक इनवॉइसिंग) जनरेट करना आवश्यक है?",
+    options: ["₹500 Crore / ₹500 करोड़", "₹100 Crore / ₹100 करोड़", "₹50 Crore / ₹50 करोड़", "₹5 Crore / ₹5 करोड़", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "The mandatory E-Invoicing threshold under GST was gradually phased down from ₹500 crore to ₹100 crore, ₹50 crore, ₹20 crore, ₹10 crore, and finally to taxpayers with aggregate turnover exceeding ₹5 crore (effective August 2023).",
+    expHi: "जीएसटी के तहत B2B लेन-देन के लिए ई-इनवॉइसिंग की सीमा को चरणबद्ध रूप से घटाते हुए ₹5 करोड़ से अधिक वार्षिक टर्नओवर वाले व्यवसायों के लिए अनिवार्य कर दिया गया है।",
+    fact: "E-Invoicing generates a unique 64-character Invoice Reference Number (IRN) and a signed QR code via the Invoice Registration Portal (IRP)."
+  },
+  {
+    stemEn: "How many total characters comprise a valid Invoice Reference Number (IRN) generated on the Invoice Registration Portal (IRP) under E-invoicing?",
+    stemHi: "ई-इनवॉइसिंग के तहत इनवॉइस रजिस्ट्रेशन पोर्टल (IRP) पर जनरेट किए गए एक वैध इनवॉइस रेफरेंस नंबर (IRN) में कुल कितने वर्ण होते हैं?",
+    options: ["15 characters / 15 वर्ण", "32 characters / 32 वर्ण", "64 characters / 64 वर्ण", "128 characters / 128 वर्ण", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "The Invoice Reference Number (IRN) is a unique 64-character alphanumeric string generated using a secure SHA-256 cryptographic hashing algorithm.",
+    expHi: "आईआरपी पोर्टल द्वारा जारी इनवॉइस रेफरेंस नंबर (IRN) एक विशिष्ट 64-वर्णों (alphanumeric hash) का कोड होता है, जो SHA-256 एल्गोरिदम पर आधारित है।",
+    fact: "IRN is uniquely generated based on Supplier GSTIN, Document Type, Document Number, and Financial Year."
+  },
+  {
+    stemEn: "Under Section 10(1) of the CGST Act, what is the reduced aggregate annual turnover threshold to opt for the Composition Scheme in designated Special Category States (like the North-Eastern states and Uttarakhand)?",
+    stemHi: "केंद्रीय जीएसटी अधिनियम की धारा 10(1) के तहत, निर्दिष्ट विशेष श्रेणी के राज्यों (जैसे पूर्वोत्तर राज्यों और उत्तराखंड) में कंपोजिशन योजना चुनने के लिए वार्षिक टर्नओवर की घटाई गई सीमा क्या है?",
+    options: ["₹20 Lakh / ₹20 लाख", "₹40 Lakh / ₹40 लाख", "₹75 Lakh / ₹75 लाख", "₹1.0 Crore / ₹1.0 करोड़", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "For 8 Special Category States (Arunachal Pradesh, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim, Tripura, and Uttarakhand), the turnover threshold for opting into the Composition Scheme is ₹75 lakh instead of ₹1.5 crore.",
+    expHi: "पूर्वोत्तर राज्यों तथा उत्तराखंड सहित निर्दिष्ट विशेष श्रेणी के 8 राज्यों में छोटे व्यापारियों के लिए कंपोजिशन योजना का टर्नओवर सीमा ₹75 लाख निर्धारित की गई है।",
+    fact: "Assam, Himachal Pradesh, and Jammu & Kashmir opted for the standard ₹1.5 crore limit despite being hilly/special states."
+  },
+  {
+    stemEn: "What is the standard rate of Tax Deducted at Source (TDS) under Section 51 of the CGST Act on taxable supplies made to government departments or public sector undertakings?",
+    stemHi: "सरकारी विभागों या सार्वजनिक क्षेत्र के उपक्रमों को की जाने वाली कर-योग्य आपूर्तियों पर केंद्रीय जीएसटी अधिनियम की धारा 51 के तहत स्रोत पर कर कटौती (TDS) की मानक कुल दर क्या है?",
+    options: ["1% (0.5% CGST + 0.5% SGST) / 1% (0.5% CGST + 0.5% SGST)", "2% (1% CGST + 1% SGST) / 2% (1% CGST + 1% SGST)", "5% (2.5% CGST + 2.5% SGST) / 5% (2.5% CGST + 2.5% SGST)", "10% (5% CGST + 5% SGST) / 10% (5% CGST + 5% SGST)", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Section 51 of the CGST Act, specified government agencies and PSUs must deduct TDS at the rate of 2% (1% CGST + 1% SGST, or 2% IGST) where the total contract value exceeds ₹2.5 lakh.",
+    expHi: "जीएसटी अधिनियम की धारा 51 के अंतर्गत, जब किसी व्यक्तिगत अनुबंध का मूल्य ₹2.5 लाख से अधिक होता है, तो निर्दिष्ट सरकारी संस्थाओं द्वारा 2% (1% CGST + 1% SGST) की दर से TDS काटा जाता है।",
+    fact: "The threshold value of supply contract for TDS deduction under GST is ₹2,50,000 (excluding taxes)."
+  },
+  {
+    stemEn: "What is the mandatory rate of Tax Collected at Source (TCS) that every E-commerce Operator (like Amazon or Flipkart) must deduct under Section 52 of the CGST Act?",
+    stemHi: "केंद्रीय जीएसटी अधिनियम की धारा 52 के तहत प्रत्येक ई-कॉमर्स ऑपरेटर (जैसे अमेज़ॅन या फ्लिपकार्ट) को स्रोत पर कर संग्रह (TCS) की किस अनिवार्य दर से कटौती करनी होती है?",
+    options: ["0.5% / 0.5%", "1% (0.5% CGST + 0.5% SGST) / 1% (0.5% CGST + 0.5% SGST)", "2% (1% CGST + 1% SGST) / 2% (1% CGST + 1% SGST)", "5% / 5%", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Section 52 of the CGST Act, 2017, e-commerce operators must collect TCS at a net rate of 1% (0.5% CGST + 0.5% SGST, or 1% IGST) on the net value of taxable supplies made through their platform.",
+    expHi: "धारा 52 के अनुसार, सभी ई-कॉमर्स ऑपरेटरों को अपने प्लेटफॉर्म के माध्यम से बेचे गए सामान के शुद्ध मूल्य पर 1% (0.5% CGST + 0.5% SGST) की दर से TCS एकत्र करना होता है।",
+    fact: "The maximum statutory cap permitted under law for TCS by e-commerce operators is 1% each for CGST and SGST (total 2%)."
+  },
+  {
+    stemEn: "What is the validity period of an E-Way Bill for a distance of up to 200 km for ordinary (non-over-dimensional) cargo?",
+    stemHi: "साधारण (गैर-ओवर-डायमेंशनल) कार्गो के लिए 200 किमी तक की दूरी हेतु ई-वे बिल (E-Way Bill) की वैधता अवधि क्या है?",
+    options: ["12 Hours / 12 घंटे", "1 Day (One Day for every 200 km or part thereof) / 1 दिन (प्रत्येक 200 किमी या उसके भाग के लिए एक दिन)", "48 Hours / 48 घंटे", "3 Days / 3 दिन", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under amended GST Rule 138(10), the validity of an E-Way Bill for general cargo is 1 day for every 200 km (or part thereof) of travel distance.",
+    expHi: "जीएसटी नियम 138(10) के संशोधित प्रावधानों के अनुसार, सामान्य माल के लिए ई-वे बिल की वैधता प्रत्येक 200 किमी अथवा उसके किसी अंश के लिए 1 दिन (24 घंटे) होती है।",
+    fact: "Earlier, this rule was 1 day for every 100 km; it was revised to 200 km from 1st January 2021."
+  },
+  {
+    stemEn: "Which auto-populated, read-only dynamic statement reflects the available Input Tax Credit (ITC) for a taxpayer based on suppliers' GSTR-1 filings?",
+    stemHi: "आपूर्तिकर्ताओं द्वारा दाखिल किए गए GSTR-1 के आधार पर करदाता के उपलब्ध इनपुट टैक्स क्रेडिट (ITC) को दर्शाने वाला ऑटो-पॉपुलेटेड, रीड-ओनली डायनामिक विवरण कौन सा है?",
+    options: ["GSTR-3B / जीएसटीआर-3B", "GSTR-4 / जीएसटीआर-4", "GSTR-2B / जीएसटीआर-2B", "GSTR-6 / जीएसटीआर-6", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "GSTR-2B is a static auto-drafted statement generated on the 14th of every month that establishes the eligible and ineligible Input Tax Credit (ITC) available to a recipient for that tax period.",
+    expHi: "जीएसटीआर-2बी (GSTR-2B) एक मासिक ऑटो-ड्राफ्टेड विवरण है जो करदाता को यह दिखाता है कि वह उस माह में कितना इनपुट टैक्स क्रेडिट (ITC) लेने का पात्र है।",
+    fact: "While GSTR-2A is dynamic and changes continuously, GSTR-2B remains static once generated on the 14th of the month."
+  },
+  {
+    stemEn: "Which of the following constitutional articles was amended by the 101st Amendment to restrict the states' power to levy taxes on the sale or purchase of goods?",
+    stemHi: "101वें संशोधन द्वारा किस संवैधानिक अनुच्छेद में संशोधन कर वस्तुओं की बिक्री या खरीद पर कर लगाने की राज्यों की शक्ति को प्रतिबंधित किया गया?",
+    options: ["Article 286 / अनुच्छेद 286", "Article 265 / अनुच्छेद 265", "Article 270 / अनुच्छेद 270", "Article 301 / अनुच्छेद 301", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "Article 286 was amended to restrict states from imposing tax on the supply of goods or services outside the state or during import/export, aligning it with the GST architecture.",
+    expHi: "संविधान के अनुच्छेद 286 में संशोधन करके यह स्पष्ट किया गया कि कोई भी राज्य राज्य के बाहर या आयात/निर्यात के दौरान वस्तुओं अथवा सेवाओं की आपूर्ति पर कोई कर नहीं लगा सकता।",
+    fact: "Article 286 originally applied only to 'sale or purchase of goods'; the 101st amendment replaced this with 'supply of goods or services or both'."
+  },
+  {
+    stemEn: "Under Article 246A(2), who has the EXCLUSIVE power to make laws with respect to Goods and Services Tax where the supply takes place in the course of inter-state trade or commerce?",
+    stemHi: "अनुच्छेद 246A(2) के तहत, अंतर-राज्यीय व्यापार या वाणिज्य के दौरान आपूर्ति होने पर वस्तु एवं सेवा कर पर कानून बनाने की विशेष (EXCLUSIVE) शक्ति किसके पास है?",
+    options: ["State Legislative Assemblies / राज्य विधानसभाओं के पास", "GST Council / जीएसटी परिषद के पास", "Parliament of India / भारत की संसद के पास", "The President of India / भारत के राष्ट्रपति के पास", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Article 246A(2) explicitly provides that the Parliament has exclusive power to make laws with respect to goods and services tax where the supply of goods, or of services, or both takes place in the course of inter-state trade or commerce.",
+    expHi: "अनुच्छेद 246A(2) के अंतर्गत संसद को अंतर-राज्यीय व्यापार या वाणिज्य के अनुक्रम में वस्तु एवं सेवा कर के संबंध में कानून बनाने की अनन्य (Exclusive) शक्ति प्रदान की गई है।",
+    fact: "State legislatures can legislate on intra-state supplies, but only Parliament can legislate on inter-state (IGST) supplies."
+  },
+  {
+    stemEn: "What is the statutory time limit under Section 16(4) of the CGST Act for a registered buyer to make payment of invoice value plus tax to the supplier to avoid reversal of claimed Input Tax Credit (ITC)?",
+    stemHi: "दावा किए गए इनपुट टैक्स क्रेडिट (ITC) को निरस्त होने से बचाने के लिए खरीदार द्वारा आपूर्तिकर्ता को कर सहित इनवॉइस राशि का भुगतान करने की कानूनी समय सीमा क्या है?",
+    options: ["30 Days / 30 दिन", "60 Days / 60 दिन", "90 Days / 90 दिन", "120 Days / 120 दिन", "None of these / इनमें से कोई नहीं"],
+    correct: 4,
+    expEn: "Options A, B, C, and D are factually incorrect. Under the second proviso to Section 16(2) of the CGST Act, the recipient must pay the supplier within 180 days from the date of issue of invoice. If unpaid, the claimed ITC must be reversed along with interest.",
+    expHi: "विकल्प (A), (B), (C) तथा (D) गलत हैं। सीजीएसटी अधिनियम की धारा 16(2) के अनुसार, यदि खरीदार इनवॉइस जारी होने की तिथि से 180 दिनों के भीतर आपूर्तिकर्ता को बिल की राशि व कर का भुगतान नहीं करता है, तो लिया गया ITC ब्याज सहित वापस (Reverse) करना होता है। अतः सही उत्तर विकल्प (E) है।",
+    fact: "Reversal after 180 days can be reclaimed as ITC whenever the payment is subsequently completed by the buyer."
+  },
+  {
+    stemEn: "What does 'QRMP' scheme stand for under the simplified GST compliance framework?",
+    stemHi: "सरलीकृत जीएसटी अनुपालन ढांचे के तहत 'QRMP' योजना का पूर्ण रूप क्या है?",
+    options: ["Quarterly Returns with Monthly Payment / क्वार्टरली रिटर्न्स विथ मंथली पेमेंट", "Quick Response Multi-Platform / क्विक रिस्पांस मल्टी-प्लेटफॉर्म", "Qualified Retailer Mandatory Portal / क्वालिफाइड रिटेलर मैंडेटरी पोर्टल", "Quick Refund Monitoring Procedure / क्विक रिफंड मॉनिटरिंग प्रोसीजर", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "QRMP stands for 'Quarterly Returns and Monthly Payment' scheme, introduced from January 2021 for small taxpayers with aggregate turnover up to ₹5 crore to file returns quarterly while paying taxes monthly.",
+    expHi: "QRMP का पूर्ण रूप 'Quarterly Returns with Monthly Payment' (त्रैमासिक रिटर्न और मासिक भुगतान योजना) है। यह ₹5 करोड़ तक के टर्नओवर वाले करदाताओं को तिमाही रिटर्न भरने की सुविधा देता है।",
+    fact: "Under QRMP, taxpayers can use the Invoice Furnishing Facility (IFF) to upload B2B invoices for the first two months of the quarter."
+  },
+  {
+    stemEn: "What is the Invoice Furnishing Facility (IFF) under the QRMP scheme?",
+    stemHi: "QRMP योजना के तहत इनवॉइस फर्निशिंग फैसिलिटी (IFF) क्या है?",
+    options: ["A facility to generate international air waybills / अंतर्राष्ट्रीय एयर वे-बिल जनरेट करने की सुविधा", "An optional facility to upload B2B outward invoices for the first two months of a quarter / तिमाही के पहले दो महीनों के लिए B2B जावक इनवॉइस अपलोड करने की एक वैकल्पिक सुविधा", "A mandatory audit portal for export transactions / निर्यात लेन-देन के लिए एक अनिवार्य ऑडिट पोर्टल", "A toll-free helpline service for taxpayers / करदाताओं के लिए एक टोल-फ्री हेल्पलाइन सेवा", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "The Invoice Furnishing Facility (IFF) is an optional feature for QRMP taxpayers to upload B2B sales invoices (up to ₹50 lakh cumulative value per month) during Month 1 and Month 2 so their buyers can claim ITC.",
+    expHi: "IFF (इनवॉइस फर्निशिंग फैसिलिटी) QRMP करदाताओं को तिमाही के पहले दो महीनों में B2B इनवॉइस अपलोड करने की वैकल्पिक सुविधा देता है ताकि खरीदार तुरंत ITC का दावा कर सकें।",
+    fact: "IFF is open from the 1st to the 13th of the month following the respective month."
+  },
+  {
+    stemEn: "Which constitutional article was omitted/repealed by the 101st Constitutional Amendment Act, 2016 because it dealt with taxes on services that merged into GST?",
+    stemHi: "101वें संविधान संशोधन अधिनियम, 2016 द्वारा किस संवैधानिक अनुच्छेद को निरस्त/हटा दिया गया क्योंकि यह सेवाओं पर कर से संबंधित था जो जीएसटी में समाहित हो गया?",
+    options: ["Article 268A / अनुच्छेद 268A", "Article 271 / अनुच्छेद 271", "Article 269 / अनुच्छेद 269", "Article 275 / अनुच्छेद 275", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "Article 268A (which was originally inserted by the 88th Constitutional Amendment to provide for service tax levied by the Union and collected/appropriated by Union and States) was repealed by the 101st Amendment.",
+    expHi: "101वें संविधान संशोधन अधिनियम द्वारा भारतीय संविधान के अनुच्छेद 268A को पूरी तरह से निरस्त (Omitted) कर दिया गया, जो पहले सेवा कर से संबंधित था।",
+    fact: "Service tax was first introduced in India in 1994 under Dr. Manmohan Singh on only 3 services (telephones, stockbrokers, and general insurance)."
+  },
+  {
+    stemEn: "What is the statutory penalty under Section 122 of the CGST Act for issuing a false or bogus invoice without actual supply of goods or services?",
+    stemHi: "वस्तुओं या सेवाओं की वास्तविक आपूर्ति के बिना झूठा या फर्जी इनवॉइस जारी करने पर सीजीएसटी अधिनियम की धारा 122 के तहत वैधानिक जुर्माना क्या है?",
+    options: ["₹10,000 or an amount equivalent to the tax evaded, whichever is higher / ₹10,000 या कर अपवंचन की राशि के बराबर, जो भी अधिक हो", "Flat ₹25,000 only / केवल ₹25,000 एकमुश्त", "50% of the invoice value / इनवॉइस मूल्य का 50%", "₹1,00,000 flat fine / ₹1,00,000 एकमुश्त जुर्माना", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "Under Section 122(1) of the CGST Act, issuing an invoice without supply or availing ITC using such invoice attracts a penalty of ₹10,000 or an amount equivalent to the tax evaded/ITC availed, whichever is higher (100% tax penalty).",
+    expHi: "धारा 122(1) के तहत, बिना माल की आपूर्ति के फर्जी बिल जारी करने या धोखाधड़ी से ITC लेने पर ₹10,000 अथवा बचाए गए कर की राशि के 100% के बराबर, जो भी अधिक हो, का जुर्माना लगता है।",
+    fact: "Serious GST frauds exceeding ₹5 crore are cognizable and non-bailable offences punishable with imprisonment up to 5 years."
+  },
+  {
+    stemEn: "In a supply of goods or services, what is the term used to describe a transaction comprising two or more individual supplies naturally bundled together in the ordinary course of business, with one being a principal supply?",
+    stemHi: "वस्तुओं या सेवाओं की आपूर्ति में, सामान्य व्यावसायिक क्रम में स्वाभाविक रूप से एक साथ बंधी हुई दो या दो से अधिक आपूर्तियों, जिनमें एक मुख्य आपूर्ति होती है, को क्या कहा जाता है?",
+    options: ["Mixed Supply / मिश्रित आपूर्ति (मिक्स्ड सप्लाई)", "Composite Supply / समग्र आपूर्ति (कंपोजिट सप्लाई)", "Continuous Supply / निरंतर आपूर्ति", "Ancillary Supply / सहायक आपूर्ति", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Section 2(30) of the CGST Act, a 'Composite Supply' comprises two or more taxable supplies naturally bundled together in the ordinary course of business, one of which is a principal supply (e.g., flight booking with onboard food).",
+    expHi: "सीजीएसटी अधिनियम की धारा 2(30) के अनुसार, जब दो या दो से अधिक वस्तुएं/सेवाएं स्वाभाविक रूप से एक साथ बंडल के रूप में दी जाती हैं और उनमें से एक मुख्य आपूर्ति (Principal Supply) होती है, तो उसे 'समग्र आपूर्ति' (Composite Supply) कहते हैं।",
+    fact: "A composite supply is taxed at the rate applicable to the 'principal supply'."
+  },
+  {
+    stemEn: "When two or more individual supplies are deliberately bundled together for a single price and do NOT constitute a natural composite supply, what are they classified as under GST?",
+    stemHi: "जब दो या दो से अधिक वस्तुओं या सेवाओं को एक ही मूल्य पर जानबूझकर एक साथ मिलाकर बेचा जाता है और वे स्वाभाविक कंपोजिट आपूर्ति नहीं होती हैं, तो उन्हें जीएसटी के तहत क्या कहा जाता है?",
+    options: ["Composite Supply / समग्र आपूर्ति", "Integrated Supply / एकीकृत आपूर्ति", "Mixed Supply / मिश्रित आपूर्ति (मिक्स्ड सप्लाई)", "Derivative Supply / व्युत्पन्न आपूर्ति", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under Section 2(74) of the CGST Act, a 'Mixed Supply' consists of two or more individual supplies made together for a single price that do not naturally belong together (e.g., a gift hamper with dry fruits, chocolates, and canned drinks).",
+    expHi: "धारा 2(74) के तहत, जब विभिन्न उत्पादों को एक संयुक्त मूल्य (Single Price) पर एक पैकेज में बेचा जाता है जो प्राकृतिक रूप से बंडल नहीं हैं, तो इसे 'मिश्रित आपूर्ति' (Mixed Supply) कहा जाता है।",
+    fact: "A mixed supply is taxed at the highest rate among the individual items in that package."
+  },
+  {
+    stemEn: "Under GST law, who is legally treated as an 'Input Service Distributor' (ISD)?",
+    stemHi: "जीएसटी कानून के तहत, कानूनी रूप से 'इनपुट सर्विस डिस्ट्रीब्यूटर' (ISD) किसे माना जाता है?",
+    options: ["A warehouse storing foreign imported goods / विदेशी आयातित वस्तुओं का भंडारण करने वाला एक गोदाम", "An office of the supplier of goods or services which receives tax invoices for input services and issues a prescribed document to distribute ITC to branches / माल या सेवाओं के आपूर्तिकर्ता का वह कार्यालय जो इनपुट सेवाओं के टैक्स इनवॉइस प्राप्त करता है और शाखाओं को ITC वितरित करने के लिए दस्तावेज जारी करता है", "Any unregistered retail transport agent / कोई भी अपंजीकृत खुदरा परिवहन एजेंट", "The central clearing house for municipal cess / नगर निगम उपकर के लिए केंद्रीय क्लीयरिंग हाउस", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Section 2(61) of the CGST Act, an Input Service Distributor (ISD) is an office of the supplier that receives invoices for input services used across multiple branches and distributes the eligible ITC to those branches using form GSTR-6.",
+    expHi: "धारा 2(61) के अनुसार, ISD करदाता का वह केंद्रीय कार्यालय है जो विभिन्न शाखाओं के लिए ली गई इनपुट सेवाओं के बिल प्राप्त करता है और उन पर लगे ITC को संबंधित शाखाओं में आनुपातिक रूप से वितरित करता है।",
+    fact: "An ISD must obtain a separate GST registration and files monthly return GSTR-6."
+  },
+  {
+    stemEn: "What is the statutory time limit under Section 29 of the CGST Act within which a registered person whose registration has been cancelled must file their Final Return in Form GSTR-10?",
+    stemHi: "सीजीएसटी अधिनियम की धारा 29 के तहत पंजीकरण रद्द होने वाले व्यक्ति को फॉर्म GSTR-10 में अपना अंतिम रिटर्न (Final Return) दाखिल करने की वैधानिक समय सीमा क्या है?",
+    options: ["Within 30 days from the date of cancellation / रद्दीकरण की तिथि से 30 दिनों के भीतर", "Within 60 days from the date of cancellation / रद्दीकरण की तिथि से 60 दिनों के भीतर", "Within 3 months from the date of cancellation or order, whichever is later / रद्दीकरण की तिथि या आदेश से 3 महीने के भीतर, जो भी बाद में हो", "Within 1 year from the date of cancellation / रद्दीकरण की तिथि से 1 वर्ष के भीतर", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under Section 45 of the CGST Act read with Rule 81, every registered person required to file a final return must file GSTR-10 within three months of the date of cancellation or date of order of cancellation, whichever is later.",
+    expHi: "धारा 45 के अनुसार, पंजीकरण निरस्त होने पर करदाता को रद्दीकरण की तिथि अथवा आदेश जारी होने की तिथि, जो भी बाद में हो, से 3 माह के भीतर अंतिम रिटर्न (GSTR-10) भरना अनिवार्य है।",
+    fact: "GSTR-10 is specifically called the 'Final Return' and should not be confused with the 'Annual Return' (GSTR-9)."
+  },
+  {
+    stemEn: "Which of the following supplies of services is completely exempt from GST in India?",
+    stemHi: "भारत में निम्नलिखित में से कौन सी सेवा आपूर्ति जीएसटी से पूरी तरह से मुक्त (Exempt) है?",
+    options: ["Commercial coaching and private tutoring institutes / वाणिज्यिक कोचिंग और निजी ट्यूशन संस्थान", "Healthcare services by a clinical establishment, an authorized medical practitioner or paramedics / क्लिनिकल प्रतिष्ठान, अधिकृत चिकित्सक या पैरामेडिक्स द्वारा स्वास्थ्य सेवाएँ", "Air travel in Business Class / बिजनेस क्लास में हवाई यात्रा", "Event management services for sports leagues / खेल लीगों के लिए इवेंट मैनेजमेंट सेवाएँ", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Standard healthcare services rendered by recognized clinical establishments, hospitals, registered medical practitioners, and paramedics are completely exempt from GST under Notification No. 12/2017-Central Tax (Rate).",
+    expHi: "अधिसूचना संख्या 12/2017 के तहत मान्यता प्राप्त अस्पतालों, क्लिनिकल प्रतिष्ठानों और अधिकृत डॉक्टरों द्वारा प्रदान की जाने वाली मानक स्वास्थ्य सेवाएं (हेल्थकेयर सर्विसेज) शून्य दर/कर मुक्त हैं।",
+    fact: "Services by educational institutions providing pre-school up to higher secondary education are also exempt from GST."
+  },
+  {
+    stemEn: "What is the maximum statutory cap on the combined rate of CGST that can be levied under Section 9(1) of the CGST Act?",
+    stemHi: "केंद्रीय जीएसटी अधिनियम की धारा 9(1) के तहत सीजीएसटी (CGST) की अधिकतम वैधानिक सीमा (अधिकतम दर) क्या निर्धारित की गई है?",
+    options: ["14% / 14%", "18% / 18%", "20% / 20%", "28% / 28%", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Section 9(1) of the CGST Act specifies that CGST shall be levied at rates recommended by the GST Council, not exceeding 20%. Since SGST has an equal mirror cap of 20%, the maximum statutory cap on total intra-state GST is 40% (and IGST cap under Section 5(1) of the IGST Act is 40%).",
+    expHi: "सीजीएसटी अधिनियम की धारा 9(1) के तहत सीजीएसटी की अधिकतम कानूनी दर 20% तय की गई है (इसी प्रकार एसजीएसटी 20% और आईजीएसटी की अधिकतम वैधानिक सीमा 40% है)।",
+    fact: "Although current highest active slab is 28% (14% CGST + 14% SGST), the enabling law allows rates up to 40% without amending the primary act."
+  },
+  {
+    stemEn: "What does the term 'Zero-Rated Supply' mean under Section 16 of the Integrated Goods and Services Tax (IGST) Act?",
+    stemHi: "एकीकृत वस्तु एवं सेवा कर (IGST) अधिनियम की धारा 16 के तहत 'शून्य-रेटेड आपूर्ति' (Zero-Rated Supply) का क्या अर्थ है?",
+    options: ["Supplies of goods to charitable hospitals / धर्मार्थ अस्पतालों को वस्तुओं की आपूर्ति", "Export of goods or services, or supplies to a Special Economic Zone (SEZ) developer or unit / वस्तुओं या सेवाओं का निर्यात, या विशेष आर्थिक क्षेत्र (SEZ) डेवलपर या इकाई को आपूर्ति", "Supply of agricultural foodgrains in local retail markets / स्थानीय खुदरा बाजारों में कृषि खाद्यान्न की आपूर्ति", "All intra-state supplies made by small shopkeepers / छोटे दुकानदारों द्वारा की जाने वाली सभी अंतर-राज्यीय आपूर्ति", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Section 16 of the IGST Act, 'Zero-Rated Supply' specifically denotes (a) export of goods or services, or (b) supply of goods or services to a Special Economic Zone (SEZ) developer or SEZ unit.",
+    expHi: "आईजीएसटी अधिनियम की धारा 16 के अनुसार, 'शून्य-रेटेड आपूर्ति' (Zero-Rated Supply) का अर्थ वस्तुओं अथवा सेवाओं के 'निर्यात' (Export) तथा 'विशेष आर्थिक क्षेत्र' (SEZ) को की जाने वाली आपूर्ति से है।",
+    fact: "In Zero-Rated supplies, the entire supply chain is tax-free, and the supplier can claim a full refund of input taxes paid (unlike exempt supplies)."
+  },
+  {
+    stemEn: "What is the fundamental difference between an 'Exempt Supply' and a 'Zero-Rated Supply' under GST?",
+    stemHi: "जीएसटी के तहत 'कर-मुक्त आपूर्ति' (Exempt Supply) और 'शून्य-रेटेड आपूर्ति' (Zero-Rated Supply) के बीच मौलिक अंतर क्या है?",
+    options: ["Zero-rated supplies cannot claim Input Tax Credit, while exempt supplies can / शून्य-रेटेड आपूर्ति ITC का दावा नहीं कर सकती, जबकि कर-मुक्त कर सकती है", "In zero-rated supplies, input tax credit is fully claimable/refundable, whereas in exempt supplies, no input tax credit can be claimed / शून्य-रेटेड आपूर्ति में ITC पूरी तरह दावा/वापसी योग्य है, जबकि कर-मुक्त आपूर्ति में ITC का दावा नहीं किया जा सकता", "Exempt supplies are applicable only to imports / कर-मुक्त आपूर्ति केवल आयात पर लागू होती है", "There is no difference; both terms are legally identical / कोई अंतर नहीं है; दोनों पद कानूनी रूप से समान हैं", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "In an exempt supply, output tax is nil, but input tax credit is blocked/reversed (adding to cost). In contrast, a zero-rated supply (exports/SEZ) has 0% output tax AND allows the supplier to claim a refund of all input taxes paid.",
+    expHi: "कर-मुक्त (Exempt) आपूर्ति में बिक्री पर कर नहीं लगता लेकिन खरीद पर चुकाए गए कर का कोई क्रेडिट (ITC) नहीं मिलता; जबकि शून्य-रेटेड (Zero-rated) आपूर्ति में संपूर्ण इनपुट टैक्स क्रेडिट का रिफंड प्राप्त होता है।",
+    fact: "Exports are zero-rated to ensure that domestic taxes are not exported, maintaining global price competitiveness."
+  },
+  {
+    stemEn: "What is the statutory constitution and headquarters of the Goods and Services Tax Appellate Tribunal (GSTAT) Principal Bench?",
+    stemHi: "वस्तु एवं सेवा कर अपीलीय अधिकरण (GSTAT) की प्रधान पीठ (Principal Bench) का वैधानिक गठन और मुख्यालय कहाँ स्थित है?",
+    options: ["Mumbai / मुंबई", "Kolkata / कोलकाता", "New Delhi / नई दिल्ली", "Bengaluru / बेंगलुरु", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "The Principal Bench of the Goods and Services Tax Appellate Tribunal (GSTAT) is statutorily established at New Delhi, consisting of the President, a Judicial Member, a Technical Member (Centre), and a Technical Member (State).",
+    expHi: "जीएसटी अपीलीय अधिकरण (GSTAT) की राष्ट्रीय प्रधान पीठ नई दिल्ली में स्थापित की गई है।",
+    fact: "GSTAT acts as the second appellate authority in GST disputes, bridging the gap between First Appellate Authorities and High Courts."
+  },
+  {
+    stemEn: "Who holds the constitutional authority to recommend the date on which GST shall be levied on petroleum crude, high-speed diesel, petrol, natural gas, and aviation turbine fuel?",
+    stemHi: "कच्चे तेल, डीजल, पेट्रोल, प्राकृतिक गैस और विमानन ईंधन पर जीएसटी लागू करने की तिथि की सिफारिश करने का संवैधानिक अधिकार किसके पास है?",
+    options: ["The Reserve Bank of India / भारतीय रिजर्व बैंक के पास", "The Prime Minister's Economic Advisory Council / प्रधानमंत्री की आर्थिक सलाहकार परिषद के पास", "The Union Petroleum Ministry / केंद्रीय पेट्रोलियम मंत्रालय के पास", "The GST Council / जीएसटी परिषद के पास", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Under Article 279A(5) of the Constitution, the GST Council has the exclusive authority to recommend the date on which Goods and Services Tax will be levied on the 5 specified petroleum products.",
+    expHi: "भारतीय संविधान के अनुच्छेद 279A(5) के तहत, जीएसटी परिषद को यह सिफारिश करने का विशेष अधिकार है कि 5 पेट्रोलियम उत्पादों पर किस तारीख से जीएसटी लागू किया जाए।",
+    fact: "Until such date is notified by the Council, these products remain subject to Central Excise and State VAT."
+  },
+  {
+    stemEn: "What is the maximum period of imprisonment prescribed under Section 132 of the CGST Act for GST tax evasion exceeding ₹5 crore?",
+    stemHi: "सीजीएसटी अधिनियम की धारा 132 के तहत ₹5 करोड़ से अधिक की जीएसटी कर चोरी के लिए निर्धारित अधिकतम कारावास की अवधि क्या है?",
+    options: ["2 years / 2 वर्ष", "3 years / 3 वर्ष", "7 years / 7 वर्ष", "10 years / 10 वर्ष", "None of these / इनमें से कोई नहीं"],
+    correct: 4,
+    expEn: "Options A, B, C, and D are incorrect. Under Section 132(1)(i) of the CGST Act, 2017, where the amount of tax evaded, or input tax credit wrongly availed or utilized exceeds ₹500 lakh (₹5 crore), the offence is punishable with imprisonment for a term which may extend to 5 years and with a fine.",
+    expHi: "विकल्प (A), (B), (C) तथा (D) गलत हैं। सीजीएसटी अधिनियम की धारा 132(1)(i) के तहत ₹5 करोड़ से अधिक की कर चोरी या गलत तरीके से ITC प्राप्त करने पर अधिकतम 5 वर्ष के कठोर कारावास और जुर्माने की सजा का प्रावधान है। अतः सही उत्तर विकल्प (E) है।",
+    fact: "For offences between ₹2 crore and ₹5 crore, the maximum term is 3 years; between ₹1 crore and ₹2 crore, it is 1 year."
+  },
+
+  // 76 to 100
+  {
+    stemEn: "Which Schedule of the Central Goods and Services Tax (CGST) Act, 2017 specifies activities to be treated as supply even if made without consideration?",
+    stemHi: "केंद्रीय वस्तु एवं सेवा कर (CGST) अधिनियम, 2017 की कौन सी अनुसूची उन गतिविधियों को निर्दिष्ट करती है जिन्हें प्रतिफल (Consideration) के बिना किए जाने पर भी 'आपूर्ति' माना जाता है?",
+    options: ["Schedule I / अनुसूची I", "Schedule II / अनुसूची II", "Schedule III / अनुसूची III", "Schedule IV / अनुसूची IV", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "Schedule I of the CGST Act lists four specific activities deemed as supplies even without consideration, including permanent transfer of business assets where ITC was availed, and supplies between related or distinct persons.",
+    expHi: "सीजीएसटी अधिनियम की अनुसूची I (Schedule I) उन मामलों को निर्दिष्ट करती है जहाँ बिना किसी प्रतिफल (धन/भुगतान) के किए गए लेन-देन को भी जीएसटी के तहत 'आपूर्ति' माना जाता है।",
+    fact: "Permanent disposal of business assets on which ITC was claimed is treated as a supply under Schedule I."
+  },
+  {
+    stemEn: "What does Schedule III of the CGST Act, 2017 deal with?",
+    stemHi: "सीजीएसटी अधिनियम, 2017 की अनुसूची III (Schedule III) किससे संबंधित है?",
+    options: ["Activities treated as supply of goods only / केवल वस्तुओं की आपूर्ति मानी जाने वाली गतिविधियाँ", "Activities treated as supply of services only / केवल सेवाओं की आपूर्ति मानी जाने वाली गतिविधियाँ", "Activities or transactions which shall be treated neither as a supply of goods nor a supply of services / वे गतिविधियाँ या लेन-देन जिन्हें न तो वस्तुओं की आपूर्ति माना जाएगा और न ही सेवाओं की आपूर्ति (ऋणात्मक सूची)", "Rules for determining the place of supply for import transactions / आयात लेन-देन के लिए आपूर्ति के स्थान का निर्धारण करने के नियम", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Schedule III acts as the 'Negative List' of GST, specifying activities that are neither treated as a supply of goods nor a supply of services (e.g., services by an employee to employer, services of funeral/burial, action claims other than lottery/betting).",
+    expHi: "अनुसूची III को जीएसटी की 'नकारात्मक सूची' (Negative List) कहा जाता है। इसमें वे लेन-देन शामिल हैं जिन्हें न तो माल की आपूर्ति और न ही सेवा की आपूर्ति माना जाता है (जैसे कर्मचारी द्वारा नियोक्ता को दी गई सेवा)।",
+    fact: "Services by any Court or Tribunal established under any law are covered under Schedule III and exempt from GST."
+  },
+  {
+    stemEn: "Under Section 17(5) of the CGST Act, which of the following is an example of 'Blocked Input Tax Credit' (credit not allowed)?",
+    stemHi: "सीजीएसटी अधिनियम की धारा 17(5) के तहत, निम्नलिखित में से कौन 'अवरुद्ध इनपुट टैक्स क्रेडिट' (Blocked ITC - जिस पर क्रेडिट की अनुमति नहीं है) का एक उदाहरण है?",
+    options: ["Purchase of raw material used directly in factory manufacturing / कारखाने में निर्माण में सीधे उपयोग किए जाने वाले कच्चे माल की खरीद", "Motor vehicles for transportation of persons having approved seating capacity of not more than 13 persons (used for general corporate travel) / सामान्य कॉर्पोरेट यात्रा के लिए उपयोग किए जाने वाले 13 व्यक्तियों तक की बैठने की क्षमता वाले मोटर वाहन", "Capital equipment purchased for expanding an industrial production plant / औद्योगिक उत्पादन संयंत्र के विस्तार के लिए खरीदे गए पूंजीगत उपकरण", "Commercial packaging material used for outward taxable goods / जावक कर-योग्य वस्तुओं के लिए उपयोग की जाने वाली वाणिज्यिक पैकेजिंग सामग्री", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Section 17(5)(a) of the CGST Act, Input Tax Credit is explicitly blocked on motor vehicles for transportation of persons having approved seating capacity up to 13 persons (including driver), unless used for specific purposes like passenger transport business, driving training, or further supply.",
+    expHi: "धारा 17(5) के तहत अवरुद्ध ऋण (Blocked ITC) के अंतर्गत सामान्य व्यावसायिक उपयोग के लिए खरीदी गई 13 सीटर तक की यात्री कारों पर चुकाए गए जीएसटी का क्रेडिट नहीं मिलता है।",
+    fact: "Food and beverages, outdoor catering, beauty treatment, and health services are also blocked credits under Section 17(5)(b)."
+  },
+  {
+    stemEn: "What is the statutory time period within which an unregistered person must apply for GST registration after their turnover crosses the mandatory threshold?",
+    stemHi: "टर्नओवर अनिवार्य सीमा को पार करने के बाद किसी अपंजीकृत व्यक्ति को जीएसटी पंजीकरण के लिए आवेदन करने की वैधानिक समय अवधि क्या है?",
+    options: ["Within 15 days / 15 दिनों के भीतर", "Within 30 days / 30 दिनों के भीतर", "Within 60 days / 60 दिनों के भीतर", "Within 90 days / 90 दिनों के भीतर", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Section 25(1) of the CGST Act, every person who becomes liable to registration must apply for GST registration within 30 days from the date on which they become liable.",
+    expHi: "धारा 25(1) के अनुसार, जब किसी व्यवसाय का कारोबार निर्धारित सीमा को पार कर जाता है, तो उसे उस तारीख से 30 दिनों के भीतर जीएसटी पंजीकरण हेतु आवेदन करना अनिवार्य है।",
+    fact: "A casual taxable person or a non-resident taxable person must apply at least 5 days prior to the commencement of business."
+  },
+  {
+    stemEn: "What is the standard validity period of a GST registration certificate issued to a 'Casual Taxable Person' or a 'Non-Resident Taxable Person'?",
+    stemHi: "'आकस्मिक कर योग्य व्यक्ति' (Casual Taxable Person) या 'अनिवासी कर योग्य व्यक्ति' (Non-Resident Taxable Person) को जारी किए गए जीएसटी पंजीकरण प्रमाण पत्र की मानक वैधता अवधि क्या होती है?",
+    options: ["30 days from registration / पंजीकरण से 30 दिन", "60 days from registration / पंजीकरण से 60 दिन", "90 days from the effective date of registration / पंजीकरण की प्रभावी तिथि से 90 दिन", "180 days from registration / पंजीकरण से 180 दिन", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under Section 27(1) of the CGST Act, the certificate of registration issued to a casual taxable person or non-resident taxable person is valid for the period specified in the application or 90 days from the effective date, whichever is earlier.",
+    expHi: "धारा 27(1) के तहत आकस्मिक या अनिवासी करदाता को दिया गया जीएसटी पंजीकरण अधिकतम 90 दिनों के लिए वैध होता है (जिसे उचित कारण बताने पर आगे 90 दिनों के लिए बढ़ाया जा सकता है)।",
+    fact: "Casual taxable persons must make an advance deposit of estimated tax liability at the time of applying for registration."
+  },
+  {
+    stemEn: "What is the standard rate of interest charged under Section 50(1) of the CGST Act for delayed payment of GST dues beyond the prescribed due date?",
+    stemHi: "निर्धारित देय तिथि के बाद जीएसटी बकाया के विलंबित भुगतान पर सीजीएसटी अधिनियम की धारा 50(1) के तहत लगाया जाने वाला मानक वार्षिक ब्याज दर क्या है?",
+    options: ["12% per annum / 12% प्रति वर्ष", "15% per annum / 15% प्रति वर्ष", "18% per annum / 18% प्रति वर्ष", "24% per annum / 24% प्रति वर्ष", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under Section 50(1) of the CGST Act, a person liable to pay tax who fails to pay within the prescribed period must pay interest at the rate of 18% per annum calculated on the net cash tax liability.",
+    expHi: "धारा 50(1) के अंतर्गत नियत तिथि के बाद जीएसटी का भुगतान करने पर सरकार द्वारा 18% वार्षिक साधारण ब्याज वसूला जाता है।",
+    fact: "Where undue or excess claim of Input Tax Credit is wrongly made and utilized under Section 50(3), interest is levied at 24% per annum."
+  },
+  {
+    stemEn: "In the context of GST collection, what does the abbreviation 'GSP' stand for?",
+    stemHi: "जीएसटी संग्रह और आईटी इंटरफेस के संदर्भ में, 'GSP' का संक्षिप्त नाम क्या दर्शाता है?",
+    options: ["Goods and Services Provider / गुड्स एंड सर्विसेज प्रोवाइडर", "GST Suvidha Provider / जीएसटी सुविधा प्रोवाइडर", "Government Sales Portal / गवर्नमेंट सेल्स पोर्टल", "General Supply Protocol / जनरल सप्लाई प्रोटोकॉल", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "GSP stands for 'GST Suvidha Provider', an authorized intermediary IT or financial technology entity appointed by GSTN to build third-party applications enabling taxpayers to seamlessly interact with the GST system.",
+    expHi: "GSP का पूर्ण रूप 'GST Suvidha Provider' (जीएसटी सुविधा प्रदाता) है, जो करदाताओं को जीएसटी पोर्टल से सीधे जोड़ने हेतु सॉफ्टवेयर और सेवाएं प्रदान करने के लिए अधिकृत होते हैं।",
+    fact: "Application Service Providers (ASPs) connect to GSTN servers through GSPs via secure APIs."
+  },
+  {
+    stemEn: "Which of the following is considered an actionable claim that IS subject to GST under the 2023 amendment to Schedule III?",
+    stemHi: "2023 के अनुसूची III संशोधन के तहत, निम्नलिखित में से कौन सा एक ऐसा स्वत्व हित दावा (Actionable Claim) है जिस पर जीएसटी लगाया जाता है?",
+    options: ["Unsecured loans between friends / मित्रों के बीच असुरक्षित ऋण", "Specified actionable claims including betting, casinos, gambling, horse racing, lottery, and online money gaming / निर्दिष्ट कार्रवाई योग्य दावे जिनमें सट्टेबाजी, कैसीनो, जुआ, घुड़दौड़, लॉटरी और ऑनलाइन मनी गेमिंग शामिल हैं", "Rent arrears due on residential houses / आवासीय मकानों पर बकाया किराया", "Fixed deposit receipts in scheduled commercial banks / अनुसूचित वाणिज्यिक बैंकों में सावधि जमा रसीदें", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under the amended Schedule III read with Section 2(102A) of the CGST Act, 'specified actionable claims' (betting, casinos, gambling, horse racing, lottery, and online money gaming) are explicitly kept subject to GST at the flat rate of 28%.",
+    expHi: "सीजीएसटी अधिनियम के 2023 संशोधन के अनुसार, ऑनलाइन मनी गेमिंग, कैसीनो, घुड़दौड़, सट्टेबाजी और लॉटरी जैसे निर्दिष्ट दावों पर 28% की दर से पूर्ण अंकित मूल्य पर जीएसटी लागू है।",
+    fact: "Other general actionable claims remain non-taxable under Schedule III."
+  },
+  {
+    stemEn: "What is the uniform GST rate applicable to online money gaming, casinos, and horse racing following the 50th and 51st GST Council meetings?",
+    stemHi: "50वीं और 51वीं जीएसटी परिषद की बैठकों के बाद ऑनलाइन मनी गेमिंग, कैसीनो और घुड़दौड़ पर लागू एकसमान जीएसटी दर क्या है?",
+    options: ["5% / 5%", "12% / 12%", "18% / 18%", "28% / 28%", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "The GST Council resolved to tax online money gaming, casinos, and horse race clubs at a uniform flat rate of 28% on the full entry value (face value) of bets placed.",
+    expHi: "जीएसटी परिषद के निर्णय के अनुसार ऑनलाइन मनी गेमिंग, कैसीनो और घुड़दौड़ पर दांव के पूरे अंकित मूल्य (Full Face Value) पर 28% की फ्लैट जीएसटी दर लागू की गई है।",
+    fact: "This unified 28% rate became effective nationwide from 1st October 2023."
+  },
+  {
+    stemEn: "What is the statutory time limit under Section 73 of the CGST Act for issuing a Show Cause Notice (SCN) in non-fraud cases from the due date of filing the annual return?",
+    stemHi: "बिना धोखाधड़ी (Non-fraud) वाले सामान्य मामलों में वार्षिक रिटर्न दाखिल करने की नियत तारीख से कारण बताओ नोटिस (SCN) जारी करने की वैधानिक समय सीमा क्या है?",
+    options: ["Within 1 year / 1 वर्ष के भीतर", "Within 2 years / 2 वर्ष के भीतर", "Within 2 years and 9 months / 2 वर्ष 9 महीने के भीतर", "Within 4 years and 6 months / 4 वर्ष 6 महीने के भीतर", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under Section 73(2) of the CGST Act, the proper officer must issue a Show Cause Notice at least 3 months prior to the time limit for passing the adjudication order (which is 3 years), meaning the notice must be issued within 2 years and 9 months.",
+    expHi: "धारा 73 के तहत सामान्य मामलों में मांग आदेश पारित करने की समय सीमा 3 वर्ष है, तथा नोटिस आदेश की अंतिम तिथि से कम से कम 3 महीने पहले (अर्थात 2 वर्ष 9 माह के भीतर) जारी किया जाना चाहिए।",
+    fact: "In fraud or wilful misstatement cases under Section 74, the order time limit is 5 years, and notice must be issued within 4 years and 6 months."
+  },
+  {
+    stemEn: "What is the designated form for filing monthly outward supplies of goods and services by regular taxpayers?",
+    stemHi: "नियमित करदाताओं द्वारा वस्तुओं और सेवाओं की मासिक जावक आपूर्ति (बिक्री) का विवरण दाखिल करने के लिए कौन सा फॉर्म निर्धारित है?",
+    options: ["GSTR-1 / जीएसटीआर-1", "GSTR-2 / जीएसटीआर-2", "GSTR-3 / जीएसटीआर-3", "GSTR-5 / जीएसटीआर-5", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "GSTR-1 is the mandatory return containing invoice-wise details of all outward supplies (sales) made by a regular taxable person, typically filed by the 11th of the succeeding month.",
+    expHi: "जीएसटीआर-1 (GSTR-1) पंजीकृत विक्रेताओं द्वारा अपनी सभी जावक बिक्री (Outward Supplies) का इनवॉइस-वार विवरण प्रस्तुत करने का अनिवार्य रिटर्न है।",
+    fact: "Filing GSTR-1 auto-populates the corresponding GSTR-2B of the buyers."
+  },
+  {
+    stemEn: "Which form is submitted by a composite dealer to declare summary tax liability and make quarterly payments?",
+    stemHi: "कंपोजिट डीलर द्वारा सारांश कर देयता घोषित करने और त्रैमासिक भुगतान करने के लिए कौन सा फॉर्म/चालान जमा किया जाता है?",
+    options: ["CMP-08 / सीएमपी-08", "GSTR-1A / जीएसटीआर-1A", "GSTR-8 / जीएसटीआर-8", "RFD-01 / आरएफ़डी-01", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "CMP-08 is a special quarterly statement-cum-challan used by composition taxpayers to declare turnover and pay tax for each quarter by the 18th of the month following the quarter.",
+    expHi: "सीएमपी-08 (CMP-08) कंपोजिशन करदाताओं द्वारा प्रत्येक तिमाही में अपने कारोबार का विवरण देने और कर का भुगतान करने के लिए उपयोग किया जाने वाला चालान-सह-विवरण है।",
+    fact: "Composition taxpayers file CMP-08 every quarter and an annual return in form GSTR-4."
+  },
+  {
+    stemEn: "What was the central excise duty replaced by in the case of inter-state transactions?",
+    stemHi: "अंतर-राज्यीय (एक राज्य से दूसरे राज्य) लेन-देन के मामले में केंद्रीय उत्पाद शुल्क और केंद्रीय बिक्री कर का स्थान किसने लिया?",
+    options: ["State GST (SGST) / राज्य जीएसटी (SGST)", "Central GST (CGST) / केंद्रीय जीएसटी (CGST)", "Integrated GST (IGST) / एकीकृत जीएसटी (IGST)", "Union Territory GST (UTGST) / संघ राज्य क्षेत्र जीएसटी (UTGST)", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Integrated Goods and Services Tax (IGST) replaced Central Sales Tax (CST) and the interstate elements of excise/VAT on all cross-border and inter-state movement of goods and services.",
+    expHi: "अंतर-राज्यीय लेन-देन में केंद्रीय बिक्री कर (CST) और उत्पाद शुल्क का स्थान 'एकीकृत वस्तु एवं सेवा कर' (IGST) ने ले लिया।",
+    fact: "IGST is collected under the Integrated Goods and Services Tax Act, 2017."
+  },
+  {
+    stemEn: "Which of the following is true regarding GST on export of goods from India?",
+    stemHi: "भारत से वस्तुओं के निर्यात पर जीएसटी के संबंध में निम्नलिखित में से कौन सा कथन सत्य है?",
+    options: ["Exports are taxed at the peak rate of 28% without refund / निर्यातों पर बिना किसी रिफंड के 28% की अधिकतम दर से कर लगाया जाता है", "Exports are considered zero-rated supplies / निर्यातों को शून्य-रेटेड आपूर्ति (Zero-rated supplies) माना जाता है", "Exports are subject only to local Municipal Octroi / निर्यात केवल स्थानीय नगरपालिका चुंगी के अधीन हैं", "Exports attract a flat 10% non-creditable customs duty / निर्यात पर 10% गैर-क्रेडिट योग्य सीमा शुल्क लगता है", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Section 16 of the IGST Act, exports are treated as 'Zero-Rated Supplies', meaning no tax is payable on export, or if paid under IGST refund route, the entire amount is refunded along with accumulated ITC.",
+    expHi: "आईजीएसटी अधिनियम की धारा 16 के अनुसार, भारत से माल या सेवाओं के निर्यात को 'शून्य-रेटेड आपूर्ति' माना जाता है, जिससे भारतीय निर्यात अंतरराष्ट्रीय बाजार में कर-मुक्त रहते हैं।",
+    fact: "Exporters can export under a Letter of Undertaking (LUT) without paying any IGST upfront."
+  },
+  {
+    stemEn: "What is a 'Letter of Undertaking' (LUT) under GST export procedures?",
+    stemHi: "जीएसटी निर्यात प्रक्रियाओं के तहत 'लेटर ऑफ अंडरटेकिंग' (LUT) क्या है?",
+    options: ["A document allowing zero-rated exports without paying upfront IGST / बिना अग्रिम IGST चुकाए शून्य-रेटेड निर्यात की अनुमति देने वाला एक कानूनी दस्तावेज", "A bank guarantee required for all domestic sales / सभी घरेलू बिक्री के लिए आवश्यक एक बैंक गारंटी", "A certificate of origin issued by the shipping line / शिपिंग लाइन द्वारा जारी मूल देश का प्रमाण पत्र", "An exemption letter from personal income tax for exporters / निर्यातकों के लिए व्यक्तिगत आयकर से छूट पत्र", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "Form GST RFD-11 (Letter of Undertaking or LUT) enables registered exporters to export goods or services without paying integrated tax (IGST) upfront, avoiding working capital blockages.",
+    expHi: "एलयूटी (LUT) एक वैधानिक वचनपत्र है जिसे दाखिल करके पंजीकृत निर्यातक बिना आईजीएसटी का अग्रिम भुगतान किए शून्य दर पर माल या सेवाओं का निर्यात कर सकते हैं।",
+    fact: "An LUT is submitted online on the GST portal and is valid for an entire financial year."
+  },
+  {
+    stemEn: "What is the total length in digits of a Harmonized System of Nomenclature (HSN) code mandated for businesses with turnover exceeding ₹5 crore in India?",
+    stemHi: "भारत में ₹5 करोड़ से अधिक टर्नओवर वाले व्यवसायों के लिए अनिवार्य एचएसएन (HSN) कोड में कुल कितने अंक होते हैं?",
+    options: ["2 digits / 2 अंक", "4 digits / 4 अंक", "6 digits / 6 अंक", "8 digits / 8 अंक", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Taxpayers with aggregate turnover exceeding ₹5 crore in the preceding financial year must mandatorily report a 6-digit HSN code on B2B tax invoices (businesses up to ₹5 crore report 4 digits for B2B).",
+    expHi: "₹5 करोड़ से अधिक के वार्षिक कारोबार वाले पंजीकृत करदाताओं के लिए B2B इनवॉइस पर 6 अंकों का HSN कोड लिखना कानूनी रूप से अनिवार्य है।",
+    fact: "An 8-digit HSN code is mandatory for export and import of goods."
+  },
+  {
+    stemEn: "What was the constitutional status of the Goods and Services Tax Settlement Fund created under the IGST Act?",
+    stemHi: "आईजीएसटी अधिनियम के तहत बनाए गए वस्तु एवं सेवा कर निपटान कोष की संवैधानिक व्यवस्था क्या है?",
+    options: ["An independent trust outside the Consolidated Fund of India / भारत की संचित निधि से बाहर एक स्वतंत्र ट्रस्ट", "Part of the Public Account of India / भारत के लोक लेखा का हिस्सा", "Cross-utilization mechanism apportioning IGST between Union and State Consolidated Funds / संघ और राज्यों की संचित निधियों के बीच आईजीएसटी का बंटवारा करने वाला तंत्र", "A private non-banking financial corporation / एक निजी गैर-बैंकिंग वित्तीय निगम", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under Article 269A and Sections 17–19 of the IGST Act, IGST does not form part of the Consolidated Fund of India permanently; it is an apportionment mechanism where revenue is settled directly between the Consolidated Fund of India and the Consolidated Fund of the destination States.",
+    expHi: "अनुच्छेद 269A के तहत एकत्रित आईजीएसटी भारत की संचित निधि का स्थायी हिस्सा नहीं बनता, बल्कि इसका निपटान केंद्र और संबंधित उपभोगकर्ता राज्य की संचित निधि के मध्य किया जाता है।",
+    fact: "This ensures that no separate parliamentary appropriation bill is required for each monthly inter-state transfer."
+  },
+  {
+    stemEn: "What is the role of an 'E-Commerce Operator' under Section 9(5) of the CGST Act?",
+    stemHi: "सीजीएसटी अधिनियम की धारा 9(5) के तहत 'ई-कॉमर्स ऑपरेटर' की क्या भूमिका होती है?",
+    options: ["Only acting as an advertising directory / केवल एक विज्ञापन निर्देशिका के रूप में कार्य करना", "Being liable to pay the GST on specified services (such as passenger transport, housekeeping, or accommodation) as if they were the actual supplier / निर्दिष्ट सेवाओं (जैसे यात्री परिवहन, हाउसकीपिंग, या आवास) पर जीएसटी का भुगतान करने के लिए उत्तरदायी होना मानो वे ही वास्तविक आपूर्तिकर्ता हों", "Collecting excise duty on manufactured cars / निर्मित कारों पर उत्पाद शुल्क एकत्र करना", "Providing interest-free micro-loans / ब्याज मुक्त सूक्ष्म ऋण प्रदान करना", "None of these / इनमें से कोई नहीं"],
+    correct: 1,
+    expEn: "Under Section 9(5) of the CGST Act, on specified services like passenger transport via cab aggregators (e.g., Ola/Uber) or hotel accommodation through portals, the e-commerce operator is legally deemed to be the person liable to pay the tax.",
+    expHi: "धारा 9(5) के तहत, ऐप-आधारित टैक्सी (जैसे ओला/उबर) या होटल बुकिंग जैसी निर्दिष्ट सेवाओं के मामले में वास्तविक चालक/होटल के बजाय ई-कॉमर्स ऑपरेटर को कर चुकाने के लिए उत्तरदायी माना जाता है।",
+    fact: "Even if the actual driver or small hotel is unregistered, the platform must pay GST."
+  },
+  {
+    stemEn: "What is the minimum threshold of aggregate annual turnover for an exclusive supplier of GOODS in the State of Uttar Pradesh to require mandatory GST registration?",
+    stemHi: "उत्तर प्रदेश राज्य में केवल वस्तुओं (Goods) के आपूर्तिकर्ता के लिए अनिवार्य जीएसटी पंजीकरण की न्यूनतम वार्षिक टर्नओवर सीमा क्या है?",
+    options: ["₹10 Lakh / ₹10 लाख", "₹20 Lakh / ₹20 लाख", "₹40 Lakh / ₹40 लाख", "₹1.0 Crore / ₹1.0 करोड़", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "In normal category states like Uttar Pradesh, the threshold limit for mandatory GST registration for persons engaged exclusively in the intra-state supply of goods was enhanced from ₹20 lakh to ₹40 lakh with effect from 1st April 2019.",
+    expHi: "उत्तर प्रदेश जैसे सामान्य श्रेणी के राज्यों में केवल वस्तुओं का अंतर-राज्यीय व्यापार करने वाले डीलरों के लिए जीएसटी पंजीकरण की अनिवार्य टर्नओवर सीमा ₹40 लाख है।",
+    fact: "For service providers or mixed suppliers in UP, the threshold remains ₹20 lakh."
+  },
+  {
+    stemEn: "Which of the following is NOT a member of the GST Council under Article 279A(2)?",
+    stemHi: "अनुच्छेद 279A(2) के तहत निम्नलिखित में से कौन जीएसटी परिषद का सदस्य नहीं होता है?",
+    options: ["The Union Finance Minister / केंद्रीय वित्त मंत्री", "The Union Minister of State in-charge of Revenue or Finance / केंद्रीय राजस्व या वित्त राज्य मंत्री", "The Minister in-charge of Finance or Taxation or any other Minister nominated by each State Government / प्रत्येक राज्य सरकार द्वारा मनोनीत वित्त या कराधान मंत्री", "The Governor of the Reserve Bank of India / भारतीय रिजर्व बैंक (RBI) के गवर्नर", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Under Article 279A(2), the GST Council consists strictly of the Union Finance Minister (Chairperson), the Union Minister of State for Finance, and the Finance/Taxation Ministers of all States/UTs. The RBI Governor is NOT a member of the Council.",
+    expHi: "भारतीय संविधान के अनुच्छेद 279A(2) के तहत आरबीआई (RBI) के गवर्नर जीएसटी परिषद के सदस्य नहीं होते हैं; इसमें केवल केंद्र और राज्यों के वित्त/कराधान मंत्री ही सदस्य होते हैं।",
+    fact: "Decisions in the GST Council are taken collectively by elected political executives of Centre and States."
+  },
+  {
+    stemEn: "What is the statutory time limit under Section 37 of the CGST Act for regular taxpayers to rectify errors or omissions in previously filed GSTR-1?",
+    stemHi: "पहले से दाखिल किए गए GSTR-1 में त्रुटियों या चूकों को सुधारने के लिए सीजीएसटी अधिनियम की धारा 37 के तहत नियमित करदाताओं के लिए वैधानिक समय सीमा क्या है?",
+    options: ["30th November following the end of the financial year (or actual filing of annual return, whichever is earlier) / वित्तीय वर्ष की समाप्ति के बाद 30 नवंबर तक (या वार्षिक रिटर्न दाखिल करने की तिथि, जो भी पहले हो)", "31st March of the relevant financial year / संबंधित वित्तीय वर्ष का 31 मार्च", "No time limit; rectifications can be made indefinitely within 10 years / कोई समय सीमा नहीं; 10 वर्षों के भीतर कभी भी सुधार किया जा सकता है", "Only within 30 days of filing the original return / केवल मूल रिटर्न दाखिल करने के 30 दिनों के भीतर", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "As per amended Section 37(3) and Section 39(9), any rectification of omissions or errors in outward supply returns is permitted up to 30th November following the end of the financial year to which such details pertain, or the actual filing of the annual return, whichever is earlier.",
+    expHi: "संशोधित धारा 37(3) के अनुसार, बिक्री इनवॉइस में किसी भी गलती या छूट को संबंधित वित्तीय वर्ष की समाप्ति के बाद 30 नवंबर तक (या वार्षिक रिटर्न भरने तक, जो भी पहले हो) सुधारा जा सकता है।",
+    fact: "Previously this deadline was the due date of September return (20th October), extended to 30th November by Finance Act 2022."
+  },
+  {
+    stemEn: "What is the tax rate applied to tobacco products under the Indian GST regime?",
+    stemHi: "भारतीय जीएसटी व्यवस्था के तहत तंबाकू उत्पादों पर लागू मूल जीएसटी दर क्या है?",
+    options: ["5% / 5%", "12% / 12%", "18% / 18%", "28% plus applicable Compensation Cess / 28% और साथ में लागू क्षतिपूर्ति उपकर (Compensation Cess)", "None of these / इनमें से कोई नहीं"],
+    correct: 3,
+    expEn: "Tobacco and tobacco products are treated as 'sin goods' attracting the peak GST slab of 28% along with additional heavy Compensation Cess and Central Excise Duty.",
+    expHi: "तंबाकू और सिगरेट को 'सिन गुड्स' (अवांछित वस्तुएं) माना जाता है, जिन पर 28% की अधिकतम जीएसटी दर के साथ भारी जीएसटी क्षतिपूर्ति उपकर लगाया जाता है।",
+    fact: "Tobacco is unique because it attracts both GST and Central Excise Duty simultaneously."
+  },
+  {
+    stemEn: "Which body was designated to replace the National Anti-Profiteering Authority (NAA) upon the expiry of its tenure on 1st December 2022?",
+    stemHi: "1 दिसंबर 2022 को कार्यकाल समाप्त होने पर राष्ट्रीय मुनाफाखोरी-रोधी प्राधिकरण (NAA) का स्थान लेने के लिए किस निकाय को नामित किया गया था?",
+    options: ["Telecom Regulatory Authority of India (TRAI) / भारतीय दूरसंचार विनियामक प्राधिकरण", "Insolvency and Bankruptcy Board of India (IBBI) / भारतीय दिवाला और शोधन अक्षमता बोर्ड", "Competition Commission of India (CCI) / भारतीय प्रतिस्पर्धा आयोग", "Securities and Exchange Board of India (SEBI) / भारतीय प्रतिभूति और विनिमय बोर्ड", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "From 1st December 2022, all anti-profiteering matters and complaints under Section 171 of the CGST Act were transferred to the Competition Commission of India (CCI), officially taking over the functions of the dissolved NAA.",
+    expHi: "1 दिसंबर 2022 से राष्ट्रीय मुनाफाखोरी-रोधी प्राधिकरण (NAA) के सभी कार्य और अधिकार 'भारतीय प्रतिस्पर्धा आयोग' (CCI) को हस्तांतरित कर दिए गए।",
+    fact: "CCI investigates whether businesses passed on tax rate reductions to consumers."
+  },
+  {
+    stemEn: "Under Article 279A, who selects the Vice-Chairperson of the GST Council?",
+    stemHi: "अनुच्छेद 279A के तहत, जीएसटी परिषद के उपाध्यक्ष (Vice-Chairperson) का चयन कौन करता है?",
+    options: ["The Prime Minister of India / भारत के प्रधानमंत्री", "The Union Finance Minister / केंद्रीय वित्त मंत्री", "The Members of the GST Council representing the State Governments from amongst themselves / राज्य सरकारों का प्रतिनिधित्व करने वाले जीएसटी परिषद के सदस्य आपस में से", "The Chief Justice of India / भारत के मुख्य न्यायाधीश", "None of these / इनमें से कोई नहीं"],
+    correct: 2,
+    expEn: "Under Article 279A(3), the members of the GST Council representing the States choose one amongst themselves to be the Vice-Chairperson of the Council for such period as they may determine.",
+    expHi: "संविधान के अनुच्छेद 279A(3) के अनुसार, राज्यों के प्रतिनिधि सदस्य अपने में से ही किसी एक राज्य के वित्त मंत्री को एक निश्चित अवधि के लिए जीएसटी परिषद का उपाध्यक्ष चुनते हैं।",
+    fact: "The Vice-Chairperson is always a State Finance Minister, never a Union Minister."
+  },
+  {
+    stemEn: "What is the fundamental constitutional objective behind introducing the Goods and Services Tax (GST) as reflected in the national slogan 'One Nation, One Tax, One Market'?",
+    stemHi: "'एक राष्ट्र, एक कर, एक बाजार' के राष्ट्रीय नारे में परिलक्षित वस्तु एवं सेवा कर (जीएसटी) को लागू करने का मूलभूत संवैधानिक और आर्थिक उद्देश्य क्या है?",
+    options: ["Creating an integrated national common market by harmonizing indirect tax structures across all States and the Union / सभी राज्यों और केंद्र में अप्रत्यक्ष कर संरचनाओं में सामंजस्य स्थापित करके एक एकीकृत राष्ट्रीय साझा बाजार का निर्माण करना", "Replacing all personal income taxes and wealth taxes across India / भारत भर में सभी व्यक्तिगत आयकर और संपत्ति करों को प्रतिस्थापित करना", "Prohibiting private retail enterprises from setting their own selling prices / निजी खुदरा उद्यमों को अपने बिक्री मूल्य निर्धारित करने से प्रतिबंधित करना", "Transferring all agricultural land ownership directly to the Union Government / सभी कृषि भूमि का स्वामित्व सीधे केंद्र सरकार को हस्तांतरित करना", "None of these / इनमें से कोई नहीं"],
+    correct: 0,
+    expEn: "The overarching economic and constitutional objective of GST was to unify fragmented domestic indirect taxes into a destination-based, seamless tax system, eliminating inter-state barriers and creating a unified national market ('One Nation, One Tax, One Market').",
+    expHi: "जीएसटी का मुख्य उद्देश्य पूरे देश में अप्रत्यक्ष करों की बहुलता और बाधाओं को समाप्त कर एक साझा राष्ट्रीय बाजार का निर्माण करना था, जिससे वस्तुओं और सेवाओं का निर्बाध अंतर-राज्यीय प्रवाह संभव हो सके।",
+    fact: "The 101st Amendment Act unified over a dozen central and state levies into a single umbrella tax structure."
+  }
+];
+
+// State Engine
+let currentIndex = 0;
+const userStates = Array.from({ length: 100 }, () => ({
+  visited: false,
+  selected: null,
+  isCorrect: null,
+  status: 'not-visited' // 'not-visited', 'correct', 'incorrect', 'unanswered', 'skipped', 'review'
+}));
+
+function renderQuestion(idx) {
+  currentIndex = idx;
+  const q = questionsData[idx];
+  const state = userStates[idx];
+
+  if (!state.visited && state.status === 'not-visited') {
+    state.visited = true;
+    state.status = 'unanswered';
+  }
+
+  // Update Meta
+  document.getElementById('qProgress').innerText = `Question ${idx + 1} of 100`;
+  document.getElementById('qStemEn').innerText = `Q${idx + 1}. ${q.stemEn}`;
+  document.getElementById('qStemHi').innerText = q.stemHi;
+
+  // Render Options
+  const container = document.getElementById('optionsBox');
+  container.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D', 'E'];
+
+  q.options.forEach((optText, oIdx) => {
+    const card = document.createElement('div');
+    card.className = 'option-card';
+    
+    // Checked if already locked
+    if (state.selected !== null) {
+      card.classList.add('locked');
+      if (oIdx === q.correct) {
+        card.classList.add('correct');
+      }
+      if (state.selected === oIdx && !state.isCorrect) {
+        card.classList.add('incorrect');
+      }
+    } else {
+      card.onclick = () => selectOption(oIdx);
+    }
+
+    card.innerHTML = `
+      <div class="opt-key">${letters[oIdx]}</div>
+      <div class="opt-text">${optText}</div>
+    `;
+    container.appendChild(card);
+  });
+
+  // Render Explanation
+  const expBox = document.getElementById('expBox');
+  if (state.selected !== null) {
+    document.getElementById('expEn').innerText = q.expEn;
+    document.getElementById('expHi').innerText = q.expHi;
+    document.getElementById('expFact').innerHTML = `<strong>📌 Key Exam Fact:</strong> ${q.fact}`;
+    expBox.style.display = 'block';
+  } else {
+    expBox.style.display = 'none';
+  }
+
+  // Button labels
+  document.getElementById('prevBtn').disabled = (idx === 0);
+  document.getElementById('nextBtn').innerText = (idx === 99) ? 'Finish & Review' : 'Next Question ➔';
+
+  updateLiveScore();
+  buildPalette();
+}
+
+function selectOption(oIdx) {
+  const state = userStates[currentIndex];
+  if (state.selected !== null) return; // Locked
+
+  const q = questionsData[currentIndex];
+  state.selected = oIdx;
+  state.isCorrect = (oIdx === q.correct);
+  state.status = state.isCorrect ? 'correct' : 'incorrect';
+
+  renderQuestion(currentIndex);
+}
+
+function skipQuestion() {
+  const state = userStates[currentIndex];
+  if (state.selected === null) {
+    state.status = 'skipped';
+  }
+  if (currentIndex < 99) {
+    renderQuestion(currentIndex + 1);
+  } else {
+    buildPalette();
+  }
+}
+
+function markForReview() {
+  const state = userStates[currentIndex];
+  state.status = 'review';
+  if (currentIndex < 99) {
+    renderQuestion(currentIndex + 1);
+  } else {
+    buildPalette();
+  }
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) renderQuestion(currentIndex - 1);
+}
+
+function nextQuestion() {
+  if (currentIndex < 99) {
+    renderQuestion(currentIndex + 1);
+  } else {
+    showFinalReport();
+  }
+}
+
+function updateLiveScore() {
+  let correct = 0;
+  let incorrect = 0;
+  userStates.forEach(s => {
+    if (s.isCorrect === true) correct++;
+    if (s.isCorrect === false) incorrect++;
+  });
+  const net = (correct * 1.0) - (incorrect * 0.25);
+  document.getElementById('topScore').innerText = net.toFixed(2);
+}
+
+// Palette Controls
+function openPalette() {
+  buildPalette();
+  document.getElementById('paletteOverlay').style.display = 'block';
+  document.getElementById('paletteDrawer').classList.add('open');
+}
+
+function closePalette() {
+  document.getElementById('paletteOverlay').style.display = 'none';
+  document.getElementById('paletteDrawer').classList.remove('open');
+}
+
+function buildPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = '';
+  userStates.forEach((st, i) => {
+    const btn = document.createElement('button');
+    btn.className = `grid-btn st-${st.status}`;
+    if (i === currentIndex) btn.classList.add('active');
+    btn.innerText = i + 1;
+    btn.onclick = () => {
+      renderQuestion(i);
+      closePalette();
+    };
+    grid.appendChild(btn);
+  });
+}
+
+// Report
+function showFinalReport() {
+  let correct = 0;
+  let incorrect = 0;
+  let attempted = 0;
+  userStates.forEach(s => {
+    if (s.selected !== null) {
+      attempted++;
+      if (s.isCorrect) correct++;
+      else incorrect++;
+    }
+  });
+  const skipped = 100 - attempted;
+  const net = (correct * 1.0) - (incorrect * 0.25);
+  const acc = attempted > 0 ? ((correct / attempted) * 100).toFixed(1) : 0;
+
+  document.getElementById('finalNetScore').innerText = net.toFixed(2);
+  document.getElementById('repCorrect').innerText = correct;
+  document.getElementById('repIncorrect').innerText = incorrect;
+  document.getElementById('repSkipped').innerText = skipped;
+  document.getElementById('repAccuracy').innerText = `${acc}%`;
+
+  document.getElementById('reportModal').style.display = 'flex';
+}
+
+function closeReport() {
+  document.getElementById('reportModal').style.display = 'none';
+  openPalette();
+}
+
+// Initial Launch
+renderQuestion(0);
+</script>
+</body>
+</html>

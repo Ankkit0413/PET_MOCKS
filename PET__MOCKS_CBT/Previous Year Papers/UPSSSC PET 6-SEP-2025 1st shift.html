@@ -1,0 +1,3217 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPSSSC PET Computer Based Test (CBT) Simulator</title>
+  <style>
+    :root {
+      --bg-main: #121316;
+      --bg-card: #1e2024;
+      --bg-card-alt: #252830;
+      --border-color: #32363f;
+      --text-main: #f0f2f5;
+      --text-muted: #9ba1ad;
+      --accent-blue: #3b82f6;
+      --accent-blue-hover: #2563eb;
+      --color-correct: #10b981;
+      --color-incorrect: #ef4444;
+      --color-unanswered: #f59e0b;
+      --color-skipped: #64748b;
+      --color-review: #8b5cf6;
+      --color-notvisited: #2a2d34;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Sticky Header */
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(30, 32, 36, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .header-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .stat-badge {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-palette {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-palette:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    /* Main Container */
+    .main-wrapper {
+      max-width: 960px;
+      width: 100%;
+      margin: 20px auto 40px;
+      padding: 0 16px;
+      flex: 1;
+    }
+
+    .q-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .q-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .q-badge {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #2b303c;
+      color: #60a5fa;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .q-review-toggle {
+      background: transparent;
+      border: 1px solid var(--color-review);
+      color: #c4b5fd;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .q-review-toggle.active {
+      background: var(--color-review);
+      color: #fff;
+    }
+
+    /* Visual Containers */
+    .visual-container {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .visual-direction {
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      margin-bottom: 14px;
+      border-left: 3px solid var(--accent-blue);
+      padding-left: 10px;
+    }
+
+    .passage-box {
+      max-height: 250px;
+      overflow-y: auto;
+      background: #191b20;
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+      border: 1px solid #2d3139;
+    }
+
+    .di-table-wrapper {
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    .di-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    .di-table th, .di-table td {
+      border: 1px solid #3b404d;
+      padding: 8px 12px;
+    }
+
+    .di-table th {
+      background: #2b303b;
+      color: #93c5fd;
+      font-weight: 600;
+    }
+
+    .di-table tr:nth-child(even) {
+      background: #1f232b;
+    }
+
+    .svg-chart-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #191b20;
+      padding: 16px 8px;
+      border-radius: 8px;
+      border: 1px solid #2d3139;
+    }
+
+    /* Question Stem & Options */
+    .q-stem {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #f8fafc;
+    }
+
+    .q-stem-hi {
+      font-size: 1.02rem;
+      color: #e2e8f0;
+      margin-top: 8px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .opt-btn {
+      background: #252830;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      background: #2d313c;
+      border-color: #4b5263;
+    }
+
+    .opt-key {
+      font-weight: 700;
+      color: #93c5fd;
+      min-width: 28px;
+    }
+
+    .opt-text {
+      flex: 1;
+    }
+
+    .opt-btn.correct {
+      background: rgba(16, 185, 129, 0.2) !important;
+      border: 2px solid var(--color-correct) !important;
+      color: #a7f3d0 !important;
+    }
+
+    .opt-btn.incorrect {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border: 2px solid var(--color-incorrect) !important;
+      color: #fca5a5 !important;
+    }
+
+    .opt-btn.outlined-correct {
+      border: 2px solid var(--color-correct) !important;
+    }
+
+    /* Explanation Accordion Card */
+    .solution-card {
+      background: #17191d;
+      border: 1px solid #2d3139;
+      border-left: 4px solid var(--color-correct);
+      border-radius: 8px;
+      padding: 18px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .solution-card.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sol-heading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-correct);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sol-section {
+      margin-bottom: 12px;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .sol-section strong {
+      color: #93c5fd;
+    }
+
+    .sol-fact {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #bfdbfe;
+      margin-top: 10px;
+    }
+
+    /* Bottom Action Controls */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: #252830;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+
+    .btn-action:hover:not(:disabled) {
+      background: #2d313c;
+    }
+
+    .btn-action:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #fff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-blue-hover);
+    }
+
+    .btn-submit {
+      background: #059669;
+      border-color: #059669;
+      color: #fff;
+    }
+
+    .btn-submit:hover {
+      background: #047857;
+    }
+
+    /* Slide-in Drawer Palette */
+    .palette-drawer {
+      position: fixed;
+      top: 0;
+      right: -380px;
+      width: 360px;
+      height: 100vh;
+      background: #1a1c22;
+      border-left: 1px solid var(--border-color);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.5);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .palette-drawer.open {
+      right: 0;
+    }
+
+    .palette-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .palette-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .btn-close:hover {
+      color: #fff;
+    }
+
+    .palette-legend {
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.78rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .palette-grid-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .p-btn {
+      height: 38px;
+      border: 1px solid #373b45;
+      background: var(--color-notvisited);
+      color: #e2e8f0;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s, border-color 0.15s;
+    }
+
+    .p-btn:hover {
+      border-color: #60a5fa;
+      transform: scale(1.05);
+    }
+
+    .p-btn.active {
+      outline: 2px solid #60a5fa;
+      outline-offset: 1px;
+    }
+
+    .p-btn.correct { background: var(--color-correct) !important; color: #fff !important; }
+    .p-btn.incorrect { background: var(--color-incorrect) !important; color: #fff !important; }
+    .p-btn.unanswered { background: var(--color-unanswered) !important; color: #000 !important; }
+    .p-btn.skipped { background: var(--color-skipped) !important; color: #fff !important; }
+    .p-btn.review { background: var(--color-review) !important; color: #fff !important; }
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 90;
+      display: none;
+    }
+
+    .drawer-overlay.open {
+      display: block;
+    }
+
+    /* Final Submit Dashboard */
+    .dashboard-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(10, 11, 14, 0.9);
+      backdrop-filter: blur(8px);
+      overflow-y: auto;
+      padding: 30px 16px;
+    }
+
+    .dashboard-modal.open {
+      display: block;
+    }
+
+    .dash-content {
+      max-width: 860px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      margin: 0 auto;
+      padding: 30px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.6);
+    }
+
+    .dash-header {
+      text-align: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 20px;
+    }
+
+    .dash-score-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: #17191d;
+      border: 4px solid var(--accent-blue);
+      margin: 16px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dash-score-num {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #60a5fa;
+    }
+
+    .dash-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .dash-stat-box {
+      background: #252830;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+
+    .dash-stat-val {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .dash-stat-lbl {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .dash-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <div class="header-title">UPSSSC PET 6-SEP-2025 1st shift</div>
+      <div class="header-subtitle" id="current-subject">Full Mock Test - 100 Questions</div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-badge">
+        <span>Question:</span>
+        <strong id="q-counter" style="color: #60a5fa;">1 / 100</strong>
+      </div>
+      <div class="stat-badge">
+        <span>Net Score:</span>
+        <strong id="live-score" style="color: #10b981;">0.00</strong>
+      </div>
+      <button class="btn-palette" onclick="togglePalette(true)">📋 Open Palette</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="q-badge" id="q-topic">Topic Name</span>
+        <button class="q-review-toggle" id="btn-review" onclick="toggleReview()">🔖 Mark for Review</button>
+      </div>
+
+      <!-- Dynamic Visual Container (SVG Charts, Passages, Tables) -->
+      <div id="visual-container" class="visual-container" style="display: none;"></div>
+
+      <!-- Question Text -->
+      <div id="q-stem-box">
+        <h2 class="q-stem" id="q-text-en"></h2>
+        <div class="q-stem-hi" id="q-text-hi"></div>
+      </div>
+
+      <!-- Options Container -->
+      <div class="options-grid" id="options-container"></div>
+
+      <!-- Solution Expansion Card -->
+      <div class="solution-card" id="solution-container"></div>
+
+      <!-- Navigation & Action Buttons -->
+      <div class="action-bar">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-action" id="btn-prev" onclick="navigateQuestion(-1)">❮ Previous</button>
+          <button class="btn-action" id="btn-skip" onclick="skipQuestion()">⏭ Skip</button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-action btn-primary" id="btn-next" onclick="navigateQuestion(1)">Next Question ➔</button>
+          <button class="btn-action btn-submit" onclick="submitExam()">Submit Test</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Slide-In Question Palette Drawer -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="togglePalette(false)"></div>
+  <aside class="palette-drawer" id="palette-drawer">
+    <div class="palette-header">
+      <span class="palette-title">Question Palette</span>
+      <button class="btn-close" onclick="togglePalette(false)">✕</button>
+    </div>
+    <div class="palette-legend">
+      <div class="legend-item"><span class="legend-dot" style="background: var(--color-correct)"></span> Correct (+1.0)</div>
+      <div class="legend-item"><span class="legend-dot" style="background: var(--color-incorrect)"></span> Incorrect (-0.25)</div>
+      <div class="legend-item"><span class="legend-dot" style="background: var(--color-unanswered)"></span> Unanswered</div>
+      <div class="legend-item"><span class="legend-dot" style="background: var(--color-skipped)"></span> Skipped</div>
+      <div class="legend-item"><span class="legend-dot" style="background: var(--color-review)"></span> Review</div>
+      <div class="legend-item"><span class="legend-dot" style="background: var(--color-notvisited)"></span> Not Visited</div>
+    </div>
+    <div class="palette-grid-wrapper">
+      <div class="palette-grid" id="palette-grid"></div>
+    </div>
+  </aside>
+
+  <!-- Final Results Modal Dashboard -->
+  <div class="dashboard-modal" id="dashboard-modal">
+    <div class="dash-content">
+      <div class="dash-header">
+        <h2 style="font-size: 1.8rem; margin-bottom: 6px;">Performance Summary</h2>
+        <p style="color: var(--text-muted);">UPSSSC PET Standard Evaluation (Correct: +1.00 | Negative: -0.25)</p>
+        <div class="dash-score-circle">
+          <div class="dash-score-num" id="dash-net-score">0.00</div>
+          <div style="font-size: 0.8rem; color: #94a3b8;">Net Score / 100</div>
+        </div>
+      </div>
+      <div class="dash-stats-grid">
+        <div class="dash-stat-box"><div class="dash-stat-val" style="color: var(--color-correct)" id="dash-correct">0</div><div class="dash-stat-lbl">Correct</div></div>
+        <div class="dash-stat-box"><div class="dash-stat-val" style="color: var(--color-incorrect)" id="dash-incorrect">0</div><div class="dash-stat-lbl">Incorrect</div></div>
+        <div class="dash-stat-box"><div class="dash-stat-val" style="color: var(--color-unanswered)" id="dash-unanswered">0</div><div class="dash-stat-lbl">Unanswered</div></div>
+        <div class="dash-stat-box"><div class="dash-stat-val" style="color: var(--color-skipped)" id="dash-skipped">0</div><div class="dash-stat-lbl">Skipped</div></div>
+        <div class="dash-stat-box"><div class="dash-stat-val" style="color: var(--color-review)" id="dash-review">0</div><div class="dash-stat-lbl">Review</div></div>
+        <div class="dash-stat-box"><div class="dash-stat-val" style="color: #60a5fa" id="dash-accuracy">0%</div><div class="dash-stat-lbl">Accuracy</div></div>
+      </div>
+      <div class="dash-actions">
+        <button class="btn-action" onclick="closeDashboard()">Review Answers</button>
+        <button class="btn-action btn-primary" onclick="location.reload()">Retake Exam</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Shared Asset Templates (Q8-Q12 Hindi Passage, Q13-Q17 Hindi Passage, Q31-Q35 Table, Q45-Q49 Table, Q60-Q61 English Passage, Q80-Q84 SVG Pie Chart, Q91-Q95 SVG Bar Chart)
+    const ASSET_HINDI_PASSAGE_1 = `
+      <div class="visual-direction">निर्देश (प्र. सं. 8 से प्र. सं. 12): निम्नलिखित गद्यांश को पढ़कर पूछे गए प्रश्नों के उत्तर दीजिए ।</div>
+      <div class="passage-box">
+        दुःख की श्रेणी में प्रवृत्ति के विचार से करुणा का उल्टा क्रोध है। क्रोध जिसके प्रति उत्पन्न होता है उसकी हानि की चेष्टा की जाती है। करुणा जिसके प्रति उत्पन्न होती है उसकी भलाई का उद्योग किया जाता है। किसी पर प्रसन्न होकर भी लोग उसकी भलाई करते हैं। इस प्रकार पात्र की भलाई की उत्तेजना दुःख और आनन्द दोनों की श्रेणियों में रखी गई है। आनन्द की श्रेणी में ऐसा कोई शुद्ध मनोविकार नहीं है जो पात्र की हानि की उत्तेजना करे, पर दुःख की श्रेणी में ऐसा मनोविकार है जो पात्र की भलाई की उत्तेजना करता है। लोभ से, जिसे मैंने आनन्द की श्रेणी में रखा है, चाहे कभी कभी और व्यक्तियों या वस्तुओं को हानि पहुँच जाय पर जिसे जिस व्यक्ति या वस्तु का लोभ होगा, उसकी हानि वह कभी नहीं करेगा। लोभी महमूद ने सोमनाथ को तोड़ा; पर भीतर से जो जवाहरात निकले उनको खूब सँभालकर रखा। नूरजहाँ के रूप के लोभी जहाँगीर ने शेर अफगान को मरवाया पर नूरजहाँ को बड़े चैन से रखा।<br><br>
+        ऊपर कहा जा चुका है कि मनुष्य ज्यों ही समाज में प्रवेश करता है, उसके सुख और दुःख का बहुत-सा अंश दूसरों की क्रिया या अवस्था पर अवलम्बित हो जाता है और उसके मनोविकारों के प्रवाह तथा जीवन के विस्तार के लिए अधिक क्षेत्र हो जाता है। वह दूसरों के दुःख से दुखी और दूसरों के सुख से सुखी होने लगता है। अब देखना यह है कि दूसरों के दुःख से दुखी होने का नियम जितना व्यापक है क्या उतना ही दूसरों के सुख से सुखी होने का भी। किसी दुखी मनुष्य को सामने देख हम अपना दुखी होना तब तक के लिए बन्द नहीं रखते जब तक कि यह न मालूम हो जाय कि वह कौन है, कहाँ रहता है और कैसा है; यह और बात है कि यह जानकर कि जिसे पीड़ा पहुँच रही है उसने कोई भारी अपराध या अत्याचार किया है हमारी दया दूर या कम हो जाय। ऐसे अवसर पर हमारे ध्यान के सामने वह अपराध या अत्याचार आ जाता है और उस अपराधी या अत्याचारी का वर्त्तमान क्लेश हमारे क्रोध की तुष्टि का साधक हो जाता है।<br><br>
+        सारांश यह कि करुणा की प्राप्ति के लिए पात्र में दुःख के अतिरिक्त और किसी विशेषता की अपेक्षा नहीं।
+      </div>
+    `;
+
+    const ASSET_HINDI_PASSAGE_2 = `
+      <div class="visual-direction">निर्देश (प्र. सं. 13 से प्र. सं. 17): निम्नलिखित गद्यांश को पढ़कर पूछे गए प्रश्नों के उत्तर दीजिए ।</div>
+      <div class="passage-box">
+        मैं कभी-कभी सोचता हूँ कि इतने दिनों तक अंग्रेजों की अनुवर्तिता करने के बाद भी भारतवर्ष 'इण्डिपेण्डेन्स' को अनधीनता क्यों नहीं कह सका ? उसने अपनी आजादी के जितने भी नामकरण किये स्वतन्त्रता, स्वराज्य, स्वाधीनता- उन सब में 'स्व' का बन्धन अवश्य रखा। यह क्या संयोग की बात है या हमारी समूची परम्परा ही अनजान में, हमारी भाषा के द्वारा प्रकट होती रही है ? मुझे प्राणि-विज्ञानी की बात फिर याद आती है - सहजात वृत्ति अनजानी स्मृतियों का ही नाम है। स्वराज होने के बाद स्वभावतः ही हमारे नेता और विचारशील नागरिक सोचने लगे हैं कि इस देश को सच्चे अर्थ में सुखी कैसे बनाया जाय। हमारे देश के लोग पहली बार यह सब सोचने लगे हों, ऐसी बात नहीं है। हमारा इतिहास बहुत पुराना है, हमारे शास्त्रों में इस समस्या को नाना भावों और नाना पहलुओं से विचारा गया है। हम कोई नौसिखुए नहीं हैं, जो रातों-रात अनजान जंगल में पहुंचाकर अरक्षित छोड़ दिये गये हों। हमारी परम्परा महिमामयी, उत्तराधिकार विपूल और संस्कार उज्ज्वल है। हमारे अनजान में भी ये बातें हमे एक खास दिशा में सोचने की प्रेरणा देती हैं। यह जरूर है कि परिस्थितियाँ बदल गयी हैं। उपकरण नये हो गये हैं और उलझनों की माया भी बहुत बढ़ गयी है, पर मूल समस्याएँ बहुत अधिक नहीं बदली हैं। भारतीय चित्त जो आज भी 'अनधीनता' के रूप में न सोचकर 'स्वाधीनता' के रूप में सोचता है, वह हमारे दीर्घकालीन संस्कारों का फल है। वह 'स्व' के बन्धन को आसानी से नहीं छोड़ सकता। अपने-आप पर अपने-आप के द्वारा लगाया हुआ बन्धन हमारी संस्कृति की बडी भारी विशेषता है। मैं ऐसा तो नहीं मानता कि जो कुछ हमारा पुराना है, जो कुछ हमारा विशेष है, उससे हम चिपटे ही रहें। पुराने का 'मोह' सब समय वाञ्छनीय ही नहीं होता। मरे बच्चे को गोद में दबाये रहनेवाली 'बँदरिया' मनुष्य का आदर्श नहीं बन सकती। परन्तु मैं ऐसा भी नहीं सोच सकता कि हम नयी अनुसन्धित्सा के नशे में चूर होकर अपना सरबस खो दें। कालिदास ने कहा था कि सब पुराने अच्छे ही नहीं होते, सब नये खराब ही नहीं होते।
+      </div>
+    `;
+
+    const ASSET_DI_TABLE_1 = `
+      <div class="visual-direction">Direction (Q. No. 31 to Q. No. 35): The given table shows the number of employees in four different companies and the percentage of male, ratio of the male to female employees in Finance department. The companies have two different departments Finance and Marketing.<br>निर्देश (प्र. सं. 31 से प्र. सं. 35) : दी गई तालिका चार अलग-अलग कंपनियों में कर्मचारियों की संख्या और फाइनैन्स विभाग में पुरुष कर्मचारियों का प्रतिशत, पुरुष और महिला कर्मचारियों का अनुपात दर्शाती है । कंपनियों में दो अलग-अलग विभाग फाइनैन्स और मार्केटिंग हैं।</div>
+      <div class="di-table-wrapper">
+        <table class="di-table">
+          <thead>
+            <tr>
+              <th>कंपनी / Company</th>
+              <th>कुल कर्मचारियों की संख्या / Total number of employees</th>
+              <th>पुरुष कर्मचारियों का % / % of the male employees</th>
+              <th>फाइनैन्स विभाग में कर्मचारियों का % / % of the employees in Finance department</th>
+              <th>फाइनैन्स में पुरुष और महिला का अनुपात / Ratio (Male : Female) in Finance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>A</td><td>2000</td><td>60%</td><td>70%</td><td>4 : 3</td></tr>
+            <tr><td>B</td><td>2400</td><td>75%</td><td>50%</td><td>3 : 1</td></tr>
+            <tr><td>C</td><td>1800</td><td>50%</td><td>60%</td><td>5 : 4</td></tr>
+            <tr><td>D</td><td>2800</td><td>75%</td><td>50%</td><td>9 : 5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    const ASSET_DI_TABLE_2 = `
+      <div class="visual-direction">Direction (Q. No. 45 to Q. No. 49): The following table shows the total number of crops (in quintal) produced by 5 different farmers in a certain year.<br>निर्देश (प्र. सं. 45 से प्र. सं. 49): निम्नलिखित तालिका एक निश्चित वर्ष में 5 विभिन्न किसानों द्वारा उत्पादित फसलों की कुल संख्या (क्विंटल में) दर्शाती है।</div>
+      <div class="di-table-wrapper">
+        <table class="di-table">
+          <thead>
+            <tr>
+              <th>किसान / Farmer</th>
+              <th>राई / Rye</th>
+              <th>सरसों / Mustard</th>
+              <th>जई / Oats</th>
+              <th>गन्ना / Sugarcane</th>
+              <th>गेहूँ / Wheat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>रोशन / Roshan</td><td>640</td><td>920</td><td>340</td><td>900</td><td>300</td></tr>
+            <tr><td>प्रभाकर / Prabhakar</td><td>480</td><td>580</td><td>180</td><td>600</td><td>440</td></tr>
+            <tr><td>तेजा / Theja</td><td>750</td><td>660</td><td>250</td><td>560</td><td>650</td></tr>
+            <tr><td>भार्गव / Bhargav</td><td>200</td><td>1050</td><td>280</td><td>840</td><td>820</td></tr>
+            <tr><td>कृष्ण / Krishna</td><td>260</td><td>760</td><td>320</td><td>720</td><td>630</td></tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    const ASSET_ENGLISH_PASSAGE = `
+      <div class="visual-direction">Direction (Q. No. 60 and Q. No. 61): Read the following passage and answer the questions by choosing the right option.</div>
+      <div class="passage-box">
+        Time is one of the most valuable resources we have, yet many people struggle to manage it effectively. In today's fast-paced world, students, professionals and even homemakers face numerous tasks every day. Proper time management helps individuals prioritize their activities, meet deadlines and reduce stress. One of the key benefits of managing time wisely is improved productivity. When people plan their day and allocate specific time slots for each task, they tend to achieve more in less time. It also creates a sense of discipline and responsibility.<br><br>
+        Moreover, effective time management leads to better work-life balance. When tasks are completed on time, individuals can make space for leisure, hobbies and family. This not only boosts happiness but also improves mental well-being.<br><br>
+        However, poor time management can result in procrastination, missed deadlines and increased anxiety. Developing time management skills requires practice and consistency. Simple habits like creating to-do lists, setting goals, and avoiding distractions can go a long way in making each day more efficient and meaningful.
+      </div>
+    `;
+
+    // Native SVG Pie Chart for Q80 to Q84
+    const ASSET_PIE_CHART_80_84 = `
+      <div class="visual-direction">
+        Direction (Q. No. 80 to Q. No. 84): The given below pie chart shows the percentage distribution of the total number of chairs (wheel and office) manufactured in five different months i.e. January, February, March, April and May and also given table chart shows the ratio of the number of wheel chairs to office chairs manufactured on five different months.<br>
+       <br> निर्देश (प्र. सं. 80 से प्र. सं. 84) : नीचे दिए गए पाई चार्ट पाँच अलग-अलग महीनों यानी जनवरी, फरवरी, मार्च, अप्रैल और मई में निर्मित कुर्सियों (व्हील और ऑफीस) की कुल संख्या का प्रतिशत वितरण दर्शाता है और साथ ही दिए गए टेबल चार्ट पाँच अलग-अलग महीनों में निर्मित व्हील कुर्सियों की संख्या का ऑफीस कुर्सियों से अनुपात दर्शाता है।<br>
+<br>निर्मित कुर्सियों की कुल संख्या / The Total Number of Chairs Manufactured = 5000
+      </div>
+      <div class="svg-chart-container">
+        <svg viewBox="0 0 640 320" width="100%" height="280" style="overflow: visible;">
+          <defs>
+            <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.4"/>
+            </filter>
+          </defs>
+          <!-- Donut/Pie Slices Center (160, 160) Radius 120 -->
+          <!-- Jan: 27% (97.2 deg) 0 to 97.2 -->
+          <path d="M 160 160 L 160 40 A 120 120 0 0 1 279.1 175.0 Z" fill="#3b82f6" stroke="#191b20" stroke-width="2"/>
+          <!-- Feb: 20% (72.0 deg) 97.2 to 169.2 -->
+          <path d="M 160 160 L 279.1 175.0 A 120 120 0 0 1 182.5 277.9 Z" fill="#10b981" stroke="#191b20" stroke-width="2"/>
+          <!-- Mar: 18% (64.8 deg) 169.2 to 234.0 -->
+          <path d="M 160 160 L 182.5 277.9 A 120 120 0 0 1 62.9 230.5 Z" fill="#f59e0b" stroke="#191b20" stroke-width="2"/>
+          <!-- Apr: 10% (36.0 deg) 234.0 to 270.0 -->
+          <path d="M 160 160 L 62.9 230.5 A 120 120 0 0 1 40.0 160.0 Z" fill="#ec4899" stroke="#191b20" stroke-width="2"/>
+          <!-- May: 25% (90.0 deg) 270.0 to 360.0 -->
+          <path d="M 160 160 L 40.0 160.0 A 120 120 0 0 1 160.0 40.0 Z" fill="#8b5cf6" stroke="#191b20" stroke-width="2"/>
+
+          <!-- Center Hole to make Donut -->
+          <circle cx="160" cy="160" r="54" fill="#191b20" stroke="#2d3139" stroke-width="2"/>
+          <text x="160" y="155" fill="#f8fafc" font-size="13" font-weight="700" text-anchor="middle">TOTAL</text>
+          <text x="160" y="174" fill="#60a5fa" font-size="15" font-weight="800" text-anchor="middle">5,000</text>
+
+          <!-- On-chart Labels -->
+          <text x="235" y="110" fill="#fff" font-size="12" font-weight="700">Jan 27%</text>
+          <text x="215" y="235" fill="#fff" font-size="12" font-weight="700">Feb 20%</text>
+          <text x="100" y="260" fill="#fff" font-size="12" font-weight="700">Mar 18%</text>
+          <text x="42" y="200" fill="#fff" font-size="12" font-weight="700">Apr 10%</text>
+          <text x="75" y="100" fill="#fff" font-size="12" font-weight="700">May 25%</text>
+
+          <!-- Table/Legend Box alongside Pie Chart -->
+          <g transform="translate(330, 25)">
+            <rect width="290" height="260" rx="8" fill="#252830" stroke="#373b45"/>
+            <text x="145" y="28" fill="#93c5fd" font-size="14" font-weight="700" text-anchor="middle">Ratio: Wheel : Office</text>
+            
+            <circle cx="25" cy="65" r="7" fill="#3b82f6"/>
+            <text x="42" y="70" fill="#f8fafc" font-size="13" font-weight="600">जनवरी / January (27%) :</text>
+            <text x="240" y="70" fill="#60a5fa" font-size="13" font-weight="700">2 : 1</text>
+
+            <circle cx="25" cy="110" r="7" fill="#10b981"/>
+            <text x="42" y="115" fill="#f8fafc" font-size="13" font-weight="600">फरवरी / February (20%) :</text>
+            <text x="240" y="115" fill="#34d399" font-size="13" font-weight="700">7 : 3</text>
+
+            <circle cx="25" cy="155" r="7" fill="#f59e0b"/>
+            <text x="42" y="160" fill="#f8fafc" font-size="13" font-weight="600">मार्च / March (18%) :</text>
+            <text x="240" y="160" fill="#fbbf24" font-size="13" font-weight="700">4 : 5</text>
+
+            <circle cx="25" cy="200" r="7" fill="#ec4899"/>
+            <text x="42" y="205" fill="#f8fafc" font-size="13" font-weight="600">अप्रैल / April (10%) :</text>
+            <text x="240" y="205" fill="#f472b6" font-size="13" font-weight="700">1 : 1</text>
+
+            <circle cx="25" cy="242" r="7" fill="#8b5cf6"/>
+            <text x="42" y="247" fill="#f8fafc" font-size="13" font-weight="600">मई / May (25%) :</text>
+            <text x="240" y="247" fill="#a78bfa" font-size="13" font-weight="700">3 : 2</text>
+          </g>
+        </svg>
+      </div>
+    `;
+
+    // Native SVG Bar Chart with DIRECT DATA LABELS for Q91 to Q95
+    const ASSET_BAR_CHART_91_95 = `
+      <div class="visual-direction">
+        Direction (Q. No. 91 to Q. No. 95): Study the bar chart below showing Marked Price of Products (in Rs.) and answer the questions.<br>
+        निर्देश (प्र. सं. 91 से प्र. सं. 95) : नीचे दिए गए बार चार्ट में उत्पादों के अंकित मूल्य (रु. में) का अध्ययन करें और प्रश्नों के उत्तर दें।
+      </div>
+      <div class="svg-chart-container">
+        <svg viewBox="0 0 660 300" width="100%" height="270">
+          <!-- Background Gridlines -->
+          <line x1="70" y1="230" x2="620" y2="230" stroke="#373b45" stroke-width="1"/>
+          <line x1="70" y1="180" x2="620" y2="180" stroke="#2a2e37" stroke-dasharray="4"/>
+          <line x1="70" y1="130" x2="620" y2="130" stroke="#2a2e37" stroke-dasharray="4"/>
+          <line x1="70" y1="80" x2="620" y2="80" stroke="#2a2e37" stroke-dasharray="4"/>
+          <line x1="70" y1="30" x2="620" y2="30" stroke="#2a2e37" stroke-dasharray="4"/>
+
+          <!-- Y-Axis Ticks & Values -->
+          <text x="55" y="234" fill="#94a3b8" font-size="11" text-anchor="end">0</text>
+          <text x="55" y="184" fill="#94a3b8" font-size="11" text-anchor="end">4,000</text>
+          <text x="55" y="134" fill="#94a3b8" font-size="11" text-anchor="end">8,000</text>
+          <text x="55" y="84" fill="#94a3b8" font-size="11" text-anchor="end">12,000</text>
+          <text x="55" y="34" fill="#94a3b8" font-size="11" text-anchor="end">16,000</text>
+
+          <!-- Bars with DIRECT LABELS -->
+          <!-- 1. Cell Phone (8000) height = 100px (230 - 100 = 130) -->
+          <rect x="95" y="130" width="60" height="100" rx="4" fill="#3b82f6"/>
+          <text x="125" y="122" fill="#60a5fa" font-size="13" font-weight="700" text-anchor="middle">Rs. 8,000</text>
+          <text x="125" y="250" fill="#f8fafc" font-size="12" font-weight="600" text-anchor="middle">सेल फोन</text>
+          <text x="125" y="266" fill="#94a3b8" font-size="10" text-anchor="middle">Cell Phone</text>
+
+          <!-- 2. Computer (15000) height = 187.5px (230 - 187.5 = 42.5) -->
+          <rect x="205" y="42.5" width="60" height="187.5" rx="4" fill="#10b981"/>
+          <text x="235" y="34" fill="#34d399" font-size="13" font-weight="700" text-anchor="middle">Rs. 15,000</text>
+          <text x="235" y="250" fill="#f8fafc" font-size="12" font-weight="600" text-anchor="middle">कंप्यूटर</text>
+          <text x="235" y="266" fill="#94a3b8" font-size="10" text-anchor="middle">Computer</text>
+
+          <!-- 3. Smart Watch (6000) height = 75px (230 - 75 = 155) -->
+          <rect x="315" y="155" width="60" height="75" rx="4" fill="#f59e0b"/>
+          <text x="345" y="147" fill="#fbbf24" font-size="13" font-weight="700" text-anchor="middle">Rs. 6,000</text>
+          <text x="345" y="250" fill="#f8fafc" font-size="12" font-weight="600" text-anchor="middle">स्मार्ट वॉच</text>
+          <text x="345" y="266" fill="#94a3b8" font-size="10" text-anchor="middle">Smart Watch</text>
+
+          <!-- 4. Dining Table (10000) height = 125px (230 - 125 = 105) -->
+          <rect x="425" y="105" width="60" height="125" rx="4" fill="#ec4899"/>
+          <text x="455" y="97" fill="#f472b6" font-size="13" font-weight="700" text-anchor="middle">Rs. 10,000</text>
+          <text x="455" y="250" fill="#f8fafc" font-size="12" font-weight="600" text-anchor="middle">डाइनिंग टेबल</text>
+          <text x="455" y="266" fill="#94a3b8" font-size="10" text-anchor="middle">Dining Table</text>
+
+          <!-- 5. Book Rack (7000) height = 87.5px (230 - 87.5 = 142.5) -->
+          <rect x="535" y="142.5" width="60" height="87.5" rx="4" fill="#8b5cf6"/>
+          <text x="565" y="134" fill="#a78bfa" font-size="13" font-weight="700" text-anchor="middle">Rs. 7,000</text>
+          <text x="565" y="250" fill="#f8fafc" font-size="12" font-weight="600" text-anchor="middle">बुक रैक</text>
+          <text x="565" y="266" fill="#94a3b8" font-size="10" text-anchor="middle">Book Rack</text>
+        </svg>
+      </div>
+    `;
+
+    // 100 Solved UPSSSC PET Questions Dataset (Verbatim preservation from Phase 1)
+    const questionsData = [
+      // Batch 1 (Q1 - Q25)
+      {
+        id: 1,
+        topic: "Ancient Indian History",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The Harappan Civilization belongs to which age?",
+        stemHi: "हड़प्पा सभ्यता किस युग से संबंधित है ?",
+        options: [
+          "Iron Age / लौह युग",
+          "Stone Age / पाषाण युग",
+          "Bronze Age / कांस्य युग",
+          "Paleolithic Age / पुरापाषाण युग",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "The Indus Valley Civilization (Harappan Civilization) is classified as a Bronze Age civilization (proto-historic period). The Harappans alloyed copper with tin to produce bronze for weapons, vessels, and artistic figurines such as the famous bronze 'Dancing Girl' found at Mohenjo-daro. They were unaware of iron, which was introduced to the Indian subcontinent much later during the Later Vedic period.",
+        explanationHi: "हड़प्पा सभ्यता (सिंधु घाटी सभ्यता) को आद्य-ऐतिहासिक काल अथवा कांस्य युग (Bronze Age) के अंतर्गत वर्गीकृत किया गया है। हड़प्पावासी तांबे में टिन मिलाकर कांसा (Bronze) तैयार करने की धातु-शोधन तकनीक से भली-भांति परिचित थे (जैसे मोहनजोदड़ो से प्राप्त प्रसिद्ध कांस्य की 'नर्तकी की मूर्ति')। हड़प्पा कालीन लोग लोहे से परिचित नहीं थे; भारत में लौह युग का आरंभ उत्तर वैदिक काल के दौरान हुआ।",
+        keyExamFact: "हड़प्पावासी तांबे (Copper) का आयात राजस्थान की खेतड़ी खानों से तथा टिन का आयात अफगानिस्तान व ईरान से करते थे।"
+      },
+      {
+        id: 2,
+        topic: "Current Affairs 2025",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "What was the theme of the Entrepreneurship Development Conclave 2025 held in Pune ?",
+        stemHi: "पुणे में आयोजित उद्यमिता विकास सम्मेलन 2025 का विषय क्या था ?",
+        options: [
+          "Empowering Entrepreneurs Transforming Livestock Economics / उद्यमियों को सशक्त बनाना पशुधन अर्थशास्त्र में बदलाव लाना",
+          "Strengthening Rural Startups through Innovation / नवाचार के माध्यम से ग्रामीण स्टार्टअप को मज़बूत बनाना",
+          "Building Future Leaders in Agri-Tech / कृषि-तकनीक में भावी नेताओं का निर्माण",
+          "Livestock Entrepreneurship for a Self-Reliant India / आत्मनिर्भर भारत के लिए पशुधन उद्यमिता",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "The Ministry of Fisheries, Animal Husbandry and Dairying organized the Entrepreneurship Development Conclave in Pune with the central theme \"Empowering Entrepreneurs Transforming Livestock Economics\". The conclave aimed to promote entrepreneurship, innovation, indigenous breed conservation, and value-addition across the livestock, dairy, and poultry ecosystems.",
+        explanationHi: "केंद्रीय मत्स्यपालन, पशुपालन एवं डेयरी मंत्रालय द्वारा पुणे (महाराष्ट्र) में आयोजित राष्ट्रीय उद्यमिता विकास सम्मेलन 2025 का मुख्य विषय (Theme) \"उद्यमियों को सशक्त बनाना: पशुधन अर्थशास्त्र में बदलाव लाना\" (Empowering Entrepreneurs Transforming Livestock Economics) था। इसका उद्देश्य पशुधन क्षेत्र में उद्यमिता, नवाचार, मूल्य संवर्धन और ग्रामीण आजीविका को सुदृढ़ बनाना था।",
+        keyExamFact: "राष्ट्रीय पशुधन मिशन (NLM) और पशुपालन अवसंरचना विकास कोष (AHIDF) केंद्र सरकार द्वारा पशुधन क्षेत्र में उद्यमिता को वित्तीय सहायता और सब्सिडी प्रदान करने हेतु संचालित प्रमुख योजनाएं हैं।"
+      },
+      {
+        id: 3,
+        topic: "General Awareness / Important Days",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "World Consumer Rights Day is observed on:",
+        stemHi: "विश्व उपभोक्ता अधिकार दिवस कब मनाया जाता है ?",
+        options: [
+          "April 8 / 8 अप्रैल",
+          "March 21 / 21 मार्च",
+          "October 11 / 11 अक्टूबर",
+          "March 15 / 15 मार्च",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "World Consumer Rights Day is celebrated internationally every year on March 15. The day commemorates President John F. Kennedy's historic declaration to the US Congress on March 15, 1962, where he formally addressed the issue of consumer rights (making him the first world leader to do so).",
+        explanationHi: "विश्व उपभोक्ता अधिकार दिवस प्रतिवर्ष 15 मार्च को वैश्विक स्तर पर मनाया जाता है। 15 मार्च 1962 को अमेरिकी राष्ट्रपति जॉन एफ. कैनेडी ने अमेरिकी कांग्रेस में औपचारिक रूप से उपभोक्ता अधिकारों (सुरक्षा, सूचना, चयन और सुनवाई का अधिकार) को रेखांकित किया था, जिसके उपलक्ष्य में यह दिवस मनाया जाता है।",
+        keyExamFact: "भारत में 'राष्ट्रीय उपभोक्ता दिवस' प्रतिवर्ष 24 दिसंबर को मनाया जाता है, क्योंकि 24 दिसंबर 1986 को तत्कालीन राष्ट्रपति द्वारा ऐतिहासिक 'उपभोक्ता संरक्षण अधिनियम, 1986' को स्वीकृति प्रदान की गई थी (वर्तमान में उपभोक्ता संरक्षण अधिनियम, 2019 प्रभावी है)।"
+      },
+      {
+        id: 4,
+        topic: "Indian Polity / Parliament",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "______ question is one to which a member desire an oral answer in the house and which is distinguished by an asterisk mark.",
+        stemHi: "______ प्रश्न वह है जिसका कोई सदस्य सदन में मौखिक उत्तर चाहता है और जिसे तारांकित चिह्न द्वारा पहचाना जाता है।",
+        options: [
+          "Short notice / अल्प अवधि सूचना",
+          "Starred / तारांकित",
+          "Unstarred / अतारांकित",
+          "Long notice / लंबी सूचना",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "Under parliamentary procedural rules, a Starred Question (तारांकित प्रश्न) is distinguished by an asterisk mark (*) and is one for which a Member of Parliament desires an oral answer on the floor of the House. Because the minister responds orally, supplementary questions can follow. In contrast, an Unstarred Question requires a written reply, and no supplementaries can be asked.",
+        explanationHi: "संसदीय कार्यप्रणाली के नियमों के अनुसार, तारांकित प्रश्न (Starred Question) वह प्रश्न होता है जिस पर तारांकन (*) चिह्न लगा होता है और जिसका संबंधित सदस्य सदन में संबंधित मंत्री से मौखिक उत्तर (Oral Answer) चाहता है। मौखिक उत्तर दिए जाने के कारण इस पर अनुपूरक प्रश्न (Supplementary Questions) पूछे जाने की अनुमति होती है; जबकि अतारांकित प्रश्न पर केवल लिखित उत्तर दिया जाता है।",
+        keyExamFact: "संसद की कार्यवाही का पहला घंटा (11:00 AM से 12:00 PM) 'प्रश्न काल' (Question Hour) कहलाता है, जिसके तुरंत बाद का समय 'शून्य काल' (Zero Hour) कहलाता है।"
+      },
+      {
+        id: 5,
+        topic: "Indian Geography / Mountain Peaks",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Kangto is one of the highest peaks of India is located in which State ?",
+        stemHi: "कांगटो भारत की सबसे ऊंची चोटियों में से एक है जो किस राज्य में स्थित है ?",
+        options: [
+          "Himachal Pradesh / हिमाचल प्रदेश",
+          "Arunachal Pradesh / अरुणाचल प्रदेश",
+          "Nagaland / नागालैंड",
+          "Manipur / मणिपुर",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "Mount Kangto (also known as Kanggardo Rize), rising to an elevation of approximately 7,060 metres (23,163 ft), is located in the Eastern Himalayas on the border of the West Kameng district of Arunachal Pradesh, India, and the Tibet Autonomous Region of China. It is the highest mountain peak in Arunachal Pradesh.",
+        explanationHi: "कांगटो (Kangto / Kanggardo Rize), जिसकी ऊंचाई लगभग 7,060 मीटर है, पूर्वी हिमालय पर्वतमाला में भारत के अरुणाचल प्रदेश (पश्चिमी कामेंग जिला) और तिब्बत (चीन) की सीमा पर स्थित है। यह अरुणाचल प्रदेश राज्य की सबसे ऊंची पर्वत चोटी है।",
+        keyExamFact: "कांगटो पर्वत चोटी से पापुम और कामेंग नदी प्रणालियों का जल ग्रहण क्षेत्र समृद्ध होता है।"
+      },
+      {
+        id: 6,
+        topic: "Ancient Indian History / Jainism",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Mahavira attained moksha (became a Siddha) at which of the following places?",
+        stemHi: "महावीर ने निम्नलिखित में से किस स्थान पर मोक्ष प्राप्त किया (सिद्ध बने)?",
+        options: [
+          "Rajagriha / राजगृह",
+          "Kapilavastu / कपिलवस्तु",
+          "Pavapuri / पावापुरी",
+          "Purushapura / पुरुषपुरा",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Lord Mahavira, the 24th and last Tirthankara of Jainism, attained Nirvana/Moksha (liberation from the cycle of birth and death, becoming a Siddha) at the age of 72 at Pavapuri (located in modern Nalanda district, Bihar) around 468 BCE at the court of King Hastipal of the Malla republic. The famous Jal Mandir is situated at Pavapuri to mark this sacred event.",
+        explanationHi: "जैन धर्म के 24वें तीर्थंकर भगवान महावीर ने 72 वर्ष की आयु में बिहार के आधुनिक नालंदा जिले में स्थित 'पावापुरी' (पावा) में मल्ल गणराज्य के राजा हस्तिपाल के राजप्रासाद में मोक्ष/निर्वाण प्राप्त किया (सिद्ध बने)। पावापुरी में उनकी मोक्ष स्थली पर प्रसिद्ध 'जल मंदिर' अवस्थित है।",
+        keyExamFact: "भगवान महावीर का जन्म कुंडग्राम (वैशाली) में हुआ था, उन्हें ऋजुपालिका नदी के तट पर 'कैवल्य' (सर्वोच्च ज्ञान) की प्राप्ति हुई थी, तथा मोक्ष की प्राप्ति पावापुरी में हुई।"
+      },
+      {
+        id: 7,
+        topic: "General Awareness / Sports",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Asian Games are held once in how many years?",
+        stemHi: "एशियाई खेल कितने वर्षों में एक बार आयोजित होते हैं ?",
+        options: [
+          "3 years / 3 वर्ष",
+          "2 years / 2 वर्ष",
+          "4 years / 4 वर्ष",
+          "5 years / 5 वर्ष",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "The Asian Games (also known as Asiad) are a continental multi-sport event held once every 4 years among athletes from all over Asia. The games are regulated by the Olympic Council of Asia (OCA). The first-ever Asian Games were held in New Delhi, India, in 1951.",
+        explanationHi: "एशियाई खेल (Asian Games या एशियाड) प्रत्येक 4 वर्ष के अंतराल पर ओलंपिक काउंसिल ऑफ एशिया (OCA) द्वारा आयोजित किए जाने वाले बहु-खेल आयोजन हैं। प्रथम एशियाई खेलों का आयोजन वर्ष 1951 में भारत की राजधानी नई दिल्ली में किया गया था।",
+        keyExamFact: "भारत ने दो बार एशियाई खेलों की मेजबानी की है - वर्ष 1951 (प्रथम एशियाई खेल) और वर्ष 1982 में, दोनों बार नई दिल्ली में।"
+      },
+      {
+        id: 8,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_1,
+        stemEn: "",
+        stemHi: "आनंद की श्रेणी में ऐसा कोई शुद्ध मनोविकार नहीं है जो पात्र की हानि की उत्तेजना करे, पर दुःख की श्रेणी में ऐसा मनोविकार है जो पात्र की ______ की उत्तेजना करता है ।",
+        options: [
+          "भलाई",
+          "भावना",
+          "सच्चाई",
+          "बुराई",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "",
+        explanationHi: "प्रस्तुत गद्यांश के प्रथम अनुच्छेद में स्पष्ट उल्लिखित है: \"आनन्द की श्रेणी में ऐसा कोई शुद्ध मनोविकार नहीं है जो पात्र की हानि की उत्तेजना करे, पर दुःख की श्रेणी में ऐसा मनोविकार है जो पात्र की भलाई की उत्तेजना करता है।\" अतः रिक्त स्थान में 'भलाई' शब्द का प्रयोग होगा।",
+        keyExamFact: "यह गद्यांश आचार्य रामचंद्र शुक्ल द्वारा रचित प्रसिद्ध निबंध 'चिंतामणि' के 'करुणा' शीर्षक निबंध से अवतरित है।"
+      },
+      {
+        id: 9,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_1,
+        stemEn: "",
+        stemHi: "दुःख की श्रेणी में प्रवृत्ति के विचार से करुणा का उल्टा क्या हो सकता है ?",
+        options: [
+          "श्रद्धा",
+          "दुःख",
+          "भाव",
+          "क्रोध",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "",
+        explanationHi: "गद्यांश की प्रथम पंक्ति के अनुसार: \"दुःख की श्रेणी में प्रवृत्ति के विचार से करुणा का उल्टा क्रोध है।\" क्रोध पात्र की हानि चाहता है जबकि करुणा पात्र की भलाई चाहती है। अतः सही विकल्प (D) है।",
+        keyExamFact: "गद्यांश के अनुसार करुणा और क्रोध दोनों ही दुःख की श्रेणी के मनोविकार हैं, परंतु दोनों की मूल प्रवृत्ति एक-दूसरे के विपरीत है।"
+      },
+      {
+        id: 10,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_1,
+        stemEn: "",
+        stemHi: "किसी पर प्रसन्न होकर भी लोग उसकी भलाई करते हैं। इस प्रकार पात्र की भलाई की उत्तेजना किन श्रेणियों में रखी जाती है ?",
+        options: [
+          "क्रोध और करुणा दोनों की",
+          "दुःख और आनन्द दोनों की",
+          "श्रद्धा और भक्ति दोनों की",
+          "प्रेम और द्वेष दोनों की",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "",
+        explanationHi: "गद्यांश में कहा गया है: \"करुणा जिसके प्रति उत्पन्न होती है उसकी भलाई का उद्योग किया जाता है। किसी पर प्रसन्न होकर भी लोग उसकी भलाई करते हैं। इस प्रकार पात्र की भलाई की उत्तेजना दुःख और आनन्द दोनों की श्रेणियों में रखी गई है।\" अतः सही उत्तर विकल्प (B) है।",
+        keyExamFact: "गद्यांश में आनंद के अंतर्गत प्रसन्नता तथा दुःख के अंतर्गत करुणा से पात्र की भलाई की प्रेरणा उत्पन्न होना दर्शाया गया है।"
+      },
+      {
+        id: 11,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_1,
+        stemEn: "",
+        stemHi: "करुणा जिसके प्रति उत्पन्न होती है, उसके लिए क्या किया जाता है ?",
+        options: [
+          "उसकी भलाई का उद्योग किया जाता है।",
+          "उसकी हानि की चेष्टा की जाती है।",
+          "चंचल हो जाते हैं।",
+          "क्रोध उसके प्रति उत्पन्न हो जाता है ।",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "",
+        explanationHi: "गद्यांश के अनुसार: \"करुणा जिसके प्रति उत्पन्न होती है उसकी भलाई का उद्योग किया जाता है।\" इसके विपरीत क्रोध उत्पन्न होने पर हानि की चेष्टा की जाती है। अतः विकल्प (A) पूर्णतः सत्य है।",
+        keyExamFact: "'उद्योग' शब्द का यहाँ संदर्भ प्रयास अथवा प्रयत्न करने से है।"
+      },
+      {
+        id: 12,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_1,
+        stemEn: "",
+        stemHi: "किसकी प्राप्ति के लिए पात्र में दुःख के अतिरिक्त और किसी विशेषता की अपेक्षा नहीं होती है ?",
+        options: [
+          "उत्साह",
+          "क्रोध",
+          "करुणा",
+          "उत्तेजना",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "",
+        explanationHi: "गद्यांश की अंतिम पंक्ति में स्पष्ट सारांश दिया गया है: \"सारांश यह कि करुणा की प्राप्ति के लिए पात्र में दुःख के अतिरिक्त और किसी विशेषता की अपेक्षा नहीं।\" अतः करुणा की उत्पत्ति के लिए पात्र का केवल दुखी होना ही पर्याप्त आधार है।",
+        keyExamFact: "दया या करुणा में पात्र के गुण-दोष या परिचय की पूर्व-शर्त नहीं होती, केवल उसका दुःख ही करुणा को उद्दीप्त करने के लिए पर्याप्त होता है।"
+      },
+      {
+        id: 13,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_2,
+        stemEn: "",
+        stemHi: "कालिदास ने क्या कहा था ?",
+        options: [
+          "उलझनों की मात्रा बहुत बढ़ गई है ।",
+          "सब पुराने अच्छे ही नहीं होते, सब नये खराब ही नहीं होते ।",
+          "हमारी परंपरा महिमामयी, उत्तराधिकार विपुल और संस्कार उज्ज्वल है।",
+          "पुराने का मोह सब समय वाञ्छनीय ही नहीं होता ।",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "",
+        explanationHi: "गद्यांश की अंतिम पंक्ति में स्पष्ट उद्धृत है: \"कालिदास ने कहा था कि सब पुराने अच्छे ही नहीं होते, सब नये खराब ही नहीं होते।\" (संस्कृत मूल: 'पुराणमित्येव न साधु सर्वं न चापि काव्यं नवमित्यवद्यम्' - मालविकाग्निमित्रम्)। अतः विकल्प (B) सही उत्तर है।",
+        keyExamFact: "यह गद्यांश आचार्य हजारीप्रसाद द्विवेदी जी के प्रसिद्ध ललित निबंध 'नाखून क्यों बढ़ते हैं' से लिया गया है।"
+      },
+      {
+        id: 14,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_2,
+        stemEn: "",
+        stemHi: "लेखकजी को प्राणि-विज्ञानियों की कौन-सी बात याद आती है ?",
+        options: [
+          "नाखून बढ़ना उनमें से एक हो सकता है।",
+          "हम कोई नौसिखुए नहीं है।",
+          "सहजात वृत्ति अनजानी स्मृतियों का ही नाम है ।",
+          "नाना भावों और नाना पहलुओं से विचारा गया है ।",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "",
+        explanationHi: "गद्यांश में उल्लिखित है: \"मुझे प्राणि-विज्ञानी की बात फिर याद आती है - सहजात वृत्ति अनजानी स्मृतियों का ही नाम है।\" अतः लेखक को स्मरण आने वाली बात विकल्प (C) में सटीक रूप से दी गई है।",
+        keyExamFact: "'सहजात वृत्ति' (Inborn instinct) जीव में जन्मजात होती है जो उसकी अचेतन व अनजानी स्मृतियों द्वारा संचालित होती है।"
+      },
+      {
+        id: 15,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_2,
+        stemEn: "",
+        stemHi: "मनुष्य ने अपनी आजादी के जितने भी नामकरण किये स्वतंत्रता, स्वराज्य, स्वाधीनता-उन सब में ______ का बंधन अवश्य रखा ।",
+        options: [
+          "स्व",
+          "पर",
+          "श्वर",
+          "ओर",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "",
+        explanationHi: "गद्यांश के अनुसार: \"उसने अपनी आजादी के जितने भी नामकरण किये स्वतन्त्रता, स्वराज्य, स्वाधीनता- उन सब में 'स्व' का बन्धन अवश्य रखा।\" लेखक के अनुसार 'स्व' का बंधन अर्थात आत्म-संयम भारतीय संस्कृति की प्रमुख विशेषता है। अतः रिक्त स्थान में 'स्व' आएगा।",
+        keyExamFact: "स्वाधीनता (स्व + अधीनता), स्वराज्य (स्व + राज्य), स्वतंत्रता (स्व + तंत्रता) - इन सभी शब्दों में 'स्व' उपसर्ग आत्म-नियंत्रण को दर्शाता है।"
+      },
+      {
+        id: 16,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_2,
+        stemEn: "",
+        stemHi: "मरे बच्चे को गोद में दबाये रहनेवाली ______ मनुष्य का आदर्श नहीं बन सकती ।",
+        options: [
+          "भेडिया",
+          "बाधिन",
+          "सुअर",
+          "बंदरिया",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "",
+        explanationHi: "गद्यांश में अंध-परंपरावाद और पुराने के व्यर्थ मोह की आलोचना करते हुए लेखक ने लिखा है: \"मरे बच्चे को गोद में दबाये रहनेवाली 'बँदरिया' मनुष्य का आदर्श नहीं बन सकती।\" अतः सही शब्द 'बंदरिया' (विकल्प D) है।",
+        keyExamFact: "इस रूपक के माध्यम से लेखक यह स्पष्ट करते हैं कि अतीत का जो अंश मृत या अनुपयोगी हो चुका है, उसका अंधानुकरण प्रगति में बाधक है।"
+      },
+      {
+        id: 17,
+        topic: "सामान्य हिंदी (अपठित गद्यांश)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: ASSET_HINDI_PASSAGE_2,
+        stemEn: "",
+        stemHi: "लेखकजी कभी-कभी क्या सोचने लगते हैं ?",
+        options: [
+          "पशुता या मनुष्यता की ओर ।",
+          "अंग्रेजों की अनुवर्तिता करने के बाद भी भारतवर्ष 'इण्डिपेण्डेन्स' को अनधीनता क्यों नहीं कह सका ?",
+          "ये हमारी पशुता की निशानी है ।",
+          "यह हमारी पशुता के अवशेष है।",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "",
+        explanationHi: "गद्यांश के आरंभ में ही लेखक का विचार व्यक्त हुआ है: \"मैं कभी-कभी सोचता हूँ कि इतने दिनों तक अंग्रेजों की अनुवर्तिता करने के बाद भी भारतवर्ष 'इण्डिपेण्डेन्स' को अनधीनता क्यों नहीं कह सका ?\" अतः सही विकल्प (B) है।",
+        keyExamFact: "'इंडिपेंडेंस' का शाब्दिक अर्थ अधीनता का न होना (अनधीनता) है, किंतु भारतीयों ने इसे 'स्वाधीनता' (स्वयं के अधीन होना) के रूप में स्वीकारा।"
+      },
+      {
+        id: 18,
+        topic: "सामान्य हिंदी (व्याकरण)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "",
+        stemHi: "जो विशेषण अपने विशेष्य की मात्रा या परिमाण के विषय में ज्ञान कराएँ, उसे ______ विशेषण कहते हैं ।",
+        options: [
+          "परिमाणवाचक",
+          "गुणवाचक",
+          "संख्यावाचक",
+          "सार्वनामिक",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "",
+        explanationHi: "वे विशेषण शब्द जो अपने विशेष्य (संज्ञा या सर्वनाम) की मात्रा, नाप अथवा तौल (परिमाण) का बोध कराते हैं, उन्हें 'परिमाणवाचक विशेषण' कहते हैं (जैसे - दो लीटर दूध, थोड़ा पानी, बहुत अनाज)। इसके दो भेद होते हैं: निश्चित परिमाणवाचक और अनिश्चित परिमाणवाचक।",
+        keyExamFact: "यदि वस्तु गणनीय (गिनने योग्य) हो तो 'संख्यावाचक विशेषण' होता है, परंतु यदि वस्तु नापने-तौलने योग्य हो तो 'परिमाणवाचक विशेषण' होता है।"
+      },
+      {
+        id: 19,
+        topic: "सामान्य हिंदी (तत्सम-तद्भव)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "",
+        stemHi: "'चैत' तद्भव शब्द है, उसका तत्सम शब्द ______ है।",
+        options: [
+          "चित्त",
+          "चंद्र",
+          "चित्र",
+          "चैत्र",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "",
+        explanationHi: "'चैत' एक तद्भव शब्द है, जिसका शुद्ध संस्कृत/तत्सम रूप 'चैत्र' होता है। चैत्र हिंदू पंचांग (राष्ट्रीय शक संवत) का प्रथम मास है। अन्य विकल्प: 'चंद्र' का तद्भव 'चाँद' तथा 'चित्र' का तद्भव 'चीता' या 'तस्वीर' के अर्थ में प्रयुक्त होता है।",
+        keyExamFact: "भारतीय राष्ट्रीय पंचांग (शक संवत) का पहला महीना 'चैत्र' होता है और अंतिम महीना 'फाल्गुन' होता है।"
+      },
+      {
+        id: 20,
+        topic: "सामान्य हिंदी (विलोम शब्द)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "",
+        stemHi: "'आदान' का विलोम शब्द ______ है।",
+        options: [
+          "अभिमान",
+          "अनुग्रह",
+          "प्रदान",
+          "आचार",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "",
+        explanationHi: "'आदान' (जिसका अर्थ 'लेना' या ग्रहण करना होता है) का सही और मानक विलोम शब्द 'प्रदान' (देना) होता है। इसीलिए समाज में लेन-देन की प्रक्रिया को 'आदान-प्रदान' कहा जाता है। अन्य विकल्पों में 'अनुग्रह' का विलोम 'विग्रह' या 'कोप' तथा 'आचार' का विलोम 'अनाचार' होता है।",
+        keyExamFact: "विलोम शब्द हमेशा उसी व्याकरणिक कोटि का होता है जिस कोटि का मूल शब्द हो (तत्सम का विलोम तत्सम, तद्भव का तद्भव)।"
+      },
+      {
+        id: 21,
+        topic: "सामान्य हिंदी (साहित्य)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "",
+        stemHi: "'समय की पहचान' सियारामशरण गुप्त जी की कविता है, जिसमें वे ______ के महत्व के बारे में बताते हैं।",
+        options: [
+          "परिश्रम",
+          "समय",
+          "धन",
+          "विश्वास",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "",
+        explanationHi: "राष्ट्रकवि मैथिलीशरण गुप्त के अनुज सियारामशरण गुप्त जी द्वारा रचित प्रसिद्ध उपदेशात्मक कविता 'समय की पहचान' में समय के सदुपयोग और उसके अमूल्य महत्व का वर्णन किया गया है। कविता की प्रसिद्ध पंक्तियां हैं: \"उद्योगी को कहाँ नहीं सुसमय मिल जाता, समय नष्ट कर नहीं कोई सुख पाता।\"",
+        keyExamFact: "सियारामशरण गुप्त गांधीवादी विचारधारा से ओत-प्रोत साहित्यकार थे, जिनकी अन्य प्रमुख रचनाओं में 'मौर्य विजय', 'अनाथ', 'उन्मुक्त' और 'बापू' शामिल हैं।"
+      },
+      {
+        id: 22,
+        topic: "सामान्य हिंदी (मुहावरे)",
+        isHindiOnly: true,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "",
+        stemHi: "'आँखें दिखाना' मुहावरे का सही अर्थ है :",
+        options: [
+          "अनदेखा करना",
+          "गुस्से में देखना",
+          "धोखा देना",
+          "अपनी हानि स्वयं करना",
+          "उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "",
+        explanationHi: "'आँखें दिखाना' एक प्रचलित हिंदी मुहावरा है जिसका अर्थ 'क्रोध या गुस्से में देखना' अथवा 'डराना/धमकाना' होता है। वाक्य प्रयोग: \"जब बच्चे ने शरारत की तो अध्यापक ने उसे आँखें दिखाईं।\"",
+        keyExamFact: "आँखों से जुड़े अन्य महत्वपूर्ण PET मुहावरे: 'आँखें फेर लेना' (उदासीन हो जाना या प्रतिकूल होना), 'आँखों का तारा' (अत्यधिक प्रिय होना), 'आँखें बिछाना' (प्रेमपूर्वक स्वागत करना)।"
+      },
+      {
+        id: 23,
+        topic: "Ancient Indian History / Buddhism",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "At what age did the Buddha attain Parinibbana (final liberation)?",
+        stemHi: "बुद्ध ने किस उम्र में परिनिब्बाण (अंतिम मुक्ति) प्राप्त की ?",
+        options: [
+          "75 years / 75 वर्ष",
+          "60 years / 60 वर्ष",
+          "55 years / 55 वर्ष",
+          "80 years / 80 वर्ष",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "Gautama Buddha attained Mahaparinirvana (Parinibbana) at the age of 80 around 483 BCE at Kushinagar (the capital of the Malla Republic, present-day Uttar Pradesh). He was born in 563 BCE at Lumbini, attained enlightenment (Bodhi) at the age of 35 at Bodh Gaya, and preached his first sermon (Dharmachakrapravartana) at Sarnath.",
+        explanationHi: "गौतम बुद्ध ने 80 वर्ष की आयु में 483 ईसा पूर्व में कुशीनगर (मल्ल गणराज्य की राजधानी, वर्तमान उत्तर प्रदेश) में महापरिनिर्वाण (परिनिब्बाण - अंतिम मुक्ति) प्राप्त किया। बुद्ध का जन्म 563 ईसा पूर्व में लुम्बिनी में हुआ था, 35 वर्ष की आयु में उन्हें बोधगया में संबोधि (ज्ञान) प्राप्त हुआ और सारनाथ में उन्होंने अपना प्रथम उपदेश (धर्मचक्रप्रवर्तन) दिया था।",
+        keyExamFact: "कुशीनगर में बुद्ध के महापरिनिर्वाण स्थल पर 'महापरिनिर्वाण मंदिर' स्थित है, जिसमें बुद्ध की 6.10 मीटर लंबी लेटी हुई प्रतिमा स्थापित है।"
+      },
+      {
+        id: 24,
+        topic: "Current Affairs / International Organizations",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Which country officially became the 10th full member of the BRICS group in January 2025?",
+        stemHi: "जनवरी 2025 में कौन-सा देश आधिकारिक तौर पर ब्रिक्स समूह का 10 वाँ पूर्ण सदस्य बना ?",
+        options: [
+          "Saudi Arabia / सऊदी अरब",
+          "Turkey / तुर्की",
+          "Indonesia / इंडोनेशिया",
+          "Egypt / मिस्र",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Following the 15th BRICS Summit decisions on expansion, four countries—Egypt, Ethiopia, Iran, and the United Arab Emirates (UAE)—formally joined BRICS on January 1, 2024, alongside the original five members (Brazil, Russia, India, China, South Africa), bringing the total to nine. The invitation to Saudi Arabia was finalized and ratified, making Saudi Arabia officially the 10th full member of the BRICS grouping.",
+        explanationHi: "15वें ब्रिक्स शिखर सम्मेलन में लिए गए विस्तार के निर्णयों के क्रम में 1 जनवरी 2024 को चार नए सदस्य—मिस्र, इथियोपिया, ईरान और संयुक्त अरब अमीरात (UAE)—मूल पांच सदस्यों (ब्राजील, रूस, भारत, चीन, दक्षिण अफ्रीका) के साथ औपचारिक रूप से शामिल हुए। इसके उपरांत सऊदी अरब (Saudi Arabia) ने आंतरिक प्रक्रियाओं को पूर्ण कर औपचारिक रूप से ब्रिक्स समूह के 10वें पूर्ण सदस्य के रूप में अपनी सदस्यता की पुष्टि की।",
+        keyExamFact: "'BRIC' शब्द का सर्वप्रथम प्रयोग वर्ष 2001 में ब्रिटिश अर्थशास्त्री जिम ओ'नील (Jim O'Neill) ने किया था; 2010 में दक्षिण अफ्रीका के जुड़ने पर यह 'BRICS' बना।"
+      },
+      {
+        id: 25,
+        topic: "Indian Economy / Poverty",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "A social phenomenon in which a section of the society is unable to fulfil even its basic necessities of life is called as:",
+        stemHi: "एक सामाजिक घटना जिसमें समाज का एक वर्ग अपने जीवन की मूलभूत आवश्यकताओं को भी पूरा करने में असमर्थ होता है, उसे ______ कहा जाता है।",
+        options: [
+          "Unemployment / बेरोजगारी",
+          "Poverty / गरीबी",
+          "Illiteracy / निरक्षरता",
+          "Inequality / असमानता",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "Poverty is defined as a socio-economic condition in which an individual or a section of society lacks the financial resources and essential means to afford basic human necessities of life such as food, safe drinking water, clothing, shelter, sanitation, and basic healthcare. In economic terms, this condition represents 'absolute poverty'.",
+        explanationHi: "निर्धनता या गरीबी (Poverty) वह सामाजिक एवं आर्थिक अवस्था है जिसमें समाज का एक वर्ग जीवन की बुनियादी और न्यूनतम आवश्यकताओं—जैसे भोजन (पोषण), सुरक्षित पेयजल, वस्त्र, आवास, स्वच्छता और प्राथमिक स्वास्थ्य—को पूरा करने में असमर्थ होता है। अर्थशास्त्र में इस न्यूनतम जीविका स्तर के अभाव को 'निरपेक्ष निर्धनता' (Absolute Poverty) कहा जाता है।",
+        keyExamFact: "भारत में गरीबी रेखा के निर्धारण और आकलन के लिए योजना आयोग/नीति आयोग द्वारा गठित प्रमुख समितियां हैं: अलग समिति (1979), लकड़ावाला समिति (1993), तेंदुलकर समिति (2009), और रंगराजन समिति (2014)।"
+      },
+
+      // Batch 2 (Q26 - Q50)
+      {
+        id: 26,
+        topic: "Indian Polity / President",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "As per which Article of the Indian Constitution, the executive power of Union shall be vested in the President?",
+        stemHi: "भारतीय संविधान के किस अनुच्छेद के अनुसार, संघ की कार्यकारी शक्ति राष्ट्रपति में निहित होगी?",
+        options: [
+          "Article 46 / अनुच्छेद 46",
+          "Article 21 / अनुच्छेद 21",
+          "Article 57 / अनुच्छेद 57",
+          "Article 53 / अनुच्छेद 53",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "Article 53(1) of the Indian Constitution explicitly provides that the executive power of the Union shall be vested in the President and shall be exercised by him either directly or through officers subordinate to him in accordance with the Constitution. Article 52 states that there shall be a President of India.",
+        explanationHi: "भारतीय संविधान के अनुच्छेद 53(1) के अनुसार संघ की कार्यपालिका (कार्यकारी) शक्ति राष्ट्रपति में निहित होगी और वह इसका प्रयोग संविधान के अनुसार स्वयं अथवा अपने अधीनस्थ अधिकारियों के माध्यम से करेगा। अनुच्छेद 52 भारत के राष्ट्रपति पद का उपबंध करता है।",
+        keyExamFact: "अनुच्छेद 54 राष्ट्रपति के निर्वाचक मंडल से, अनुच्छेद 61 महाभियोग प्रक्रिया से, तथा अनुच्छेद 72 राष्ट्रपति की क्षमादान शक्ति से संबंधित है।"
+      },
+      {
+        id: 27,
+        topic: "Indian Economy / Industrial Policy",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Which Industrial Policy Resolution gave the public sector a strategic role in the Indian economy ?",
+        stemHi: "किस औद्योगिक नीति प्रस्ताव ने सार्वजनिक क्षेत्र को भारतीय अर्थव्यवस्था में एक रणनीतिक भूमिका प्रदान की ?",
+        options: [
+          "Industrial Policy Resolution 1950 / औद्योगिक नीति प्रस्ताव 1950",
+          "Industrial Policy Resolution 1948 / औद्योगिक नीति प्रस्ताव 1948",
+          "Industrial Policy Resolution 1952 / औद्योगिक नीति प्रस्ताव 1952",
+          "Industrial Policy Resolution 1956 / औद्योगिक नीति प्रस्ताव 1956",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "The Industrial Policy Resolution of 1956 (IPR 1956) assigned the public sector a strategic, commanding role in the Indian economy to establish a \"socialistic pattern of society\". Based on the Mahalanobis growth model of the Second Five-Year Plan, it classified industries into three categories (Schedules A, B, and C), giving the State exclusive monopoly over heavy and basic core industries under Schedule A.",
+        explanationHi: "औद्योगिक नीति प्रस्ताव 1956 (IPR 1956) ने सार्वजनिक क्षेत्र को भारतीय अर्थव्यवस्था की 'कमांडिंग हाइट्स' (रणनीतिक भूमिका) सौंपी। द्वितीय पंचवर्षीय योजना (पीसी महालनोबिस मॉडल) पर आधारित इस नीति का उद्देश्य समाजवादी समाज की स्थापना करना था। इसने उद्योगों को तीन अनुसूचियों (A, B, C) में विभाजित किया, जिसमें अनुसूची 'A' के 17 प्रमुख उद्योग राज्य के अनन्य एकाधिकार में रखे गए थे।",
+        keyExamFact: "औद्योगिक नीति प्रस्ताव 1956 को भारत का 'आर्थिक संविधान' (Economic Constitution of India) भी कहा जाता है।"
+      },
+      {
+        id: 28,
+        topic: "Current Affairs / International Personalities",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Former U.S. President Jimmy Carter passed away at the age of 100 on which date?",
+        stemHi: "पूर्व अमेरिकी राष्ट्रपति जिमी कार्टर का 100 वर्ष की आयु में किस तिथि को निधन हो गया ?",
+        options: [
+          "December 25, 2024 / 25 दिसंबर, 2024",
+          "January 15, 2025 / 15 जनवरी, 2025",
+          "December 29, 2024 / 29 दिसंबर, 2024",
+          "November 30, 2024 / 30 नवंबर, 2024",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Jimmy Carter (the 39th President of the United States from 1977 to 1981 and 2002 Nobel Peace Prize laureate) passed away peacefully at his home in Plains, Georgia, on December 29, 2024, at the age of 100. He was the longest-living president in United States history.",
+        explanationHi: "संयुक्त राज्य अमेरिका के 39वें राष्ट्रपति (1977-1981) तथा वर्ष 2002 के नोबेल शांति पुरस्कार विजेता जिमी कार्टर का 29 दिसंबर, 2024 को 100 वर्ष की आयु में जॉर्जिया के प्लेन्स में निधन हुआ। वे अमेरिकी इतिहास में सबसे दीर्घायु राष्ट्रपति थे।",
+        keyExamFact: "जिमी कार्टर के राष्ट्रपति कार्यकाल के दौरान ऐतिहासिक कैंप डेविड समझौता (Camp David Accords, 1978) मिस्र और इज़राइल के मध्य संपन्न हुआ था।"
+      },
+      {
+        id: 29,
+        topic: "Ancient Indian History / Vedic Literature",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The Purusha Sukta, which explains the origin of the four Varnas, is found in which Vedic text?",
+        stemHi: "पुरुष सूक्त, जो चार वर्णों की उत्पत्ति की व्याख्या करता है, किस वैदिक ग्रंथ में पाया जाता है ?",
+        options: [
+          "Yajur Veda / यजुर्वेद",
+          "Samaveda / सामवेद",
+          "Atharva Veda / अथर्ववेद",
+          "Rig Veda / ऋग्वेद",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "The Purusha Sukta (पुरुष सूक्त) is hymn 90 of the 10th Mandala (book) of the Rig Veda. It contains the earliest textual mention and cosmic explanation for the origin of the four Varnas (Brahmana, Kshatriya, Vaishya, and Shudra) from the primordial cosmic being (Purusha).",
+        explanationHi: "'पुरुष सूक्त' ऋग्वेद के 10वें मंडल का 90वां सूक्त है। इसमें सर्वप्रथम चारों वर्णों (ब्राह्मण, क्षत्रिय, वैश्य एवं शूद्र) की उत्पत्ति की व्याख्या आदि-पुरुष के विभिन्न अंगों (मुख, बाहु, जंघा और पाद) से होने के रूप में की गई है।",
+        keyExamFact: "ऋग्वेद में कुल 10 मंडल और 1,028 सूक्त हैं। गायत्री मंत्र का उल्लेख ऋग्वेद के तीसरे मंडल में है, जिसकी रचना विश्वामित्र ने की थी।"
+      },
+      {
+        id: 30,
+        topic: "Elementary Arithmetic / Decimals",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "If 2994 ÷ 14.5 = 172, then 29.94 ÷ 1.45 =",
+        stemHi: "यदि 2994 ÷ 14.5 = 172 है, तो 29.94 ÷ 1.45 =",
+        options: [
+          "1.72",
+          "0.172",
+          "17.2",
+          "172",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Given: 2994 / 14.5 = 172. We need to evaluate: 29.94 / 1.45. Convert decimals to fractions: 29.94 = 2994 / 100, and 1.45 = 14.5 / 10. Therefore, (29.94 / 1.45) = (2994 / 14.5) × (10 / 100) = 172 × 0.1 = 17.2.",
+        explanationHi: "दिया गया है: 2994 ÷ 14.5 = 172। हमें 29.94 ÷ 1.45 का मान ज्ञात करना है। दशमलव हटाने पर: 29.94 / 1.45 = (2994 / 100) ÷ (14.5 / 10) = (2994 / 14.5) × (10 / 100) = 172 × (1 / 10) = 17.2। अतः सही उत्तर 17.2 है।",
+        keyExamFact: "दशमलव स्थानांतरण नियम: अंश में दशमलव 2 स्थान बाईं ओर गया (÷ 100) तथा हर में 1 स्थान बाईं ओर गया (÷ 10), अतः कुल मान में दशमलव 1 स्थान बाईं ओर खिसकेगा (172 ÷ 10 = 17.2)।"
+      },
+      {
+        id: 31,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_1,
+        stemEn: "What is the ratio of the total number of male to female in Marketing department employees in D?",
+        stemHi: "D में मार्केटिंग विभाग के कर्मचारियों में पुरुष और महिला की कुल संख्या का अनुपात क्या है ?",
+        options: [
+          "6:1",
+          "4:3",
+          "7:2",
+          "8:3",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "In Company D: Total Male = 75% of 2800 = 2100; Total Female = 2800 - 2100 = 700. Finance employees = 50% of 2800 = 1400. Finance Male:Female = 9:5 => Finance Male = (9/14) × 1400 = 900; Finance Female = (5/14) × 1400 = 500. Marketing Male = 2100 - 900 = 1200; Marketing Female = 700 - 500 = 200. Ratio = 1200 : 200 = 6 : 1.",
+        explanationHi: "कंपनी D में: कुल पुरुष कर्मचारी = 2800 का 75% = 2100; कुल महिला कर्मचारी = 2800 - 2100 = 700। फाइनैन्स विभाग में कुल कर्मचारी = 2800 का 50% = 1400। फाइनैन्स में पुरुष = (9/14) × 1400 = 900; फाइनैन्स में महिला = (5/14) × 1400 = 500। मार्केटिंग में पुरुष = 2100 - 900 = 1200; मार्केटिंग में महिला = 700 - 500 = 200। अभीष्ट अनुपात = 1200 : 200 = 6 : 1।",
+        keyExamFact: "जब किसी कंपनी में केवल दो ही विभाग हों, तो विभाग 2 (मार्केटिंग) के कर्मचारियों की संख्या = (कंपनी के कुल कर्मचारी) - (विभाग 1 यानी फाइनैन्स के कर्मचारी)।"
+      },
+      {
+        id: 32,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_1,
+        stemEn: "What is the average number of male employees in all the companies together?",
+        stemHi: "सभी कंपनियों में पुरुष कर्मचारियों की औसत संख्या क्या है ?",
+        options: [
+          "1400",
+          "1200",
+          "1500",
+          "1300",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Male employees in each company: A = 60% of 2000 = 1200; B = 75% of 2400 = 1800; C = 50% of 1800 = 900; D = 75% of 2800 = 2100. Total male employees = 1200 + 1800 + 900 + 2100 = 6000. Average = 6000 / 4 = 1500.",
+        explanationHi: "सभी कंपनियों में पुरुष कर्मचारियों की संख्या: A = 1200, B = 1800, C = 900, D = 2100। कुल पुरुष कर्मचारी = 1200 + 1800 + 900 + 2100 = 6000। औसत = 6000 / 4 = 1500।",
+        keyExamFact: "औसत = राशियों का कुल योग ÷ राशियों की कुल संख्या (6000 ÷ 4 = 1500)।"
+      },
+      {
+        id: 33,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_1,
+        stemEn: "What is the average number of female employees in Finance department in all the companies together?",
+        stemHi: "सभी कंपनियों में फाइनैन्स विभाग में महिला कर्मचारियों की औसत संख्या क्या है ?",
+        options: [
+          "470",
+          "440",
+          "460",
+          "480",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Female employees in Finance department: A = (3/7) × (70% of 2000) = (3/7) × 1400 = 600; B = (1/4) × (50% of 2400) = (1/4) × 1200 = 300; C = (4/9) × (60% of 1800) = (4/9) × 1080 = 480; D = (5/14) × (50% of 2800) = (5/14) × 1400 = 500. Total = 600 + 300 + 480 + 500 = 1880. Average = 1880 / 4 = 470.",
+        explanationHi: "फाइनैन्स विभाग में महिला कर्मचारी: A = 600, B = 300, C = 480, D = 500। कुल महिला कर्मचारी = 600 + 300 + 480 + 500 = 1880। औसत = 1880 / 4 = 470।",
+        keyExamFact: "अनुपात विभाजन में: महिला भाग = (महिला अनुपात / अनुपाती योग) × विभाग के कुल कर्मचारी।"
+      },
+      {
+        id: 34,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_1,
+        stemEn: "What is the difference between the male and female employees in Marketing department in all the companies together?",
+        stemHi: "सभी कंपनियों में मार्केटिंग विभाग में पुरुष और महिला कर्मचारियों के बीच क्या अंतर है ?",
+        options: [
+          "1680",
+          "1460",
+          "1720",
+          "Cannot be determined / निर्धारित नहीं किया जा सकता",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Marketing Male employees: A = 1200 - 800 = 400; B = 1800 - 900 = 900; C = 900 - 600 = 300; D = 2100 - 900 = 1200. Total Marketing Male = 2800. Marketing Female employees: A = 800 - 600 = 200; B = 600 - 300 = 300; C = 900 - 480 = 420; D = 700 - 500 = 200. Total Marketing Female = 1120. Difference = 2800 - 1120 = 1680.",
+        explanationHi: "मार्केटिंग में पुरुष कर्मचारी: A = 400, B = 900, C = 300, D = 1200 => कुल = 2800। मार्केटिंग में महिला कर्मचारी: A = 200, B = 300, C = 420, D = 200 => कुल = 1120। अंतर = 2800 - 1120 = 1680।",
+        keyExamFact: "वैकल्पिक विधि: प्रत्येक कंपनी के मार्केटिंग अंतरों का योग: (400-200) + (900-300) + (300-420) + (1200-200) = 200 + 600 - 120 + 1000 = 1680।"
+      },
+      {
+        id: 35,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_1,
+        stemEn: "The number of male employees in Finance department in C is approximately what percent of the total number of employees in Marketing department in D?",
+        stemHi: "C में फाइनैन्स विभाग में पुरुष कर्मचारियों की संख्या D में मार्केटिंग विभाग के कर्मचारियों की कुल संख्या का लगभग कितना प्रतिशत है ?",
+        options: [
+          "50%",
+          "43%",
+          "53%",
+          "77%",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "Male in Finance in C = (5/9) × 1080 = 600. Total employees in Marketing in D = 2800 - 1400 = 1400. Required percentage = (600 / 1400) × 100 = (3/7) × 100 ≈ 42.857% ≈ 43%.",
+        explanationHi: "कंपनी C में फाइनैन्स विभाग में पुरुष कर्मचारी = 1080 × (5/9) = 600। कंपनी D में मार्केटिंग विभाग के कुल कर्मचारी = 2800 - 1400 = 1400। अभीष्ट प्रतिशत = (600 / 1400) × 100 = (3/7) × 100 = 42.85% ≈ 43%।",
+        keyExamFact: "1/7 ≈ 14.28%, अतः 3/7 = 3 × 14.28% = 42.85% ≈ 43%।"
+      },
+      {
+        id: 36,
+        topic: "Indian Economy / Financial System",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Which of the following acts as a vehicle for mobilising and transferring the economy's surplus to the ultimate users ?",
+        stemHi: "अर्थव्यवस्था के अधिशेष को अंतिम उपयोगकर्ताओं तक पहुँचाने और स्थानांतरित करने के लिए निम्नलिखित में से कौन-सा माध्यम कार्य करता है ?",
+        options: [
+          "Government policy / सरकारी नीति",
+          "Financial institutions / वित्तीय संस्थान",
+          "Man power / मानव शक्ति",
+          "Commercial centers / वाणिज्यिक केंद्र",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "Financial institutions (banks, non-banking financial companies, mutual funds, insurance companies) act as intermediaries or vehicles that mobilise surplus savings from household savers and allocate or transfer them efficiently to ultimate borrowers and productive investors in the economy.",
+        explanationHi: "वित्तीय संस्थान (Financial institutions जैसे बैंक, बीमा कंपनियां, म्यूचुअल फंड, गैर-बैंकिंग वित्तीय कंपनियां) वित्तीय मध्यस्थ के रूप में कार्य करते हैं। ये अर्थव्यवस्था में परिवारों व व्यक्तियों की अधिशेष बचतों को जुटाते हैं (mobilise) और उन्हें उत्पादक कार्यों हेतु अंतिम उपयोगकर्ताओं एवं निवेशकों तक स्थानांतरित करते हैं।",
+        keyExamFact: "वित्तीय प्रणाली के चार मुख्य घटक होते हैं: वित्तीय संस्थान, वित्तीय बाजार, वित्तीय लिखत (Instruments) और वित्तीय सेवाएं।"
+      },
+      {
+        id: 37,
+        topic: "Current Affairs / Awards & Honours",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Who was conferred the Honorary Citizen Award of Singapore by President Tharman Shanmugaratnam during a ceremony in New Delhi on January 15, 2025?",
+        stemHi: "15 जनवरी, 2025 को नई दिल्ली में आयोजित एक समारोह में राष्ट्रपति थर्मन षणमुगरत्नम द्वारा सिंगापुर के मानद नागरिक पुरस्कार से किसे सम्मानित किया गया ?",
+        options: [
+          "N. Chandrashekaran / एन. चंद्रशेखरन",
+          "Ratan Tata / रतन टाटा",
+          "Tarun Das / तरुण दास",
+          "Uday Kotak / उदय कोटक",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Veteran industrialist and former Director General of the Confederation of Indian Industry (CII), Tarun Das, was conferred the Honorary Citizen Award of Singapore (the highest national honour Singapore confers on non-citizens) by Singapore President Tharman Shanmugaratnam during a ceremony in New Delhi on January 15, 2025, in recognition of his significant contributions to strengthening bilateral trade and strategic relations between India and Singapore.",
+        explanationHi: "भारतीय उद्योग परिसंघ (CII) के पूर्व महानिदेशक तरुण दास (Tarun Das) को भारत और सिंगापुर के बीच द्विपक्षीय व्यापारिक व रणनीतिक संबंधों को मजबूत करने में उनके बहुमूल्य योगदान के लिए 15 जनवरी, 2025 को नई दिल्ली में सिंगापुर के राष्ट्रपति थर्मन षणमुगरत्नम द्वारा सिंगापुर के सर्वोच्च गैर-नागरिक सम्मान 'मानद नागरिक पुरस्कार' (Honorary Citizen Award) से सम्मानित किया गया।",
+        keyExamFact: "सिंगापुर का मानद नागरिक पुरस्कार सिंगापुर सरकार द्वारा किसी विदेशी नागरिक को द्विपक्षीय संबंधों और आर्थिक प्रगति में असाधारण योगदान के लिए दिया जाने वाला सर्वोच्च राष्ट्रीय सम्मान है।"
+      },
+      {
+        id: 38,
+        topic: "Ancient Indian History / Literature",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The Adi Purana, is the hagiography of which Tirthankara ?",
+        stemHi: "आदि पुराण किस तीर्थंकर की संतचरित संग्रह है ?",
+        options: [
+          "Parshvanatha / पार्श्वनाथ",
+          "Neminatha / नेमिनाथ",
+          "Mahavira / महावीर",
+          "Adinatha / आदिनाथ",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "The Adi Purana (आदि पुराण) is a 9th-century Sanskrit text composed by the Digambara Jain monk Acharya Jinasena. It deals with the life and spiritual journey (hagiography) of Rishabhanatha (also known as Adinatha, the first Tirthankara of Jainism) and his son Bharata Chakravartin.",
+        explanationHi: "'आदि पुराण' 9वीं शताब्दी में दिगंबर जैन आचार्य जिनसेन द्वारा संस्कृत भाषा में रचित प्रसिद्ध महाकाव्य है। यह जैन धर्म के प्रथम तीर्थंकर भगवान ऋषभदेव (जिन्हें आदिनाथ भी कहा जाता है) तथा उनके चक्रवर्ती पुत्र भरत के जीवन चरित्र एवं आध्यात्मिक यात्रा का संकलन (संतचरित संग्रह) है।",
+        keyExamFact: "आचार्य जिनसेन राष्ट्रकूट शासक अमोघवर्ष प्रथम के आध्यात्मिक गुरु थे।"
+      },
+      {
+        id: 39,
+        topic: "Current Affairs / Summits & Conferences",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Where was the Future Minerals Forum (FMF) 2025 held ?",
+        stemHi: "फ्यूचर मिनरल्स फोरम (FMF) 2025 कहाँ आयोजित किया गया था ?",
+        options: [
+          "Doha, Qatar / दोहा, कतर",
+          "Abu Dhabi, UAE / अबू धाबी, यू.ए.ई.",
+          "Muscat, Oman / मस्कट, ओमान",
+          "Riyadh, Saudi Arabia / रियाद, सऊदी अरब",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "The 4th edition of the Future Minerals Forum (FMF) 2025 was held at the King Abdulaziz International Conference Center in Riyadh, Saudi Arabia, in January 2025. It brought together mining ministers, global investors, and industry leaders to discuss sustainable mineral supply chains and green energy transition metals.",
+        explanationHi: "फ्यूचर मिनरल्स फोरम (FMF 2025) का चौथा संस्करण जनवरी 2025 में सऊदी अरब की राजधानी रियाद (किंग अब्दुलअजीज इंटरनेशनल कॉन्फ्रेंस सेंटर) में आयोजित किया गया था। इस वैश्विक सम्मेलन में महत्वपूर्ण खनिजों की आपूर्ति श्रृंखला, नवीकरणीय ऊर्जा धातुओं और सतत खनन पर गहन चर्चा हुई।",
+        keyExamFact: "भारत सरकार के खान मंत्रालय ने भी महत्वपूर्ण खनिजों (Critical Minerals) की अंतरराष्ट्रीय साझेदारी और आपूर्ति शृंखला को मजबूत करने के लिए इस मंच में सक्रिय सहभागिता की।"
+      },
+      {
+        id: 40,
+        topic: "Elementary Arithmetic / Number System",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The difference between the largest 3 digit number and smallest 2 digit number is:",
+        stemHi: "सबसे बड़ी 3 अंकों की संख्या और सबसे छोटी 2 अंकों की संख्या के बीच का अंतर क्या है ?",
+        options: [
+          "989",
+          "980",
+          "998",
+          "990",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Largest 3-digit number = 999. Smallest 2-digit number = 10. Difference = 999 - 10 = 989.",
+        explanationHi: "3 अंकों की सबसे बड़ी संख्या = 999। 2 अंकों की सबसे छोटी संख्या = 10। अभीष्ट अंतर = 999 - 10 = 989।",
+        keyExamFact: "n अंकों की सबसे बड़ी संख्या में n बार '9' लिखा जाता है (999), जबकि n अंकों की सबसे छोटी संख्या 1 के आगे (n-1) शून्य लगाने से बनती है (10)।"
+      },
+      {
+        id: 41,
+        topic: "Elementary Arithmetic / Square Roots",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Which is greater: √45 or √49 - 1?",
+        stemHi: "कौन-सा बड़ा है: √45 या √49 - 1?",
+        options: [
+          "√45",
+          "√49 - 1",
+          "Both are equal / दोनों बराबर हैं",
+          "Cannot be determined / निर्धारित नहीं किया जा सकता",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Let us evaluate both expressions: √49 - 1 = 7 - 1 = 6. Also, 6 = √36. Since 45 > 36, √45 > √36, meaning √45 > 6. Therefore, √45 is strictly greater.",
+        explanationHi: "दोनों मानों की तुलना करने पर: √49 - 1 = 7 - 1 = 6। संख्या 6 = √36 होती है। चूँकि 45 > 36, इसलिए √45 > √36 अर्थात √45 > 6 होगा। संख्यात्मक रूप से, √45 ≈ 6.708 > 6। अतः √45 बड़ा है।",
+        keyExamFact: "यदि a > b > 0, तो √a > √b होता है।"
+      },
+      {
+        id: 42,
+        topic: "Indian Economy / Rural Schemes",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The food for work programme was restructured and renamed as ______ from October, 1980.",
+        stemHi: "काम के बदले अनाज कार्यक्रम का पुनर्गठन किया गया और अक्टूबर 1980 से इसका नाम बदलकर ______ कर दिया गया ।",
+        options: [
+          "Rural Employment Guarantee Programme / ग्रामीण रोज़गार गारंटी कार्यक्रम",
+          "National Rural Employment Programme / राष्ट्रीय ग्रामीण रोज़गार कार्यक्रम",
+          "Integrated Rural Development Programme / एकीकृत ग्रामीण विकास कार्यक्रम",
+          "Employment Generated Programme / रोज़गार सृजन कार्यक्रम",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "The 'Food for Work' (FFW) programme, initially launched in 1977, was restructured, strengthened, and renamed as the National Rural Employment Programme (NREP) in October 1980 during the Sixth Five-Year Plan. It later merged with RLEGP in 1989 to form the Jawahar Rozgar Yojana (JRY).",
+        explanationHi: "वर्ष 1977 में शुरू किए गए 'काम के बदले अनाज' (Food for Work) कार्यक्रम का पुनर्गठन कर अक्टूबर 1980 (छठी पंचवर्षीय योजना) में इसका नाम बदलकर 'राष्ट्रीय ग्रामीण रोजगार कार्यक्रम' (National Rural Employment Programme - NREP) कर दिया गया था। 1 अप्रैल 1989 को इसे RLEGP के साथ मिलाकर 'जवाहर रोजगार योजना' (JRY) बनाई गई।",
+        keyExamFact: "एकीकृत ग्रामीण विकास कार्यक्रम (IRDP) 1978 में शुरू किया गया था और 2 अक्टूबर 1980 को इसे पूरे देश में लागू किया गया था।"
+      },
+      {
+        id: 43,
+        topic: "Art & Culture / Folk Dances",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Dekhni is a traditional dance form of which Indian State ?",
+        stemHi: "देखनी किस भारतीय राज्य का पारंपरिक नृत्य है ?",
+        options: [
+          "Goa / गोवा",
+          "Kerala / केरल",
+          "Madhya Pradesh / मध्य प्रदेश",
+          "Odisha / ओडिशा",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Dekhni (देखनी) is a traditional folk dance and song form of Goa. It uniquely blends Indian folk traditions with Western musical melodies (originating from Portuguese cultural influence), typically performed by women dancers carrying small brass lamps (diya) to the beat of the traditional Ghumat drum.",
+        explanationHi: "'देखनी' (Dekhni) भारत के गोवा राज्य का एक प्रसिद्ध पारंपरिक लोक नृत्य एवं गीत शैली है। यह भारतीय लोक संगीत और पश्चिमी पुर्तगाली धुनों का अनूठा सम्मिश्रण है। इसमें नर्तकियां हाथों में दीया लेकर पारंपारिक ताल वाद्य 'घुमट' (Ghumat) की थाप पर नृत्य प्रस्तुत करती हैं।",
+        keyExamFact: "गोवा के अन्य प्रमुख लोक नृत्य हैं: फुगड़ी (Fugdi), ढालो (Dhalo), और तरंगमेल (Tarangmel)।"
+      },
+      {
+        id: 44,
+        topic: "Indian National Movement / Pre-Congress Associations",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The Bengal British India Society was established on:",
+        stemHi: "बंगाल ब्रिटिश इंडिया सोसाइटी की स्थापना कब हुई थी ?",
+        options: [
+          "20 April, 1834 / 20 अप्रैल, 1834",
+          "20 April, 1844 / 20 अप्रैल, 1844",
+          "21 April, 1843 / 21 अप्रैल, 1843",
+          "20 April, 1843 / 20 अप्रैल, 1843",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "The Bengal British India Society was founded in Calcutta on April 20, 1843, under the leadership and initiative of George Thompson along with prominent leaders like Dwarkanath Tagore, Peary Chand Mitra, and Ramgopal Ghosh. Its objective was to collect and disseminate information relating to the actual condition of the people of British India.",
+        explanationHi: "बंगाल ब्रिटिश इंडिया सोसाइटी की स्थापना 20 अप्रैल, 1843 को कलकत्ता में जॉर्ज थॉम्पसन के प्रयासों से तथा द्वारकानाथ टैगोर, प्यारी चंद मित्रा और रामगोपाल घोष जैसे प्रबुद्ध राष्ट्रवादियों द्वारा की गई थी। इसका उद्देश्य ब्रिटिश भारत में जनता की वास्तविक दशा की जानकारी एकत्र कर शांतिपूर्ण व संवैधानिक साधनों से सुधारों की मांग करना था।",
+        keyExamFact: "वर्ष 1851 में लैंडहोल्डर्स सोसाइटी (जमींदारी एसोसिएशन) और बंगाल ब्रिटिश इंडिया सोसाइटी का आपस में विलय करके 'ब्रिटिश इंडियन एसोसिएशन' का गठन किया गया था।"
+      },
+      {
+        id: 45,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_2,
+        stemEn: "Find the average crops produced by Theja.",
+        stemHi: "तेजा द्वारा उत्पादित औसत फसलें ज्ञात करें ।",
+        options: [
+          "612",
+          "574",
+          "656",
+          "738",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "Total crops produced by Theja = 750 (Rye) + 660 (Mustard) + 250 (Oats) + 560 (Sugarcane) + 650 (Wheat) = 2870 quintals. Average = 2870 / 5 = 574 quintals.",
+        explanationHi: "तेजा द्वारा उत्पादित कुल फसलें = 750 + 660 + 250 + 560 + 650 = 2870 क्विंटल। औसत = 2870 / 5 = 574।",
+        keyExamFact: "5 से भाग देने की त्वरित ट्रिक: संख्या को 2 से गुणा करें और इकाई अंक से पहले दशमलव लगा दें (2870 × 2 = 5740 => 574)।"
+      },
+      {
+        id: 46,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_2,
+        stemEn: "Which farmer produced third lowest number of crops ?",
+        stemHi: "किस किसान ने तीसरी सबसे कम फसलें उगाई ?",
+        options: [
+          "Prabhakar / प्रभाकर",
+          "Theja / तेजा",
+          "Roshan / रोशन",
+          "Bhargav / भार्गव",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "Total production: Prabhakar = 2280; Krishna = 2690; Theja = 2870; Roshan = 3100; Bhargav = 3190. In ascending order: Prabhakar (2280) < Krishna (2690) < Theja (2870) < Roshan (3100) < Bhargav (3190). Thus, Theja produced the third lowest number of crops.",
+        explanationHi: "किसानों का कुल उत्पादन: प्रभाकर = 2280 (1st सबसे कम), कृष्ण = 2690 (2nd सबसे कम), तेजा = 2870 (3rd सबसे कम), रोशन = 3100, भार्गव = 3190। अतः तीसरी सबसे कम फसलें तेजा ने उगाईं।",
+        keyExamFact: "आरोही क्रम (Ascending order) में व्यवस्थित करने पर तीसरा पद ही 'तीसरा सबसे कम' होता है।"
+      },
+      {
+        id: 47,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_2,
+        stemEn: "Find the ratio between total Mustard produced to that of total Wheat produced by all the farmers.",
+        stemHi: "सभी किसानों द्वारा उत्पादित कुल सरसों और कुल गेहूँ के बीच अनुपात ज्ञात करें ।",
+        options: [
+          "397: 284",
+          "185: 113",
+          "229: 175",
+          "52: 17",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Total Mustard produced = 920 + 580 + 660 + 1050 + 760 = 3970 quintals. Total Wheat produced = 300 + 440 + 650 + 820 + 630 = 2840 quintals. Required Ratio = 3970 : 2840 = 397 : 284.",
+        explanationHi: "सभी किसानों द्वारा उत्पादित कुल सरसों = 3970 क्विंटल। कुल गेहूँ = 2840 क्विंटल। अभीष्ट अनुपात = 3970 : 2840 = 397 : 284।",
+        keyExamFact: "दोनों संख्याओं को 10 से विभाजित करने पर 397:284 प्राप्त होता है; 397 एक अभाज्य संख्या है, अतः इसे और सरल नहीं किया जा सकता।"
+      },
+      {
+        id: 48,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_2,
+        stemEn: "The total crops produced by Roshan is approximately what percentage of total crops produced by Bhargav?",
+        stemHi: "रोशन द्वारा उत्पादित कुल फसलें, भार्गव द्वारा उत्पादित कुल फसलों का लगभग कितना प्रतिशत है ?",
+        options: [
+          "72%",
+          "85%",
+          "97%",
+          "58%",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Total crops produced by Roshan = 3100. Total crops produced by Bhargav = 3190. Required percentage = (3100 / 3190) × 100 ≈ 97.178% ≈ 97%.",
+        explanationHi: "रोशन का कुल उत्पादन = 3100 क्विंटल। भार्गव का कुल उत्पादन = 3190 क्विंटल। अभीष्ट प्रतिशत = (3100 / 3190) × 100 ≈ 97.18% ≈ 97%।",
+        keyExamFact: "सन्निकटन विधि: 3190 का 1% = 31.9। अंतर 3190 - 3100 = 90 (लगभग 2.82%)। 100% - 2.82% ≈ 97.18% ≈ 97%।"
+      },
+      {
+        id: 49,
+        topic: "Data Interpretation / Tabular DI",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_DI_TABLE_2,
+        stemEn: "Find the difference between the average of Rye produced to that of Oats produced by all the given farmers together.",
+        stemHi: "सभी दिए गए किसानों द्वारा उत्पादित राई और जई के औसत के बीच अंतर ज्ञात करें ।",
+        options: [
+          "156",
+          "234",
+          "118",
+          "192",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "Total Rye = 2330 => Average = 2330 / 5 = 466. Total Oats = 1370 => Average = 1370 / 5 = 274. Difference = 466 - 274 = 192. (Or Difference of Totals / 5 = (2330 - 1370) / 5 = 960 / 5 = 192).",
+        explanationHi: "राई का कुल योग = 2330, औसत = 466। जई का कुल योग = 1370, औसत = 274। औसतों का अंतर = 466 - 274 = 192। (शॉर्टकट: कुल योग का अंतर ÷ 5 = 960 ÷ 5 = 192)।",
+        keyExamFact: "समान पदों के दो समुच्चयों के औसतों का अंतर उनके कुल योगों के अंतर को पदों की संख्या से भाग देने पर सीधे प्राप्त हो जाता है।"
+      },
+      {
+        id: 50,
+        topic: "Indian National Movement / Organizations",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "East Indian Association in London was founded by:",
+        stemHi: "लंदन में ईस्ट इंडियन एसोसिएशन की स्थापना किसके द्वारा की गई थी ?",
+        options: [
+          "Gopala Krishna Gokhale / गोपाल कृष्ण गोखले",
+          "Dadabhai Naoroji / दादाभाई नौरोजी",
+          "Madan Mohan Malavia / मदन मोहन मालवीय",
+          "Bal Gangadhar Tilak / बाल गंगाधर तिलक",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "The East India Association was founded by Dadabhai Naoroji in London on October 1, 1866, in collaboration with Indian students and British sympathizers. Its purpose was to advocate for Indian rights and present authentic Indian viewpoints to the British public and Parliament.",
+        explanationHi: "'ईस्ट इंडिया एसोसिएशन' की स्थापना दादाभाई नौरोजी द्वारा 1 अक्टूबर 1866 को लंदन में की गई थी। इसका मुख्य उद्देश्य ब्रिटिश संसद और ब्रिटेन की जनता के समक्ष भारतीयों की समस्याओं, शिकायतों और वास्तविक स्थिति को प्रस्तुत कर भारतीय जनमत का समर्थन जुटाना था।",
+        keyExamFact: "दादाभाई नौरोजी को 'भारत के वयोवृद्ध पुरुष' (Grand Old Man of India) के नाम से जाना जाता है। उन्होंने 'धन के निष्कासन का सिद्धांत' (Drain of Wealth Theory) अपनी पुस्तक 'Poverty and Un-British Rule in India' में प्रतिपादित किया था।"
+      },
+
+      // Batch 3 (Q51 - Q75)
+      {
+        id: 51,
+        topic: "World Geography / Capitals & Currencies",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "What is the capital of Libya ?",
+        stemHi: "लीबिया की राजधानी क्या है ?",
+        options: [
+          "Port Louis / पोर्ट लुइस",
+          "Luxembourg / लक्जमबर्ग",
+          "Tripoli / त्रिपोली",
+          "Amsterdam / एम्स्टर्डम",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Tripoli is the capital and largest city of Libya, situated in northwest Libya on the Mediterranean coast. Port Louis is the capital of Mauritius, Luxembourg City is the capital of Luxembourg, and Amsterdam is the capital of the Netherlands.",
+        explanationHi: "त्रिपोली (Tripoli) उत्तरी अफ्रीका में स्थित देश लीबिया की राजधानी और सबसे बड़ा शहर है, जो भूमध्य सागर के तट पर स्थित है। पोर्ट लुइस मॉरीशस की, लक्जमबर्ग लक्जमबर्ग की, तथा एम्स्टर्डम नीदरलैंड की राजधानी है।",
+        keyExamFact: "लीबिया की आधिकारिक मुद्रा 'लीबियाई दीनार' (Libyan Dinar) है।"
+      },
+      {
+        id: 52,
+        topic: "Indian History / Medieval Monuments",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Vijay Stambh is situated in:",
+        stemHi: "विजय स्तम्भ कहाँ स्थित है ?",
+        options: [
+          "Udaipur / उदयपुर",
+          "Jaipur / जयपुर",
+          "Jodhpur / जोधपुर",
+          "Chittorgarh / चित्तौड़गढ़",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "The Vijay Stambh (Tower of Victory) is a 9-storeyed, 37.19-metre-tall monument located inside Chittorgarh Fort in Rajasthan. It was commissioned by Maharana Kumbha of Mewar in 1448 to commemorate his decisive victory over the combined armies of Malwa (Mahmud Khilji) and Gujarat in the Battle of Sarangpur (1437).",
+        explanationHi: "'विजय स्तम्भ' (कीर्ति स्तम्भ/जय स्तम्भ) राजस्थान के प्रसिद्ध चित्तौड़गढ़ दुर्ग में स्थित एक 9 मंजिला (लगभग 37.19 मीटर ऊँचा) स्मारक है। इसका निर्माण मेवाड़ के महाराणा कुंभा ने 1437 ई. में सारंगपुर के युद्ध में मालवा के सुल्तान महमूद खिलजी और गुजरात की संयुक्त सेना पर अपनी विजय के उपलक्ष्य में करवाया था।",
+        keyExamFact: "विजय स्तम्भ भगवान विष्णु को समर्पित है, इसलिए इसे 'विष्णुध्वज' भी कहा जाता है। इसके मुख्य वास्तुकार 'जैता' तथा उनके पुत्र नापा और पूंजा थे।"
+      },
+      {
+        id: 53,
+        topic: "Environment & Ecology / Acts & Laws",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "When did the Biological Diversity (Amendment) Act, 2023 come into force?",
+        stemHi: "जैविक विविधता (संशोधन) अधिनियम, 2023 कब लागू हुआ ?",
+        options: [
+          "1 February, 2024 / 1 फरवरी, 2024",
+          "1 January, 2024 / 1 जनवरी, 2024",
+          "1 April, 2024 / 1 अप्रैल, 2024",
+          "5 June, 2024 / 5 जून, 2024",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "The Biological Diversity (Amendment) Act, 2023, which received Presidential assent in August 2023, was officially brought into force by the Ministry of Environment, Forest and Climate Change with effect from 1 April, 2024 through an official gazette notification. The amendment aims to encourage the Indian system of medicine (AYUSH) practitioners, promote research, and decriminalize certain procedural violations under the original 2002 Act.",
+        explanationHi: "जैविक विविधता (संशोधन) अधिनियम, 2023, जिसे अगस्त 2023 में राष्ट्रपति की स्वीकृति मिली थी, पर्यावरण, वन एवं जलवायु परिवर्तन मंत्रालय द्वारा राजपत्र अधिसूचना के माध्यम से 1 अप्रैल, 2024 से आधिकारिक रूप से प्रभावी (लागू) हुआ। यह संशोधन पारंपरिक आयुष चिकित्सकों और किसानों के लिए नियमों को सरल बनाता है तथा मूल अधिनियम (2002) के कुछ दंडात्मक प्रावधानों को अपराधमुक्त करता है।",
+        keyExamFact: "मूल 'जैविक विविधता अधिनियम' वर्ष 2002 में पारित किया गया था, और इसके तहत राष्ट्रीय जैव विविधता प्राधिकरण (NBA) का मुख्यालय चेन्नई में स्थापित है।"
+      },
+      {
+        id: 54,
+        topic: "Elementary Arithmetic / LCM & HCF",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "If x and y are co-primes, then their LCM is:",
+        stemHi: "यदि x और y सह-अभाज्य हैं, तो उनका LCM क्या है ?",
+        options: [
+          "x / y",
+          "1",
+          "xy",
+          "x + y",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "By definition, two numbers x and y are co-prime (relatively prime) if their Highest Common Factor (HCF) is 1, i.e., HCF(x, y) = 1. Using the fundamental relation: Product of two numbers = HCF × LCM => x × y = 1 × LCM => LCM = xy.",
+        explanationHi: "सह-अभाज्य (Co-prime) संख्याओं की परिभाषानुसार, दो संख्याओं x और y का महत्तम समापवर्तक (HCF) 1 होता है। मूल सूत्रानुसार: दो संख्याओं का गुणनफल = HCF × LCM => x × y = 1 × LCM => LCM = xy।",
+        keyExamFact: "किन्हीं भी दो क्रमागत प्राकृतिक संख्याएं (जैसे 14 और 15) सदैव सह-अभाज्य होती हैं और उनका LCM सदैव उनका गुणनफल होता है।"
+      },
+      {
+        id: 55,
+        topic: "Indian Economy / Economic Development",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Meaning of the underdeveloped economy was:",
+        stemHi: "अविकसित अर्थव्यवस्था का अर्थ था:",
+        options: [
+          "Countries in which per capita real income is balanced / वे देश जिनमें प्रति व्यक्ति वास्तविक आय संतुलित है",
+          "Countries in which per capita real income is low / वे देश जहाँ प्रति व्यक्ति वास्तविक आय कम है",
+          "Countries in which per capita real income is high / वे देश जिनमें प्रति व्यक्ति वास्तविक आय अधिक है",
+          "Countries in which mass poverty is observed / वे देश जिनमें अधिक गरीबी देखी जाती है",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "In standard macroeconomic classification (as defined by the United Nations and World Bank economic literature), an underdeveloped economy is fundamentally characterized by low per capita real income compared to developed nations, accompanied by low capital formation, agrarian dominance, and unutilized or underutilized natural and human resources.",
+        explanationHi: "मानक अर्थशास्त्र (संयुक्त राष्ट्र एवं विश्व बैंक की परिभाषा) के अनुसार, अविकसित अर्थव्यवस्था (Underdeveloped Economy) का प्राथमिक एवं मौलिक लक्षण विकसित देशों की तुलना में प्रति व्यक्ति वास्तविक आय (Per capita real income) का अत्यंत कम होना है। इसके परिणामस्वरूप पूंजी निर्माण की निम्न दर, निम्न जीवन स्तर और संसाधनों का कम उपयोग होता है।",
+        keyExamFact: "प्रति व्यक्ति आय (Per Capita Income) = कुल राष्ट्रीय आय (National Income) ÷ कुल जनसंख्या (Total Population)।"
+      },
+      {
+        id: 56,
+        topic: "General Awareness / UN Organizations",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Where is the headquarters of the International Labour Organization (ILO) located?",
+        stemHi: "अंतर्राष्ट्रीय श्रम संगठन (ILO) का मुख्यालय कहाँ स्थित है ?",
+        options: [
+          "Geneva / जिनेवा",
+          "New York / न्यूयॉर्क",
+          "Paris / पेरिस",
+          "The Hague / द हेग",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "The International Labour Organization (ILO), established in 1919 under the Treaty of Versailles and the oldest specialized agency of the United Nations, has its headquarters in Geneva, Switzerland.",
+        explanationHi: "अंतर्राष्ट्रीय श्रम संगठन (ILO) की स्थापना 1919 में वर्साय की संधि के तहत हुई थी और यह संयुक्त राष्ट्र (UN) की पहली और सबसे पुरानी विशिष्ट एजेंसी है। इसका मुख्यालय जिनेवा, स्विट्जरलैंड में स्थित है।",
+        keyExamFact: "अंतर्राष्ट्रीय श्रम संगठन (ILO) को सामाजिक न्याय को बढ़ावा देने के लिए वर्ष 1969 में नोबेल शांति पुरस्कार से सम्मानित किया गया था।"
+      },
+      {
+        id: 57,
+        topic: "General English / Grammar",
+        isHindiOnly: false,
+        isEnglishOnly: true,
+        visual: null,
+        stemEn: "What ______ for breakfast?",
+        stemHi: "",
+        options: [
+          "are you usually having",
+          "do you usually have",
+          "have you usually",
+          "do usually you have",
+          "None of the above"
+        ],
+        correctIndex: 1,
+        explanationEn: "The adverb of frequency 'usually' indicates a routine or habitual action, which requires the Present Indefinite (Simple Present) tense. For questions in the simple present tense with 'you', the auxiliary verb 'do' comes before the subject, followed by the adverb of frequency and the base verb: \"Wh-word + do + subject + adverb + base verb?\" => \"What do you usually have for breakfast?\".",
+        explanationHi: "",
+        keyExamFact: "Adverbs of frequency (such as always, usually, often, rarely, never) are typically placed between the subject and the main verb, or immediately after the auxiliary verb in interrogative sentences."
+      },
+      {
+        id: 58,
+        topic: "General English / Vocabulary",
+        isHindiOnly: false,
+        isEnglishOnly: true,
+        visual: null,
+        stemEn: "A group of persons working on a ship or aircraft",
+        stemHi: "",
+        options: [
+          "Crew",
+          "Scar",
+          "Concert",
+          "Staff",
+          "None of the above"
+        ],
+        correctIndex: 0,
+        explanationEn: "'Crew' is the standard collective noun specifically used for a group of people who work on and operate a ship, boat, aircraft, spacecraft, or train. 'Staff' refers broadly to all employees in an organization/school/office, while 'Concert' is a musical performance.",
+        explanationHi: "",
+        keyExamFact: "Collective nouns commonly asked in UPSSSC: A crew of sailors/airmen, a fleet of ships, a pack of wolves, a pride of lions."
+      },
+      {
+        id: 59,
+        topic: "General English / Sentence Rearrangement",
+        isHindiOnly: false,
+        isEnglishOnly: true,
+        visual: null,
+        stemEn: "Choose the right answer from the five options given below to frame meaningful sentence:\nRama / garden / in / the / be / may",
+        stemHi: "",
+        options: [
+          "In the garden may be Rama.",
+          "May be Rama in the garden.",
+          "In the garden Rama may be.",
+          "Rama may be in the garden.",
+          "None of the above"
+        ],
+        correctIndex: 3,
+        explanationEn: "The standard declarative sentence structure in English grammar follows: Subject + Modal Auxiliary Verb + Base Verb + Prepositional Phrase (Adverbial of Place). Subject: Rama; Modal + Verb: may be; Prepositional Phrase: in the garden. Thus, the grammatically correct and natural sentence is: \"Rama may be in the garden.\"",
+        explanationHi: "",
+        keyExamFact: "The modal auxiliary verb 'may' denotes possibility and is followed directly by the bare infinitive 'be'."
+      },
+      {
+        id: 60,
+        topic: "General English / Reading Comprehension",
+        isHindiOnly: false,
+        isEnglishOnly: true,
+        visual: ASSET_ENGLISH_PASSAGE,
+        stemEn: "According to the passage, how can individuals start improving time management?",
+        stemHi: "",
+        options: [
+          "By watching motivational videos",
+          "By working faster without rest",
+          "By creating to-do lists and avoiding distractions",
+          "By comparing themselves to others",
+          "None of the above"
+        ],
+        correctIndex: 2,
+        explanationEn: "The last sentence of the third paragraph explicitly states: \"Simple habits like creating to-do lists, setting goals, and avoiding distractions can go a long way in making each day more efficient and meaningful.\" Hence, option (C) is directly supported by the text.",
+        explanationHi: "",
+        keyExamFact: "In reading comprehension, answers must be strictly grounded in direct textual statements rather than external assumptions."
+      },
+      {
+        id: 61,
+        topic: "General English / Reading Comprehension",
+        isHindiOnly: false,
+        isEnglishOnly: true,
+        visual: ASSET_ENGLISH_PASSAGE,
+        stemEn: "What is the main purpose of the passage?",
+        stemHi: "",
+        options: [
+          "To highlight the importance of time management",
+          "To explain the causes of stress",
+          "To discuss different professions",
+          "To promote the use of digital planners",
+          "None of the above"
+        ],
+        correctIndex: 0,
+        explanationEn: "The entire passage explores why time is a valuable resource, details the various benefits of proper time management (improved productivity, discipline, work-life balance, reduced anxiety), and provides practical steps to cultivate it. Therefore, the central purpose is to highlight the importance of time management.",
+        explanationHi: "",
+        keyExamFact: "The main idea/purpose question evaluates the overarching theme that spans all paragraphs, rather than secondary supporting examples."
+      },
+      {
+        id: 62,
+        topic: "General Science / Physics (Optics)",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "If a convex lens of power +4 D and a concave lens of power -10 D are placed in contact with each other, what will be the resultant power?",
+        stemHi: "यदि +4 D शक्ति का एक उत्तल लेंस और -10 D शक्ति का एक अवतल लेंस एक दूसरे के संपर्क में रखा जाता है, परिणामी शक्ति क्या होगी ?",
+        options: [
+          "-6 D",
+          "+14 D",
+          "+6 D",
+          "-14 D",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "When thin lenses are placed in contact, the total optical power P of the combination is the algebraic sum of the individual powers: P = P1 + P2. Here, P1 = +4 D and P2 = -10 D => P = (+4 D) + (-10 D) = -6 D. Since the resultant power is negative (-6 D), the combined lens behaves as a concave (diverging) lens.",
+        explanationHi: "जब दो पतले लेंस एक-दूसरे के संपर्क में रखे जाते हैं, तो संयोजन की कुल क्षमता P व्यक्तिगत लेंसों की क्षमताओं का बीजगणितीय योग होती है: P = P1 + P2। यहाँ P1 = +4 D तथा P2 = -10 D => P = +4 + (-10) = -6 D। परिणामी क्षमता ऋणात्मक होने के कारण यह संयुक्त लेंस एक अवतल लेंस की भाँति कार्य करेगा।",
+        keyExamFact: "लेंस की क्षमता का मात्रक डायोप्टर (D) होता है, जहाँ 1 D = 1 m⁻¹। उत्तल लेंस की क्षमता धनात्मक (+) तथा अवतल लेंस की क्षमता ऋणात्मक (-) होती है।"
+      },
+      {
+        id: 63,
+        topic: "Logic & Reasoning / Calendar",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "If 1st January, 2001 was Monday, then what day of the week was it on 31st December, 2001?",
+        stemHi: "यदि 1 जनवरी, 2001 को सोमवार था, तो 31 दिसंबर, 2001 को सप्ताह का कौन-सा दिन था ?",
+        options: [
+          "Friday / शुक्रवार",
+          "Wednesday / बुधवार",
+          "Monday / सोमवार",
+          "Saturday / शनिवार",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "The year 2001 is an ordinary non-leap year (365 days). An ordinary year has 52 complete weeks and 1 odd day. In any ordinary year, the first day of the year (1st January) and the last day of the year (31st December) are always on the exact same day of the week. Days elapsed = 365 - 1 = 364 days => 364 ÷ 7 = 52 weeks and 0 odd days. Monday + 0 = Monday.",
+        explanationHi: "वर्ष 2001 एक साधारण (गैर-लीप) वर्ष है जिसमें कुल 365 दिन होते हैं। किसी भी साधारण वर्ष में पहला दिन (1 जनवरी) और अंतिम दिन (31 दिसंबर) सप्ताह का एक ही दिन होता है, क्योंकि 1 जनवरी से 31 दिसंबर के बीच 364 दिन बीतते हैं (364 ÷ 7 = 52 सप्ताह, शेष = 0 विषम दिन)। अतः 31 दिसंबर, 2001 को भी सोमवार ही था।",
+        keyExamFact: "एक साधारण वर्ष जिस वार (दिन) से शुरू होता है, उसी वार पर समाप्त होता है; जबकि लीप वर्ष जिस वार से शुरू होता है, उससे अगले वार पर समाप्त होता है।"
+      },
+      {
+        id: 64,
+        topic: "Modern Indian History / Socio-Religious Reform",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The Parliament of Religions held at Chicago in which year?",
+        stemHi: "शिकागो में धर्म संसद का आयोजन किस वर्ष हुआ ?",
+        options: [
+          "1894",
+          "1893",
+          "1839",
+          "1983",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "The historic World's Parliament of Religions was held from September 11 to September 27, 1893, in Chicago, United States (as part of the World's Columbian Exposition). Swami Vivekananda delivered his iconic speech representing Hinduism and India on September 11, 1893, beginning with the famous words, \"Sisters and brothers of America!\".",
+        explanationHi: "प्रथम विश्व धर्म संसद (Parliament of Religions) का आयोजन 11 सितंबर से 27 सितंबर 1893 तक अमेरिका के शिकागो शहर में हुआ था। इसी ऐतिहासिक धर्म संसद में 11 सितंबर 1893 को स्वामी विवेकानंद ने भारत और सनातन हिंदू धर्म का प्रतिनिधित्व करते हुए अपना कालजयी भाषण दिया था, जिसकी शुरुआत उन्होंने \"अमेरिकी भाइयो और बहनो!\" से की थी।",
+        keyExamFact: "स्वामी विवेकानंद ने अपने गुरु रामकृष्ण परमहंस की स्मृति में वर्ष 1897 में 'रामकृष्ण मिशन' की स्थापना बेलूर (पश्चिम बंगाल) में की थी।"
+      },
+      {
+        id: 65,
+        topic: "Current Affairs / Defence",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "On January 5, 2025, two indigenously designed and constructed Fast Patrol Vessels (FPVs) - Amulya and Akshay - were launched for the Indian Coast Guard by which of the following Shipyards?",
+        stemHi: "5 जनवरी, 2025 को, भारतीय तट रक्षक बल के लिए निम्नलिखित में से किस शिपयार्ड द्वारा दो स्वदेशी रूप से डिज़ाइन और निर्मित तीव्र गश्ती पोत (FPV)-अमूल्य और अक्षय-लॉन्च किए गए ?",
+        options: [
+          "Garden Reach Shipbuilders and Engineers / गार्डन रीच शिपबिल्डर्स एंड इंजीनियर्स",
+          "Mazagon Dock Shipbuilders Limited / मझगांव डॉक शिपबिल्डर्स लिमिटेड",
+          "Cochin Shipyard Limited / कोचीन शिपयार्ड लिमिटेड",
+          "Goa Shipyard Limited / गोवा शिपयार्ड लिमिटेड",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "On January 5, 2025, Goa Shipyard Limited (GSL) launched two indigenously designed and built Fast Patrol Vessels (FPVs) named 'Amulya' and 'Akshay' for the Indian Coast Guard at Vasco da Gama, Goa. These vessels are equipped for coastal surveillance, search and rescue (SAR), and anti-smuggling maritime operations.",
+        explanationHi: "5 जनवरी, 2025 को गोवा शिपयार्ड लिमिटेड (GSL) ने वास्को डी गामा, गोवा में भारतीय तट रक्षक बल (ICG) के लिए स्वदेशी रूप से डिजाइन और निर्मित दो तीव्र गश्ती पोतों (Fast Patrol Vessels - FPVs) 'अमूल्य' और 'अक्षय' का जलावतरण (लॉन्च) किया। ये पोत तटीय गश्त, समुद्री निगरानी, तस्करी रोधी अभियानों और खोज व बचाव कार्यों में सक्षम हैं।",
+        keyExamFact: "भारतीय तटरक्षक बल (ICG) की स्थापना 1 फरवरी 1977 को अंतरिम रूप से तथा औपचारिक रूप से तट रक्षक अधिनियम, 1978 के तहत की गई थी।"
+      },
+      {
+        id: 66,
+        topic: "Geography / Demography",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Which stage of the DTM sees the fastest population growth?",
+        stemHi: "DTM के किस चरण में सबसे तेज़ जनसंख्या वृद्धि देखी जाती है ?",
+        options: [
+          "Stage 2 / चरण 2",
+          "Stage 1 / चरण 1",
+          "Stage 3 / चरण 3",
+          "Stage 5 / चरण 5",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "In the Demographic Transition Model (DTM), Stage 2 (Early Expanding Stage) witnesses the fastest natural population growth (population explosion). In this stage, death rates drop rapidly due to improvements in healthcare, sanitation, and food supply, while birth rates remain very high, creating the widest gap between births and deaths.",
+        explanationHi: "जनसांख्यिकीय संक्रमण मॉडल (Demographic Transition Model - DTM) के द्वितीय चरण (Stage 2 - प्रारंभिक विस्तार चरण) में जनसंख्या की प्राकृतिक वृद्धि दर सबसे तीव्र (जनसंख्या विस्फोट) होती है। इस चरण में चिकित्सा, स्वच्छता और पोषण में सुधार के कारण मृत्यु दर में तीव्र गिरावट आती है, जबकि जन्म दर उच्च बनी रहती है, जिससे दोनों के बीच का अंतर अधिकतम हो जाता है।",
+        keyExamFact: "DTM के चरण 1 में जन्म व मृत्यु दर दोनों उच्च (स्थिर जनसंख्या), चरण 3 में जन्म दर में गिरावट, तथा चरण 4 में जन्म व मृत्यु दर दोनों निम्न (स्थिर जनसंख्या) होती हैं।"
+      },
+      {
+        id: 67,
+        topic: "Logic & Reasoning / Blood Relations",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Introducing a man, a woman said \"His mother is the only daughter of my father\". How is the man related to the woman?",
+        stemHi: "एक पुरुष का परिचय देते हुए, एक महिला ने कहा \"उसकी माँ मेरे पिता की इकलौती बेटी है।\" पुरुष का महिला से क्या संबंध है ?",
+        options: [
+          "Father / पिता",
+          "Son / बेटा",
+          "Brother / भाई",
+          "Uncle / चाचा",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "Break down the statement made by the woman: \"The only daughter of my father\" => Since the speaker is a woman herself, the only daughter of her father is the woman herself. Now substitute this back: \"His mother is [the woman herself]\". Therefore, the woman is the man's mother, which means the man is the woman's son.",
+        explanationHi: "महिला के कथन का विश्लेषण: \"मेरे पिता की इकलौती बेटी\" => चूंकि वक्ता स्वयं एक महिला है, अतः उसके पिता की इकलौती बेटी वह स्वयं महिला ही है। कथन में मान रखने पर: \"उस (पुरुष) की माँ [वह स्वयं महिला] है।\" इस प्रकार, वह महिला उस पुरुष की माँ है, अर्थात वह पुरुष उस महिला का बेटा (Son) है।",
+        keyExamFact: "रक्त संबंध प्रश्नों में 'मेरे पिता की इकलौती पुत्री' महिला वक्ता के लिए स्वयं को तथा पुरुष वक्ता के लिए उसकी बहन को इंगित करता है।"
+      },
+      {
+        id: 68,
+        topic: "Indian Polity / DPSP",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Protection and improvement of environment and safeguarding of forests and wildlife of the country comes under:",
+        stemHi: "देश के पर्यावरण का संरक्षण और सुधार तथा वनों और वन्य जीवन की सुरक्षा, ______ के अंतर्गत आती है।",
+        options: [
+          "Article 44A / अनुच्छेद 44A",
+          "Article 43A / अनुच्छेद 43A",
+          "Article 46A / अनुच्छेद 46A",
+          "Article 48A / अनुच्छेद 48A",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "Article 48A of the Directive Principles of State Policy (Part IV of the Indian Constitution) directs that \"The State shall endeavour to protect and improve the environment and to safeguard the forests and wild life of the country.\" It was added by the 42nd Constitutional Amendment Act of 1976.",
+        explanationHi: "भारतीय संविधान के भाग IV में राज्य के नीति निदेशक तत्वों के अंतर्गत अनुच्छेद 48A (48क) यह प्रावधान करता है कि \"राज्य देश के पर्यावरण के संरक्षण तथा संवर्धन का और वन तथा वन्य जीवों की रक्षा करने का प्रयास करेगा।\" इसे 42वें संविधान संशोधन अधिनियम, 1976 द्वारा संविधान में जोड़ा गया था।",
+        keyExamFact: "42वें संविधान संशोधन 1976 द्वारा नागरिकों के मूल कर्तव्य (अनुच्छेद 51A(g)) में भी पर्यावरण, वनों और वन्यजीवों की रक्षा का दायित्व शामिल किया गया।"
+      },
+      {
+        id: 69,
+        topic: "Current Affairs / Sports",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Who won the Men's Singles title at the India Open Badminton 2025 held in New Delhi ?",
+        stemHi: "नई दिल्ली में आयोजित इंडिया ओपन बैडमिंटन 2025 में पुरुष एकल का खिताब किसने जीता ?",
+        options: [
+          "Viktor Axelsen / विक्टर एक्सेलसेन",
+          "Lee Cheuk Yiu / ली चेउक यिउ",
+          "Lakshya Sen / लक्ष्य सेन",
+          "Kento Momota / केंटो मोमोटा",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Two-time Olympic Champion Viktor Axelsen of Denmark won the Men's Singles title at the Yonex-Sunrise India Open 2025 (BWF World Tour Super 750) held at the K.D. Jadhav Indoor Stadium in New Delhi in January 2025, defeating Hong Kong's Lee Cheuk Yiu in a thrilling final.",
+        explanationHi: "डेनमार्क के दो बार के ओलंपिक स्वर्ण पदक विजेता विक्टर एक्सेलसेन (Viktor Axelsen) ने जनवरी 2025 में नई दिल्ली के के.डी. जाधव इंडोर स्टेडियम में आयोजित 'योनेक्स-सनराइज इंडिया ओपन 2025' (BWF सुपर 750) के पुरुष एकल फाइनल में हांगकांग के ली चेउक यिउ को हराकर पुरुष एकल का खिताब जीता।",
+        keyExamFact: "इंडिया ओपन बैडमिंटन टूर्नामेंट 2023 से BWF वर्ल्ड टूर सुपर 750 श्रेणी के प्रतिष्ठित टूर्नामेंट के रूप में अपग्रेड किया गया है।"
+      },
+      {
+        id: 70,
+        topic: "Indian National Movement / Revolutionary Phase",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The headquarter of Anushilan Samiti is at:",
+        stemHi: "अनुशीलन समिति का मुख्यालय कहाँ है ?",
+        options: [
+          "Bombay / बम्बई",
+          "Calcutta / कलकत्ता",
+          "Madras / मद्रास",
+          "Poona / पूना",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "The revolutionary organization 'Anushilan Samiti' was founded on March 24, 1902, in Calcutta (now Kolkata), Bengal, by Promotha Nath Mitra (P. Mitra) along with Jatindranath Banerjee, Barindra Kumar Ghosh, and Satish Chandra Bose, with its headquarters in Calcutta. A major regional wing was later established in Dacca in 1906 under Pulin Behari Das.",
+        explanationHi: "अनुशीलन समिति की स्थापना 24 मार्च 1902 को कलकत्ता (वर्तमान कोलकाता), बंगाल में प्रमथनाथ मित्र (पी. मित्रा), जतींद्रनाथ बनर्जी, बारींद्र कुमार घोष और सतीश चंद्र बोस द्वारा की गई थी। इस क्रांतिकारी गुप्त संस्था का मुख्य केंद्र/मुख्यालय कलकत्ता में ही था। 1906 में ढाका में पुलिन बिहारी दास के नेतृत्व में इसकी प्रसिद्ध 'ढाका अनुशीलन समिति' शाखा स्थापित हुई।",
+        keyExamFact: "अनुशीलन समिति का मुखपत्र 'युगांतर' था, जिसे 1906 में बारींद्र कुमार घोष और भूपेंद्रनाथ दत्त ने प्रारंभ किया था।"
+      },
+      {
+        id: 71,
+        topic: "Elementary Arithmetic / Percentage",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "2/5 in percent form is:",
+        stemHi: "2/5 प्रतिशत रूप में क्या है ?",
+        options: [
+          "40%",
+          "20%",
+          "25%",
+          "80%",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "To convert any common fraction into percentage form, multiply the fraction by 100: (2/5) × 100% = 2 × 20% = 40%.",
+        explanationHi: "किसी भिन्न को प्रतिशत में परिवर्तित करने के लिए उसे 100 से गुणा किया जाता है: (2/5) × 100% = 2 × 20% = 40%। अतः सही उत्तर 40% है।",
+        keyExamFact: "महत्वपूर्ण भिन्न-प्रतिशत रूपांतरण: 1/5 = 20%, 2/5 = 40%, 3/5 = 60%, 4/5 = 80%।"
+      },
+      {
+        id: 72,
+        topic: "General Science / Space Technology",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Chandrayaan-3 was launched in which year?",
+        stemHi: "चंद्रयान-3 किस वर्ष प्रक्षेपित किया गया था ?",
+        options: [
+          "2021",
+          "2019",
+          "2022",
+          "2023",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "Chandrayaan-3 was launched by the Indian Space Research Organisation (ISRO) on 14 July 2023 at 2:35 PM IST aboard an LVM3-M4 rocket from the Satish Dhawan Space Centre (SDSC-SHAR) in Sriharikota, Andhra Pradesh. On 23 August 2023, its Vikram lander successfully executed a soft landing near the lunar south pole.",
+        explanationHi: "भारतीय अंतरिक्ष अनुसंधान संगठन (ISRO) द्वारा 'चंद्रयान-3' का सफल प्रक्षेपण 14 जुलाई 2023 को सतीश धवन अंतरिक्ष केंद्र, श्रीहरिकोटा (आंध्र प्रदेश) से LVM3-M4 प्रक्षेपण यान द्वारा किया गया था। 23 अगस्त 2023 को इसके 'विक्रम' लैंडर ने चंद्रमा के दक्षिणी ध्रुवीय क्षेत्र के समीप सफल 'सॉफ्ट लैंडिंग' की।",
+        keyExamFact: "23 अगस्त को चंद्रयान-3 की ऐतिहासिक लैंडिंग के उपलक्ष्य में भारत सरकार ने प्रतिवर्ष 23 अगस्त को 'राष्ट्रीय अंतरिक्ष दिवस' (National Space Day) के रूप में घोषित किया, और लैंडिंग स्थल को 'शिव शक्ति' (Shiv Shakti Point) नाम दिया गया।"
+      },
+      {
+        id: 73,
+        topic: "Indian Geography / Water Bodies",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Which sea lies to the west of India?",
+        stemHi: "भारत के पश्चिम में कौन-सा सागर स्थित है ?",
+        options: [
+          "Bay of Bengal / बंगाल की खाड़ी",
+          "Arabian Sea / अरब सागर",
+          "Red Sea / लाल सागर",
+          "South China Sea / दक्षिण चीन सागर",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "The Indian peninsula is bounded by three major water bodies: the Arabian Sea to the west, the Bay of Bengal to the east, and the Indian Ocean to the south.",
+        explanationHi: "भारतीय प्रायद्वीप तीन ओर से जलराशियों से घिरा हुआ है: इसके पश्चिम में अरब सागर (Arabian Sea), पूर्व में बंगाल की खाड़ी (Bay of Bengal), तथा दक्षिण में हिंद महासागर (Indian Ocean) स्थित है।",
+        keyExamFact: "भारत के पश्चिमी तटीय राज्य—गुजरात, महाराष्ट्र, गोवा, कर्नाटक और केरल—अरब सागर के तट पर स्थित हैं।"
+      },
+      {
+        id: 74,
+        topic: "Current Affairs / Business & Trade",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Where was the 8th edition of Indusfood Asia's premier Food and Beverage (F and B) Trade Show 2025 organized?",
+        stemHi: "एशिया का प्रीमियर खाद्य एवं पेय (एफ एण्ड बी) व्यापार प्रदर्शन इंडसफूड 2025 का 8 वाँ संस्करण कहाँ आयोजित किया गया था ?",
+        options: [
+          "India Habitat Centre, New Delhi / इंडिया हैबिटेट सेंटर, नई दिल्ली",
+          "Pragati Maidan, New Delhi / प्रगति मैदान, नई दिल्ली",
+          "India Exposition Mart Ltd., Greater Noida / इंडिया एक्सपोज़िशन मार्ट लिमिटेड, ग्रेटर नोएडा",
+          "Mahatma Mandir, Gandhinagar / महात्मा मंदिर, गांधीनगर",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "The 8th edition of 'Indusfood 2025'—South Asia's largest integrated Food and Beverage (F&B) trade show organized by the Trade Promotion Council of India (TPCI) with the support of the Department of Commerce—was held from January 9 to 11, 2025, at the India Exposition Mart Ltd. (IEML) in Greater Noida, National Capital Region (NCR), Uttar Pradesh.",
+        explanationHi: "वाणिज्य विभाग के सहयोग से भारतीय व्यापार संवर्धन परिषद (TPCI) द्वारा आयोजित दक्षिण एशिया के सबसे बड़े खाद्य और पेय व्यापार एक्सपो 'इंडसफूड 2025' (Indusfood 2025) का 8वां संस्करण 9 से 11 जनवरी 2025 को इंडिया एक्सपोज़िशन मार्ट लिमिटेड (IEML), ग्रेटर नोएडा (उत्तर प्रदेश) में आयोजित किया गया था।",
+        keyExamFact: "ग्रेटर नोएडा स्थित इंडिया एक्सपो सेंटर एवं मार्ट उत्तर प्रदेश का प्रमुख अंतरराष्ट्रीय प्रदर्शनी और सम्मेलन केंद्र है।"
+      },
+      {
+        id: 75,
+        topic: "General Science / Chemistry",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Acids are stored in containers made of which materials?",
+        stemHi: "एसिड को किस पदार्थ से बने बर्तनों में संग्रहित किया जाता है ?",
+        options: [
+          "Wood and paper / लकड़ी और कागज",
+          "Metals and plastic / धातु और प्लास्टिक",
+          "Glass and ceramics / कांच और सिरैमिक",
+          "Rubber and cardboard / रबर और कार्डबोर्ड",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Acids are highly corrosive substances that react aggressively with most metals (releasing hydrogen gas) and degrade wood, paper, and ordinary rubbers. Glass (such as borosilicate glass) and ceramics are chemically inert and resistant to attack by virtually all standard mineral acids (except hydrofluoric acid), making them the ideal materials for acid storage vessels in laboratories and industries.",
+        explanationHi: "अम्ल (एसिड) अत्यधिक संक्षारक (Corrosive) होते हैं जो अधिकांश धातुओं के साथ रासायनिक अभिक्रिया करके हाइड्रोजन गैस उत्पन्न करते हैं तथा लकड़ी और कागज को नष्ट कर देते हैं। कांच (विशेष रूप से बोरोसिलिकेट कांच) और चीनी मिट्टी (सिरैमिक्स) अत्यधिक रासायनिक रूप से अक्रिय (Inert) और अप्रतिक्रियाशील होते हैं, इसलिए अम्लों को सुरक्षित रखने के लिए कांच और सिरैमिक से बने बर्तनों का उपयोग किया जाता है।",
+        keyExamFact: "कांच सिलिकेट्स का बना होता है और हाइड्रोफ्लोरोइक एसिड (HF) को छोड़कर सभी सामान्य अम्लों के प्रति प्रतिरोधी होता है; हाइड्रोफ्लोरोइक एसिड कांच को घोल देता है।"
+      },
+
+      // Batch 4 (Q76 - Q100)
+      {
+        id: 76,
+        topic: "Indian National Movement / Constitutional History",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The Constitution of India was first drafted by ______ in 1928.",
+        stemHi: "भारत का संविधान पहली बार 1928 में ______ द्वारा तैयार किया गया था।",
+        options: [
+          "Motilal Nehru / मोतीलाल नेहरू",
+          "Mahatma Gandhi / महात्मा गांधी",
+          "V. V. Giri / वि. वि. गिरि",
+          "Rajendra Prasad / राजेंद्र प्रसाद",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "In 1928, an All Parties Conference appointed a committee chaired by Motilal Nehru to draft a constitution for India, as a challenge to Lord Birkenhead's assertion that Indians could not formulate a constitution. The resulting document, known as the 'Nehru Report' (August 1928), was the first major indigenous attempt by Indians to draft a constitutional framework, recommending Dominion Status, fundamental rights, and universal adult suffrage.",
+        explanationHi: "वर्ष 1928 में लॉर्ड बर्कनहेड की चुनौती के जवाब में सर्वदलीय सम्मेलन द्वारा पंडित मोतीलाल नेहरू की अध्यक्षता में एक समिति का गठन किया गया, जिसने भारत के संविधान का पहला प्रारूप तैयार किया। इसे ऐतिहासिक 'नेहरू रिपोर्ट' (Nehru Report, 1928) कहा जाता है। इसमें भारत के लिए डोमिनियन स्टेट्स, मूल अधिकारों, सार्वभौमिक वयस्क मताधिकार तथा स्वतंत्र न्यायपालिका की रूपरेखा प्रस्तुत की गई थी।",
+        keyExamFact: "जवाहरलाल नेहरू इस प्रारूप समिति के सचिव थे, जबकि मोतीलाल नेहरू इसके अध्यक्ष थे।"
+      },
+      {
+        id: 77,
+        topic: "Indian National Movement / Partition of India",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Who announced the British Government's acceptance of the partition of India?",
+        stemHi: "भारत के विभाजन को ब्रिटिश सरकार द्वारा स्वीकार किए जाने की घोषणा किसने की थी ?",
+        options: [
+          "Lord Mountbatten / लॉर्ड माउंटबैटन",
+          "Linlithgow / लिनलिथगो",
+          "Rajagopalachari / राजगोपालाचारी",
+          "Hardinge / हार्डिंग",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Lord Mountbatten, the last Viceroy of British India, formally announced the British Government's plan for the partition of British India into two independent dominions—India and Pakistan—on June 3, 1947. This is historically known as the 'Mountbatten Plan' or the '3rd June Plan', which laid the legislative foundation for the Indian Independence Act, 1947.",
+        explanationHi: "भारत के अंतिम वायसराय लॉर्ड माउंटबैटन ने 3 जून 1947 को ब्रिटिश सरकार द्वारा भारत विभाजन की औपचारिक स्वीकृति की घोषणा की थी, जिसे 'माउंटबैटन योजना' या '3 जून की योजना' (June 3rd Plan) कहा जाता है। इसी योजना के आधार पर ब्रिटिश संसद द्वारा 'भारतीय स्वतंत्रता अधिनियम, 1947' पारित किया गया था।",
+        keyExamFact: "भारत और पाकिस्तान के मध्य सीमा निर्धारण के लिए सर सिरिल रेडक्लिफ (Sir Cyril Radcliffe) की अध्यक्षता में दो सीमा आयोग गठित किए गए थे।"
+      },
+      {
+        id: 78,
+        topic: "Logic & Reasoning / Odd One Out",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Find the odd one out from the following.",
+        stemHi: "निम्नलिखित में से सर्वथा भिन्न ज्ञात कीजिए।",
+        options: [
+          "Mercury / पारा",
+          "Iron / लोहा",
+          "Silver / चांदी",
+          "Gold / सोना",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Mercury (पारा - Hg) is the only metal that remains in a liquid state at room temperature (25°C). Iron (लोहा), Silver (चांदी), and Gold (सोना) are solid metals at standard room temperature. Hence, Mercury is the odd one out.",
+        explanationHi: "पारा (Mercury - Hg) एकमात्र ऐसी धातु है जो सामान्य कमरे के तापमान (25°C) पर द्रव (तरल) अवस्था में पाई जाती है। जबकि लोहा, चांदी और सोना सामान्य ताप पर ठोस (Solid) धातुएं हैं। अतः पारा अन्य सभी से भिन्न है।",
+        keyExamFact: "अधातुओं में केवल ब्रोमीन (Bromine - Br) कमरे के तापमान पर द्रव अवस्था में पाई जाती है।"
+      },
+      {
+        id: 79,
+        topic: "Indian History & Polity / Treaties",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The India-Pakistan signed a treaty in the year 1960. The name of that treaty was ______.",
+        stemHi: "भारत-पाकिस्तान ने वर्ष 1960 में एक संधि पर हस्ताक्षर किए थे। उस संधि का नाम था ______।",
+        options: [
+          "Yamuna waters treaty / यमुना जल संधि",
+          "Ganga waters treaty / गंगा जल संधि",
+          "Indus waters treaty / सिंधु जल संधि",
+          "Brahmaputra waters treaty / ब्रह्मपुत्र जल संधि",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "The Indus Waters Treaty (सिंधु जल संधि) was signed in Karachi on September 19, 1960, between Indian Prime Minister Jawaharlal Nehru and Pakistani President Ayub Khan, brokered by the World Bank. Under the treaty, waters of the three eastern rivers (Ravi, Beas, and Sutlej) were allocated to India for unrestricted use, while waters of the three western rivers (Indus, Jhelum, and Chenab) were allocated largely to Pakistan.",
+        explanationHi: "19 सितंबर 1960 को कराची में भारत के प्रधानमंत्री जवाहरलाल नेहरू और पाकिस्तान के राष्ट्रपति अयूब खान के बीच विश्व बैंक की मध्यस्थता में ऐतिहासिक 'सिंधु जल संधि' (Indus Waters Treaty) पर हस्ताक्षर किए गए थे। इस संधि के तहत तीन पूर्वी नदियों (रावी, ब्यास, सतलुज) का अनन्य नियंत्रण भारत को तथा तीन पश्चिमी नदियों (सिंधु, झेलम, चेनाब) का अधिकांश जल पाकिस्तान को आवंटित किया गया था।",
+        keyExamFact: "विश्व बैंक (उस समय IBRD) इस ऐतिहासिक संधि का औपचारिक हस्ताक्षरकर्ता और मध्यस्थ था।"
+      },
+      {
+        id: 80,
+        topic: "Data Interpretation / Pie Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_PIE_CHART_80_84,
+        stemEn: "Find the ratio of the number of wheel chairs manufactured in May to the number of office chairs manufactured in January.",
+        stemHi: "मई में निर्मित व्हील कुर्सियों की संख्या और जनवरी में निर्मित ऑफीस कुर्सियों की संख्या का अनुपात ज्ञात कीजिए।",
+        options: [
+          "2:1",
+          "5:3",
+          "8:9",
+          "7:8",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "Total chairs in May = 25% of 5000 = 1250. Wheel chairs in May = (3/5) × 1250 = 750. Total chairs in January = 27% of 5000 = 1350. Office chairs in January = (1/3) × 1350 = 450. Required Ratio = 750 : 450 = 5 : 3.",
+        explanationHi: "मई में निर्मित कुल कुर्सियाँ = 5000 × 25% = 1250। मई में व्हील कुर्सियाँ = (3/5) × 1250 = 750। जनवरी में निर्मित कुल कुर्सियाँ = 5000 × 27% = 1350। जनवरी में ऑफीस कुर्सियाँ = (1/3) × 1350 = 450। अभीष्ट अनुपात = 750 : 450 = 5 : 3।",
+        keyExamFact: "दोनों पदों को उनके महत्तम समापवर्तक (HCF = 150) से विभाजित करने पर न्यूनतम पूर्णांक अनुपात 5:3 प्राप्त होता है।"
+      },
+      {
+        id: 81,
+        topic: "Data Interpretation / Pie Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_PIE_CHART_80_84,
+        stemEn: "Out of the total number of chairs manufactured in January, 20% of the chairs are unsold. If the ratio of the number of office chairs to wheel chairs unsold in January is 5: 4, then find the number of wheel chairs sold in January.",
+        stemHi: "जनवरी में निर्मित कुल कुर्सियों में से 20% कुर्सियाँ नहीं बिकीं। यदि जनवरी में नहीं बिकीं गई ऑफीस कुर्सियों की संख्या और व्हील कुर्सियों की संख्या का अनुपात 5:4 है, तो जनवरी में बेची गई व्हील कुर्सियों की संख्या ज्ञात कीजिए।",
+        options: [
+          "690",
+          "820",
+          "510",
+          "780",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "Total chairs manufactured in January = 1350. Unsold chairs in January = 20% × 1350 = 270. Ratio of unsold Office to Wheel = 5 : 4 => Unsold Wheel chairs = (4/9) × 270 = 120. Total Wheel chairs manufactured in January = 900. Wheel chairs sold = 900 - 120 = 780.",
+        explanationHi: "जनवरी में निर्मित कुल कुर्सियाँ = 1350। जनवरी में नहीं बिकी कुल कुर्सियाँ = 1350 × 20% = 270। नहीं बिकीं ऑफीस और व्हील कुर्सियों का अनुपात = 5 : 4 (अनुपाती योग = 9)। नहीं बिकीं व्हील कुर्सियाँ = (4/9) × 270 = 120। जनवरी में कुल निर्मित व्हील कुर्सियाँ = 900। जनवरी में बेची गई व्हील कुर्सियों की संख्या = 900 - 120 = 780।",
+        keyExamFact: "बेची गई संख्या = कुल निर्मित संख्या - नहीं बिकी (अविक्रित) संख्या।"
+      },
+      {
+        id: 82,
+        topic: "Data Interpretation / Pie Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_PIE_CHART_80_84,
+        stemEn: "The number of office chairs manufactured in April is what percentage of the difference between the total number of chairs manufactured in February and April ?",
+        stemHi: "अप्रैल में निर्मित ऑफीस कुर्सियों की संख्या फरवरी और अप्रैल में निर्मित कुर्सियों की कुल संख्या के बीच अंतर का कितना प्रतिशत है ?",
+        options: [
+          "70%",
+          "40%",
+          "30%",
+          "50%",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "Total chairs in April = 10% of 5000 = 500. Office chairs in April = (1/2) × 500 = 250. Total chairs in February = 20% of 5000 = 1000. Difference between total chairs in February and April = 1000 - 500 = 500. Required percentage = (250 / 500) × 100% = 50%.",
+        explanationHi: "अप्रैल में कुल कुर्सियाँ = 500। अप्रैल में निर्मित ऑफीस कुर्सियाँ = (1/2) × 500 = 250। फरवरी में कुल कुर्सियाँ = 1000। फरवरी और अप्रैल में निर्मित कुल कुर्सियों का अंतर = 1000 - 500 = 500। अभीष्ट प्रतिशत = (250 / 500) × 100% = 50%।",
+        keyExamFact: "250 / 500 = 1/2 = 50%।"
+      },
+      {
+        id: 83,
+        topic: "Data Interpretation / Pie Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_PIE_CHART_80_84,
+        stemEn: "If the number of wheel chairs manufactured in June is 5/8th of the number of wheel chairs manufactured in March and the ratio of the number of office chairs manufactured in March and June is 5: 3, then find the total number of chairs manufactured in June.",
+        stemHi: "यदि जून में निर्मित व्हील कुर्सियों की संख्या, मार्च में निर्मित व्हील कुर्सियों की संख्या का 5/8 है और मार्च और जून में निर्मित ऑफीस कुर्सियों की संख्या का अनुपात 5:3 है, तो जून में निर्मित कुर्सियों की कुल संख्या ज्ञात करें।",
+        options: [
+          "550",
+          "740",
+          "480",
+          "670",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Total chairs in March = 18% of 5000 = 900. Ratio in March (Wheel : Office) = 4 : 5 => Wheel chairs in March = (4/9) × 900 = 400; Office chairs in March = (5/9) × 900 = 500. Wheel chairs in June = (5/8) × 400 = 250. Ratio of Office chairs (March : June) = 5 : 3 => Office chairs in June = (3/5) × 500 = 300. Total chairs manufactured in June = 250 + 300 = 550.",
+        explanationHi: "मार्च में कुल कुर्सियाँ = 900। मार्च में व्हील कुर्सियाँ = (4/9) × 900 = 400; ऑफीस कुर्सियाँ = (5/9) × 900 = 500। जून में व्हील कुर्सियाँ = 400 × (5/8) = 250। मार्च और जून की ऑफीस कुर्सियों का अनुपात = 5 : 3 => जून में ऑफीस कुर्सियाँ = (3/5) × 500 = 300। जून में निर्मित कुल कुर्सियाँ = 250 + 300 = 550।",
+        keyExamFact: "प्रश्न में दी गई शर्तों के अनुसार दोनों घटकों (व्हील + ऑफीस) को अलग-अलग निकाल कर जोड़ना होगा।"
+      },
+      {
+        id: 84,
+        topic: "Data Interpretation / Pie Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_PIE_CHART_80_84,
+        stemEn: "Find the difference between the number of wheel chairs manufactured in February and the number of wheel chairs manufactured in April.",
+        stemHi: "फरवरी में निर्मित व्हील कुर्सियों की संख्या और अप्रैल में निर्मित व्हील कुर्सियों की संख्या के बीच अंतर ज्ञात करें।",
+        options: [
+          "320",
+          "550",
+          "450",
+          "600",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Total chairs in February = 20% of 5000 = 1000. Wheel chairs in February = (7/10) × 1000 = 700. Total chairs in April = 10% of 5000 = 500. Wheel chairs in April = (1/2) × 500 = 250. Difference = 700 - 250 = 450.",
+        explanationHi: "फरवरी में निर्मित व्हील कुर्सियाँ = (7/10) × 1000 = 700। अप्रैल में निर्मित व्हील कुर्सियाँ = (1/2) × 500 = 250। अभीष्ट अंतर = 700 - 250 = 450।",
+        keyExamFact: "सीधे गणना: 700 - 250 = 450।"
+      },
+      {
+        id: 85,
+        topic: "General Science / Chemistry",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Which acidic gas from the air dissolves in rainwater to form carbonic acid (H2CO3)?",
+        stemHi: "हवा से कौन-सी अम्लीय गैस वर्षा के पानी में घुलकर कार्बोनिक एसिड (H2CO3) बनाती है ?",
+        options: [
+          "Nitrogen (N2) / नाइट्रोजन (N2)",
+          "Oxygen (O2) / ऑक्सीजन (O2)",
+          "Carbon dioxide (CO2) / कार्बन डाइऑक्साइड (CO2)",
+          "Sulfur dioxide (SO2) / सल्फर डाइऑक्साइड (SO2)",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Atmospheric carbon dioxide (CO2) naturally dissolves in rainwater droplets to form weak carbonic acid (H2CO3) through the reversible reaction: CO2(g) + H2O(l) ⇌ H2CO3(aq). Because of this naturally occurring reaction, pure unpolluted rainwater has a slightly acidic pH of approximately 5.6.",
+        explanationHi: "वायुमंडल में उपस्थित कार्बन डाइऑक्साइड (CO2) एक अम्लीय ऑक्साइड गैस है, जो वर्षा के जल के साथ अभिक्रिया करके दुर्बल अम्ल 'कार्बोनिक एसिड' (H2CO3) बनाती है: CO2 + H2O ⇌ H2CO3। इसी कारण प्राकृतिक अप्रदूषित वर्षा जल का pH मान हल्का अम्लीय (लगभग 5.6) होता है।",
+        keyExamFact: "'अम्ल वर्षा' (Acid Rain) के लिए मुख्य रूप से सल्फर डाइऑक्साइड (SO2) और नाइट्रोजन ऑक्साइड (NOx) जिम्मेदार होते हैं, जो सल्फ्यूरिक और नाइट्रिक अम्ल बनाते हैं (pH < 5.6)।"
+      },
+      {
+        id: 86,
+        topic: "World Geography / Rivers",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The longest river in the world is:",
+        stemHi: "विश्व की सबसे लंबी नदी कौन-सी है?",
+        options: [
+          "Mississippi / मिसिसिपी",
+          "Amazon / अमेज़न",
+          "Yangtze / यांग्त्ज़ी",
+          "Nile / नाइल",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "The Nile River (नाइल) in northeast Africa is traditionally recognized as the longest river in the world, with an approximate length of 6,650 km (4,132 miles), emptying into the Mediterranean Sea. The Amazon River is the world's largest river by water discharge volume and width, and the second longest (~6,400 km).",
+        explanationHi: "विश्व की सबसे लंबी नदी 'नील नदी' (Nile River) है, जिसकी कुल लंबाई लगभग 6,650 किलोमीटर (4,132 मील) है। यह विक्टोरिया झील से निकलकर उत्तर की ओर बहती हुई भूमध्य सागर में गिरती है। जल प्रवाह आयतन (Drainage volume) की दृष्टि से विश्व की सबसे बड़ी नदी अमेज़न है।",
+        keyExamFact: "मिस्र (Egypt) को 'नील नदी का वरदान' कहा जाता है। विश्व की सबसे बड़ी नदी घाटी अमेज़न बेसिन है।"
+      },
+      {
+        id: 87,
+        topic: "Logic & Reasoning / Ordering & Ranking",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Mukesh is taller than Suresh but shorter than Rakesh. Rakesh is taller than Harish but shorter than Amar. Who among them is the shortest?",
+        stemHi: "मुकेश सुरेश से लंबा है लेकिन राकेश से छोटा है। राकेश हरीश से लंबा है लेकिन अमर से छोटा है। उनमें से सबसे छोटा कौन है ?",
+        options: [
+          "Suresh / सुरेश",
+          "Mukesh / मुकेश",
+          "Harish / हरीश",
+          "Cannot be determined / निर्धारित नहीं किया जा सकता",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "From the given statements: 1. Rakesh > Mukesh > Suresh. 2. Amar > Rakesh > Harish. Combining them: Amar > Rakesh > {Mukesh, Harish}. And Mukesh > Suresh. However, no relationship or comparison is provided between Harish and Suresh. Harish could be taller, shorter, or equal to Suresh. Therefore, it cannot be determined who among them is the shortest.",
+        explanationHi: "दिए गए कथनों के अनुसार: 1. राकेश > मुकेश > सुरेश। 2. अमर > राकेश > हरीश। यहाँ अमर सबसे लंबा है, उसके बाद राकेश है। राकेश, मुकेश और हरीश दोनों से लंबा है, तथा मुकेश, सुरेश से लंबा है। परंतु हरीश और सुरेश के बीच कोई संबंध या तुलना नहीं दी गई है। हरीश, सुरेश से छोटा भी हो सकता है या बड़ा भी। अतः सबसे छोटा कौन है, यह 'निर्धारित नहीं किया जा सकता' (Cannot be determined)।",
+        keyExamFact: "क्रम-व्यवस्था (Ordering/Ranking) में यदि दो अंतिम तत्वों के मध्य कोई प्रत्यक्ष या अप्रत्यक्ष संबंध स्थापित न हो, तो निश्चित उत्तर नहीं निकाला जा सकता।"
+      },
+      {
+        id: 88,
+        topic: "General Science / Physics (Optics)",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The ratio of speed of light in vacuum to the speed of light in a medium is called the ______ of the medium.",
+        stemHi: "निर्वात में प्रकाश की गति और माध्यम में प्रकाश की गति के अनुपात को माध्यम का ______ कहा जाता है।",
+        options: [
+          "Frequency / आवृत्ति",
+          "Wavelength / तरंगदैर्ध्य",
+          "Refractive index / अपवर्तनांक",
+          "Amplitude / आयाम",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "The absolute refractive index (n or μ) of a transparent medium is defined as the ratio of the speed of light in a vacuum (c) to the speed of light in that specific medium (v): n = c / v. Since it is a ratio of two identical physical quantities (speeds), refractive index is a dimensionless unitless scalar quantity.",
+        explanationHi: "किसी माध्यम का निरपेक्ष अपवर्तनांक (Refractive Index - n) निर्वात में प्रकाश की चाल (c ≈ 3 × 10⁸ m/s) और उस माध्यम में प्रकाश की चाल (v) का अनुपात होता है: n = c / v। यह दो समान भौतिक राशियों का अनुपात होने के कारण एक मात्रकहीन और विमाहीन राशि है।",
+        keyExamFact: "निर्वात का अपवर्तनांक 1 होता है। हीरे (Diamond) का अपवर्तनांक सर्वाधिक (लगभग 2.42) होता है, जिसके कारण इसमें पूर्ण आंतरिक परावर्तन सर्वाधिक होता है।"
+      },
+      {
+        id: 89,
+        topic: "Current Affairs / Reports & Indices",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "In December 2024, which organization released the report titled \"S.A.F.E. (Secure, Affordable, Flexible and Efficient) Accommodation: Worker Housing for Manufacturing Growth\"?",
+        stemHi: "दिसंबर 2024 में, किस संगठन ने \"S.A.F.E. (सिक्यूर, एफोर्डेबल, फ्लेक्सिबल एण्ड एफिशिएंट) एकोमोडेशन : विनिर्माण विकास के लिए श्रमिक आवास\" शीर्षक से रिपोर्ट जारी की ?",
+        options: [
+          "Ministry of Labour and Employment / श्रम और रोजगार मंत्रालय",
+          "Ministry of Housing and Urban Affairs / आवास और शहरी मामलों का मंत्रालय",
+          "Confederation of Indian Industry (CII) / भारतीय उद्योग परिसंघ (CII)",
+          "National Institution for Transforming India (NITI) Aayog / नैशनल इन्स्टिट्यूशन फॉर ट्रैन्सफॉर्मिंग इंडिया (NITI) आयोग",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "In December 2024, NITI Aayog (National Institution for Transforming India) released the strategic policy report titled \"S.A.F.E. (Secure, Affordable, Flexible, and Efficient) Accommodation: Worker Housing for Manufacturing Growth\". The report advocates for integrated industrial housing dormitories near manufacturing clusters to improve female workforce participation, boost productivity, reduce absenteeism, and support India's vision of becoming a global manufacturing hub.",
+        explanationHi: "दिसंबर 2024 में, नीति आयोग (NITI Aayog) ने \"S.A.F.E. (Secure, Affordable, Flexible and Efficient) Accommodation: Worker Housing for Manufacturing Growth\" शीर्षक से रिपोर्ट जारी की। इस रिपोर्ट का उद्देश्य विनिर्माण क्षेत्रों के पास श्रमिकों, विशेष रूप से महिला कार्यबल के लिए सुरक्षित, किफायती और सुलभ आवासीय व्यवस्था (डॉर्मिटरी मॉडल) विकसित कर औद्योगिक उत्पादकता को बढ़ाना है।",
+        keyExamFact: "नीति आयोग का गठन 1 जनवरी 2015 को योजना आयोग के स्थान पर किया गया था; इसके पदेन अध्यक्ष भारत के प्रधानमंत्री होते हैं।"
+      },
+      {
+        id: 90,
+        topic: "Physical Geography / Hydrogeology",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "Which type of rock formation is most commonly associated with low groundwater storage?",
+        stemHi: "निम्न भूजल भंडारण से किस प्रकार की चट्टान संरचना सबसे अधिक जुड़ी हुई है ?",
+        options: [
+          "Sedimentary rocks / अवसादी चट्टानें",
+          "Alluvial deposits / जलोढ़ निक्षेप",
+          "Igneous and metamorphic rocks / आग्नेय और कायांतरित चट्टानें",
+          "Limestone formations / चूना पत्थर संरचनाएँ",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Crystalline igneous rocks (e.g., granite, basalt) and metamorphic rocks (e.g., gneiss, schist) possess extremely low primary porosity and permeability because their interlocking mineral crystals leave virtually no inter-granular pore spaces. Consequently, they have inherently low groundwater storage capacity, holding water only in secondary fractures or weathered zones. In contrast, alluvial deposits and porous sedimentary rocks form the most productive aquifers.",
+        explanationHi: "आग्नेय (Igneous) और कायांतरित/रूपांतरित (Metamorphic) चट्टानें (जैसे ग्रेनाइट, बेसाल्ट, नीस) रवेदार (क्रिस्टलीय) और सघन संरचना की होती हैं, जिसके कारण इनकी प्राथमिक सरंध्रता (Porosity) और पारगम्यता (Permeability) नगण्य होती है। अतः इनमें भूजल भंडारण क्षमता अत्यंत निम्न होती है। इसके विपरीत जलोढ़ निक्षेप और अवसादी चट्टानें सर्वोत्तम जलभृत (Aquifers) बनाती हैं।",
+        keyExamFact: "भारत के प्रायद्वीपीय पठारी क्षेत्र में आग्नेय व कायांतरित चट्टानों की प्रधानता के कारण ही कुओं की तुलना में तालाब सिंचाई प्रणाली अधिक प्रचलित है।"
+      },
+      {
+        id: 91,
+        topic: "Data Interpretation / Bar Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_BAR_CHART_91_95,
+        stemEn: "Find the average of the marked price of dining table and book rack.",
+        stemHi: "डाइनिंग टेबल और बुक रैक के अंकित मूल्य का औसत ज्ञात कीजिए।",
+        options: [
+          "Rs. 8,500 / 8,500 रुपये",
+          "Rs. 8,000 / 8,000 रुपये",
+          "Rs. 9,000 / 9,000 रुपये",
+          "Rs. 7,500 / 7,500 रुपये",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Marked Price of Dining Table = Rs. 10,000. Marked Price of Book Rack = Rs. 7,000. Average Marked Price = (10,000 + 7,000) / 2 = 17,000 / 2 = Rs. 8,500.",
+        explanationHi: "डाइनिंग टेबल का अंकित मूल्य = 10,000 रुपये। बुक रैक का अंकित मूल्य = 7,000 रुपये। दोनों के अंकित मूल्य का औसत = (10000 + 7000) / 2 = 17000 / 2 = 8,500 रुपये।",
+        keyExamFact: "दो मानों का औसत = (a + b) / 2।"
+      },
+      {
+        id: 92,
+        topic: "Data Interpretation / Bar Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_BAR_CHART_91_95,
+        stemEn: "If the marked price of the computer is 20% more than its cost price and the shopkeeper offers a discount of 15% on the marked price of the computer, then find the profit percentage of the computer.",
+        stemHi: "यदि कंप्यूटर का अंकित मूल्य उसके क्रय मूल्य से 20% अधिक है और दुकानदार कंप्यूटर के अंकित मूल्य पर 15% की छूट देता है, तो कंप्यूटर का लाभ प्रतिशत ज्ञात कीजिए।",
+        options: [
+          "5%",
+          "1%",
+          "3%",
+          "2%",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "Let Cost Price (CP) = 100. Marked Price (MP) = 20% more = 120. Discount = 15% of 120 = 18. Selling Price (SP) = 120 - 18 = 102. Profit Percentage = SP - CP = 102 - 100 = 2%. (Alternatively using successive formula: Net % = 20 - 15 - (20 × 15) / 100 = 5 - 3 = 2%).",
+        explanationHi: "माना क्रय मूल्य (CP) = 100। अंकित मूल्य (MP) = 100 + 20 = 120। छूट = 120 का 15% = 18। विक्रय मूल्य (SP) = 120 - 18 = 102। लाभ प्रतिशत = 102 - 100 = 2%। (सक्सेसिव सूत्र: +20 - 15 - (20 × 15)/100 = 5 - 3 = 2%)।",
+        keyExamFact: "जब लाभ प्रतिशत निकालना हो, तो वास्तविक मूल्य (15,000) का उपयोग किए बिना सीधे प्रतिशत विधि या क्रमिक परिवर्तन सूत्र से तीव्र गणना की जा सकती है।"
+      },
+      {
+        id: 93,
+        topic: "Data Interpretation / Bar Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_BAR_CHART_91_95,
+        stemEn: "The selling price and marked price of the dining table is 4: 5. If the shopkeeper gets the profit of 25%, then find the cost price of the dining table.",
+        stemHi: "डाइनिंग टेबल का विक्रय मूल्य और अंकित मूल्य 4:5 है। यदि दुकानदार को 25% का लाभ मिलता है, तो डाइनिंग टेबल का क्रय मूल्य ज्ञात कीजिए।",
+        options: [
+          "Rs. 6,200 / 6,200 रुपये",
+          "Rs. 6,000 / 6,000 रुपये",
+          "Rs. 6,400 / 6,400 रुपये",
+          "Rs. 6,500 / 6,500 रुपये",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "From the bar chart, Marked Price (MP) of Dining Table = Rs. 10,000. Given SP : MP = 4 : 5 => SP = (4/5) × 10,000 = Rs. 8,000. Profit = 25% => SP = 1.25 × CP => CP = 8,000 / 1.25 = (8,000 × 4) / 5 = Rs. 6,400.",
+        explanationHi: "बार चार्ट से, डाइनिंग टेबल का अंकित मूल्य (MP) = 10,000 रुपये। SP : MP = 4 : 5 => SP = (4/5) × 10000 = 8,000 रुपये। लाभ = 25% => CP = 8000 / 1.25 = (8000 × 4) / 5 = 6,400 रुपये।",
+        keyExamFact: "25% लाभ पर SP = (5/4)CP, अतः CP = (4/5)SP।"
+      },
+      {
+        id: 94,
+        topic: "Data Interpretation / Bar Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_BAR_CHART_91_95,
+        stemEn: "If the ratio of the cost price and marked price of the cell phone is 3: 4 and the profit earned by the shopkeeper is Rs. 1,200, then find the discount offered by the shopkeeper.",
+        stemHi: "यदि सेल फोन के क्रय मूल्य और अंकित मूल्य का अनुपात 3:4 है और दुकानदार द्वारा अर्जित लाभ 1,200 रुपये है, तो दुकानदार द्वारा दी जाने वाली छूट ज्ञात कीजिए।",
+        options: [
+          "Rs. 1,000 / 1,000 रुपये",
+          "Rs. 800 / 800 रुपये",
+          "Rs. 900 / 900 रुपये",
+          "Rs. 600 / 600 रुपये",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "From the chart, MP of Cell Phone = Rs. 8,000. Given CP : MP = 3 : 4 => CP = (3/4) × 8,000 = Rs. 6,000. Profit = Rs. 1,200 => SP = 6,000 + 1,200 = Rs. 7,200. Discount = MP - SP = 8,000 - 7,200 = Rs. 800.",
+        explanationHi: "बार चार्ट के अनुसार सेल फोन का अंकित मूल्य (MP) = 8,000 रुपये। CP : MP = 3 : 4 => क्रय मूल्य (CP) = (3/4) × 8000 = 6,000 रुपये। लाभ = 1,200 रुपये => विक्रय मूल्य (SP) = 6000 + 1200 = 7,200 रुपये। छूट = MP - SP = 8000 - 7200 = 800 रुपये।",
+        keyExamFact: "छूट = अंकित मूल्य - विक्रय मूल्य (Discount = MP - SP)।"
+      },
+      {
+        id: 95,
+        topic: "Data Interpretation / Bar Chart",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: ASSET_BAR_CHART_91_95,
+        stemEn: "The selling price of smart watch and book rack is in the ratio of 4:5 and the cost price of the smart watch is Rs. 4,800. If the shopkeeper gets the profit of the smart watch is 10% of its marked price, then find the discount offered by the shopkeeper on a book rack.",
+        stemHi: "स्मार्ट वॉच और बुक रैक का विक्रय मूल्य 4: 5 के अनुपात में है और स्मार्ट वॉच का क्रय मूल्य 4,800 रुपये है। यदि दुकानदार को स्मार्ट वॉच पर उसके अंकित मूल्य का 10% लाभ मिलता है, तो दुकानदार द्वारा बुक रैक पर दी जाने वाली छूट ज्ञात कीजिए।",
+        options: [
+          "Rs. 150 / 150 रुपये",
+          "Rs. 100 / 100 रुपये",
+          "Rs. 200 / 200 रुपये",
+          "Rs. 250 / 250 रुपये",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "From the chart: MP of Smart Watch = Rs. 6,000; MP of Book Rack = Rs. 7,000. CP of Smart Watch = Rs. 4,800. Profit on Smart Watch = 10% of MP = 10% of 6,000 = Rs. 600. SP of Smart Watch = 4,800 + 600 = Rs. 5,400. SP Ratio (Watch : Book Rack) = 4 : 5 => SP of Book Rack = (5,400 / 4) × 5 = 1,350 × 5 = Rs. 6,750. Discount on Book Rack = MP - SP = 7,000 - 6,750 = Rs. 250.",
+        explanationHi: "बार चार्ट से: स्मार्ट वॉच का MP = 6,000 रुपये; बुक रैक का MP = 7,000 रुपये। स्मार्ट वॉच का CP = 4,800 रुपये। स्मार्ट वॉच पर लाभ = 6,000 का 10% = 600 रुपये। स्मार्ट वॉच का SP = 4,800 + 600 = 5,400 रुपये। विक्रय मूल्यों का अनुपात (वॉच : रैक) = 4 : 5 => बुक रैक का SP = (5400 / 4) × 5 = 6,750 रुपये। बुक रैक पर छूट = 7,000 - 6,750 = 250 रुपये।",
+        keyExamFact: "प्रश्न में स्पष्ट दिया गया है कि लाभ अंकित मूल्य का 10% है (क्रय मूल्य का नहीं), अतः लाभ = 6000 × 10% = 600 रुपये।"
+      },
+      {
+        id: 96,
+        topic: "Indian Polity / Emergency Provisions",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "______ is applicable during external as well as internal emergency.",
+        stemHi: "______ बाह्य एवं आंतरिक आपातकाल के दौरान लागू होता है।",
+        options: [
+          "Article 359 / अनुच्छेद 359",
+          "Article 358 / अनुच्छेद 358",
+          "Article 348 / अनुच्छेद 348",
+          "Article 338 / अनुच्छेद 338",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "Under the Indian Constitution: Article 358 automatically suspends the fundamental rights guaranteed by Article 19 ONLY during an External Emergency (war or external aggression), and does not apply during an Internal Emergency (armed rebellion). Article 359 empowers the President to suspend the right to move any court for the enforcement of fundamental rights (except Articles 20 and 21) during BOTH External Emergency as well as Internal Emergency.",
+        explanationHi: "भारतीय संविधान के तहत: अनुच्छेद 358 केवल 'बाह्य आपातकाल' (युद्ध या बाह्य आक्रमण) के समय ही अनुच्छेद 19 के मूल अधिकारों को स्वतः निलंबित करता है। जबकि अनुच्छेद 359 बाह्य एवं आंतरिक दोनों प्रकार के आपातकाल के दौरान लागू होता है, जिसके तहत राष्ट्रपति आदेश जारी कर (अनुच्छेद 20 और 21 को छोड़कर) अन्य मूल अधिकारों के प्रवर्तन के लिए न्यायालय जाने के अधिकार को निलंबित कर सकते हैं।",
+        keyExamFact: "44वें संविधान संशोधन 1978 द्वारा यह प्रावधान किया गया कि किसी भी स्थिति में (आंतरिक या बाह्य आपातकाल) अनुच्छेद 20 (अपराधों के लिए दोषसिद्धि के संबंध में संरक्षण) और अनुच्छेद 21 (प्राण एवं दैहिक स्वतंत्रता) को निलंबित नहीं किया जा सकता।"
+      },
+      {
+        id: 97,
+        topic: "Logic & Reasoning / Ranking Test",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "In a class of 45 students, the rank of Ayush is 15 from the top, then rank of Ayush from the bottom is:",
+        stemHi: "45 छात्रों की कक्षा में आयुष का रैंक ऊपर से 15 है, तो नीचे से आयुष का रैंक क्या है ?",
+        options: [
+          "32",
+          "30",
+          "31",
+          "35",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 2,
+        explanationEn: "Using the standard linear ranking formula: Total Students = Rank from Top + Rank from Bottom - 1 => 45 = 15 + Rank from Bottom - 1 => 45 = 14 + Rank from Bottom => Rank from Bottom = 45 - 14 = 31.",
+        explanationHi: "रैंकिंग के मानक सूत्रानुसार: कुल छात्र = ऊपर से रैंक + नीचे से रैंक - 1 => 45 = 15 + नीचे से रैंक - 1 => 45 = 14 + नीचे से रैंक => नीचे से रैंक = 45 - 14 = 31। अतः नीचे से आयुष का रैंक 31वां है।",
+        keyExamFact: "शॉर्टकट ट्रिक: नीचे से रैंक = (कुल छात्र - ऊपर से रैंक) + 1 = (45 - 15) + 1 = 30 + 1 = 31।"
+      },
+      {
+        id: 98,
+        topic: "Indian Polity / Parliament (Rajya Sabha)",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "______ of India is Ex-officio Chairperson of Rajya Sabha.",
+        stemHi: "भारत के ______ राज्यसभा के पदेन अध्यक्ष हैं।",
+        options: [
+          "Vice-President / उपराष्ट्रपति",
+          "President / राष्ट्रपति",
+          "Prime Minister / प्रधानमंत्री",
+          "Governor / राज्यपाल",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 0,
+        explanationEn: "According to Article 64 and Article 89(1) of the Constitution of India, the Vice-President of India is the ex-officio Chairman (Chairperson) of the Council of States (Rajya Sabha). The Vice-President does not hold any other office of profit and presides over the proceedings of the Upper House.",
+        explanationHi: "भारतीय संविधान के अनुच्छेद 64 और अनुच्छेद 89(1) के अनुसार, भारत के उपराष्ट्रपति (Vice-President) राज्यसभा के पदेन सभापति (Ex-officio Chairperson) होते हैं। उपराष्ट्रपति राज्यसभा के सदस्य नहीं होते, परंतु वे सदन के पीठासीन अधिकारी होते हैं।",
+        keyExamFact: "उपराष्ट्रपति को राज्यसभा के सभापति के रूप में वेतन और भत्ते प्राप्त होते हैं (उपराष्ट्रपति पद के लिए संविधान में कोई अलग वेतन निर्धारित नहीं है)।"
+      },
+      {
+        id: 99,
+        topic: "General Science / Biology (Zoology)",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The camel stores fat in its ______.",
+        stemHi: "ऊँट अपने ______ में वसा जमा करता है।",
+        options: [
+          "Stomach / पेट",
+          "Legs / पैर",
+          "Feet / पाद",
+          "Hump / हम्प",
+          "None of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 3,
+        explanationEn: "Contrary to the popular misconception that camels store water in their humps, a camel's hump actually stores concentrated adipose tissue (fat). When food and water are scarce in the arid desert, the camel metabolizes this stored fat into energy and metabolic water (producing approximately 1.07 grams of water per gram of fat oxidized). Storing fat in a localized dorsal hump rather than throughout the body also allows the camel to dissipate heat more effectively in hot climates.",
+        explanationHi: "ऊँट अपने कूबड़ (हम्प - Hump) में वसा (Fat) संचित करता है, न कि पानी। मरुस्थल में भोजन और जल की कमी होने पर ऊँट इसी संचित वसा का उपापचय (Metabolism) कर ऊर्जा और जल प्राप्त करता है। शरीर में वसा को एक ही स्थान (हम्प) पर केंद्रित रखने से ऊँट के शरीर का तापमान नियंत्रित रहता है और गर्मी का विकिरण सुगमता से होता है।",
+        keyExamFact: "ऊँट को 'रेगिस्तान का जहाज' (Ship of the Desert) कहा जाता है। ऊँट की लाल रक्त कणिकाएं (RBCs) अन्य स्तनधारियों के विपरीत अंडाकार (Oval) और केंद्रक युक्त होती हैं।"
+      },
+      {
+        id: 100,
+        topic: "General Science / Biology (Botany)",
+        isHindiOnly: false,
+        isEnglishOnly: false,
+        visual: null,
+        stemEn: "The flower of the Hibiscus plant is:",
+        stemHi: "गुड़हल के पौधे का फूल है: ",
+        options: [
+          "unisexual / एकलिंगी",
+          "bisexual / उभयलिंगी",
+          "neuter / नपुंसक",
+          "very small / बहुत छोटा",
+          "none of the above / उपर्युक्त में से कोई नहीं"
+        ],
+        correctIndex: 1,
+        explanationEn: "The flower of the Hibiscus plant (गुड़हल - Hibiscus rosa-sinensis, family Malvaceae) is bisexual (hermaphrodite or complete), meaning it possesses both male reproductive organs (stamens/androecium) and female reproductive organs (pistil or carpel/gynoecium) within the same individual flower.",
+        explanationHi: "गुड़हल (Hibiscus rosa-sinensis, कुल मालवेसी) का फूल उभयलिंगी (Bisexual / द्विलिंगी) होता है। इसका तात्पर्य है कि इसमें नर जननांग (पुमंग/पुंकेसर - Androecium) तथा मादा जननांग (जायांग/स्त्रीकेसर - Gynoecium) दोनों एक ही पुष्प में उपस्थित होते हैं।",
+        keyExamFact: "पपीता (Papaya) और तरबूज (Watermelon) एकलिंगी (Unisexual) पुष्पों के प्रमुख उदाहरण हैं, जबकि सरसों, मटर और गुड़हल उभयलिंगी (Bisexual) पुष्पों के उदाहरण हैं।"
+      }
+    ];
+
+    // State Tracking
+    let currentIndex = 0;
+    const userAnswers = questionsData.map(() => ({
+      visited: false,
+      answered: false,
+      selectedIndex: null,
+      isCorrect: null,
+      isSkipped: false,
+      isReview: false
+    }));
+
+    // Initialization
+    function init() {
+      buildPalette();
+      renderCurrentQuestion();
+    }
+
+    // Build Slide-in Palette
+    function buildPalette() {
+      const paletteGrid = document.getElementById("palette-grid");
+      paletteGrid.innerHTML = "";
+      for (let i = 0; i < questionsData.length; i++) {
+        const btn = document.createElement("button");
+        btn.className = "p-btn";
+        btn.id = `palette-btn-${i}`;
+        btn.innerText = i + 1;
+        btn.onclick = () => jumpToQuestion(i);
+        paletteGrid.appendChild(btn);
+      }
+    }
+
+    // Palette Drawer Toggles
+    function togglePalette(open) {
+      const drawer = document.getElementById("palette-drawer");
+      const overlay = document.getElementById("drawer-overlay");
+      if (open) {
+        drawer.classList.add("open");
+        overlay.classList.add("open");
+      } else {
+        drawer.classList.remove("open");
+        overlay.classList.remove("open");
+      }
+    }
+
+    // Jump to Question
+    function jumpToQuestion(index) {
+      currentIndex = index;
+      togglePalette(false);
+      renderCurrentQuestion();
+    }
+
+    // Render Question Function
+    function renderCurrentQuestion() {
+      const q = questionsData[currentIndex];
+      const state = userAnswers[currentIndex];
+      state.visited = true;
+
+      // Update Header info
+      document.getElementById("q-counter").innerText = `${currentIndex + 1} / ${questionsData.length}`;
+      document.getElementById("current-subject").innerText = q.topic;
+      document.getElementById("q-topic").innerText = q.topic;
+
+      // Mark for Review Button state
+      const reviewBtn = document.getElementById("btn-review");
+      if (state.isReview) {
+        reviewBtn.classList.add("active");
+        reviewBtn.innerText = "★ Marked for Review";
+      } else {
+        reviewBtn.classList.remove("active");
+        reviewBtn.innerText = "🔖 Mark for Review";
+      }
+
+      // Render Visual Content (SVG Charts, Tables, Passages)
+      const visualContainer = document.getElementById("visual-container");
+      if (q.visual) {
+        visualContainer.style.display = "block";
+        visualContainer.innerHTML = q.visual;
+      } else {
+        visualContainer.style.display = "none";
+        visualContainer.innerHTML = "";
+      }
+
+      // Render Question Stem
+      const stemEn = document.getElementById("q-text-en");
+      const stemHi = document.getElementById("q-text-hi");
+
+      if (q.isHindiOnly) {
+        stemEn.style.display = "none";
+        stemHi.style.display = "block";
+        stemHi.innerText = `प्र. ${q.id}. ${q.stemHi}`;
+      } else if (q.isEnglishOnly) {
+        stemEn.style.display = "block";
+        stemHi.style.display = "none";
+        stemEn.innerText = `Q${q.id}. ${q.stemEn}`;
+      } else {
+        stemEn.style.display = "block";
+        stemHi.style.display = "block";
+        stemEn.innerText = `Q${q.id}. ${q.stemEn}`;
+        stemHi.innerText = `प्र. ${q.id}. ${q.stemHi}`;
+      }
+
+      // Render Options with One-Tap Selection Lock
+      const optionsContainer = document.getElementById("options-container");
+      optionsContainer.innerHTML = "";
+      const optionLabels = ["(A)", "(B)", "(C)", "(D)", "(E)"];
+
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.id = `opt-${optIdx}`;
+
+        if (state.answered) {
+          btn.disabled = true;
+          if (optIdx === q.correctIndex) {
+            btn.classList.add("correct");
+          }
+          if (optIdx === state.selectedIndex && !state.isCorrect) {
+            btn.classList.add("incorrect");
+          }
+        }
+
+        btn.innerHTML = `
+          <span class="opt-key">${optionLabels[optIdx]}</span>
+          <span class="opt-text">${optText}</span>
+        `;
+
+        btn.onclick = () => selectOption(optIdx);
+        optionsContainer.appendChild(btn);
+      });
+
+      // Render Unabridged Solution Card
+      const solutionCard = document.getElementById("solution-container");
+      if (state.answered) {
+        solutionCard.classList.add("visible");
+        let solHtml = `
+          <div class="sol-heading">
+            <span>✔</span> Correct Option: ${optionLabels[q.correctIndex]}
+          </div>
+        `;
+
+        if (!q.isHindiOnly && q.explanationEn) {
+          solHtml += `
+            <div class="sol-section">
+              <strong>Explanation (English):</strong> ${q.explanationEn}
+            </div>
+          `;
+        }
+
+        if (!q.isEnglishOnly && q.explanationHi) {
+          solHtml += `
+            <div class="sol-section">
+              <strong>व्याख्या (Hindi):</strong> ${q.explanationHi}
+            </div>
+          `;
+        }
+
+        if (q.keyExamFact) {
+          solHtml += `
+            <div class="sol-fact">
+              <strong>💡 Key Exam Fact:</strong> ${q.keyExamFact}
+            </div>
+          `;
+        }
+
+        solutionCard.innerHTML = solHtml;
+      } else {
+        solutionCard.classList.remove("visible");
+        solutionCard.innerHTML = "";
+      }
+
+      // Prev & Next Buttons state
+      document.getElementById("btn-prev").disabled = (currentIndex === 0);
+      document.getElementById("btn-next").disabled = (currentIndex === questionsData.length - 1);
+
+      updateScoreBadge();
+      updatePaletteButton(currentIndex);
+    }
+
+    // Option Selection Lock & Instant Feedback
+    function selectOption(selectedIdx) {
+      const state = userAnswers[currentIndex];
+      if (state.answered) return; // Prevent re-selection
+
+      const q = questionsData[currentIndex];
+      state.answered = true;
+      state.isSkipped = false;
+      state.selectedIndex = selectedIdx;
+      state.isCorrect = (selectedIdx === q.correctIndex);
+
+      renderCurrentQuestion();
+    }
+
+    // Skip Question
+    function skipQuestion() {
+      const state = userAnswers[currentIndex];
+      if (!state.answered) {
+        state.isSkipped = true;
+      }
+      if (currentIndex < questionsData.length - 1) {
+        currentIndex++;
+        renderCurrentQuestion();
+      }
+    }
+
+    // Mark/Unmark for Review
+    function toggleReview() {
+      const state = userAnswers[currentIndex];
+      state.isReview = !state.isReview;
+      renderCurrentQuestion();
+    }
+
+    // Question Navigation
+    function navigateQuestion(delta) {
+      const newIdx = currentIndex + delta;
+      if (newIdx >= 0 && newIdx < questionsData.length) {
+        currentIndex = newIdx;
+        renderCurrentQuestion();
+      }
+    }
+
+    // UPSSSC PET Scoring Formula
+    function calculateScore() {
+      let correctCount = userAnswers.filter(q => q.answered && q.isCorrect === true).length;
+      let incorrectCount = userAnswers.filter(q => q.answered && q.isCorrect === false && !q.isSkipped).length;
+      let netScore = (correctCount * 1.0) - (incorrectCount * 0.25);
+      return {
+        correctCount,
+        incorrectCount,
+        netScore: netScore.toFixed(2)
+      };
+    }
+
+    function updateScoreBadge() {
+      const { netScore } = calculateScore();
+      document.getElementById("live-score").innerText = netScore;
+    }
+
+    // Update Palette Button Status Color
+    function updatePaletteButton(idx) {
+      const btn = document.getElementById(`palette-btn-${idx}`);
+      if (!btn) return;
+      const state = userAnswers[idx];
+
+      btn.className = "p-btn";
+      if (idx === currentIndex) {
+        btn.classList.add("active");
+      }
+
+      if (state.isReview) {
+        btn.classList.add("review");
+      } else if (state.answered && state.isCorrect === true) {
+        btn.classList.add("correct");
+      } else if (state.answered && state.isCorrect === false) {
+        btn.classList.add("incorrect");
+      } else if (state.isSkipped) {
+        btn.classList.add("skipped");
+      } else if (state.visited && !state.answered) {
+        btn.classList.add("unanswered");
+      }
+    }
+
+    // Submit Exam & Show Final Report Dashboard
+    function submitExam() {
+      const { correctCount, incorrectCount, netScore } = calculateScore();
+      const answeredTotal = correctCount + incorrectCount;
+      const skippedCount = userAnswers.filter(q => q.isSkipped).length;
+      const unansweredCount = userAnswers.filter(q => !q.answered && !q.isSkipped).length;
+      const reviewCount = userAnswers.filter(q => q.isReview).length;
+      const accuracy = answeredTotal > 0 ? ((correctCount / answeredTotal) * 100).toFixed(1) + "%" : "0.0%";
+
+      document.getElementById("dash-net-score").innerText = netScore;
+      document.getElementById("dash-correct").innerText = correctCount;
+      document.getElementById("dash-incorrect").innerText = incorrectCount;
+      document.getElementById("dash-unanswered").innerText = unansweredCount;
+      document.getElementById("dash-skipped").innerText = skippedCount;
+      document.getElementById("dash-review").innerText = reviewCount;
+      document.getElementById("dash-accuracy").innerText = accuracy;
+
+      document.getElementById("dashboard-modal").classList.add("open");
+    }
+
+    function closeDashboard() {
+      document.getElementById("dashboard-modal").classList.remove("open");
+    }
+
+    // Launch Simulator on load
+    window.onload = init;
+  </script>
+</body>
+</html>

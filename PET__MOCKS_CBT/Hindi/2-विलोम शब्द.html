@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPSSSC PET CBT Simulator - सामान्य हिन्दी: विलोम शब्द (100 Questions)</title>
+  <style>
+    :root {
+      --bg-main: #121316;
+      --bg-card: #1e2024;
+      --bg-elevated: #272a30;
+      --bg-hover: #31353d;
+      --text-primary: #f1f3f5;
+      --text-secondary: #adb5bd;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --correct: #10b981;
+      --correct-bg: rgba(16, 185, 129, 0.14);
+      --incorrect: #ef4444;
+      --incorrect-bg: rgba(239, 68, 68, 0.14);
+      --unanswered: #f59e0b;
+      --skipped: #64748b;
+      --review: #a855f7;
+      --not-visited: #34373c;
+      --border: #2f333a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .brand-section {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .subject-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.2px;
+    }
+
+    .sub-caption {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .score-badge {
+      border-color: rgba(59, 130, 246, 0.45);
+      background-color: rgba(59, 130, 246, 0.12);
+      color: #93c5fd;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      padding: 0.55rem 1rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text-primary);
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border);
+    }
+
+    .btn:hover:not(:disabled) {
+      background-color: var(--bg-hover);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-review {
+      background-color: rgba(168, 85, 247, 0.16);
+      border-color: rgba(168, 85, 247, 0.45);
+      color: #d8b4fe;
+    }
+
+    .btn-review.active {
+      background-color: var(--review);
+      color: #fff;
+    }
+
+    .btn-finish {
+      background-color: rgba(16, 185, 129, 0.16);
+      border-color: rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+    }
+
+    .btn-finish:hover {
+      background-color: var(--correct);
+      color: #ffffff;
+    }
+
+    /* Main Container */
+    .main-container {
+      width: 100%;
+      max-width: 860px;
+      margin: 2rem auto;
+      padding: 0 1.25rem;
+      flex: 1;
+    }
+
+    /* Question Card */
+    .question-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .q-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .q-num-badge {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #60a5fa;
+      background-color: rgba(59, 130, 246, 0.12);
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+    }
+
+    .marking-pill {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      background-color: var(--bg-elevated);
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+    }
+
+    .q-stem-hi {
+      font-size: 1.32rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.35rem;
+    }
+
+    .q-stem-en {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Options List */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .option-card {
+      background-color: var(--bg-elevated);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.95rem 1.15rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      transition: all 0.16s ease;
+      user-select: none;
+    }
+
+    .option-card:hover:not(.locked) {
+      background-color: var(--bg-hover);
+      border-color: #4b5563;
+    }
+
+    .option-card.locked {
+      cursor: default;
+    }
+
+    .option-letter {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      color: var(--text-secondary);
+    }
+
+    .option-text {
+      font-size: 1.08rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      flex: 1;
+    }
+
+    .option-status-icon {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    /* Option Feedback States */
+    .option-card.correct-selected {
+      background-color: var(--correct-bg);
+      border-color: var(--correct);
+    }
+    .option-card.correct-selected .option-letter {
+      background-color: var(--correct);
+      border-color: var(--correct);
+      color: #ffffff;
+    }
+
+    .option-card.incorrect-selected {
+      background-color: var(--incorrect-bg);
+      border-color: var(--incorrect);
+    }
+    .option-card.incorrect-selected .option-letter {
+      background-color: var(--incorrect);
+      border-color: var(--incorrect);
+      color: #ffffff;
+    }
+
+    .option-card.correct-outline {
+      border-color: var(--correct);
+      box-shadow: 0 0 0 1px var(--correct);
+    }
+    .option-card.correct-outline .option-letter {
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+
+    /* Action Bar inside Card */
+    .card-actions {
+      margin-top: 1.6rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .left-actions, .right-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    /* Explanation Box */
+    .explanation-card {
+      margin-top: 1.5rem;
+      background-color: rgba(30, 41, 59, 0.55);
+      border: 1px solid #334155;
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: none;
+      animation: fadeIn 0.22s ease;
+    }
+
+    .explanation-card.visible {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .exp-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .exp-block {
+      margin-bottom: 0.75rem;
+      font-size: 0.98rem;
+      color: var(--text-primary);
+    }
+
+    .exp-fact {
+      background-color: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.7rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      color: #a7f3d0;
+    }
+
+    /* Slide-over Palette Drawer & Backdrop */
+    .palette-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.68);
+      backdrop-filter: blur(3px);
+      z-index: 90;
+      display: none;
+    }
+
+    .palette-backdrop.open {
+      display: block;
+    }
+
+    .palette-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      background-color: var(--bg-card);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .palette-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: 1.15rem 1.35rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+    }
+
+    .legend-grid {
+      padding: 0.95rem 1.35rem;
+      background-color: var(--bg-main);
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.55rem;
+      font-size: 0.8rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--text-secondary);
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .palette-grid-container {
+      padding: 1.25rem 1.35rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.6rem;
+    }
+
+    .p-btn {
+      height: 42px;
+      border-radius: 8px;
+      border: 1.5px solid transparent;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: #ffffff;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    .p-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .p-btn.current-q {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+    }
+
+    /* 6 Status Colors */
+    .st-correct { background-color: var(--correct); }
+    .st-incorrect { background-color: var(--incorrect); }
+    .st-unanswered { background-color: var(--unanswered); color: #111; }
+    .st-skipped { background-color: var(--skipped); }
+    .st-review { background-color: var(--review); }
+    .st-not-visited { background-color: var(--not-visited); color: var(--text-secondary); border-color: var(--border); }
+
+    /* Final Report Dashboard */
+    .report-container {
+      display: none;
+      width: 100%;
+      max-width: 1020px;
+      margin: 2rem auto;
+      padding: 0 1.25rem 3rem;
+    }
+
+    .report-container.visible {
+      display: block;
+    }
+
+    .report-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .stat-box {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 1.65rem;
+      font-weight: 800;
+      margin-bottom: 0.2rem;
+    }
+
+    .stat-lbl {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .review-matrix {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .matrix-item {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.15rem;
+    }
+
+    .matrix-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.55rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.22rem 0.65rem;
+      border-radius: 99px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 640px) {
+      .question-card { padding: 1.2rem; }
+      .q-stem-hi { font-size: 1.15rem; }
+      .card-actions { flex-direction: column; align-items: stretch; }
+      .left-actions, .right-actions { justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-bar">
+    <div class="brand-section">
+      <div class="subject-title">UPSSSC PET — सामान्य हिन्दी: विलोम शब्द</div>
+      <div class="sub-caption">Class 10th/12th NCERT Standard | +1.00 Correct, -0.25 Incorrect</div>
+    </div>
+
+    <div class="top-controls">
+      <div class="badge" id="qCounterBadge">Question 1 of 100</div>
+      <div class="badge score-badge" id="liveScoreBadge">Live Score: 0.00</div>
+      <button class="btn" id="openPaletteTopBtn" onclick="togglePalette(true)">📋 Open Palette</button>
+      <button class="btn btn-finish" onclick="showFinalReport()">📊 Finish & Report</button>
+    </div>
+  </header>
+
+  <!-- Main Single-Column Question View -->
+  <main class="main-container" id="simulatorView">
+    <div class="question-card">
+      <div class="q-header">
+        <span class="q-num-badge" id="cardQNum">Question 1 of 100</span>
+        <span class="marking-pill">Correct: +1.00 | Wrong: -0.25 | Skip: 0.00</span>
+      </div>
+
+      <div class="q-stem-hi" id="qStemHi"></div>
+      <div class="q-stem-en" id="qStemEn"></div>
+
+      <div class="options-list" id="optionsContainer"></div>
+
+      <!-- Bilingual Explanation Card -->
+      <div class="explanation-card" id="explanationCard">
+        <div class="exp-title">📘 प्रमाणित व्याख्या एवं विश्लेषण (Verified Explanation)</div>
+        <div class="exp-block" id="expEnText"></div>
+        <div class="exp-block" id="expHiText"></div>
+        <div class="exp-fact" id="expFactText"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="card-actions">
+        <div class="left-actions">
+          <button class="btn" id="prevBtn" onclick="navigateQuestion(-1)">⬅ Previous</button>
+          <button class="btn" id="skipBtn" onclick="skipQuestion()">⏭ Skip Question</button>
+          <button class="btn btn-review" id="reviewBtn" onclick="toggleMarkForReview()">🟣 Mark for Review</button>
+        </div>
+        <div class="right-actions">
+          <button class="btn" onclick="togglePalette(true)">📋 Open Palette</button>
+          <button class="btn btn-primary" id="nextBtn" onclick="navigateQuestion(1)">Next Question ➔</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- On-Demand Hidden Slide-in Question Palette -->
+  <div class="palette-backdrop" id="paletteBackdrop" onclick="togglePalette(false)"></div>
+  <aside class="palette-drawer" id="paletteDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-title">📋 Question Palette (1–100)</div>
+      <button class="btn" onclick="togglePalette(false)">✕ Close Palette</button>
+    </div>
+
+    <div class="legend-grid">
+      <div class="legend-item"><span class="dot st-correct"></span>🟢 Correct (<span id="legCorrect">0</span>)</div>
+      <div class="legend-item"><span class="dot st-incorrect"></span>🔴 Incorrect (<span id="legIncorrect">0</span>)</div>
+      <div class="legend-item"><span class="dot st-unanswered"></span>🟠 Unanswered (<span id="legUnanswered">0</span>)</div>
+      <div class="legend-item"><span class="dot st-skipped"></span>⚪ Skipped (<span id="legSkipped">0</span>)</div>
+      <div class="legend-item"><span class="dot st-review"></span>🟣 Review (<span id="legReview">0</span>)</div>
+      <div class="legend-item"><span class="dot st-not-visited"></span>⚫ Not Visited (<span id="legNotVisited">100</span>)</div>
+    </div>
+
+    <div class="palette-grid-container">
+      <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+  </aside>
+
+  <!-- Final Report Dashboard -->
+  <section class="report-container" id="reportView">
+    <div class="report-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <h2 style="font-size:1.5rem; color:#fff;">📊 UPSSSC PET Final Scorecard & Review Matrix</h2>
+          <p style="color:var(--text-secondary); font-size:0.92rem;">सामान्य हिन्दी — विलोम शब्द (Complete 100-Question Performance Breakdown)</p>
+        </div>
+        <div style="display:flex; gap:0.65rem;">
+          <button class="btn btn-primary" onclick="returnToSimulator()">⬅ Back to Simulator</button>
+          <button class="btn" onclick="resetSimulator()">🔄 Reset Exam</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="repNetScore" style="color:#60a5fa;">0.00</div>
+          <div class="stat-lbl">Net Score (out of 100)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="repAccuracy" style="color:#34d399;">0.00%</div>
+          <div class="stat-lbl">Accuracy Rate</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="repAttempted">0</div>
+          <div class="stat-lbl">Total Attempted</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="repCorrect" style="color:var(--correct);">0</div>
+          <div class="stat-lbl">Correct (+1.00)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="repIncorrect" style="color:var(--incorrect);">0</div>
+          <div class="stat-lbl">Incorrect (-0.25)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="repSkipped" style="color:var(--text-secondary);">0</div>
+          <div class="stat-lbl">Skipped / Unanswered</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-card">
+      <h3 style="margin-bottom:1.1rem; font-size:1.2rem;">🔍 100-Question Bilingual Review Matrix</h3>
+      <div class="review-matrix" id="reviewMatrixContainer"></div>
+    </div>
+  </section>
+
+  <script>
+    // Complete 100 Unique Verified Questions from Batches 1 to 4
+    const rawQuestions = [
+      [1, "जंगम शब्द का सही विलोम शब्द क्या है?", ["अगम", "दुर्गम", "स्थावर", "चंचल"], 2, "'जंगम' का अर्थ है 'जो चल सकता हो' या 'गतिशील'। इसका सटीक एवं प्रमाणित विलोम शब्द 'स्थावर' (स्थिर या अचल) होता है। 'दुर्गम' और 'अगम' का विलोम 'सुगम' होता है, जबकि 'चंचल' का विलोम 'स्थिर' या 'एकाग्र' होता है।", "'स्थावर-जंगम' युग्म UPSSSC PET और RO/ARO परीक्षाओं में सर्वाधिक बार पूछा जाने वाला तत्सम विलोम युग्म है।"],
+      [2, "तिमिर शब्द का उपयुक्त विलोम शब्द चुनिए।", ["आलोक", "किरण", "रंगीन", "रंगहीन"], 0, "'तिमिर' का शाब्दिक अर्थ 'अंधकार' होता है। अतः इसका सही तत्सम विलोम शब्द 'आलोक' या 'प्रकाश' है। 'रंगीन' का विलोम 'रंगहीन' होता है।", "तत्सम शब्द का विलोम सदैव तत्सम ही होता है; जैसे—'अंधकार' का 'प्रकाश' और 'तिमिर' का 'आलोक' या 'ज्योति'।"],
+      [3, "ऋजु का विलोम शब्द निम्नलिखित में से कौन-सा है?", ["सीधा", "सरल", "त्रिकोण", "वक्र"], 3, "'ऋजु' का अर्थ 'सीधा' या 'सरल' होता है। इसका सटीक विलोम 'वक्र' (टेढ़ा या तिरछा) होता है। 'सरल' का विलोम 'कठिन' या 'कुटिल' होता है तथा 'सीधा' का विलोम 'उल्टा' या 'टेढ़ा' होता है।", "'ऋजु-वक्र' संस्कृत निष्ठ (तत्सम) विलोम युग्म है जो UPSSSC की विभिन्न परीक्षाओं में बार-बार दोहराया जाता है।"],
+      [4, "अज्ञ का विलोम शब्द क्या है?", ["विज्ञ", "यज्ञ", "सर्वज्ञ", "अनज्ञ"], 0, "'अज्ञ' का अर्थ है 'जो कुछ न जानता हो' (अज्ञानी)। इसका सही विलोम 'विज्ञ' या 'प्रज्ञ' (जानकार/समझदार) होता है। इसी प्रकार 'अल्पज्ञ' (कम जानने वाला) का विलोम 'सर्वज्ञ' या 'बहुज्ञ' होता है।", "परीक्षा में 'अज्ञ' और 'अल्पज्ञ' के अंतर को ध्यान में रखें: अज्ञ ↔ विज्ञ, अल्पज्ञ ↔ सर्वज्ञ/बहुज्ञ, अभिज्ञ ↔ अनभिज्ञ।"],
+      [5, "उन्मूलन का सही विलोम शब्द चुनिए।", ["अवमूल्यन", "विश्लेषण", "रोपण", "संश्लेषण"], 2, "'उन्मूलन' का अर्थ है 'जड़ से उखाड़ देना' या 'नष्ट करना'। इसका सही विलोम शब्द 'रोपण' (लगाना या स्थापित करना) है। 'विश्लेषण' का विलोम 'संश्लेषण' और 'अवमूल्यन' का विलोम 'अधिमूल्यन' होता है।", "'उन्मूलन ↔ रोपण' तथा 'उन्मीलन ↔ निमीलन' (पलक खुलना ↔ पलक झपकना)—इन दोनों की वर्तनी में विशेष सावधानी बरतें।"],
+      [6, "उत्कर्ष शब्द का विलोम लिखिए।", ["पतन", "अपकर्ष", "अपभ्रष्ट", "विकर्ष"], 1, "'उत्कर्ष' का अर्थ है 'ऊपर उठना', 'उन्नति' या 'समृद्धि'। इसका सही विलोम 'अपकर्ष' (अवनति या नीचे गिरना) है। 'पतन' का विलोम 'उत्थान' होता है।", "'उत्' उपसर्ग से बने शब्दों का विलोम प्रायः 'अप' उपसर्ग लगाकर बनाया जाता है (जैसे—उत्कर्ष ↔ अपकर्ष, उपकार ↔ अपकार)।"],
+      [7, "चिरंतन शब्द का सही विलोम क्या है?", ["अलौकिक", "लौकिक", "नश्वर", "नैसर्गिक"], 2, "'चिरंतन' (या शाश्वत) का अर्थ है 'सदा रहने वाला' या 'प्राचीन काल से चला आने वाला'। इसका सटीक विलोम 'नश्वर' (नष्ट होने वाला) है। 'लौकिक' का विलोम 'अलौकिक' तथा 'नैसर्गिक' का विलोम 'कृत्रिम' होता है।", "'चिरंतन' और 'शाश्वत' परस्पर पर्यायवाची हैं, और इन दोनों का विलोम 'नश्वर' या 'क्षणिक' होता है।"],
+      [8, "अनुग्रह शब्द का उपयुक्त विलोम शब्द क्या होगा?", ["विग्रह", "आग्रह", "परिग्रह", "संग्रह"], 0, "'अनुग्रह' का अर्थ 'कृपा' या 'दया' होता है। इसका सही विलोम शब्द 'विग्रह' (अत्याचार, अलगाव या दंड) या 'कोप' होता है। 'परिग्रह' का विलोम 'अपरिग्रह' और 'आग्रह' का विलोम 'दुराग्रह' या 'अनाग्रह' होता है।", "समास के संदर्भ में 'समास' का विलोम 'व्यास' होता है और 'संधि' का विलोम 'विग्रह' या 'विच्छेद' होता है।"],
+      [9, "अनभिज्ञ का सटीक विलोम शब्द बताइए।", ["अज्ञ", "अभिज्ञ", "प्रज्ञ", "अविज्ञ"], 1, "'अनभिज्ञ' (अन् + अभिज्ञ) का अर्थ 'अनजान' या 'न जानने वाला' होता है। इसका सही विलोम 'अभिज्ञ' (जानने वाला या ज्ञाता) है। कई अभ्यर्थी भ्रमवश 'अभिज्ञ' को 'अज्ञानी' समझ लेते हैं, जो अशुद्ध है।", "'अभिज्ञ' और 'विज्ञ' समानार्थी हैं (अर्थ: जानकार), और इन दोनों का विलोम 'अनभिज्ञ' होता है।"],
+      [10, "सौम्य शब्द का विलोम क्या है?", ["सौभाग्य", "उग्र", "शत्रु", "दुराशय"], 1, "'सौम्य' का अर्थ 'शांत', 'सुशील' या 'मनोहर' होता है। इसका सही विलोम शब्द 'उग्र' (प्रचंड या क्रोधी) है। 'सौभाग्य' का विलोम 'दुर्भाग्य', 'शत्रु' का 'मित्र' और 'दुराशय' का 'सदाशय' होता है।", "UPSSSC की परीक्षाओं में 'सौम्य ↔ उग्र' तथा 'शांत ↔ अशांत/उग्र' सीधे तौर पर पूछे जाते हैं।"],
+      [11, "ह्रास शब्द का सटीक विलोम शब्द क्या है?", ["हास्य", "वृद्धि", "हंसी", "हस्त"], 1, "'ह्रास' का अर्थ 'कमी', 'क्षय' या 'गिरावट' होता है। इसका सही विलोम 'वृद्धि' या 'विकास' है। वहीं 'हास्य' का विलोम 'रुदन' होता है।", "वर्तनी शुद्धि और विलोम दोनों की दृष्टि से 'ह्रास' (ह् + र + आ + स) और 'वृद्धि' अत्यंत महत्वपूर्ण शब्द हैं।"],
+      [12, "न्यून शब्द का सही विलोम चुनिए।", ["अधिक", "नवीन", "नवनीत", "नगर"], 0, "'न्यून' का अर्थ 'कम' या 'थोड़ा' होता है। इसका सटीक विलोम 'अधिक' है। 'नवीन' का विलोम 'प्राचीन' तथा 'नगर' का विलोम 'ग्राम' होता है।", "'अल्प' का विलोम 'अति' या 'बहु' होता है, जबकि 'न्यून' का विलोम 'अधिक' और 'न्यूनतम' का 'अधिकतम' होता है।"],
+      [13, "पुष्ट शब्द का विलोम शब्द क्या है?", ["क्षीण", "दुष्ट", "पुरस्कार", "प्रकृति"], 0, "'पुष्ट' का अर्थ 'मजबूत', 'हृष्ट-पुष्ट' या 'बलवान' होता है। इसका सही विलोम शब्द 'क्षीण' (कमजोर या दुर्बल) या 'अपुष्ट' होता है। 'पुरस्कार' का विलोम 'दंड' या 'तिरस्कार' होता है।", "'आकर्षण ↔ विकर्षण' और 'पुष्ट ↔ क्षीण' तत्सम विलोम शब्दों की श्रेणी में उच्च प्राथमिकता रखते हैं।"],
+      [14, "गुण शब्द का विलोम बताइए।", ["दोष", "गुणी", "गुणा", "गृहस्थ"], 0, "'गुण' का सटीक विलोम 'दोष' या 'अवगुण' होता है। 'गुणी' का विलोम 'निर्गुणी', 'गुणा' का 'भाग' और 'गृहस्थ' का विलोम 'संन्यासी' या 'ब्रह्मचारी' होता है।", "'सगुण' का विलोम 'निर्गुण' होता है, जबकि 'गुण' का विलोम 'दोष' या 'अवगुण' होता है।"],
+      [15, "संकीर्ण का सही विलोम शब्द क्या है?", ["संक्षेप", "विस्तार", "विकीर्ण", "विस्तीर्ण"], 3, "'संकीर्ण' का अर्थ 'संकरा' या 'छोटा/संकुचित' होता है। इसका सर्वाधिक उपयुक्त विलोम 'विस्तीर्ण' (फैला हुआ/चौड़ा) है। 'संक्षेप' का विलोम 'विस्तार' और 'आकीर्ण' का विलोम 'विकीर्ण' होता है।", "यदि विकल्प में 'विस्तीर्ण' न हो, तब 'विकीर्ण' को चुना जा सकता है, किंतु दोनों के होने पर 'संकीर्ण ↔ विस्तीर्ण' ही प्रथम वरीयता है।"],
+      [16, "अनुरक्ति का विलोम शब्द क्या है?", ["विराग", "विरक्ति", "तिरोभाव", "संसक्ति"], 1, "'अनुरक्ति' (प्रेम या आसक्ति) का सटीक विलोम 'विरक्ति' है। 'अनुराग' का विलोम 'विराग' तथा 'आविर्भाव' का विलोम 'तिरोभाव' होता है।", "शब्द जिस कोटि (संज्ञा/विशेषण) या प्रत्यय का हो, विलोम भी उसी रूप में होना चाहिए: अनुराग ↔ विराग, अनुरक्ति ↔ विरक्ति, अनुरक्त ↔ विरक्त।"],
+      [17, "सापेक्ष का सही विलोम शब्द चुनिए।", ["असपेक्ष्य", "निष्पक्ष", "निरपेक्ष", "आपेक्ष"], 2, "'सापेक्ष' का अर्थ है 'किसी की अपेक्षा रखने वाला'। इसका सही विलोम 'निरपेक्ष' (बिना किसी अपेक्षा के/स्वतंत्र) है। 'पक्ष' का विलोम 'विपक्ष' और 'पक्षपाती' का 'निष्पक्ष' होता है।", "'सापेक्ष ↔ निरपेक्ष' में 'निर्' उपसर्ग के प्रयोग से विलोम शब्द का निर्माण हुआ है।"],
+      [18, "विग्रह का उपयुक्त विलोम शब्द क्या है?", ["संधि", "अविग्रह", "आग्रह", "ग्रहण"], 0, "व्याकरण और सामान्य प्रयोग दोनों में 'विग्रह' (अलग करना या तोड़ना) का सटीक विलोम 'संधि' या 'समास' (जोड़ना या मिलाना) होता है। 'ग्रहण' का विलोम 'त्याग' या 'अर्पण' होता है।", "यदि विकल्प में 'संधि' और 'समास' दोनों हों, तो 'विग्रह' के लिए 'संधि' को प्राथमिकता दी जाती है (क्योंकि 'समास' का मुख्य विलोम 'व्यास' है)।"],
+      [19, "यथार्थ का विलोम शब्द निम्नलिखित में से कौन-सा है?", ["कृत्रिम", "आदर्श", "उचित", "अनुचित"], 1, "'यथार्थ' का अर्थ है 'जैसा होना चाहिए ठीक वैसा' अर्थात् 'वास्तविक'। इसका सही विलोम 'आदर्श' या 'कल्पित/काल्पनिक' होता है। 'कृत्रिम' का विलोम 'प्राकृतिक' और 'उचित' का 'अनुचित' होता है।", "दर्शन और साहित्य से जुड़े प्रश्नों में 'यथार्थवाद' का विलोम 'आदर्शवाद' तथा 'यथार्थ' का विलोम 'आदर्श' या 'कल्पित' माना जाता है।"],
+      [20, "साधु का सही विलोम शब्द क्या है?", ["साधुनी", "संन्यासिनी", "साध्वी", "असाधु"], 3, "'साधु' का अर्थ 'सज्जन' या 'भला आदमी' होता है, अतः इसका विलोम 'असाधु' (दुष्ट/असज्जन) है। 'साध्वी' साधु का स्त्रीलिंग रूप है, न कि विपरीतार्थक (विलोम) शब्द।", "अभ्यर्थी प्रायः लिंग-परिवर्तन (साधु-साध्वी) और विलोम-शब्द (साधु-असाधु) में भ्रमित हो जाते हैं; UPSSSC इस अंतर पर विशेष प्रश्न बनाता है।"],
+      [21, "आहूत का विलोम शब्द क्या है?", ["हुत", "अनहूत", "अपहूत", "अनाहूत"], 3, "'आहूत' का अर्थ है 'जिसे बुलाया गया हो' (निमंत्रित)। इसमें 'अन्' उपसर्ग लगाने से इसका विलोम 'अनाहूत' (बिना बुलाया हुआ) बनता है।", "इसी से मिलता-जुलता शब्द 'आह्वान' (पुकारना/बुलाना) है, जिसका विलोम 'विसर्जन' होता है।"],
+      [22, "अथ का सटीक विलोम शब्द बताइए।", ["पूर्ण", "समास", "इति", "खत्म"], 2, "'अथ' का अर्थ 'आरंभ' या 'शुरुआत' (मंगलसूचक शब्द) होता है। इसका सटीक तत्सम विलोम 'इति' (समाप्ति/अंत) है। इसी प्रकार 'श्रीगणेश' का विलोम 'इतिश्री' होता है।", "'अथ ↔ इति' और 'श्रीगणेश ↔ इतिश्री' दोनों युग्म आरंभ और अंत के द्योतक हैं और PET परीक्षा के लिए अत्यंत महत्वपूर्ण हैं।"],
+      [23, "वादी का विलोम शब्द क्या है?", ["अवादी", "विवादी", "प्रतिवादी", "अनादि"], 2, "न्यायालय में मुकदमा दायर करने वाले या पक्ष रखने वाले को 'वादी' कहते हैं, और उसका विरोध करने या उत्तर देने वाले विपक्ष को 'प्रतिवादी' कहते हैं। 'आदि' का विलोम 'अंत' या 'अनादि' होता है।", "प्रशासनिक एवं न्यायिक शब्दावली के अंतर्गत 'वादी ↔ प्रतिवादी' UPSSSC परीक्षाओं का एक सदाबहार प्रश्न है।"],
+      [24, "अवर का सही विलोम शब्द चुनिए।", ["लघु", "प्रवर", "सुवर", "कनिष्ठ"], 1, "'अवर' का अर्थ 'नीचे का' या 'निम्न श्रेणी का' (Junior/Lower) होता है। इसका सटीक विलोम 'प्रवर' (श्रेष्ठ या उच्च श्रेणी का - Senior/Superior) है। 'लघु' का विलोम 'गुरु' या 'दीर्घ' और 'कनिष्ठ' का 'वरिष्ठ' या 'ज्येष्ठ' होता है।", "सरकारी पदनामों में भी 'अवर अभियंता' (Junior Engineer) और 'प्रवर वर्ग' (Superior Class) का प्रयोग इसी विलोम आधार पर होता है।"],
+      [25, "जटिल का विलोम शब्द क्या है?", ["सरल", "कुटिल", "सहज", "अटल"], 0, "'जटिल' का अर्थ 'पेचीदा' या 'उलझा हुआ' होता है। इसका सही विलोम 'सरल' है। 'कुटिल' जटिल का ही समानार्थी जैसा शब्द है, और 'कुटिल' का विलोम भी 'सरल' होता है।", "'सरल' शब्द तीन प्रमुख शब्दों—'कठिन', 'जटिल' और 'कुटिल'—के सटीक विलोम के रूप में प्रयुक्त होता है।"],
+      [26, "आमिष शब्द का सही विलोम शब्द क्या है?", ["सामिष", "निरामिष", "मांसाहारी", "शाकाहारी"], 1, "'आमिष' और 'सामिष' दोनों का अर्थ 'मांस से युक्त भोजन' होता है। अतः इन दोनों का सटीक एवं प्रमाणित विलोम शब्द 'निरामिष' (मांस रहित भोजन) है। कई अभ्यर्थी भ्रमवश 'आमिष' का विलोम 'सामिष' लगा देते हैं, जबकि दोनों समानार्थी हैं।", "'आमिष' और 'सामिष' परस्पर पर्यायवाची हैं, और इन दोनों का एकमात्र शुद्ध विलोम 'निरामिष' होता है।"],
+      [27, "अंतरंग का उपयुक्त विलोम शब्द चुनिए।", ["अभ्यंतर", "तरंग", "बहिरंग", "अतिरंग"], 2, "'अंतरंग' का अर्थ 'अंदरूनी' या 'घनिष्ठ' होता है। इसका सही तत्सम विलोम 'बहिरंग' (बाहरी) है। इसी प्रकार 'आभ्यंतर' (भीतरी) का विलोम 'बाह्य' होता है।", "विसर्ग संधि के नियम से 'बहिः + अंग = बहिरंग' बनता है, जो 'अंतरंग' का मानक विलोम है।"],
+      [28, "सजल का विलोम शब्द निम्नलिखित में से कौन-सा है?", ["अजल", "निर्जल", "जलहीन", "कुजल"], 1, "'सजल' (जल सहित या भीगा हुआ) में 'स' उपसर्ग लगा है, जिसका सटीक विलोम 'निर्' उपसर्ग लगाकर 'निर्जल' (बिना जल का/सूखा) बनाया जाता है।", "'स' उपसर्ग से बने शब्दों का विलोम प्रायः 'निर्' उपसर्ग से बनता है; जैसे—सजल ↔ निर्जल, सजीव ↔ निर्जीव, सबल ↔ निर्बल।"],
+      [29, "सामान्य शब्द का सटीक विलोम शब्द क्या है?", ["श्रेष्ठ", "सर्वज्ञ", "साधारण", "विशिष्ट"], 3, "'सामान्य' का अर्थ 'साधारण' या 'आम' होता है। इसका सही विलोम शब्द 'विशिष्ट' (विशेष) है। 'श्रेष्ठ' का विलोम 'अधम' या 'निम्न' होता है तथा 'साधारण' का विलोम 'विशेष' या 'असाधारण' होता है।", "UPSSSC की परीक्षाओं में 'सामान्य ↔ विशिष्ट' तथा 'संश्लेषण ↔ विश्लेषण' युग्म बार-बार पूछे जाते हैं।"],
+      [30, "परमार्थ का सही विलोम शब्द बताइए।", ["स्वार्थ", "शब्दार्थ", "दयावान", "दयाहीन"], 0, "'परमार्थ' (परम + अर्थ) का तात्पर्य 'दूसरों की भलाई' या 'परोपकार' से है। इसका सटीक विलोम 'स्वार्थ' (अपना हित) है। इसी प्रकार 'निःस्वार्थ' का विलोम 'स्वार्थी' होता है।", "दीर्घ स्वर संधि से निर्मित 'परमार्थ' और 'स्वार्थ' एक-दूसरे के विपरीतार्थक शब्द हैं।"],
+      [31, "प्रसारण का विलोम शब्द क्या है?", ["प्रतिपादन", "आरक्षण", "आकुंचन", "संदर्शन"], 2, "'प्रसारण' का अर्थ 'फैलाना' या 'विस्तार करना' होता है। इसका सटीक तत्सम विलोम 'आकुंचन' या 'संकुचन' (सिकोड़ना या समेटना) है।", "विज्ञान और हिंदी व्याकरण दोनों के संदर्भ में 'प्रसारण ↔ आकुंचन/संकुचन' एक अत्यंत महत्वपूर्ण युग्म है।"],
+      [32, "ऋणात्मक का सही विलोम शब्द क्या है?", ["धनात्मक", "रिणात्मक", "मानात्मक", "अनात्मक"], 0, "'ऋणात्मक' (नकारात्मक या घटाने वाला) का सटीक विलोम 'धनात्मक' (सकारात्मक या जोड़ने वाला) है। इसी प्रकार 'ऋण' का विलोम 'धन' या 'उऋण' और 'ऋणी' का विलोम 'धनी' या 'उऋण' होता है।", "जब कर्ज चुकाने के संदर्भ में पूछा जाए तो 'ऋणी' का विलोम 'उऋण' (कर्जमुक्त) होता है।"],
+      [33, "निषिद्ध का सर्वथा उपयुक्त विलोम शब्द कौन-सा है?", ["निश्चित", "विहित", "उचित", "निर्मित"], 1, "'निषिद्ध' का अर्थ है 'जिसका निषेध किया गया हो' या 'वर्जित'। इसका मानक तत्सम विलोम शब्द 'विहित' (जिसका विधान किया गया हो/उचित) है। 'निश्चित' का विलोम 'अनिश्चित' और 'उचित' का 'अनुचित' होता है।", "'निषेध' (संज्ञा) का विलोम 'विधि' होता है, जबकि 'निषिद्ध' (विशेषण) का विलोम 'विहित' होता है—यह अंतर अत्यंत महत्वपूर्ण है।"],
+      [34, "शुष्क का विलोम शब्द चुनिए।", ["उष्ण", "आर्द्र", "शीत", "शिष्ट"], 1, "'शुष्क' का अर्थ 'सूखा' होता है, अतः इसका तत्सम विलोम 'आर्द्र' (गीला या नम) है। 'उष्ण' (गर्म) का विलोम 'शीत' (ठंडा) और 'शिष्ट' का विलोम 'अशिष्ट' होता है।", "तद्भव रूप में 'सूखा' का विलोम 'गीला' होता है, किंतु तत्सम रूप में 'शुष्क' का विलोम सदैव 'आर्द्र' होगा।"],
+      [35, "स्थूल का विलोम शब्द निम्नलिखित में से कौन-सा नहीं है?", ["सूक्ष्म", "तन्वी", "दुर्बल", "शाश्वत"], 3, "'स्थूल' का अर्थ 'मोटा', 'बड़ा' या 'भारी' होता है। इसके विलोम रूप में 'सूक्ष्म', 'तन्वी' और 'दुर्बल' तीनों प्रयुक्त हो सकते हैं, किंतु 'शाश्वत' (सदा रहने वाला) का स्थूल से कोई संबंध नहीं है; 'शाश्वत' का विलोम 'नश्वर' या 'क्षणिक' होता है।", "यदि सीधा प्रश्न पूछा जाए कि 'स्थूल का सर्वोत्तम विलोम क्या है?', तो उत्तर सदैव 'सूक्ष्म' (या 'कृश') होगा।"],
+      [36, "पृथक् का सही विलोम शब्द क्या है?", ["एकत्र", "संयुक्त", "थक", "सुघट"], 1, "'पृथक्' का अर्थ 'अलग' या 'जुदा' होता है। इसका सटीक तत्सम विलोम 'संयुक्त' (जुड़ा हुआ/मिला हुआ) है। 'एकत्र' का विलोम 'विकीर्ण' या 'प्रकीर्ण' होता है।", "वर्तनी की दृष्टि से 'पृथक्' में 'क' के नीचे हलंत (्) लगता है, और इसका विलोम 'संयुक्त' होता है।"],
+      [37, "उपयोग का विलोम शब्द बताइए।", ["समुपयोग", "निरुपयोग", "सदुपयोग", "अनुपयोग"], 3, "'उपयोग' में 'अन्' उपसर्ग जोड़ने से इसका सटीक विलोम 'अनुपयोग' (या 'दुरुपयोग') बनता है। वहीं 'सदुपयोग' का मुख्य विलोम 'दुरुपयोग' होता है।", "'उपयोगी' का विलोम 'अनुपयोगी' या 'निरुपयोगी' होता है, और 'उपयोग' का विलोम 'अनुपयोग' होता है।"],
+      [38, "उद्यम का सही विलोम शब्द क्या है?", ["प्रवीण", "आलस्य", "नीरज", "नृप"], 1, "'उद्यम' का अर्थ 'परिश्रम' या 'मेहनत' होता है। इसका सटीक विलोम शब्द 'आलस्य' है। इसी प्रकार 'उद्यमी' (परिश्रमी) का विलोम 'आलसी' या 'निरुद्यम' होता है।", "संज्ञा शब्द 'उद्यम' का विलोम 'आलस्य' (संज्ञा) होगा, जबकि विशेषण 'उद्यमी' का विलोम 'आलसी' (विशेषण) होगा।"],
+      [39, "अल्पज्ञ का विलोम शब्द क्या होगा?", ["अवज्ञ", "कृतज्ञ", "सर्वज्ञ", "अभिज्ञ"], 2, "'अल्पज्ञ' का अर्थ है 'कम जानने वाला'। इसका सटीक विलोम 'सर्वज्ञ' (सब कुछ जानने वाला) या 'बहुज्ञ' (बहुत कुछ जानने वाला) होता है। 'कृतज्ञ' का विलोम 'कृतघ्न' होता है।", "यदि विकल्प में 'बहुज्ञ' और 'सर्वज्ञ' दोनों हों, तो 'अल्पज्ञ' (कम जानने वाला) के विलोम के रूप में 'बहुज्ञ' (बहुत जानने वाला) को प्राथमिकता दी जाती है।"],
+      [40, "अचल शब्द का एक अर्थ 'स्थिर' है और दूसरा अर्थ 'निश्चल' है; तो 'अचल' का सही विलोम क्या होगा?", ["सचल", "चंचल", "अस्थिर", "चलायमान"], 0, "'अचल' (अ + चल = न चलने वाला/पर्वत) का सटीक उपसर्ग-आधारित विलोम 'सचल' या 'चल' (गतिमान) होता है। 'स्थिर' का विलोम 'अस्थिर' या 'चंचल' होता है।", "हिंदी में 'अचल' पर्वत का पर्यायवाची है और 'अचला' पृथ्वी का पर्यायवाची है; विलोम की दृष्टि से 'चल ↔ अचल' या 'सचल ↔ अचल' मानक हैं।"],
+      [41, "जारज का सटीक विलोम शब्द क्या है?", ["सजारज", "औरस", "प्रदत्त", "दत्तक"], 1, "'जारज' का अर्थ 'उपपति या परपुरुष से उत्पन्न संतान' (अवैध संतान) होता है। इसका सटीक शास्त्रीय विलोम 'औरस' (विवाहित पत्नी से उत्पन्न वैध संतान) है। गोद लिए गए पुत्र को 'दत्तक' कहते हैं।", "'औरस ↔ जारज' वाक्यांश के लिए एक शब्द और विलोम शब्द—दोनों अध्यायों के लिए UPSSSC का अत्यंत महत्वपूर्ण प्रश्न है।"],
+      [42, "हया का विलोम शब्द क्या है?", ["हास्य", "हार", "बेहया", "अपयश"], 2, "'हया' (उर्दू/अरबी मूल का शब्द) का अर्थ 'लज्जा' या 'शर्म' होता है। इसमें 'बे' उपसर्ग लगाने से इसका विलोम 'बेहया' (बेशर्म/निर्लज्ज) बनता है। 'अपयश' का विलोम 'यश' या 'सुयश' होता है।", "आगत (विदेशी) शब्दों का विलोम भी उसी भाषा के उपसर्ग से बनता है; जैसे—हया ↔ बेहया, शर्म ↔ बेशर्म, ईमान ↔ बेईमान।"],
+      [43, "अघी का सही विलोम शब्द चुनिए।", ["अनघ", "निरघ", "पापी", "पुण्यवान"], 0, "'अघ' का अर्थ 'पाप' और 'अघी' का अर्थ 'पापी' होता है। इसका मानक विलोम 'अनघ' (निष्पाप या पवित्र) होता है। इसी प्रकार 'पापी' का विलोम 'निष्पाप' या 'पुण्यात्मा' होता है।", "'अघ ↔ अनघ' और 'अघी ↔ अनघ' संस्कृत के उच्च स्तरीय विलोम शब्द हैं जो आयोग की परीक्षाओं में अक्सर पूछे जाते हैं।"],
+      [44, "ग्रस्त का विलोम शब्द क्या है?", ["सुप्त", "ग्राह्य", "मुक्त", "लुप्त"], 2, "'ग्रस्त' का अर्थ 'जकड़ा हुआ' या 'पकड़ा हुआ' (जैसे—रोगग्रस्त, ऋणग्रस्त) होता है। इसका सटीक विलोम 'मुक्त' (स्वतंत्र या छूटा हुआ) है। 'सुप्त' का विलोम 'जाग्रत', 'ग्राह्य' का 'त्याज्य' और 'लुप्त' का 'व्यक्त/प्रकट' होता है।", "'ग्रस्त ↔ मुक्त', 'ग्राह्य ↔ त्याज्य' और 'सुप्त ↔ जाग्रत'—ये तीनों युग्म परीक्षा की दृष्टि से अत्यंत उपयोगी हैं।"],
+      [45, "हास का विलोम शब्द निम्नलिखित में से क्या है?", ["विहास", "अहास", "निहास", "रुदन"], 3, "'हास' या 'हास्य' का अर्थ 'हंसी' होता है। इसका सटीक विलोम 'रुदन' (रोना) है। ध्यान रहे कि 'ह्रास' (कमी) का विलोम 'वृद्धि' होता है, जबकि 'हास' (हंसी) का विलोम 'रुदन' होता है।", "परीक्षा में 'हास' (हंसी) और 'ह्रास' (कमी/पतन) के सूक्ष्म वर्तनी भेद को अवश्य ध्यान में रखें।"],
+      [46, "रुग्ण का सही विलोम शब्द क्या है?", ["स्थूल", "स्वस्थ", "बीमार", "कर्मठ"], 1, "'रुग्ण' का अर्थ 'रोगी' या 'बीमार' होता है। इसका सटीक तत्सम विलोम 'स्वस्थ' (निरोग) है। 'कर्मठ' का विलोम 'अकर्मण्य' या 'आलसी' होता है।", "'रोगी' का विलोम 'निरोग' होता है, जबकि तत्सम विशेषण 'रुग्ण' का सटीक विलोम 'स्वस्थ' होता है।"],
+      [47, "प्रवृत्ति का विलोम शब्द बताइए।", ["वृत्ति", "अनावृत्ति", "निवृत्ति", "सद्वृत्ति"], 2, "'प्रवृत्ति' का अर्थ 'किसी कार्य या विषय में मन का लगना/झुकाव' (Attachment/Inclination) होता है। इसका सटीक विलोम 'निवृत्ति' (छुटकारा या विमुख होना) है। 'आवृत्ति' का विलोम 'अनावृत्ति' होता है।", "'प्रवृत्त' का विलोम 'निवृत्त' होता है और 'प्रवृत्ति' का विलोम 'निवृत्ति' होता है।"],
+      [48, "विपद का सही विलोम शब्द कौन-सा है?", ["आपद", "संपद", "संबद्ध", "आबद्ध"], 1, "'विपद' (या विपत्ति) का अर्थ 'संकट' या 'मुसीबत' होता है। इसका सटीक विलोम 'संपद' (या संपत्ति/सुख-संपदा) है। 'आपद' विपद का ही समानार्थी है।", "शब्द के अंतिम वर्ण के अनुसार विलोम चुनें: विपद ↔ संपद, विपत्ति ↔ संपत्ति, विपन्न ↔ संपन्न।"],
+      [49, "चपल का विलोम शब्द क्या है?", ["गंभीर", "वाचाल", "चंचल", "उद्यमी"], 0, "'चपल' का अर्थ 'चंचल' या 'अस्थिर स्वभाव वाला' होता है। इसका सटीक विलोम 'गंभीर' (शांत और स्थिर स्वभाव वाला) है। 'वाचाल' का विलोम 'मूक' होता है।", "इसी प्रकार 'उथला' या 'छिछला' का विलोम 'गहरा' होता है, और स्वभाव के संदर्भ में 'चपल/ओछा' का विलोम 'गंभीर' होता है।"],
+      [50, "संपन्नता का विलोम शब्द कौन-सा है?", ["आपत्ति", "निर्धनता", "आफत", "विपत्ति"], 1, "'संपन्नता' (समृद्धि या अमीरी) का दिए गए विकल्पों में सटीक विलोम 'निर्धनता' (या 'विपन्नता') है। 'संपत्ति' का विलोम 'विपत्ति' होता है और 'अनापत्ति' का विलोम 'आपत्ति' होता है।", "यदि विकल्प में 'विपन्नता' दिया हो तो 'संपन्नता ↔ विपन्नता' सर्वोच्च प्राथमिकता होगी; उसके अभाव में 'निर्धनता' सही उत्तर है।"],
+      [51, "कौटिल्य का विलोम शब्द निम्नलिखित में से क्या है?", ["मार्दव", "आर्जव", "मृदुलता", "आर्तव"], 1, "'कौटिल्य' (कुटिलता या टेढ़ापन) का सटीक एवं प्रमाणित तत्सम विलोम 'आर्जव' (ऋजुता या सीधापन/सरलता) है। 'मार्दव' (कोमलता) का विलोम 'काठिन्य' या 'कर्कशता' होता है।", "'ऋजु' में 'अण्' प्रत्यय से 'आर्जव' और 'कुटिल' में 'ष्यञ्' प्रत्यय से 'कौटिल्य' बनता है; अतः 'कौटिल्य ↔ आर्जव' उच्च स्तरीय तत्सम विलोम युग्म है।"],
+      [52, "अवनि का सही विलोम शब्द चुनिए।", ["अम्बर", "सितारा", "धरा", "शशांक"], 0, "'अवनि' का अर्थ 'पृथ्वी' या 'धरती' होता है। इसका सटीक विलोम शब्द 'अम्बर' (आकाश) है। इसी प्रकार 'पृथ्वी' का विलोम 'आकाश' और 'धरा' का विलोम 'गगन' होता है।", "UPSSSC परीक्षाओं में 'अवनि ↔ अम्बर' और 'इहलोक ↔ परलोक' अत्यंत लोकप्रिय विलोम युग्म हैं।"],
+      [53, "श्रीगणेश शब्द का सटीक विलोम क्या है?", ["समापन", "इतिश्री", "अंत", "अथ"], 1, "'श्रीगणेश' का अर्थ 'किसी कार्य का शुभारंभ करना' होता है। इसका सटीक एवं परंपरागत विलोम शब्द 'इतिश्री' (कार्य की समाप्ति) है। 'अथ' का विलोम 'इति' और 'आरंभ' का विलोम 'अंत' या 'समापन' होता है।", "'अथ ↔ इति', 'श्रीगणेश ↔ इतिश्री', और 'उद्घाटन ↔ समापन'—इन तीनों समान अर्थ वाले युग्मों के सटीक जोड़े याद रखें।"],
+      [54, "उन्मिलन (उन्मीलन) शब्द का सही विलोम क्या है?", ["अनुमिलन", "निमीलन", "अवमिलन", "मिलन"], 1, "'उन्मीलन' का अर्थ 'पलक का खुलना' या 'खिलना' होता है। इसका सटीक विलोम 'निमीलन' (पलक का बंद होना या झपकना) है। 'मिलन' का विलोम 'विरह' या 'बिछोह' होता है।", "'उन्मूलन' (जड़ से उखाड़ना) का विलोम 'रोपण' है, जबकि 'उन्मीलन' (खुलना) का विलोम 'निमीलन' है।"],
+      [55, "अधिकृत शब्द का विलोम शब्द बताइए।", ["अनाधिकृत", "अनधिकृत", "प्राधिकृत", "सर्वाधिकृत"], 1, "'अधिकृत' में 'अन्' (हलंत न्) उपसर्ग जुड़ने पर 'न् + अ = न' बनता है, जिससे शुद्ध शब्द 'अनधिकृत' निर्मित होता है। 'अनाधिकृत' वर्तनी की दृष्टि से अशुद्ध शब्द है।", "यह प्रश्न विलोम और वर्तनी शुद्धि दोनों में पूछा जाता है—सदैव ध्यान रखें कि शुद्ध शब्द 'अनधिकृत' (न पर आ की मात्रा नहीं) होता है।"],
+      [56, "अनुलोम शब्द का सही विलोम क्या है?", ["सुलोम", "प्रतिलोम", "अनलोम", "अवलोम"], 1, "'अनुलोम' (ऊपर से नीचे की ओर या क्रमानुसार) का सटीक विलोम 'प्रतिलोम' या 'विलोम' (नीचे से ऊपर या विपरीत क्रम) होता है।", "यदि विकल्प में 'प्रतिलोम' और 'विलोम' दोनों दिए हों, तो 'अनुलोम' के लिए 'प्रतिलोम' को प्रथम वरीयता दी जाती है।"],
+      [57, "साधुता का विलोम शब्द क्या होगा?", ["असाधुता", "सज्जनता", "दानवता", "कठोरता"], 0, "'साधुता' (भाववाचक संज्ञा) का सही विलोम 'असाधुता' या 'दुष्टता' होता है। 'सज्जनता' का विलोम 'दुर्जनता' और 'मानवता' का विलोम 'दानवता' होता है।", "भाववाचक संज्ञा ('ता' प्रत्यय युक्त) का विलोम भी भाववाचक संज्ञा ('ता' प्रत्यय युक्त) ही होता है।"],
+      [58, "अलभ्य का सटीक विलोम शब्द चुनिए।", ["सुगम", "सहज", "सरल", "लभ्य"], 3, "'अलभ्य' का अर्थ है 'जो प्राप्त न हो सके' (दुर्लभ)। इसका सीधा विलोम 'लभ्य' (प्राप्त होने योग्य) या 'सुलभ' होता है। 'सुगम' का विलोम 'दुर्गम' होता है।", "विकल्प में 'लभ्य' होने पर 'अलभ्य ↔ लभ्य' और 'दुर्लभ ↔ सुलभ' का युग्म सर्वाधिक सटीक माना जाता है।"],
+      [59, "कृतज्ञ का सही विलोम शब्द क्या है?", ["अकृतज्ञ", "संवेदनहीन", "कृतघ्न", "जड़"], 2, "'कृतज्ञ' का अर्थ है 'किए गए उपकार को मानने वाला'। इसका सटीक विलोम 'कृतघ्न' (किए गए उपकार को न मानने वाला) होता है। 'जड़' का विलोम 'चेतन' होता है।", "'कृतज्ञ ↔ कृतघ्न' हिंदी व्याकरण के सबसे महत्वपूर्ण शब्दों में से एक है जो लगभग हर प्रतियोगी परीक्षा में पूछा जाता है।"],
+      [60, "संकीर्ण मानसिकता वालों के विपरीत हमें कैसा होना चाहिए? (रेखांकित शब्द 'संकीर्ण' का विलोम बताइए)", ["उदार", "विस्तीर्ण", "संकुचित", "कृपण"], 1, "व्याकरणिक रूप से 'संकीर्ण' का सटीक विलोम 'विस्तीर्ण' (या 'उदार' भाव के संदर्भ में, किंतु शब्दशः 'विस्तीर्ण') होता है। 'कृपण' (कंजूस) का सटीक विलोम 'उदार' या 'दानी' होता है।", "'उदार' का मानक विलोम 'अनुदार' या 'कृपण' है, जबकि 'संकीर्ण' का मानक विलोम 'विस्तीर्ण' है।"],
+      [61, "गौरव का सही विलोम शब्द कौन-सा है?", ["लाघव", "लघुत्व", "लघुता", "लघुतम"], 0, "'गुरु' शब्द में 'अण्' प्रत्यय लगने से 'गौरव' (बड़प्पन/महत्त्व) बनता है। इसी प्रकार 'लघु' में 'अण्' प्रत्यय लगने से इसका सटीक विलोम 'लाघव' (छोटापन) बनता है।", "प्रत्यय की समानता के नियम के अनुसार: गुरु ↔ लघु, गुरुता ↔ लघुता, गुरुत्व ↔ लघुत्व, और गौरव ↔ लाघव।"],
+      [62, "परोक्ष का विलोम शब्द क्या है?", ["प्रत्यक्ष", "अपरोक्ष", "स्थूल", "दृष्टव्य"], 0, "'परोक्ष' का अर्थ 'आंखों से परे' (अप्रत्यक्ष) होता है। इसका सटीक विलोम शब्द 'प्रत्यक्ष' (आंखों के सामने) है। ध्यान रहे कि 'अपरोक्ष' का अर्थ भी 'प्रत्यक्ष' ही होता है, किंतु मानक विलोम युग्म 'प्रत्यक्ष ↔ परोक्ष' है।", "कई छात्र 'परोक्ष' का विलोम 'प्रत्यक्ष' के स्थान पर भ्रम में पड़ जाते हैं; याद रखें—'अप्रत्यक्ष' और 'परोक्ष' समानार्थी हैं।"],
+      [63, "मुखर का सही विलोम शब्द चुनिए।", ["मोक्ष", "मूक", "मौन", "मोम"], 2, "'मुखर' का अर्थ 'अधिक बोलने वाला' या 'स्पष्ट वक्ता' होता है। इसका सटीक विलोम 'मौन' या 'चुप' होता है। वहीं 'वाचाल' (बहुत बोलने वाला) का सटीक विलोम 'मूक' (गूंगा) होता है।", "आयोग के मानक उत्तरों के अनुसार: 'वाचाल ↔ मूक' और 'मुखर ↔ मौन' सर्वमान्य विलोम युग्म हैं।"],
+      [64, "उपार्जित का विलोम शब्द क्या है?", ["अनुपार्जित", "पार्जित", "अनार्जित", "विसर्जित"], 0, "'उपार्जित' (स्वयं कमाया हुआ या प्राप्त किया हुआ) में 'अन्' उपसर्ग लगाने से इसका सही विलोम 'अनुपार्जित' बनता है। इसी प्रकार 'अर्जित' का विलोम 'अनर्जित' होता है।", "पैतृक संपत्ति 'अनुपार्जित' की श्रेणी में आती है, जबकि स्व-परिश्रम से प्राप्त धन 'उपार्जित' कहलाता है।"],
+      [65, "तिरस्कार का उपयुक्त विलोम शब्द क्या है?", ["पुरस्कार", "सम्मान", "सत्कार", "नमस्कार"], 2, "'तिरस्कार' (अपमान या उपेक्षा) का सटीक विलोम शब्द 'सत्कार' है। 'अपमान' का विलोम 'सम्मान' तथा 'दंड' का विलोम 'पुरस्कार' होता है।", "विलोम शब्दों में ध्वनि और व्युत्पत्ति की समरूपता देखी जाती है: सत्कार ↔ तिरस्कार, सम्मान ↔ अपमान, आदर ↔ अनादर/निरादर।"],
+      [66, "शर्मनाक का विलोम शब्द निम्नलिखित में से क्या है?", ["सम्मानजनक", "शानदार", "संतोषजनक", "ससम्मान"], 1, "उर्दू/फारसी मूल के विशेषण शब्द 'शर्मनाक' (लज्जाजनक) का सटीक विलोम 'शानदार' (या सम्मानपूर्ण) होता है। हिंदी तत्सम रूप में 'लज्जाजनक' का विलोम 'गौरवपूर्ण' या 'सम्मानजनक' होता है।", "UPSSSC की परीक्षाओं में 'शर्मनाक ↔ शानदार' को मानक उत्तर माना गया है।"],
+      [67, "लुभावना का सटीक विलोम शब्द क्या है?", ["प्रसन्नता", "आकर्षित", "घिनौना", "घृणा"], 2, "'लुभावना' (मन को भाने वाला/आकर्षक) एक तद्भव विशेषण है, जिसका सटीक विलोम 'घिनौना' (मन में घृणा पैदा करने वाला) है। 'प्रेम' का विलोम 'घृणा' और 'आकर्षक' का 'अनाकर्षक' या 'विकर्षक' होता है।", "'ना' प्रत्ययांत विशेषण 'लुभावना' का विलोम भी समान प्रत्यय वाला विशेषण 'घिनौना' ही होगा।"],
+      [68, "विहित का सही विलोम शब्द चुनिए।", ["निषिद्ध", "अहित", "रहित", "सहित"], 0, "'विहित' का अर्थ 'नियमानुसार उचित' या 'शास्त्रसम्मत' होता है। इसका सटीक विलोम 'निषिद्ध' (वर्जित/मना किया हुआ) है। 'सहित' का विलोम 'रहित' और 'हित' का विलोम 'अहित' होता है।", "'विधि ↔ निषेध' और 'विहित ↔ निषिद्ध' दोनों युग्म UPSSSC के अत्यंत प्रिय प्रश्नों में शामिल हैं।"],
+      [69, "तामसिक का विलोम शब्द क्या है?", ["सात्विक", "अभय", "दृढ़", "सामिष"], 0, "भारतीय दर्शन के त्रिगुणों (सत्त्व, रज, तम) के अनुसार 'तामसिक' (अज्ञान या अंधकार से युक्त) का सटीक विलोम 'सात्विक' (सत्य और पवित्रता से युक्त) होता है। इसी प्रकार 'तामस' का विलोम 'सात्त्विक' या 'ज्योतिर्मय' होता है।", "'सात्विक' की शुद्ध वर्तनी 'सात्त्विक' (दो आधे त) भी होती है, और इसका विलोम सदैव 'तामसिक' होता है।"],
+      [70, "यौवन का सही विलोम शब्द क्या होगा?", ["जरा", "पराजय", "मृत्यु", "बचपन"], 0, "'यौवन' (युवावस्था/जवानी) का सटीक तत्सम विलोम शब्द 'जरा' या 'वार्धक्य' (बुढ़ापा) होता है। तद्भव रूप में 'जवानी' का विलोम 'बुढ़ापा' होता है। ध्यान रहे कि 'जरा' (नुक्ता रहित) का अर्थ 'बुढ़ापा' है, जबकि 'ज़रा' (नुक्ता सहित) का अर्थ 'थोड़ा' होता है।", "'जन्म ↔ मृत्यु', 'जय ↔ पराजय' और 'यौवन ↔ जरा/वार्धक्य' मानक तत्सम विलोम युग्म हैं।"],
+      [71, "यथार्थ का विलोम शब्द विकल्पों में से चुनिए (जब 'आदर्श' विकल्प में न हो)।", ["उड़ान", "काल्पनिक", "स्वप्न", "विचार"], 1, "'यथार्थ' का अर्थ 'वास्तविक' होता है। जब विकल्प में 'आदर्श' न दिया हो, तो इसका सटीक विलोम 'काल्पनिक' या 'कल्पित' होता है। 'स्वप्न' का विलोम 'जागरण' होता है।", "'यथार्थ' के दो मानक विलोम हैं—दर्शन/सिद्धांत के संदर्भ में 'आदर्श' और तथ्य के संदर्भ में 'कल्पित/काल्पनिक'।"],
+      [72, "प्रतिवादी का सही विलोम शब्द क्या है?", ["संवादी", "विवाद", "वादी", "आरोपी"], 2, "'प्रतिवादी' (बचाव पक्ष या उत्तर देने वाला) का सही विलोम 'वादी' (अभियोग लगाने वाला या प्रथम पक्ष) होता है। 'संवाद' का विलोम 'विवाद' होता है।", "विधिक शब्दावली में 'वादी' को अंग्रेजी में 'Plaintiff' और 'प्रतिवादी' को 'Defendant' कहा जाता है।"],
+      [73, "सिंह की 'गर्जना' के विपरीत 'मेघ' या 'कायर' के संदर्भ में 'भीरु' का विलोम क्या होगा?", ["साहसी / वीर", "कायर", "डरपोक", "कोमल"], 0, "'भीरु' का शाब्दिक अर्थ 'कायर' या 'डरपोक' होता है। इसका सटीक विलोम 'वीर', 'साहसी' या 'निर्भीक' होता है। इसी प्रकार 'भीरुता' का विलोम 'वीरता' या 'साहस' होता है।", "'कायर' और 'डरपोक' भीरु के पर्यायवाची हैं, जबकि 'शूर', 'वीर' और 'निर्भीक' इसके विलोम शब्द हैं।"],
+      [74, "उद्धत का सही विलोम शब्द क्या है?", ["सौख्य", "विनीत", "उत्तम", "कोमल"], 1, "'उद्धत' का अर्थ 'अक्खड़', 'उद्दंड' या 'अभिमानी' होता है। इसका सटीक तत्सम विलोम शब्द 'विनीत' या 'सौम्य' (विनम्र/सुशील) होता है। 'उत्तम' का विलोम 'अधम' और 'कोमल' का 'कठोर' होता है।", "'उद्धत ↔ विनीत' तथा 'औद्धत्य ↔ विनय'—दोनों रूपों को परीक्षा के लिए कंठस्थ कर लें।"],
+      [75, "प्रसार का विलोम शब्द निम्नलिखित में से क्या है?", ["विस्तार", "संकोच / संकुचन", "फैलाव", "प्रचार"], 1, "'प्रसार' का अर्थ 'फैलाव' या 'विस्तार' होता है। इसका सटीक विलोम 'संकोच' या 'संकुचन' (सिमटना) है। 'विस्तार' और 'फैलाव' इसके समानार्थी शब्द हैं।", "'प्रसार ↔ संकोच' और 'विस्तार ↔ संक्षेप' में सूक्ष्म अंतर है, जिसे विकल्प चुनते समय ध्यान में रखना चाहिए।"],
+      [76, "आविर्भाव शब्द का सही विलोम शब्द क्या है?", ["अनार्विभाव", "विभाव", "तिरोभाव", "प्रादुर्भाव"], 2, "'आविर्भाव' का अर्थ 'प्रकट होना' या 'उत्पत्ति' होता है। इसका सटीक एवं प्रमाणित तत्सम विलोम 'तिरोभाव' (अदृश्य होना या लोप होना) है। 'प्रादुर्भाव' आविर्भाव का ही समानार्थी शब्द है।", "'आविर्भाव ↔ तिरोभाव' तथा 'आविर्भूत ↔ तिरोभूत' UPSSSC PET और RO/ARO परीक्षाओं के सबसे महत्वपूर्ण तत्सम विलोम युग्मों में से हैं।"],
+      [77, "उन्मूलन के समान ही 'रोपण' से संबंधित 'ध्वंस' शब्द का सटीक विलोम क्या होगा?", ["विध्वंस", "निर्माण", "विनाश", "सृजन"], 1, "'ध्वंस' का अर्थ 'नष्ट होना' या 'टूटना' होता है। इसका सटीक विलोम 'निर्माण' है। वहीं 'विनाश' या 'संहार' का सटीक विलोम 'सृजन' या 'सृष्टि' होता है, और 'विध्वंस' ध्वंस का ही समानार्थी है।", "शब्द-युग्म की सटीकता ध्यान रखें: ध्वंस ↔ निर्माण, विनाश/संहार ↔ सृजन, और नूतन ↔ पुरातन।"],
+      [78, "चिरंतन के समान अर्थ रखने वाले शब्द 'शाश्वत' का सही विलोम चुनिए।", ["सदैव", "अनश्वर", "नश्वर", "रहस्यमय"], 2, "'शाश्वत' का अर्थ है 'सदा रहने वाला' या 'अमर'। इसका सटीक विलोम 'नश्वर' या 'क्षणिक' (नष्ट होने वाला) है। 'अनश्वर' शाश्वत का ही पर्यायवाची शब्द है।", "परीक्षा में प्रायः 'अनश्वर' विकल्प देकर भ्रमित किया जाता है; ध्यान रखें 'नश्वर ↔ अनश्वर/शाश्वत' होता है।"],
+      [79, "ग्रस्त का विलोम 'मुक्त' है, तो 'ग्राह्य' का सटीक विलोम शब्द क्या है?", ["त्याज्य", "अग्राह्य", "ग्रहण", "त्याग"], 0, "'ग्राह्य' का अर्थ 'ग्रहण करने योग्य' होता है। इसका सर्वोत्तम शास्त्रीय विलोम 'त्याज्य' (त्यागने योग्य) है। 'ग्रहण' (संज्ञा) का विलोम 'त्याग' या 'अर्पण' होता है।", "यदि विकल्प में 'त्याज्य' और 'अग्राह्य' दोनों हों, तो 'ग्राह्य ↔ त्याज्य' को प्रथम वरीयता दी जाती है।"],
+      [80, "मृसृण शब्द का सही विलोम शब्द क्या है?", ["कमनीय", "रुक्ष", "चिकना", "कोमल"], 1, "'मृसृण' का शाब्दिक अर्थ 'चिकना', 'मुलायम' या 'स्निग्ध' होता है। इसका सटीक तत्सम विलोम 'रुक्ष' (खुरदरा या रूखा) है। 'कोमल' का विलोम 'कठोर' या 'परुष' होता है।", "'मृसृण ↔ रुक्ष' तथा 'स्निग्ध ↔ अस्निग्ध/रुक्ष' उच्च स्तरीय तत्सम विलोम शब्द हैं जो आयोग की परीक्षाओं में बार-बार पूछे जाते हैं।"],
+      [81, "अनुरूप का विलोम शब्द निम्नलिखित में से कौन-सा है?", ["विरूप", "प्रतिरूप", "अपरूप", "व्यतिरूप"], 1, "'अनुरूप' (समान रूप वाला या अनुकूल) का मानक विलोम 'प्रतिरूप' (या अननुरूप) होता है। यद्यपि 'प्रतिरूप' का एक अर्थ नकल भी होता है, किंतु उपसर्ग नियम ('अनु' ↔ 'प्रति') के तहत आयोग 'प्रतिरूप' को सही मानता है।", "'अनु' उपसर्ग वाले शब्दों का विलोम प्रायः 'प्रति' से बनता है; जैसे—अनुकूल ↔ प्रतिकूल, अनुलोम ↔ प्रतिलोम, अनुरूप ↔ प्रतिरूप।"],
+      [82, "अनिवार्य का सटीक विलोम शब्द चुनिए।", ["निवारणीय", "ऐच्छिक", "अनावश्यक", "आवश्यक"], 1, "'अनिवार्य' का अर्थ है 'जिसे टाला न जा सके' (बाध्यकारी)। इसका सटीक विलोम 'ऐच्छिक' या 'वैकल्पिक' (इच्छा पर निर्भर) होता है। 'आवश्यक' का विलोम 'अनावश्यक' होता है।", "'वैकल्पिक' और 'ऐच्छिक' दोनों ही 'अनिवार्य' के शुद्ध विलोम शब्द हैं।"],
+      [83, "अधुनातन का सही विलोम शब्द क्या है?", ["प्राचीन", "भूतकालिक", "पुरातन", "विगतकालीन"], 2, "'अधुनातन' (या नूतन) का अर्थ 'आधुनिक काल का' या 'नया' होता है। इसका सटीक विलोम 'पुरातन' (प्राचीन काल का) है। इसी प्रकार 'आधुनिक' का विलोम 'प्राचीन' और 'अर्वाचीन' का विलोम भी 'प्राचीन' होता है।", "प्रत्यय समरूपता के नियम से 'तन' प्रत्ययांत शब्दों का मिलान करें: नूतन/अधुनातन ↔ पुरातन, जबकि नवीन/अर्वाचीन ↔ प्राचीन।"],
+      [84, "अमावस्या का सटीक विलोम शब्द क्या है?", ["पूर्णिमा", "शुक्ल", "चांदनी", "एकादशी"], 0, "कृष्ण पक्ष की अंतिम तिथि 'अमावस्या' कहलाती है, और इसका सटीक विलोम शुक्ल पक्ष की अंतिम तिथि 'पूर्णिमा' है। इसी प्रकार 'कृष्ण पक्ष' का विलोम 'शुक्ल पक्ष' होता है।", "'शुक्ल' का विलोम 'कृष्ण' होता है और 'चांदनी' का विलोम 'अंधेरा' होता है।"],
+      [85, "अंतरद्वंद्व (अंतर्द्वंद्व) का सही विलोम शब्द बताइए।", ["बहिर्द्वंद्व", "द्वंद्वहीन", "संवाद", "मेल"], 0, "'अंतर्द्वंद्व' (मन के भीतर चलने वाला संघर्ष) का सटीक विलोम 'बहिर्द्वंद्व' (बाहरी संघर्ष) है। इसी प्रकार 'अंतर्मुखी' का विलोम 'बहिर्मुखी' होता है।", "'अन्तः' उपसर्ग का विलोम सदैव 'बहिः' उपसर्ग से बनता है (अन्तःकरण ↔ बहिष्करण, अंतर्मुखी ↔ बहिर्मुखी)।"],
+      [86, "आध्यात्मिक का विलोम शब्द क्या है?", ["सांसारिक / भौतिक", "वैचारिक", "धार्मिक", "नैतिक"], 0, "'आध्यात्मिक' (आत्मा या परमात्मा से संबंधित) का सटीक विलोम 'भौतिक' या 'सांसारिक' होता है। 'धार्मिक' का विलोम 'अधार्मिक' और 'नैतिक' का विलोम 'अनैतिक' होता है।", "UPSSSC की परीक्षाओं में 'आध्यात्मिक' के विलोम के रूप में 'भौतिक' और 'सांसारिक' दोनों को मान्यता प्राप्त है।"],
+      [87, "व्यष्टि का सटीक विलोम शब्द चुनिए।", ["भीड़", "व्यक्ति", "समष्टि", "समाज"], 2, "'व्यष्टि' का अर्थ 'एक व्यक्ति' या 'समूह की एक इकाई' (Micro/Individual) होता है। इसका सटीक तत्सम विलोम 'समष्टि' (संपूर्ण समाज या समूह - Macro/Collective) है। 'व्यक्ति' का विलोम 'समाज' होता है।", "'व्यष्टि ↔ समष्टि' तथा 'सृष्टि ↔ प्रलय' दोनों की ध्वनि समान होने के कारण छात्र भ्रमित होते हैं; इन्हें अलग-अलग याद रखें।"],
+      [88, "सन्यास (संन्यास) का सही विलोम शब्द क्या है?", ["गार्हस्थ्य / गृहस्थ", "त्यागी", "भोगी", "राजा"], 0, "आश्रम व्यवस्था के अनुसार 'संन्यास' (आश्रम/भाव) का सटीक विलोम 'गार्हस्थ्य' (या विकल्पानुसार 'गृहस्थ') होता है। इसी प्रकार 'संन्यासी' का विलोम 'गृहस्थ' और 'योगी' का विलोम 'भोगी' होता है।", "शुद्ध वर्तनी 'संन्यास' (अनुस्वार और आधा न दोनों) होती है, और इसका सर्वोत्तम शास्त्रीय विलोम 'गार्हस्थ्य' है।"],
+      [89, "अपव्यय का सही विलोम शब्द क्या होगा?", ["अधिव्यय", "व्यय", "मितव्यय", "अव्यय"], 2, "'अपव्यय' का अर्थ 'फिजूलखर्ची' (आवश्यकता से अधिक खर्च करना) होता है। इसका सटीक विलोम 'मितव्यय' (सोच-समझकर कम खर्च करना) है। 'आय' का विलोम 'व्यय' होता है।", "'अपव्यय ↔ मितव्यय' और विशेषण रूप में 'अपव्ययी ↔ मितव्ययी' परीक्षा की दृष्टि से अत्यंत महत्वपूर्ण हैं।"],
+      [90, "अल्प का विलोम 'अति' है, तो 'इति' का सही विलोम क्या है?", ["पूर्ण", "समाप्त", "अथ", "बाधा"], 2, "'इति' का अर्थ 'समाप्ति' होता है और इसका विलोम 'अथ' (प्रारंभ) है। ध्यान दें कि यदि शब्द 'ईति' (दीर्घ ई—जिसका अर्थ दैवीय आपदा या फसल की बाधा होता है) हो, तो उसका विलोम 'अथ' नहीं होता।", "समश्रुत भिन्नार्थक में भी यह पूछा जाता है: 'इति' = समाप्ति (विलोम: अथ), और 'ईति' = दैवी आपदा/विघ्न।"],
+      [91, "उत्कृष्ट का विलोम शब्द निम्नलिखित में से कौन-सा है?", ["अपकृष्ट", "निकृष्ट", "व्यर्थ", "विकराल"], 1, "'उत्कृष्ट' का अर्थ 'श्रेष्ठ' या 'उत्तम' होता है। इसका सटीक विलोम शब्द 'निकृष्ट' (निम्न कोटि का या घटिया) है। ध्यान रहे कि 'उत्कर्ष' का विलोम 'अपकर्ष' होता है, परंतु 'उत्कृष्ट' का विलोम 'निकृष्ट' होता है (अपकृष्ट नहीं)।", "छात्र प्रायः 'उत्कर्ष ↔ अपकर्ष' की तर्ज पर 'उत्कृष्ट' का 'अपकृष्ट' लगा देते हैं, जो गलत है; सही युग्म 'उत्कृष्ट ↔ निकृष्ट' है।"],
+      [92, "उन्मुख का सही विलोम शब्द चुनिए।", ["प्रमुख", "विमुख", "सन्मुख", "त्रिमूख"], 1, "'उन्मुख' का अर्थ 'किसी की ओर मुख किए हुए' या 'अग्रसर' होता है। इसका सटीक विलोम 'विमुख' (प्रतिकूल या मुंह फेरे हुए) है। 'सन्मुख' (सम्मुख) का विलोम 'नेपथ्य' या 'विमुख' होता है।", "'उन्मुख' और 'सम्मुख' दोनों के विलोम के रूप में 'विमुख' शब्द का प्रयोग किया जाता है।"],
+      [93, "उपचय का विलोम शब्द क्या है?", ["अपचय", "अवनत", "रोपण", "अनुर्वर"], 0, "'उपचय' का अर्थ 'वृद्धि' या 'एकत्र होना' होता है। इसका सटीक तत्सम विलोम 'अपचय' (ह्रास या कमी) है। 'उन्नत' का विलोम 'अवनत' और 'उर्वर' का विलोम 'अनुर्वर' या 'ऊसर' होता है।", "जीवविज्ञान की शब्दावली 'उपापचय' (Metabolism) इन्हीं दो विपरीत शब्दों—'उपचय' (Anabolism) और 'अपचय' (Catabolism)—की संधि से बनी है।"],
+      [94, "पुष्ट का विलोम 'क्षीण' है, तो 'कृश' का सटीक विलोम शब्द क्या है?", ["केश", "भव", "विटप", "हृष्ट-पुष्ट / स्थूल"], 3, "'कृश' का अर्थ 'दुबला-पतला' या 'कमजोर' होता है। इसका सटीक विलोम 'पुष्ट', 'हृष्ट-पुष्ट' या 'स्थूल' (मोटा/बलवान) होता है। 'विटप' वृक्ष का पर्यायवाची है।", "UPSSSC की परीक्षाओं में 'कृश' के विलोम के रूप में 'पुष्ट' और 'स्थूल' दोनों विकल्प सही माने जाते हैं।"],
+      [95, "ग्रामीण का विलोम 'नागर' या 'शहरी' है, तो 'ग्राम्य' का तत्सम विलोम क्या होगा?", ["नगर", "शिष्ट / पौर", "देहाती", "गँवार"], 1, "'ग्राम्य' का अर्थ 'गाँव से संबंधित' या 'अशिष्ट' होता है। इसका शास्त्रीय विलोम 'शिष्ट' या 'पौर' (पुर/नगर से संबंधित) अथवा 'नागर' होता है। 'नगर' का सीधा विलोम 'ग्राम' होता है।", "संज्ञा और विशेषण का भेद रखें: ग्राम (संज्ञा) ↔ नगर (संज्ञा), जबकि ग्रामीण/ग्राम्य (विशेषण) ↔ नागर/पौर/शहरी (विशेषण)।"],
+      [96, "तटस्थ का सटीक विलोम शब्द क्या है?", ["आसक्त / पक्षपाती", "गौण", "समष्टि", "निश्चल"], 0, "'तटस्थ' का अर्थ 'निष्पक्ष' या 'किसी भी पक्ष में न रहने वाला' होता है। इसका सटीक विलोम 'सापेक्ष', 'पक्षपाती' या 'आसक्त' (शामिल/संलग्न) होता है। 'गौण' का विलोम 'मुख्य' या 'प्रधान' होता है।", "कूटनीतिक और प्रशासनिक प्रश्नों में 'तटस्थ' का विलोम 'पक्षपाती' या 'सापेक्ष' पूछा जाता है।"],
+      [97, "धृष्ट का सही विलोम शब्द चुनिए।", ["विशेष", "विनम्र / विनीत", "विकृष्ट", "प्रकृष्ट"], 1, "'धृष्ट' का अर्थ 'ढीठ', 'निर्लज्ज' या 'उद्दंड' होता है। इसका सटीक विलोम 'विनम्र' या 'विनीत' (सुशील और आज्ञाकारी) है।", "'उद्धत' और 'धृष्ट' दोनों समानार्थी हैं, और इन दोनों का मानक विलोम 'विनीत' या 'विनम्र' होता है।"],
+      [98, "निर्दय का विलोम शब्द निम्नलिखित में से कौन-सा है?", ["सहृदय", "सभय", "सदय", "दयालु"], 2, "'निर्दय' (निर् + दय = बिना दया का) का सटीक उपसर्ग-आधारित विलोम 'सदय' (स + दय = दया सहित) है। वहीं 'निर्दयी' का प्रचलित विलोम 'दयालु' और 'अहृदय' का विलोम 'सहृदय' होता है।", "यदि विकल्प में 'सदय' और 'दयालु' दोनों हों, तो 'निर्दय' के लिए 'सदय' ही व्याकरणिक दृष्टि से 100% शुद्ध उत्तर है।"],
+      [99, "कलुष का सही विलोम शब्द क्या है?", ["पापशून्य", "निष्पाप", "निष्कलुष", "निष्करुण"], 2, "'कलुष' का अर्थ 'मैल', 'अपवित्रता' या 'पाप' होता है। इसमें 'निष्' उपसर्ग जोड़ने से इसका सटीक विलोम 'निष्कलुष' (पवित्र या दोषरहित) बनता है। 'करुण' का विलोम 'निष्ठुर' या 'निष्करुण' होता है।", "विसर्ग संधि के नियम (निः + कलुष = निष्कलुष) से बने विलोम शब्द (जैसे—निष्काम, निष्फल, निष्कलंक) परीक्षा में खूब पूछे जाते हैं।"],
+      [100, "सृष्टि का सटीक विलोम शब्द बताइए।", ["विसृष्टि", "प्रलय", "व्यष्टि", "समष्टि"], 1, "'सृष्टि' का अर्थ 'संसार की रचना' या 'निर्माण' होता है। इसका सटीक एवं प्रमाणित विलोम शब्द 'प्रलय' (संपूर्ण विनाश या संहार) है। 'व्यष्टि' का विलोम 'समष्टि' होता है।", "UPSSSC PET के पाठ्यक्रम में 'सृष्टि ↔ प्रलय' और 'व्यष्टि ↔ समष्टि' सबसे अधिक बार दोहराए जाने वाले अंतिम युग्म हैं।"]
+    ];
+
+    const optionLetters = ["A", "B", "C", "D", "E"];
+
+    // Build structured 100-question objects with 5 options
+    const questions = rawQuestions.map(item => ({
+      id: item[0],
+      stemHi: `Q${item[0]}. ${item[1]}`,
+      stemEn: `Select the correct antonym (विलोम शब्द) for the given Hindi term as per UPSSSC PET NCERT standard:`,
+      options: [
+        item[2][0],
+        item[2][1],
+        item[2][2],
+        item[2][3],
+        "None of these / इनमें से कोई नहीं"
+      ],
+      correctIndex: item[3],
+      expHi: item[4],
+      keyFact: item[5]
+    }));
+
+    // State Tracking
+    let currentIdx = 0;
+    // statuses: 'not-visited', 'unanswered', 'answered-correct', 'answered-incorrect', 'skipped'
+    let questionState = questions.map((_, idx) => ({
+      visited: idx === 0,
+      selectedOption: null,
+      skipped: false,
+      markedForReview: false
+    }));
+
+    // Initialize Simulator
+    function initSimulator() {
+      renderQuestion();
+      renderPalette();
+      updateScoreAndCounters();
+    }
+
+    function getEffectiveStatus(idx) {
+      const st = questionState[idx];
+      if (st.selectedOption !== null) {
+        return st.selectedOption === questions[idx].correctIndex ? 'correct' : 'incorrect';
+      }
+      if (st.markedForReview) return 'review';
+      if (st.skipped) return 'skipped';
+      if (st.visited) return 'unanswered';
+      return 'not-visited';
+    }
+
+    function renderQuestion() {
+      const q = questions[currentIdx];
+      const st = questionState[currentIdx];
+      st.visited = true;
+
+      document.getElementById("qCounterBadge").textContent = `Question ${currentIdx + 1} of ${questions.length}`;
+      document.getElementById("cardQNum").textContent = `Question ${currentIdx + 1} of ${questions.length}`;
+      document.getElementById("qStemHi").textContent = q.stemHi;
+      document.getElementById("qStemEn").textContent = q.stemEn;
+
+      // Render 5 options
+      const container = document.getElementById("optionsContainer");
+      container.innerHTML = "";
+      const isLocked = st.selectedOption !== null;
+
+      q.options.forEach((optText, oIdx) => {
+        const card = document.createElement("div");
+        card.className = "option-card" + (isLocked ? " locked" : "");
+
+        let statusTag = "";
+        if (isLocked) {
+          if (oIdx === st.selectedOption && oIdx === q.correctIndex) {
+            card.classList.add("correct-selected");
+            statusTag = `<span class="option-status-icon" style="color:var(--correct);">✔ Correct (+1.00)</span>`;
+          } else if (oIdx === st.selectedOption && oIdx !== q.correctIndex) {
+            card.classList.add("incorrect-selected");
+            statusTag = `<span class="option-status-icon" style="color:var(--incorrect);">✘ Your Choice (-0.25)</span>`;
+          } else if (oIdx === q.correctIndex) {
+            card.classList.add("correct-outline");
+            statusTag = `<span class="option-status-icon" style="color:var(--correct);">✔ Correct Answer</span>`;
+          }
+        }
+
+        card.innerHTML = `
+          <div class="option-letter">${optionLetters[oIdx]}</div>
+          <div class="option-text">${optText}</div>
+          ${statusTag}
+        `;
+
+        if (!isLocked) {
+          card.onclick = () => selectOption(oIdx);
+        }
+        container.appendChild(card);
+      });
+
+      // Explanation Card Visibility
+      const expCard = document.getElementById("explanationCard");
+      if (isLocked) {
+        const correctOptText = q.options[q.correctIndex];
+        document.getElementById("expEnText").innerHTML = `<strong>English Breakdown:</strong> Option <strong>(${optionLetters[q.correctIndex]}) ${correctOptText}</strong> is the verified UPSSSC PET standard antonym.`;
+        document.getElementById("expHiText").innerHTML = `<strong>व्याख्या (Hindi):</strong> ${q.expHi}`;
+        document.getElementById("expFactText").innerHTML = `<strong>🎯 Key Exam Fact:</strong> ${q.keyFact}`;
+        expCard.classList.add("visible");
+      } else {
+        expCard.classList.remove("visible");
+      }
+
+      // Update Action Buttons
+      document.getElementById("prevBtn").disabled = currentIdx === 0;
+      document.getElementById("skipBtn").disabled = isLocked;
+      
+      const revBtn = document.getElementById("reviewBtn");
+      if (st.markedForReview) {
+        revBtn.classList.add("active");
+        revBtn.textContent = "🟣 Marked for Review";
+      } else {
+        revBtn.classList.remove("active");
+        revBtn.textContent = "🟣 Mark for Review";
+      }
+
+      const nextBtn = document.getElementById("nextBtn");
+      if (currentIdx === questions.length - 1) {
+        nextBtn.textContent = "Finish & View Report ➔";
+      } else {
+        nextBtn.textContent = "Next Question ➔";
+      }
+
+      updateScoreAndCounters();
+      renderPalette();
+    }
+
+    function selectOption(optIdx) {
+      const st = questionState[currentIdx];
+      if (st.selectedOption !== null) return; // Strict one-tap selection lock
+      st.selectedOption = optIdx;
+      st.skipped = false;
+      renderQuestion();
+    }
+
+    function skipQuestion() {
+      const st = questionState[currentIdx];
+      if (st.selectedOption === null) {
+        st.skipped = true;
+      }
+      if (currentIdx < questions.length - 1) {
+        currentIdx++;
+        renderQuestion();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function toggleMarkForReview() {
+      const st = questionState[currentIdx];
+      st.markedForReview = !st.markedForReview;
+      renderQuestion();
+    }
+
+    function navigateQuestion(delta) {
+      if (delta === 1 && currentIdx === questions.length - 1) {
+        showFinalReport();
+        return;
+      }
+      const target = currentIdx + delta;
+      if (target >= 0 && target < questions.length) {
+        currentIdx = target;
+        renderQuestion();
+      }
+    }
+
+    function jumpToQuestion(idx) {
+      currentIdx = idx;
+      togglePalette(false);
+      renderQuestion();
+    }
+
+    function togglePalette(open) {
+      const drawer = document.getElementById("paletteDrawer");
+      const backdrop = document.getElementById("paletteBackdrop");
+      if (open) {
+        renderPalette();
+        drawer.classList.add("open");
+        backdrop.classList.add("open");
+      } else {
+        drawer.classList.remove("open");
+        backdrop.classList.remove("open");
+      }
+    }
+
+    function updateScoreAndCounters() {
+      let correctCount = 0;
+      let incorrectCount = 0;
+      let unansweredCount = 0;
+      let skippedCount = 0;
+      let reviewCount = 0;
+      let notVisitedCount = 0;
+
+      questionState.forEach((st, idx) => {
+        const eff = getEffectiveStatus(idx);
+        if (eff === 'correct') correctCount++;
+        else if (eff === 'incorrect') incorrectCount++;
+        else if (eff === 'review') reviewCount++;
+        else if (eff === 'skipped') skippedCount++;
+        else if (eff === 'unanswered') unansweredCount++;
+        else notVisitedCount++;
+      });
+
+      const netScore = (correctCount * 1.0) - (incorrectCount * 0.25);
+      document.getElementById("liveScoreBadge").textContent = `Live Score: ${netScore.toFixed(2)}`;
+
+      document.getElementById("legCorrect").textContent = correctCount;
+      document.getElementById("legIncorrect").textContent = incorrectCount;
+      document.getElementById("legUnanswered").textContent = unansweredCount;
+      document.getElementById("legSkipped").textContent = skippedCount;
+      document.getElementById("legReview").textContent = reviewCount;
+      document.getElementById("legNotVisited").textContent = notVisitedCount;
+    }
+
+    function renderPalette() {
+      const grid = document.getElementById("paletteGrid");
+      grid.innerHTML = "";
+      questions.forEach((q, idx) => {
+        const btn = document.createElement("button");
+        const eff = getEffectiveStatus(idx);
+        btn.className = `p-btn st-${eff}` + (idx === currentIdx ? " current-q" : "");
+        btn.textContent = idx + 1;
+        btn.onclick = () => jumpToQuestion(idx);
+        grid.appendChild(btn);
+      });
+    }
+
+    function showFinalReport() {
+      togglePalette(false);
+      document.getElementById("simulatorView").style.display = "none";
+      const repView = document.getElementById("reportView");
+      repView.classList.add("visible");
+
+      let correct = 0, incorrect = 0, skippedOrUnanswered = 0;
+      questionState.forEach((st, idx) => {
+        if (st.selectedOption === null) {
+          skippedOrUnanswered++;
+        } else if (st.selectedOption === questions[idx].correctIndex) {
+          correct++;
+        } else {
+          incorrect++;
+        }
+      });
+
+      const attempted = correct + incorrect;
+      const netScore = (correct * 1.0) - (incorrect * 0.25);
+      const accuracy = attempted > 0 ? (correct / attempted) * 100 : 0;
+
+      document.getElementById("repNetScore").textContent = netScore.toFixed(2);
+      document.getElementById("repAccuracy").textContent = `${accuracy.toFixed(2)}%`;
+      document.getElementById("repAttempted").textContent = attempted;
+      document.getElementById("repCorrect").textContent = correct;
+      document.getElementById("repIncorrect").textContent = incorrect;
+      document.getElementById("repSkipped").textContent = skippedOrUnanswered;
+
+      const matrix = document.getElementById("reviewMatrixContainer");
+      matrix.innerHTML = "";
+
+      questions.forEach((q, idx) => {
+        const st = questionState[idx];
+        const userChoice = st.selectedOption !== null ? `(${optionLetters[st.selectedOption]}) ${q.options[st.selectedOption]}` : "Not Attempted / Skipped";
+        const correctChoice = `(${optionLetters[q.correctIndex]}) ${q.options[q.correctIndex]}`;
+
+        let badgeClass = "background:rgba(100,116,139,0.25); color:#cbd5e1;";
+        let badgeLabel = "Skipped (0.00)";
+        if (st.selectedOption !== null) {
+          if (st.selectedOption === q.correctIndex) {
+            badgeClass = "background:rgba(16,185,129,0.2); color:#34d399;";
+            badgeLabel = "Correct (+1.00)";
+          } else {
+            badgeClass = "background:rgba(239,68,68,0.2); color:#f87171;";
+            badgeLabel = "Incorrect (-0.25)";
+          }
+        }
+
+        const item = document.createElement("div");
+        item.className = "matrix-item";
+        item.innerHTML = `
+          <div class="matrix-top">
+            <strong style="color:#fff; font-size:1.05rem;">${q.stemHi}</strong>
+            <span class="status-pill" style="${badgeClass}">${badgeLabel}</span>
+          </div>
+          <div style="font-size:0.92rem; margin-bottom:0.55rem; color:var(--text-secondary);">
+            <span><strong>Your Answer:</strong> ${userChoice}</span> &nbsp;|&nbsp;
+            <span style="color:var(--correct);"><strong>Correct Answer:</strong> ${correctChoice}</span>
+          </div>
+          <div style="font-size:0.92rem; color:var(--text-primary); margin-bottom:0.35rem;">
+            <strong>व्याख्या:</strong> ${q.expHi}
+          </div>
+          <div style="font-size:0.86rem; color:#a7f3d0;">
+            <strong>Key Exam Fact:</strong> ${q.keyFact}
+          </div>
+        `;
+        matrix.appendChild(item);
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function returnToSimulator() {
+      document.getElementById("reportView").classList.remove("visible");
+      document.getElementById("simulatorView").style.display = "block";
+      renderQuestion();
+    }
+
+    function resetSimulator() {
+      if (!confirm("Are you sure you want to reset all 100 responses and start fresh?")) return;
+      currentIdx = 0;
+      questionState = questions.map((_, idx) => ({
+        visited: idx === 0,
+        selectedOption: null,
+        skipped: false,
+        markedForReview: false
+      }));
+      returnToSimulator();
+    }
+
+    // Boot
+    window.onload = initSimulator;
+  </script>
+</body>
+</html>

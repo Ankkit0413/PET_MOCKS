@@ -1,0 +1,2577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPSSSC PET CBT Simulator - Mixed Economy (Public & Private Sectors)</title>
+  <style>
+    :root {
+      --bg-main: #f1f5f9;
+      --bg-card: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --border-color: #e2e8f0;
+      --accent-blue: #2563eb;
+      --accent-blue-hover: #1d4ed8;
+      --green-correct: #16a34a;
+      --green-bg: #dcfce7;
+      --red-wrong: #dc2626;
+      --red-bg: #fee2e2;
+      --orange-unanswered: #ea580c;
+      --orange-bg: #ffedd5;
+      --slate-skipped: #64748b;
+      --slate-bg: #f1f5f9;
+      --purple-review: #7c3aed;
+      --purple-bg: #f3e8ff;
+      --dark-notvisited: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Header Bar */
+    .top-header {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #38bdf8;
+    }
+
+    .brand-title span {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .score-badge {
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+    }
+
+    .submit-test-btn {
+      background: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 0.5rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .submit-test-btn:hover {
+      background: #dc2626;
+    }
+
+    /* Sub-bar */
+    .sub-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      position: sticky;
+      top: 63px;
+      z-index: 95;
+    }
+
+    .sub-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .q-counter {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+
+    .marking-pill {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .marking-pill .plus { color: var(--green-correct); }
+    .marking-pill .minus { color: var(--red-wrong); }
+
+    .palette-toggle-btn {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border: none;
+      padding: 0.55rem 1.15rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .palette-toggle-btn:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    /* Main Container */
+    .main-container {
+      max-width: 960px;
+      width: 100%;
+      margin: 1.5rem auto;
+      padding: 0 1rem 3rem;
+      flex: 1;
+    }
+
+    .question-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
+      padding: 1.75rem;
+    }
+
+    .question-stem-box {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 2px solid #f1f5f9;
+    }
+
+    .q-en {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.6rem;
+    }
+
+    .q-hi {
+      font-size: 1.08rem;
+      font-weight: 500;
+      color: #334155;
+    }
+
+    /* Options List */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .option-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.95rem 1.15rem;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: left;
+      width: 100%;
+    }
+
+    .option-card:hover:not(.locked) {
+      border-color: #93c5fd;
+      background: #f8fafc;
+    }
+
+    .option-card.locked {
+      cursor: default;
+    }
+
+    .option-badge {
+      min-width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      border: 1px solid #cbd5e1;
+      flex-shrink: 0;
+    }
+
+    .option-text {
+      font-size: 1rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      line-height: 1.45;
+    }
+
+    /* Correct / Wrong Option States */
+    .option-card.correct-choice {
+      border-color: var(--green-correct) !important;
+      background-color: var(--green-bg) !important;
+    }
+
+    .option-card.correct-choice .option-badge {
+      background-color: var(--green-correct);
+      color: #ffffff;
+      border-color: var(--green-correct);
+    }
+
+    .option-card.wrong-choice {
+      border-color: var(--red-wrong) !important;
+      background-color: var(--red-bg) !important;
+    }
+
+    .option-card.wrong-choice .option-badge {
+      background-color: var(--red-wrong);
+      color: #ffffff;
+      border-color: var(--red-wrong);
+    }
+
+    /* Action Row */
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: #e2e8f0;
+    }
+
+    .btn-secondary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-review {
+      background: var(--purple-bg);
+      color: var(--purple-review);
+      border: 1px solid #d8b4fe;
+    }
+
+    .btn-review.active-review {
+      background: var(--purple-review);
+      color: #ffffff;
+    }
+
+    .helper-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* Explanation Container */
+    .explanation-box {
+      margin-top: 1.5rem;
+      background: #f8fafc;
+      border-radius: 10px;
+      border-left: 5px solid var(--accent-blue);
+      padding: 1.4rem;
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .status-correct { background: var(--green-bg); color: var(--green-correct); }
+    .status-incorrect { background: var(--red-bg); color: var(--red-wrong); }
+    .status-skipped { background: #e2e8f0; color: #334155; }
+
+    .correct-key-label {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .exp-block {
+      margin-bottom: 0.85rem;
+      font-size: 0.96rem;
+    }
+
+    .exp-block strong {
+      color: #0f172a;
+    }
+
+    .key-fact-box {
+      background: #fef9c3;
+      border: 1px solid #fde047;
+      color: #854d0e;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-top: 0.85rem;
+    }
+
+    .next-btn-row {
+      margin-top: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .prev-q-btn {
+      background: #e2e8f0;
+      color: #1e293b;
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .prev-q-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .next-q-btn {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.98rem;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+      transition: background 0.2s;
+    }
+
+    .next-q-btn:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    /* On-Demand Modal/Drawer Palette */
+    .palette-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(2px);
+      z-index: 200;
+      display: none;
+      justify-content: flex-end;
+    }
+
+    .palette-backdrop.open {
+      display: flex;
+    }
+
+    .palette-drawer {
+      background: #ffffff;
+      width: 100%;
+      max-width: 440px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -5px 0 25px rgba(0, 0, 0, 0.25);
+      animation: slideLeft 0.22s ease-out;
+    }
+
+    @keyframes slideLeft {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    .drawer-header {
+      padding: 1.1rem 1.35rem;
+      background: #0f172a;
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .close-drawer-btn {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .close-drawer-btn:hover {
+      background: #475569;
+    }
+
+    .palette-legend {
+      padding: 1rem 1.25rem;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .palette-grid {
+      padding: 1.25rem;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.65rem;
+      flex: 1;
+      align-content: start;
+    }
+
+    .p-btn {
+      height: 42px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+    }
+
+    .p-btn:hover {
+      transform: scale(1.06);
+    }
+
+    .p-btn.current-q {
+      outline: 3px solid #0f172a;
+      outline-offset: 1px;
+    }
+
+    /* 6-Status Colors */
+    .st-not-visited { background: #334155; color: #f8fafc; }
+    .st-correct { background: var(--green-correct); color: #ffffff; }
+    .st-incorrect { background: var(--red-wrong); color: #ffffff; }
+    .st-unanswered { background: var(--orange-unanswered); color: #ffffff; }
+    .st-skipped { background: var(--slate-skipped); color: #ffffff; }
+    .st-review { background: var(--purple-review); color: #ffffff; }
+
+    /* Final Performance Dashboard */
+    .dashboard-container {
+      max-width: 980px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1rem 4rem;
+      display: none;
+    }
+
+    .dashboard-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      margin-bottom: 2rem;
+    }
+
+    .dash-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 0.4rem;
+      text-align: center;
+    }
+
+    .dash-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 1.75rem;
+      font-size: 0.95rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      padding: 1.15rem;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-box .stat-val {
+      font-size: 1.65rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-box .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .review-item {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.35rem;
+    }
+
+    @media (max-width: 640px) {
+      .sub-bar { top: 96px; }
+      .question-card { padding: 1.2rem; }
+      .q-en { font-size: 1.05rem; }
+      .q-hi { font-size: 0.98rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Bar -->
+  <header class="top-header">
+    <div class="brand-title">
+      <h1>UPSSSC PET CBT SIMULATOR</h1>
+      <span>Indian Economy: मिश्रित अर्थव्यवस्था का विकास (निजी एवं सार्वजनिक क्षेत्र)</span>
+    </div>
+    <div class="header-right">
+      <div class="score-badge" id="liveScoreBadge">Net Score: +0.00 Marks</div>
+      <button class="submit-test-btn" onclick="showFinalDashboard()">Finish &amp; Submit</button>
+    </div>
+  </header>
+
+  <!-- Sub-bar -->
+  <div class="sub-bar" id="subBar">
+    <div class="sub-bar-left">
+      <div class="q-counter" id="questionCounter">Question 1 of 100</div>
+      <div class="marking-pill">
+        Marking: <span class="plus">+1.00</span> | <span class="minus">-0.25</span>
+      </div>
+    </div>
+    <button class="palette-toggle-btn" onclick="openPalette()">
+      📋 Question Palette
+    </button>
+  </div>
+
+  <!-- Main Test Area -->
+  <main class="main-container" id="testContainer">
+    <div class="question-card">
+      <div class="question-stem-box">
+        <div class="q-en" id="qStemEn"></div>
+        <div class="q-hi" id="qStemHi"></div>
+      </div>
+
+      <div class="options-list" id="optionsContainer"></div>
+
+      <div class="action-row">
+        <div class="action-buttons">
+          <button class="btn-secondary" id="skipBtn" onclick="skipQuestion()">⚪ Skip Question</button>
+          <button class="btn-secondary btn-review" id="reviewBtn" onclick="toggleMarkForReview()">🟣 Mark for Review</button>
+        </div>
+        <div class="helper-text" id="helperText">Tap an option to lock your answer and view explanation.</div>
+      </div>
+
+      <!-- Expandable Bilingual Explanation Container -->
+      <div class="explanation-box" id="explanationBox">
+        <div class="exp-header">
+          <span class="status-badge" id="expStatusBadge"></span>
+          <span class="correct-key-label" id="expCorrectKey"></span>
+        </div>
+        <div class="exp-block" id="expEn"></div>
+        <div class="exp-block" id="expHi"></div>
+        <div class="key-fact-box" id="expFact"></div>
+      </div>
+
+      <!-- Manual Navigation Row -->
+      <div class="next-btn-row">
+        <button class="prev-q-btn" id="prevBtn" onclick="navigateStep(-1)">⬅ Previous</button>
+        <button class="next-q-btn" id="nextBtn" onclick="navigateStep(1)">Next Question ➔</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- On-Demand Question Palette Modal/Drawer -->
+  <div class="palette-backdrop" id="paletteBackdrop" onclick="handleBackdropClick(event)">
+    <div class="palette-drawer">
+      <div class="drawer-header">
+        <h2>📋 Question Palette (1–100)</h2>
+        <button class="close-drawer-btn" onclick="closePalette()">✕ Close</button>
+      </div>
+      <div class="palette-legend">
+        <div class="legend-item"><span class="legend-dot st-correct"></span> Correct (<span id="cntCorrect">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-incorrect"></span> Incorrect (<span id="cntIncorrect">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-unanswered"></span> Visited/Unans (<span id="cntUnanswered">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-skipped"></span> Skipped (<span id="cntSkipped">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-review"></span> Review (<span id="cntReview">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-not-visited"></span> Not Visited (<span id="cntNotVisited">100</span>)</div>
+      </div>
+      <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+  </div>
+
+  <!-- Final Performance Dashboard -->
+  <section class="dashboard-container" id="dashboardContainer">
+    <div class="dashboard-card">
+      <h2 class="dash-title">🏆 UPSSSC PET Final Performance Dashboard</h2>
+      <p class="dash-subtitle">Topic: मिश्रित अर्थव्यवस्था का विकास: निजी एवं सार्वजनिक क्षेत्र (100 Questions)</p>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="finalNetScore" style="color: var(--accent-blue);">0.00</div>
+          <div class="stat-label">Net Score (Out of 100)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="finalCorrect" style="color: var(--green-correct);">0</div>
+          <div class="stat-label">Correct (+1.00)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="finalIncorrect" style="color: var(--red-wrong);">0</div>
+          <div class="stat-label">Incorrect (-0.25)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="finalSkipped" style="color: var(--slate-skipped);">0</div>
+          <div class="stat-label">Skipped / Unattempted</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="finalAccuracy" style="color: var(--purple-review);">0%</div>
+          <div class="stat-label">Accuracy Rate</div>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <button class="next-q-btn" onclick="returnToSimulator()">⬅ Back to Question Simulator</button>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">📚 Complete 100-Question Bilingual Review</h3>
+    <div class="review-list" id="fullReviewList"></div>
+  </section>
+
+  <script>
+    const OPTION_E = "None of these / इनमें से कोई नहीं";
+
+    const questionsData = [
+      {
+        q: 1,
+        en: "Which type of economic system did India adopt after independence?",
+        hi: "स्वतंत्रता के बाद भारत ने किस प्रकार की आर्थिक प्रणाली को अपनाया?",
+        options: [
+          "Capitalist Economy / पूंजीवादी अर्थव्यवस्था",
+          "Socialist Economy / समाजवादी अर्थव्यवस्था",
+          "Mixed Economy / मिश्रित अर्थव्यवस्था",
+          "Traditional Economy / पारंपरिक अर्थव्यवस्था",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "After independence, India adopted a Mixed Economy model, combining features of both capitalism (private sector) and socialism (public sector).",
+        expHi: "स्वतंत्रता के बाद भारत ने पूंजीवाद (निजी क्षेत्र) और समाजवाद (सार्वजनिक क्षेत्र) दोनों की विशेषताओं को मिलाकर मिश्रित अर्थव्यवस्था मॉडल को अपनाया।",
+        fact: "The concept of Mixed Economy was officially adopted through the First Industrial Policy Resolution of 1948."
+      },
+      {
+        q: 2,
+        en: "What does the term 'Mixed Economy' primarily mean?",
+        hi: "'मिश्रित अर्थव्यवस्था' शब्द का मुख्य अर्थ क्या है?",
+        options: [
+          "Co-existence of small and large industries / लघु और वृहद उद्योगों का सह-अस्तित्व",
+          "Co-existence of agriculture and industry / कृषि और उद्योग का सह-अस्तित्व",
+          "Co-existence of public and private sectors / सार्वजनिक और निजी क्षेत्रों का सह-अस्तित्व",
+          "Co-existence of rich and poor / अमीर और गरीब का सह-अस्तित्व",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "A mixed economy is defined by the co-existence and cooperative functioning of both the public (government) and private sectors in economic activities.",
+        expHi: "मिश्रित अर्थव्यवस्था को आर्थिक गतिविधियों में सार्वजनिक (सरकारी) और निजी दोनों क्षेत्रों के सह-अस्तित्व और सहयोगात्मक कार्यप्रणाली द्वारा परिभाषित किया जाता है।",
+        fact: "This question has been repeatedly asked in UPPSC and UPSSSC exams, including UPSSSC PET 2021/2022."
+      },
+      {
+        q: 3,
+        en: "Who is widely considered the pioneer of the concept of Mixed Economy in world economics?",
+        hi: "विश्व अर्थशास्त्र में मिश्रित अर्थव्यवस्था की अवधारणा का जनक किसे माना जाता है?",
+        options: [
+          "Adam Smith / एडम स्मिथ",
+          "Karl Marx / कार्ल मार्क्स",
+          "John Maynard Keynes / जॉन मेनार्ड कीन्स",
+          "Amartya Sen / अमर्त्य सेन",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "John Maynard Keynes advocated for government intervention in a free-market capitalist economy after the Great Depression of 1929, laying the foundation for a Mixed Economy.",
+        expHi: "जॉन मेनार्ड कीन्स ने 1929 की महामंदी के बाद मुक्त-बाजार पूंजीवादी अर्थव्यवस्था में सरकारी हस्तक्षेप की वकालत की, जिससे मिश्रित अर्थव्यवस्था की नींव पड़ी।",
+        fact: "Adam Smith is the father of Capitalist Economy ('The Wealth of Nations', 1776), while Karl Marx is the father of Socialist Economy ('Das Kapital')."
+      },
+      {
+        q: 4,
+        en: "When was the First Industrial Policy of independent India announced?",
+        hi: "स्वतंत्र भारत की प्रथम औद्योगिक नीति की घोषणा कब की गई थी?",
+        options: [
+          "6 April 1948 / 6 अप्रैल 1948",
+          "30 April 1956 / 30 अप्रैल 1956",
+          "24 July 1991 / 24 जुलाई 1991",
+          "15 August 1947 / 15 अगस्त 1947",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "Independent India's First Industrial Policy Resolution was announced on 6 April 1948, which formally introduced the Mixed Economy structure in India.",
+        expHi: "स्वतंत्र भारत के प्रथम औद्योगिक नीति संकल्प की घोषणा 6 अप्रैल 1948 को की गई थी, जिसने औपचारिक रूप से भारत में मिश्रित अर्थव्यवस्था संरचना की शुरुआत की।",
+        fact: "It divided Indian industries into 4 broad categories."
+      },
+      {
+        q: 5,
+        en: "Who presented the First Industrial Policy Resolution on 6 April 1948?",
+        hi: "6 अप्रैल 1948 को प्रथम औद्योगिक नीति संकल्प किसने प्रस्तुत किया था?",
+        options: [
+          "Jawaharlal Nehru / जवाहरलाल नेहरू",
+          "Dr. Shyama Prasad Mukherjee / डॉ. श्यामा प्रसाद मुखर्जी",
+          "Sardar Vallabhbhai Patel / सरदार वल्लभभाई पटेल",
+          "John Mathai / जॉन मथाई",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Dr. Shyama Prasad Mukherjee, the first Minister of Industry and Supply of independent India, presented the Industrial Policy Resolution of 1948.",
+        expHi: "स्वतंत्र भारत के पहले उद्योग और आपूर्ति मंत्री डॉ. श्यामा प्रसाद मुखर्जी ने 1948 का औद्योगिक नीति संकल्प प्रस्तुत किया था।",
+        fact: "Dr. Shyama Prasad Mukherjee was the Industry Minister in Jawaharlal Nehru's first cabinet."
+      },
+      {
+        q: 6,
+        en: "Into how many categories were industries divided in the Industrial Policy Resolution of 1948?",
+        hi: "1948 के औद्योगिक नीति संकल्प में उद्योगों को कितनी श्रेणियों में विभाजित किया गया था?",
+        options: [
+          "Two / दो",
+          "Three / तीन",
+          "Four / चार",
+          "Five / पांच",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "The 1948 Industrial Policy divided industries into 4 categories: Exclusive State Monopoly (3 industries), Mixed Sector (6 industries), Regulated Sector (18 industries), and Private & Cooperative Sector.",
+        expHi: "1948 की औद्योगिक नीति ने उद्योगों को 4 श्रेणियों में विभाजित किया: अनन्य राज्य एकाधिकार (3 उद्योग), मिश्रित क्षेत्र (6 उद्योग), विनियमित क्षेत्र (18 उद्योग), और निजी एवं सहकारी क्षेत्र।",
+        fact: "Arms & ammunition, atomic energy, and railway transport were kept under exclusive central government monopoly in 1948."
+      },
+      {
+        q: 7,
+        en: "Which Industrial Policy Resolution is called the 'Economic Constitution of India' or the 'Bible of State Capitalism'?",
+        hi: "किस औद्योगिक नीति संकल्प को 'भारत का आर्थिक संविधान' या 'राज्य पूंजीवाद की बाइबिल' कहा जाता है?",
+        options: [
+          "Industrial Policy 1948 / औद्योगिक नीति 1948",
+          "Industrial Policy 1956 / औद्योगिक नीति 1956",
+          "Industrial Policy 1977 / औद्योगिक नीति 1977",
+          "Industrial Policy 1991 / औद्योगिक नीति 1991",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "The Industrial Policy Resolution of 1956 (30 April 1956) is known as the 'Economic Constitution of India' because it laid the foundational framework for public sector dominance and socialist pattern of society.",
+        expHi: "1956 के औद्योगिक नीति संकल्प (30 अप्रैल 1956) को 'भारत का आर्थिक संविधान' कहा जाता है क्योंकि इसने सार्वजनिक क्षेत्र के प्रभुत्व और समाज के समाजवादी प्रतिमान के लिए आधारभूत ढांचा तैयार किया।",
+        fact: "The 1956 policy formed the basis of the Second Five-Year Plan (Mahalanobis Model)."
+      },
+      {
+        q: 8,
+        en: "In the Industrial Policy Resolution of 1956, industries were classified into how many schedules?",
+        hi: "1956 के औद्योगिक नीति संकल्प में उद्योगों को कितनी अनुसूचियों (Schedules) में वर्गीकृत किया गया था?",
+        options: [
+          "2 Schedules / 2 अनुसूचियां",
+          "3 Schedules / 3 अनुसूचियां",
+          "4 Schedules / 4 अनुसूचियां",
+          "5 Schedules / 5 अनुसूचियां",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "The 1956 policy classified industries into 3 schedules: Schedule A (17 industries exclusively under Public Sector), Schedule B (12 industries progressively state-owned with private supplement), and Schedule C (remaining industries for the Private Sector).",
+        expHi: "1956 की नीति ने उद्योगों को 3 अनुसूचियों में वर्गीकृत किया: अनुसूची A (विशेष रूप से सार्वजनिक क्षेत्र के तहत 17 उद्योग), अनुसूची B (12 उद्योग जिनमें राज्य और निजी दोनों की भागीदारी थी), और अनुसूची C (निजी क्षेत्र के लिए शेष उद्योग)।",
+        fact: "Schedule A had 17 industries, Schedule B had 12 industries, and Schedule C covered all remaining private sector industries."
+      },
+      {
+        q: 9,
+        en: "How many industries were exclusively reserved for the Public Sector under Schedule A of the Industrial Policy 1956?",
+        hi: "औद्योगिक नीति 1956 की अनुसूची A के तहत सार्वजनिक क्षेत्र के लिए विशेष रूप से कितने उद्योग आरक्षित किए गए थे?",
+        options: ["12", "17", "18", "24", OPTION_E],
+        ans: 1,
+        expEn: "Schedule A of the Industrial Policy Resolution 1956 contained 17 key and strategic industries whose future development was the exclusive responsibility of the State (Public Sector).",
+        expHi: "औद्योगिक नीति संकल्प 1956 की अनुसूची A में 17 प्रमुख और रणनीतिक उद्योग शामिल थे जिनका भविष्य का विकास विशेष रूप से राज्य (सार्वजनिक क्षेत्र) की जिम्मेदारी थी।",
+        fact: "Schedule B contained 12 industries where the state would establish new units while private enterprises could supplement state efforts."
+      },
+      {
+        q: 10,
+        en: "What was the primary objective of establishing a strong Public Sector in India during the initial Five-Year Plans?",
+        hi: "प्रारंभिक पंचवर्षीय योजनाओं के दौरान भारत में एक मजबूत सार्वजनिक क्षेत्र स्थापित करने का प्राथमिक उद्देश्य क्या था?",
+        options: [
+          "Maximizing private profit / निजी लाभ को अधिकतम करना",
+          "Developing heavy infrastructure, promoting regional balance, and social welfare / भारी बुनियादी ढांचे का विकास, क्षेत्रीय संतुलन को बढ़ावा देना और सामाजिक कल्याण",
+          "Eliminating agriculture completely / कृषि को पूरी तरह से समाप्त करना",
+          "Promoting foreign imports / विदेशी आयात को बढ़ावा देना",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Since private capital was scarce after independence, the Public Sector was given the 'Commanding Heights' to build core infrastructure, heavy industries, generate employment, and ensure balanced regional development.",
+        expHi: "चूंकि स्वतंत्रता के बाद निजी पूंजी दुर्लभ थी, इसलिए बुनियादी ढांचे, भारी उद्योगों के निर्माण, रोजगार सृजन और संतुलित क्षेत्रीय विकास को सुनिश्चित करने के लिए सार्वजनिक क्षेत्र को 'अर्थव्यवस्था के शीर्ष नियंत्रण (Commanding Heights)' की भूमिका दी गई।",
+        fact: "The Second Five-Year Plan (1956–61) specifically focused on rapid industrialization and heavy public sector enterprises."
+      },
+      {
+        q: 11,
+        en: "Which session of the Indian National Congress adopted the resolution for a 'Socialistic Pattern of Society'?",
+        hi: "भारतीय राष्ट्रीय कांग्रेस के किस अधिवेशन में 'समाज के समाजवादी प्रतिमान (Socialistic Pattern of Society)' के संकल्प को अपनाया गया था?",
+        options: [
+          "Lahore Session, 1929 / लाहौर अधिवेशन, 1929",
+          "Karachi Session, 1931 / कराची अधिवेशन, 1931",
+          "Avadi Session, 1955 / अवाडी अधिवेशन, 1955",
+          "Haripura Session, 1938 / हरिपुरा अधिवेशन, 1938",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "In the Avadi Session (near Madras) of 1955, presided over by U. N. Dhebar and championed by Jawaharlal Nehru, the Congress declared the establishment of a 'Socialistic Pattern of Society' as its goal, which directly influenced the 1956 Industrial Policy.",
+        expHi: "1955 के अवाडी अधिवेशन (मद्रास के पास) में, जिसकी अध्यक्षता यू. एन. ढेबर ने की और जवाहरलाल नेहरू ने समर्थन किया, कांग्रेस ने 'समाज के समाजवादी प्रतिमान' की स्थापना को अपना लक्ष्य घोषित किया, जिसने सीधे 1956 की औद्योगिक नीति को प्रभावित किया।",
+        fact: "Avadi Session (1955) led directly to the public-sector-led growth strategy in the Second Five-Year Plan."
+      },
+      {
+        q: 12,
+        en: "What is an enterprise called in which the Government (Central, State, or both) holds 51% or more of the paid-up share capital?",
+        hi: "उस उद्यम को क्या कहा जाता है जिसमें सरकार (केंद्र, राज्य या दोनों) के पास प्रदत्त शेयर पूंजी (Paid-up share capital) का 51% या उससे अधिक हिस्सा होता है?",
+        options: [
+          "Private Sector Enterprise / निजी क्षेत्र का उद्यम",
+          "Public Sector Undertaking (PSU) / सार्वजनिक क्षेत्र का उपक्रम (PSU)",
+          "Multinational Corporation (MNC) / बहुराष्ट्रीय निगम (MNC)",
+          "Non-Governmental Organization (NGO) / गैर-सरकारी संगठन (NGO)",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Under the Companies Act, a Government Company or Public Sector Undertaking (PSU) is any company in which not less than 51% of the paid-up share capital is held by the Central Government, State Government(s), or partly by both.",
+        expHi: "कंपनी अधिनियम के तहत, एक सरकारी कंपनी या सार्वजनिक क्षेत्र का उपक्रम (PSU) वह कंपनी है जिसमें प्रदत्त शेयर पूंजी का कम से कम 51% हिस्सा केंद्र सरकार, राज्य सरकार या आंशिक रूप से दोनों के पास होता है।",
+        fact: "Minimum 51% equity holding by the government is mandatory for an entity to be classified as a PSU."
+      },
+      {
+        q: 13,
+        en: "What does the 'Joint Sector' in an economy imply?",
+        hi: "अर्थव्यवस्था में 'संयुक्त क्षेत्र (Joint Sector)' का क्या तात्पर्य है?",
+        options: [
+          "Partnership between two private companies / दो निजी कंपनियों के बीच साझेदारी",
+          "Partnership between domestic and foreign private firms / घरेलू और विदेशी निजी फर्मों के बीच साझेदारी",
+          "Partnership between the Public Sector (Government) and Private Sector in ownership and management / स्वामित्व और प्रबंधन में सार्वजनिक क्षेत्र (सरकार) और निजी क्षेत्र के बीच साझेदारी",
+          "Enterprises run exclusively by cooperative societies / केवल सहकारी समितियों द्वारा चलाए जाने वाले उद्यम",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "The Joint Sector refers to enterprises owned and managed jointly by the government (Public Sector) and private entrepreneurs, combining state financial support with private managerial efficiency.",
+        expHi: "संयुक्त क्षेत्र उन उद्यमों को संदर्भित करता है जिनका स्वामित्व और प्रबंधन सरकार (सार्वजनिक क्षेत्र) और निजी उद्यमियों द्वारा संयुक्त रूप से किया जाता है, जिसमें राज्य के वित्तीय समर्थन को निजी प्रबंधकीय दक्षता के साथ जोड़ा जाता है।",
+        fact: "Maruti Udyog Limited (started in 1981-82 with Government of India and Suzuki) was a classic historical example of a Joint Sector venture before full privatization."
+      },
+      {
+        q: 14,
+        en: "Which committee recommended the concept of the 'Joint Sector' in India in 1969?",
+        hi: "1969 में किस समिति ने भारत में 'संयुक्त क्षेत्र (Joint Sector)' की अवधारणा की सिफारिश की थी?",
+        options: [
+          "Hazari Committee / हजारी समिति",
+          "Dutt Committee (Industrial Licensing Policy Inquiry Committee) / दत्त समिति (औद्योगिक लाइसेंसिंग नीति जांच समिति)",
+          "Abid Hussain Committee / आबिद हुसैन समिति",
+          "Narasimham Committee / नरसिम्हम समिति",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "The Subimal Dutt Committee (Industrial Licensing Policy Inquiry Committee, 1969) recommended the creation of the Joint Sector to prevent the concentration of economic power in a few private hands.",
+        expHi: "सुबिमल दत्त समिति (औद्योगिक लाइसेंसिंग नीति जांच समिति, 1969) ने कुछ निजी हाथों में आर्थिक शक्ति के केंद्रीकरण को रोकने के लिए संयुक्त क्षेत्र के निर्माण की सिफारिश की थी।",
+        fact: "Based on the Dutt Committee's recommendations, the MRTP Act (1969) and the Industrial Licensing Policy of 1970 were introduced."
+      },
+      {
+        q: 15,
+        en: "Which Act was enacted in 1951 to implement the Industrial Policy of 1948 and establish the licensing system ('License Raj') for the private sector?",
+        hi: "1948 की औद्योगिक नीति को लागू करने और निजी क्षेत्र के लिए लाइसेंसिंग प्रणाली ('लाइसेंस राज') स्थापित करने के लिए 1951 में कौन सा अधिनियम बनाया गया था?",
+        options: [
+          "Companies Act, 1951 / कंपनी अधिनियम, 1951",
+          "Industries (Development and Regulation) Act (IDRA), 1951 / उद्योग (विकास और विनियमन) अधिनियम (IDRA), 1951",
+          "MRTP Act, 1951 / एमआरटीपी अधिनियम, 1951",
+          "FEMA Act, 1951 / फेमा अधिनियम, 1951",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "The Industries (Development and Regulation) Act (IDRA), 1951 made it mandatory for private entrepreneurs to obtain a government license before setting up a new industrial undertaking or expanding capacity.",
+        expHi: "उद्योग (विकास और विनियमन) अधिनियम (IDRA), 1951 ने निजी उद्यमियों के लिए एक नया औद्योगिक उपक्रम स्थापित करने या क्षमता का विस्तार करने से पहले सरकारी लाइसेंस प्राप्त करना अनिवार्य कर दिया।",
+        fact: "IDRA 1951 came into force on 8 May 1952 and was the main legal instrument of the 'License Quota Permit Raj'."
+      },
+      {
+        q: 16,
+        en: "Who coined the famous term 'License-Permit-Quota Raj' to criticize excessive government control over the private sector in India?",
+        hi: "भारत में निजी क्षेत्र पर अत्यधिक सरकारी नियंत्रण की आलोचना करने के लिए प्रसिद्ध शब्द 'लाइसेंस-परमिट-कोटा राज' किसने गढ़ा था?",
+        options: [
+          "Mahatma Gandhi / महात्मा गांधी",
+          "C. Rajagopalachari / सी. राजगोपालाचारी",
+          "Jayaprakash Narayan / जयप्रकाश नारायण",
+          "Morarji Desai / मोरारजी देसाई",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Veteran freedom fighter and founder of the Swatantra Party, C. Rajagopalachari (Rajaji), coined the term 'Permit-License-Quota Raj' to oppose the bureaucratic controls over private enterprise under Nehruvian socialism.",
+        expHi: "वयोवृद्ध स्वतंत्रता सेनानी और स्वतंत्र पार्टी के संस्थापक, सी. राजगोपालाचारी (राजाजी) ने नेहरूवादी समाजवाद के तहत निजी उद्यम पर नौकरशाही नियंत्रणों का विरोध करने के लिए 'परमिट-लाइसेंस-कोटा राज' शब्द गढ़ा था।",
+        fact: "C. Rajagopalachari founded the pro-market Swatantra Party in 1959."
+      },
+      {
+        q: 17,
+        en: "In which year was the Monopolies and Restrictive Trade Practices (MRTP) Act enacted to prevent monopolistic practices in the private sector?",
+        hi: "निजी क्षेत्र में एकाधिकार प्रथाओं को रोकने के लिए एकाधिकार तथा अवरोधक व्यापार व्यवहार (MRTP) अधिनियम किस वर्ष अधिनियमित किया गया था?",
+        options: ["1956", "1969", "1973", "1991", OPTION_E],
+        ans: 1,
+        expEn: "The MRTP Act was passed in 1969 (and came into force in June 1970) to prevent the concentration of economic power in the hands of a few large private business houses.",
+        expHi: "कुछ बड़े निजी व्यापारिक घरानों के हाथों में आर्थिक शक्ति के केंद्रीकरण को रोकने के लिए 1969 में MRTP अधिनियम पारित किया गया था (और जून 1970 में लागू हुआ)।",
+        fact: "The MRTP Act, 1969 was later replaced by the Competition Act, 2002 on the recommendation of the Raghavan Committee."
+      },
+      {
+        q: 18,
+        en: "Which steel plant was established in the Public Sector during the Second Five-Year Plan with the collaboration of the USSR (Soviet Union)?",
+        hi: "द्वितीय पंचवर्षीय योजना के दौरान सोवियत संघ (USSR) के सहयोग से सार्वजनिक क्षेत्र में कौन सा इस्पात संयंत्र स्थापित किया गया था?",
+        options: [
+          "Rourkela Steel Plant / राउरकेला इस्पात संयंत्र",
+          "Bhilai Steel Plant / भिलाई इस्पात संयंत्र",
+          "Durgapur Steel Plant / दुर्गापुर इस्पात संयंत्र",
+          "Bokaro Steel Plant / बोकारो इस्पात संयंत्र",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "During the Second Five-Year Plan (1956–61), Bhilai Steel Plant (Chhattisgarh) was set up with USSR help, Rourkela (Odisha) with West Germany's help, and Durgapur (West Bengal) with the UK's help.",
+        expHi: "द्वितीय पंचवर्षीय योजना (1956-61) के दौरान, सोवियत संघ (USSR) की सहायता से भिलाई इस्पात संयंत्र (छत्तीसगढ़), पश्चिम जर्मनी की सहायता से राउरकेला (ओडिशा), और ब्रिटेन (UK) की सहायता से दुर्गापुर (पश्चिम बंगाल) स्थापित किया गया था।",
+        fact: "Bokaro Steel Plant (Jharkhand) was set up with USSR collaboration during the Third Five-Year Plan (1964)."
+      },
+      {
+        q: 19,
+        en: "Which was the first major iron and steel company established in the Private Sector in India in 1907?",
+        hi: "1907 में भारत में निजी क्षेत्र में स्थापित पहली प्रमुख लोहा और इस्पात कंपनी कौन सी थी?",
+        options: [
+          "IISCO (Burnpur) / इस्को (बर्नपुर)",
+          "TISCO (Jamshedpur) / टिस्को (जमशेदपुर)",
+          "VISL (Bhadravati) / वीआईएसएल (भद्रावती)",
+          "Jindal Steel / जिंदल स्टील",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Tata Iron and Steel Company (TISCO, now Tata Steel) was established by Jamsetji Nusserwanji Tata (and Dorabji Tata) at Sakchi (Jamshedpur, Jharkhand) in 1907 in the private sector.",
+        expHi: "टाटा आयरन एंड स्टील कंपनी (TISCO, अब टाटा स्टील) की स्थापना 1907 में निजी क्षेत्र में जमशेदजी नुसरवानजी टाटा (और दोराबजी टाटा) द्वारा साकची (जमशेदपुर, झारखंड) में की गई थी।",
+        fact: "TISCO started pig iron production in 1911 and steel production in 1912."
+      },
+      {
+        q: 20,
+        en: "In which year was the Imperial Bank of India nationalized and converted into the State Bank of India (SBI), expanding the Public Sector in banking?",
+        hi: "बैंकिंग में सार्वजनिक क्षेत्र का विस्तार करते हुए इंपीरियल बैंक ऑफ इंडिया का राष्ट्रीयकरण किस वर्ष किया गया और इसे भारतीय स्टेट बैंक (SBI) में बदल दिया गया?",
+        options: ["1949", "1955", "1969", "1980", OPTION_E],
+        ans: 1,
+        expEn: "On 1 July 1955, the Imperial Bank of India (originally formed in 1921) was nationalized on the recommendation of the A.D. Gorwala Committee to create the State Bank of India (SBI).",
+        expHi: "1 जुलाई 1955 को, ए.डी. गोरेवाला समिति की सिफारिश पर भारतीय स्टेट बैंक (SBI) बनाने के लिए इंपीरियल बैंक ऑफ इंडिया (मूल रूप से 1921 में गठित) का राष्ट्रीयकरण किया गया था।",
+        fact: "The Reserve Bank of India (RBI) was nationalized earlier on 1 January 1949."
+      },
+      {
+        q: 21,
+        en: "In which year was the Life Insurance sector nationalized to establish the Life Insurance Corporation of India (LIC) as a Public Sector enterprise?",
+        hi: "भारतीय जीवन बीमा निगम (LIC) को सार्वजनिक क्षेत्र के उद्यम के रूप में स्थापित करने के लिए जीवन बीमा क्षेत्र का राष्ट्रीयकरण किस वर्ष किया गया था?",
+        options: ["1951", "1956", "1964", "1972", OPTION_E],
+        ans: 1,
+        expEn: "LIC was established on 1 September 1956 by nationalizing and merging 245 private insurance companies and provident societies under the LIC Act, 1956.",
+        expHi: "एलआईसी अधिनियम, 1956 के तहत 245 निजी बीमा कंपनियों और प्रोविडेंट सोसायटियों का राष्ट्रीयकरण और विलय करके 1 सितंबर 1956 को LIC की स्थापना की गई थी।",
+        fact: "General (non-life) insurance was nationalized later in 1972 through the GIBNA Act, forming GIC."
+      },
+      {
+        q: 22,
+        en: "On 19 July 1969, how many major private commercial banks were nationalized by the Government of India?",
+        hi: "19 जुलाई 1969 को भारत सरकार द्वारा कितने प्रमुख निजी वाणिज्यिक बैंकों का राष्ट्रीयकरण किया गया था?",
+        options: [
+          "6 Banks / 6 बैंक",
+          "14 Banks / 14 बैंक",
+          "19 Banks / 19 बैंक",
+          "20 Banks / 20 बैंक",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "On 19 July 1969, during Prime Minister Indira Gandhi's tenure, 14 major private commercial banks with deposits of ₹50 crore or more were nationalized to bring banking into the Public Sector for social welfare and agricultural credit.",
+        expHi: "19 जुलाई 1969 को प्रधानमंत्री इंदिरा गांधी के कार्यकाल के दौरान, सामाजिक कल्याण और कृषि ऋण के लिए बैंकिंग को सार्वजनिक क्षेत्र में लाने हेतु ₹50 करोड़ या उससे अधिक की जमा राशि वाले 14 प्रमुख निजी वाणिज्यिक बैंकों का राष्ट्रीयकरण किया गया था।",
+        fact: "This happened during the Fourth Five-Year Plan (1969–1974)."
+      },
+      {
+        q: 23,
+        en: "In the second phase of bank nationalization on 15 April 1980, how many private banks were nationalized?",
+        hi: "15 अप्रैल 1980 को बैंक राष्ट्रीयकरण के दूसरे चरण में कितने निजी बैंकों का राष्ट्रीयकरण किया गया था?",
+        options: [
+          "4 Banks / 4 बैंक",
+          "6 Banks / 6 बैंक",
+          "8 Banks / 8 बैंक",
+          "10 Banks / 10 बैंक",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "On 15 April 1980, 6 more private commercial banks with demand and time liabilities (deposits) of ₹200 crore or more were nationalized.",
+        expHi: "15 अप्रैल 1980 को, ₹200 करोड़ या उससे अधिक की जमा राशि (देनदारियों) वाले 6 और निजी वाणिज्यिक बैंकों का राष्ट्रीयकरण किया गया।",
+        fact: "Currently, after major mergers, there are 12 Public Sector Banks (PSBs) in India (including SBI)."
+      },
+      {
+        q: 24,
+        en: "When was the New Industrial Policy (LPG Reforms) announced, which fundamentally redefined the role of Public and Private sectors in India's Mixed Economy?",
+        hi: "नई औद्योगिक नीति (LPG सुधार) की घोषणा कब की गई थी, जिसने भारत की मिश्रित अर्थव्यवस्था में सार्वजनिक और निजी क्षेत्रों की भूमिका को मौलिक रूप से फिर से परिभाषित किया?",
+        options: [
+          "24 July 1990 / 24 जुलाई 1990",
+          "24 July 1991 / 24 जुलाई 1991",
+          "1 April 1991 / 1 अप्रैल 1991",
+          "15 August 1992 / 15 अगस्त 1992",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "On 24 July 1991, the Narasimha Rao government (with Dr. Manmohan Singh as Finance Minister) announced the New Industrial Policy, shifting India from a state-dominated mixed economy to a market-driven mixed economy.",
+        expHi: "24 जुलाई 1991 को, नरसिम्हा राव सरकार (वित्त मंत्री के रूप में डॉ. मनमोहन सिंह के साथ) ने नई औद्योगिक नीति की घोषणा की, जिससे भारत राज्य-प्रधान मिश्रित अर्थव्यवस्था से बाजार-संचालित मिश्रित अर्थव्यवस्था में परिवर्तित हो गया।",
+        fact: "The 1991 reforms are famously known as the Rao-Manmohan Model and LPG (Liberalization, Privatization, Globalization) reforms."
+      },
+      {
+        q: 25,
+        en: "What does 'L', 'P', and 'G' stand for in the 1991 Economic Reforms?",
+        hi: "1991 के आर्थिक सुधारों में 'L', 'P' और 'G' का क्या अर्थ है?",
+        options: [
+          "Licensing, Public Sector, Growth / लाइसेंसिंग, सार्वजनिक क्षेत्र, विकास",
+          "Liberalization, Privatization, Globalization / उदारीकरण, निजीकरण, वैश्वीकरण",
+          "Labour, Production, Goods / श्रम, उत्पादन, वस्तुएं",
+          "Liquidity, Profit, GDP / तरलता, लाभ, जीडीपी",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "LPG stands for Liberalization (removing licensing controls on private sector), Privatization (reducing public sector monopoly and disinvestment), and Globalization (integrating the domestic economy with the world economy).",
+        expHi: "LPG का अर्थ है उदारीकरण (निजी क्षेत्र पर लाइसेंसिंग नियंत्रण हटाना), निजीकरण (सार्वजनिक क्षेत्र के एकाधिकार को कम करना और विनिवेश), और वैश्वीकरण (घरेलू अर्थव्यवस्था को विश्व अर्थव्यवस्था के साथ एकीकृत करना)।",
+        fact: "These reforms ended the License-Permit-Quota Raj in India."
+      },
+      {
+        q: 26,
+        en: "In the New Industrial Policy of 1991, the number of industries reserved exclusively for the Public Sector was immediately reduced from 17 to how many?",
+        hi: "1991 की नई औद्योगिक नीति में, सार्वजनिक क्षेत्र के लिए विशेष रूप से आरक्षित उद्योगों की संख्या को तुरंत 17 से घटाकर कितना कर दिया गया था?",
+        options: ["2", "3", "8", "12", OPTION_E],
+        ans: 2,
+        expEn: "In the 1991 Industrial Policy, the number of industries reserved for the Public Sector (originally 17 under Schedule A of 1956) was immediately reduced to 8, opening the rest to the Private Sector.",
+        expHi: "1991 की औद्योगिक नीति में, सार्वजनिक क्षेत्र के लिए आरक्षित उद्योगों की संख्या (मूल रूप से 1956 की अनुसूची A के तहत 17) को तुरंत घटाकर 8 कर दिया गया, और शेष को निजी क्षेत्र के लिए खोल दिया गया।",
+        fact: "Gradually, this number was further reduced from 8 to 6 (1993), then to 4 (1998-99), then 3 (2001), and finally 2 (Atomic Energy and Railway operations)."
+      },
+      {
+        q: 27,
+        en: "At present, which two core sectors remain largely reserved for the Public Sector in India (barring specific PPP/policy relaxations)?",
+        hi: "वर्तमान में, भारत में कौन से दो मुख्य क्षेत्र मुख्य रूप से सार्वजनिक क्षेत्र के लिए आरक्षित हैं (विशिष्ट पीपीपी/नीतिगत छूटों को छोड़कर)?",
+        options: [
+          "Coal and Steel / कोयला और इस्पात",
+          "Defense and Aviation / रक्षा और विमानन",
+          "Atomic Energy and Railway Operations / परमाणु ऊर्जा और रेलवे संचालन",
+          "Banking and Insurance / बैंकिंग और बीमा",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "Currently, only two areas are kept under Public Sector reservation: (1) Atomic Energy (production, separation, and specified nuclear minerals) and (2) Railway Transport Operations (though private participation in trains/stations via PPP is now allowed).",
+        expHi: "वर्तमान में, केवल दो क्षेत्रों को सार्वजनिक क्षेत्र के आरक्षण के तहत रखा गया है: (1) परमाणु ऊर्जा (उत्पादन, पृथक्करण और निर्दिष्ट परमाणु खनिज) और (2) रेलवे परिवहन संचालन (हालांकि पीपीपी के माध्यम से ट्रेनों/स्टेशनों में निजी भागीदारी की अब अनुमति है)।",
+        fact: "Defense manufacturing was opened to the private sector in May 2001 (and now allows up to 74% FDI under the automatic route and 100% under the government route)."
+      },
+      {
+        q: 28,
+        en: "What is the process of selling or liquidating government equity/shares in Public Sector Undertakings (PSUs) to the private sector or public called?",
+        hi: "सार्वजनिक क्षेत्र के उपक्रमों (PSUs) में सरकारी इक्विटी/शेयरों को निजी क्षेत्र या जनता को बेचने या परिसमाप्त करने की प्रक्रिया को क्या कहा जाता है?",
+        options: [
+          "Nationalization / राष्ट्रीयकरण",
+          "Disinvestment / विनिवेश",
+          "Demonetization / विमुद्रीकरण",
+          "Amalgamation / समामेलन",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Disinvestment (विनिवेश) is the action of the government selling or liquidating its shareholding/equity in a Public Sector Enterprise (PSE), whereas Nationalization is the exact opposite.",
+        expHi: "विनिवेश (Disinvestment) सरकार द्वारा सार्वजनिक क्षेत्र के उद्यम (PSE) में अपनी शेयरधारिता/इक्विटी को बेचने या कम करने की प्रक्रिया है, जबकि राष्ट्रीयकरण इसके ठीक विपरीत है।",
+        fact: "When the government sells more than 50% of its stake along with transferring management control to a private entity, it is called 'Strategic Disinvestment' (रणनीतिक विनिवेश)."
+      },
+      {
+        q: 29,
+        en: "Which committee was constituted in 1993 by the Government of India to give recommendations on the Disinvestment of Public Sector Enterprises?",
+        hi: "सार्वजनिक क्षेत्र के उद्यमों के विनिवेश (Disinvestment) पर सिफारिशें देने के लिए भारत सरकार द्वारा 1993 में किस समिति का गठन किया गया था?",
+        options: [
+          "C. Rangarajan Committee / सी. रंगराजन समिति",
+          "Kelkar Committee / केलकर समिति",
+          "Narasimham Committee / नरसिम्हम समिति",
+          "Chelliah Committee / चेलैया समिति",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "The Committee on Disinvestment of Shares in Public Sector Enterprises was constituted in 1993 under the chairmanship of Dr. C. Rangarajan.",
+        expHi: "सार्वजनिक क्षेत्र के उद्यमों में शेयरों के विनिवेश पर समिति का गठन 1993 में डॉ. सी. रंगराजन की अध्यक्षता में किया गया था।",
+        fact: "Based on the Rangarajan Committee report, the first Public Sector Disinvestment Commission was set up in 1996."
+      },
+      {
+        q: 30,
+        en: "Who was appointed as the first Chairman of the Public Sector Disinvestment Commission constituted in August 1996?",
+        hi: "अगस्त 1996 में गठित सार्वजनिक क्षेत्र विनिवेश आयोग के पहले अध्यक्ष के रूप में किसे नियुक्त किया गया था?",
+        options: [
+          "G.V. Ramakrishna / जी.वी. रामकृष्ण",
+          "Montek Singh Ahluwalia / मोंटेक सिंह अहलूवालिया",
+          "Y.V. Reddy / वाई.वी. रेड्डी",
+          "Urjit Patel / उर्जित पटेल",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "G.V. Ramakrishna was the first Chairman of the Public Sector Disinvestment Commission set up in August 1996 by the Government of India.",
+        expHi: "जी.वी. रामकृष्ण अगस्त 1996 में भारत सरकार द्वारा स्थापित सार्वजनिक क्षेत्र विनिवेश आयोग के पहले अध्यक्ष थे।",
+        fact: "Frequently asked one-liner in UPSSSC and UPPSC exams regarding disinvestment history."
+      },
+      {
+        q: 31,
+        en: "In April 2016, the Department of Disinvestment was renamed as what?",
+        hi: "अप्रैल 2016 में, विनिवेश विभाग (Department of Disinvestment) का नाम बदलकर क्या कर दिया गया?",
+        options: [
+          "DIPP / डीआईपीपी",
+          "DIPAM / दीपम",
+          "DPE / डीपीई",
+          "NIIF / एनआईआईएफ",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In April 2016, the Department of Disinvestment was renamed as DIPAM — Department of Investment and Public Asset Management (निवेश और लोक परिसंपत्ति प्रबंधन विभाग).",
+        expHi: "अप्रैल 2016 में, विनिवेश विभाग का नाम बदलकर DIPAM — निवेश और लोक परिसंपत्ति प्रबंधन विभाग (Department of Investment and Public Asset Management) कर दिया गया।",
+        fact: "DIPAM functions under the Ministry of Finance and manages central government equity in PSUs."
+      },
+      {
+        q: 32,
+        en: "Currently, the Department of Public Enterprises (DPE), which formulates policies for Central Public Sector Enterprises (CPSEs), operates under which Union Ministry?",
+        hi: "वर्तमान में, लोक उद्यम विभाग (DPE), जो केंद्रीय सार्वजनिक क्षेत्र के उद्यमों (CPSEs) के लिए नीतियां बनाता है, किस केंद्रीय मंत्रालय के अधीन कार्य करता है?",
+        options: [
+          "Ministry of Commerce and Industry / वाणिज्य और उद्योग मंत्रालय",
+          "Ministry of Finance / वित्त मंत्रालय",
+          "Ministry of Home Affairs / गृह मंत्रालय",
+          "Ministry of Corporate Affairs / कॉर्पोरेट कार्य मंत्रालय",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In July 2021, the Government of India shifted the Department of Public Enterprises (DPE) from the Ministry of Heavy Industries to the Ministry of Finance to streamline disinvestment and asset management of CPSEs.",
+        expHi: "जुलाई 2021 में, भारत सरकार ने CPSEs के विनिवेश और परिसंपत्ति प्रबंधन को सुव्यवस्थित करने के लिए लोक उद्यम विभाग (DPE) को भारी उद्योग मंत्रालय से वित्त मंत्रालय में स्थानांतरित कर दिया।",
+        fact: "The Ministry of Finance now has 6 departments, including DPE and DIPAM."
+      },
+      {
+        q: 33,
+        en: "In which year did the Government of India introduce the 'Navratna' scheme to grant greater financial and managerial autonomy to top-performing Public Sector Undertakings?",
+        hi: "शीर्ष प्रदर्शन करने वाले सार्वजनिक क्षेत्र के उपक्रमों को अधिक वित्तीय और प्रबंधकीय स्वायत्तता प्रदान करने के लिए भारत सरकार ने किस वर्ष 'नवरत्न' योजना शुरू की थी?",
+        options: ["1991", "1997", "2005", "2010", OPTION_E],
+        ans: 1,
+        expEn: "The Government of India introduced the 'Navratna' status scheme in 1997 (initially selecting 9 PSUs) to give them autonomy to compete globally. The 'Miniratna' scheme was also introduced in October 1997.",
+        expHi: "भारत सरकार ने वैश्विक स्तर पर प्रतिस्पर्धा करने के लिए उन्हें स्वायत्तता देने हेतु 1997 में 'नवरत्न' दर्जा योजना शुरू की (शुरुआत में 9 पीएसयू का चयन किया गया)। अक्टूबर 1997 में 'मिनीरत्न' योजना भी शुरू की गई थी।",
+        fact: "Navratna & Miniratna were launched in 1997; Maharatna was launched in 2010."
+      },
+      {
+        q: 34,
+        en: "In which year was the 'Maharatna' status introduced for mega Central Public Sector Enterprises (CPSEs)?",
+        hi: "मेगा केंद्रीय सार्वजनिक क्षेत्र के उद्यमों (CPSEs) के लिए 'महारत्न' का दर्जा किस वर्ष शुरू किया गया था?",
+        options: ["1997", "2002", "2010", "2014", OPTION_E],
+        ans: 2,
+        expEn: "The 'Maharatna' scheme was introduced in February 2010 (announced in December 2009) to empower mega CPSEs to expand their operations and emerge as global giants.",
+        expHi: "मेगा CPSEs को अपने संचालन का विस्तार करने और वैश्विक दिग्गजों के रूप में उभरने के लिए सशक्त बनाने हेतु फरवरी 2010 (दिसंबर 2009 में घोषित) में 'महारत्न' योजना शुरू की गई थी।",
+        fact: "Maharatna CPSEs can invest up to ₹5,000 crore (or 15% of their net worth) in a single project without prior government approval."
+      },
+      {
+        q: 35,
+        en: "Which of the following is a mandatory eligibility criterion for a CPSE to be granted 'Maharatna' status?",
+        hi: "किसी CPSE को 'महारत्न' का दर्जा दिए जाने के लिए निम्नलिखित में से कौन सा एक अनिवार्य पात्रता मानदंड है?",
+        options: [
+          "Must already have Navratna status and be listed on an Indian Stock Exchange / पहले से ही नवरत्न का दर्जा होना चाहिए और भारतीय स्टॉक एक्सचेंज में सूचीबद्ध होना चाहिए",
+          "Average annual turnover of more than ₹25,000 crore during the last 3 years / पिछले 3 वर्षों के दौरान ₹25,000 करोड़ से अधिक का औसत वार्षिक कारोबार",
+          "Average annual net profit after tax of more than ₹5,000 crore during the last 3 years / पिछले 3 वर्षों के दौरान कर पश्चात ₹5,000 करोड़ से अधिक का औसत वार्षिक शुद्ध लाभ",
+          "All of the above / उपर्युक्त सभी",
+          OPTION_E
+        ],
+        ans: 3,
+        expEn: "To become a Maharatna, a CPSE must: (1) have Navratna status, (2) be listed on an Indian stock exchange, (3) have 3-year average annual turnover > ₹25,000 crore, (4) 3-year average net worth > ₹15,000 crore, and (5) 3-year average net profit > ₹5,000 crore.",
+        expHi: "महारत्न बनने के लिए, किसी CPSE के पास: (1) नवरत्न का दर्जा होना चाहिए, (2) भारतीय स्टॉक एक्सचेंज में सूचीबद्ध होना चाहिए, (3) 3 साल का औसत वार्षिक टर्नओवर > ₹25,000 करोड़, (4) 3 साल की औसत नेट वर्थ > ₹15,000 करोड़, और (5) 3 साल का औसत शुद्ध लाभ > ₹5,000 करोड़ होना चाहिए।",
+        fact: "Turnover > ₹25,000 Cr, Net Worth > ₹15,000 Cr, Net Profit > ₹5,000 Cr (for last 3 years)."
+      },
+      {
+        q: 36,
+        en: "Which Central Public Sector Enterprise (CPSE) became the 14th company in India to be granted 'Maharatna' status in October 2024?",
+        hi: "अक्टूबर 2024 में कौन सा केंद्रीय सार्वजनिक क्षेत्र का उद्यम (CPSE) भारत में 'महारत्न' का दर्जा प्राप्त करने वाली 14वीं कंपनी बन गया?",
+        options: [
+          "Hindustan Aeronautics Limited (HAL) / हिंदुस्तान एयरोनॉटिक्स लिमिटेड (HAL)",
+          "Oil India Limited (OIL) / ऑयल इंडिया लिमिटेड (OIL)",
+          "Rural Electrification Corporation (REC) / ग्रामीण विद्युतीकरण निगम (REC)",
+          "Power Finance Corporation (PFC) / पावर फाइनेंस कॉर्पोरेशन (PFC)",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "Hindustan Aeronautics Limited (HAL), headquartered in Bengaluru, was upgraded to become India's 14th Maharatna CPSE in October 2024. Earlier, Oil India Limited (OIL) had become the 13th Maharatna in August 2023.",
+        expHi: "बेंगलुरु में मुख्यालय वाले हिंदुस्तान एयरोनॉटिक्स लिमिटेड (HAL) को अक्टूबर 2024 में भारत के 14वें महारत्न CPSE के रूप में अपग्रेड किया गया था। इससे पहले अगस्त 2023 में ऑयल इंडिया लिमिटेड (OIL) 13वीं महारत्न कंपनी बनी थी।",
+        fact: "The 14 Maharatna CPSEs are: BHEL, BPCL, CIL, GAIL, HPCL, IOCL, NTPC, ONGC, PGCIL, SAIL, PFC (11th), REC (12th), OIL (13th), and HAL (14th)."
+      },
+      {
+        q: 37,
+        en: "Which of the following companies is NOT a Public Sector Undertaking (PSU)?",
+        hi: "निम्नलिखित में से कौन सी कंपनी सार्वजनिक क्षेत्र का उपक्रम (PSU) नहीं है?",
+        options: [
+          "NTPC Limited / एनटीपीसी लिमिटेड",
+          "BHEL / भेल",
+          "GAIL (India) Limited / गेल (इंडिया) लिमिटेड",
+          "Reliance Industries Limited (RIL) / रिलायंस इंडस्ट्रीज लिमिटेड (RIL)",
+          OPTION_E
+        ],
+        ans: 3,
+        expEn: "Reliance Industries Limited (RIL) is India's largest Private Sector company by market capitalization and revenue, whereas NTPC, BHEL, and GAIL are Maharatna Public Sector Undertakings (PSUs).",
+        expHi: "रिलायंस इंडस्ट्रीज लिमिटेड (RIL) बाजार पूंजीकरण और राजस्व के हिसाब से भारत की सबसे बड़ी निजी क्षेत्र की कंपनी है, जबकि NTPC, BHEL और GAIL महारत्न सार्वजनिक क्षेत्र के उपक्रम (PSU) हैं।",
+        fact: "RIL was founded by Dhirubhai Ambani in the private sector."
+      },
+      {
+        q: 38,
+        en: "Which flagship Public Sector air carrier was officially handed over to the Tata Group (Private Sector) in January 2022 under Strategic Disinvestment?",
+        hi: "जनवरी 2022 में रणनीतिक विनिवेश के तहत किस प्रमुख सार्वजनिक क्षेत्र की विमानन कंपनी को आधिकारिक तौर पर टाटा समूह (निजी क्षेत्र) को सौंप दिया गया?",
+        options: [
+          "Indian Airlines / इंडियन एयरलाइंस",
+          "Air India / एयर इंडिया",
+          "Alliance Air / एलायंस एयर",
+          "Pawan Hans / पवन हंस",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Air India, which was originally founded by J.R.D. Tata as Tata Airlines in 1932 and nationalized in 1953, was privatized and handed back to the Tata Group (via Talace Pvt Ltd) for ₹18,000 crore in January 2022.",
+        expHi: "एयर इंडिया, जिसे मूल रूप से 1932 में जे.आर.डी. टाटा द्वारा टाटा एयरलाइंस के रूप में स्थापित किया गया था और 1953 में राष्ट्रीयकृत किया गया था, का निजीकरण कर दिया गया और जनवरी 2022 में ₹18,000 करोड़ में टाटा समूह (टैलेस प्राइवेट लिमिटेड के माध्यम से) को वापस सौंप दिया गया।",
+        fact: "Air India privatization (2022) is the biggest landmark strategic disinvestment in recent Indian economic history."
+      },
+      {
+        q: 39,
+        en: "In the Union Budget 2021-22, under the 'New Public Sector Enterprise (PSE) Policy for Atmanirbhar Bharat', into how many Strategic Sectors were CPSEs classified for maintaining a bare minimum presence?",
+        hi: "केंद्रीय बजट 2021-22 में, 'आत्मनिर्भर भारत के लिए नई सार्वजनिक क्षेत्र उद्यम (PSE) नीति' के तहत, न्यूनतम उपस्थिति बनाए रखने के लिए CPSEs को कितने रणनीतिक क्षेत्रों (Strategic Sectors) में वर्गीकृत किया गया था?",
+        options: [
+          "2 Strategic Sectors / 2 रणनीतिक क्षेत्र",
+          "4 Strategic Sectors / 4 रणनीतिक क्षेत्र",
+          "6 Strategic Sectors / 6 रणनीतिक क्षेत्र",
+          "8 Strategic Sectors / 8 रणनीतिक क्षेत्र",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Under the New PSE Policy (2021), the government identified 4 broad Strategic Sectors where a bare minimum number of CPSEs will be retained, and the rest will be privatized, merged, or closed: (1) Atomic energy, Space & Defence, (2) Transport & Telecom, (3) Power, Petroleum, Coal & other minerals, and (4) Banking, Insurance & Financial Services.",
+        expHi: "नई PSE नीति (2021) के तहत, सरकार ने 4 व्यापक रणनीतिक क्षेत्रों की पहचान की जहाँ न्यूनतम संख्या में CPSE रखे जाएंगे, और बाकी का निजीकरण, विलय या बंद कर दिया जाएगा: (1) परमाणु ऊर्जा, अंतरिक्ष और रक्षा, (2) परिवहन और दूरसंचार, (3) बिजली, पेट्रोलियम, कोयला और अन्य खनिज, और (4) बैंकिंग, बीमा और वित्तीय सेवाएं।",
+        fact: "In all Non-Strategic Sectors, CPSEs will be privatized or closed if privatization is not feasible."
+      },
+      {
+        q: 40,
+        en: "What is the full form of 'PPP' in the context of infrastructure development in a Mixed Economy?",
+        hi: "मिश्रित अर्थव्यवस्था में बुनियादी ढांचे के विकास के संदर्भ में 'PPP' का पूर्ण रूप क्या है?",
+        options: [
+          "Purchasing Power Parity / क्रय शक्ति समता",
+          "Public-Private Partnership / सार्वजनिक-निजी भागीदारी",
+          "Public-Public Partnership / सार्वजनिक-सार्वजनिक भागीदारी",
+          "Private Profit Plan / निजी लाभ योजना",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In infrastructure and mixed economy governance, PPP stands for Public-Private Partnership (सार्वजनिक-निजी भागीदारी), a long-term collaborative arrangement between the government and private sector companies to build and operate public assets (like highways, airports, metro rails).",
+        expHi: "बुनियादी ढांचे और मिश्रित अर्थव्यवस्था शासन में, PPP का अर्थ सार्वजनिक-निजी भागीदारी (Public-Private Partnership) है, जो सार्वजनिक संपत्तियों (जैसे राजमार्ग, हवाई अड्डे, मेट्रो रेल) के निर्माण और संचालन के लिए सरकार और निजी क्षेत्र की कंपनियों के बीच एक दीर्घकालिक सहयोगात्मक व्यवस्था है।",
+        fact: "While PPP means Purchasing Power Parity in international currency comparisons, in infrastructure & public-private sector topics it stands for Public-Private Partnership."
+      },
+      {
+        q: 41,
+        en: "Which committee was constituted in 2015 to review and revitalize the Public-Private Partnership (PPP) model of infrastructure development in India?",
+        hi: "भारत में बुनियादी ढांचे के विकास के सार्वजनिक-निजी भागीदारी (PPP) मॉडल की समीक्षा और पुनरुद्धार करने के लिए 2015 में किस समिति का गठन किया गया था?",
+        options: [
+          "Vijay Kelkar Committee / विजय केलकर समिति",
+          "Shanta Kumar Committee / शांता कुमार समिति",
+          "Nachiket Mor Committee / नचिकेत मोर समिति",
+          "Deepak Parekh Committee / दीपक पारेख समिति",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "The Vijay Kelkar Committee on Revisiting and Revitalizing the Public-Private Partnership (PPP) Model of Infrastructure Development submitted its landmark report in November 2015.",
+        expHi: "बुनियादी ढांचे के विकास के सार्वजनिक-निजी भागीदारी (PPP) मॉडल की समीक्षा और पुनरुद्धार पर विजय केलकर समिति ने नवंबर 2015 में अपनी ऐतिहासिक रिपोर्ट प्रस्तुत की थी।",
+        fact: "Vijay Kelkar Committee (2015) is directly associated with PPP reforms in India."
+      },
+      {
+        q: 42,
+        en: "In the context of Public-Private Partnership (PPP) road projects, what does 'BOT' stand for?",
+        hi: "सार्वजनिक-निजी भागीदारी (PPP) सड़क परियोजनाओं के संदर्भ में, 'BOT' का क्या अर्थ है?",
+        options: [
+          "Buy-Own-Transfer / खरीदें-स्वामित्व रखें-हस्तांतरित करें",
+          "Build-Operate-Transfer / निर्माण-संचालन-हस्तांतरण",
+          "Build-Own-Trade / निर्माण-स्वामित्व-व्यापार",
+          "Borrow-Operate-Tax / उधार-संचालन-कर",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "BOT stands for Build-Operate-Transfer. Under this PPP model, a private company finances and builds an infrastructure project, operates it for a specified concession period (collecting tolls/user fees to recover costs), and then transfers ownership back to the government.",
+        expHi: "BOT का अर्थ है निर्माण-संचालन-हस्तांतरण (Build-Operate-Transfer)। इस पीपीपी मॉडल के तहत, एक निजी कंपनी एक बुनियादी ढांचा परियोजना का वित्तपोषण और निर्माण करती है, इसे एक निर्दिष्ट रियायत अवधि के लिए संचालित करती है (लागत वसूलने के लिए टोल/उपयोगकर्ता शुल्क एकत्र करती है), और फिर स्वामित्व सरकार को वापस हस्तांतरित कर देती है।",
+        fact: "Other popular PPP models in India include BOOT (Build-Own-Operate-Transfer), DBFOT, and HAM (Hybrid Annuity Model)."
+      },
+      {
+        q: 43,
+        en: "What is the 'Hybrid Annuity Model' (HAM), introduced by the Government of India in 2016 for highway construction?",
+        hi: "राजमार्ग निर्माण के लिए 2016 में भारत सरकार द्वारा शुरू किया गया 'हाइब्रिड वार्षिकी मॉडल (HAM)' क्या है?",
+        options: [
+          "A 100% government-funded model / 100% सरकार द्वारा वित्त पोषित मॉडल",
+          "A 100% private-funded model / 100% निजी वित्त पोषित मॉडल",
+          "A PPP model combining EPC (40% government payment during construction) and BOT-Annuity (60% arranged by private developer) / ईपीसी (निर्माण के दौरान 40% सरकारी भुगतान) और बीओटी-वार्षिकी (निजी डेवलपर द्वारा व्यवस्थित 60%) को मिलाने वाला एक पीपीपी मॉडल",
+          "A foreign loan model / एक विदेशी ऋण मॉडल",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "Under HAM (Hybrid Annuity Model), the government (NHAI) pays 40% of the project cost during the construction phase in installments, while the private developer arranges the remaining 60% and is repaid over time through annuity payments, with toll collection handled by NHAI.",
+        expHi: "HAM (हाइब्रिड वार्षिकी मॉडल) के तहत, सरकार (NHAI) निर्माण चरण के दौरान किश्तों में परियोजना लागत का 40% भुगतान करती है, जबकि निजी डेवलपर शेष 60% की व्यवस्था करता है और समय के साथ वार्षिकी भुगतान के माध्यम से उसे वापस भुगतान किया जाता है, जिसमें टोल संग्रह NHAI द्वारा संभाला जाता है।",
+        fact: "HAM shares financial risk between the Public Sector (40%) and Private Sector (60%)."
+      },
+      {
+        q: 44,
+        en: "What is 'Viability Gap Funding' (VGF) in Public-Private Partnership (PPP) projects?",
+        hi: "सार्वजनिक-निजी भागीदारी (PPP) परियोजनाओं में 'व्यवहार्यता अंतर वित्तपोषण (Viability Gap Funding - VGF)' क्या है?",
+        options: [
+          "Penalty imposed on private contractors for delay / देरी के लिए निजी ठेकेदारों पर लगाया गया जुर्माना",
+          "A capital grant provided by the Government to make economically essential but financially unviable PPP infrastructure projects viable for private investors / आर्थिक रूप से आवश्यक लेकिन वित्तीय रूप से अव्यवहार्य पीपीपी बुनियादी ढांचा परियोजनाओं को निजी निवेशकों के लिए व्यवहार्य बनाने हेतु सरकार द्वारा प्रदान किया जाने वाला पूंजीगत अनुदान",
+          "Tax levied on highway commuters / राजमार्ग यात्रियों पर लगाया जाने वाला कर",
+          "Loan given by private banks to the government / निजी बैंकों द्वारा सरकार को दिया गया ऋण",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Viability Gap Funding (VGF) is a one-time or deferred capital grant provided by the government to support infrastructure projects under PPP that are economically/socially justified but fall short of financial viability due to long gestation periods or capped user charges.",
+        expHi: "व्यवहार्यता अंतर वित्तपोषण (VGF) सरकार द्वारा पीपीपी के तहत उन बुनियादी ढांचा परियोजनाओं का समर्थन करने के लिए प्रदान किया जाने वाला एकमुश्त या आस्थगित पूंजीगत अनुदान है जो आर्थिक/सामाजिक रूप से उचित हैं लेकिन लंबी अवधि या सीमित उपयोगकर्ता शुल्क के कारण वित्तीय व्यवहार्यता में कम पड़ जाती हैं।",
+        fact: "The VGF scheme was launched by the Ministry of Finance in 2004-2006 and revamped in 2020 to include social infrastructure (health, education, wastewater)."
+      },
+      {
+        q: 45,
+        en: "Which economic plan prepared by eight leading Indian private industrialists in 1944 advocated for state intervention and a planned Mixed Economy in post-independence India?",
+        hi: "1944 में आठ प्रमुख भारतीय निजी उद्योगपतियों द्वारा तैयार की गई किस आर्थिक योजना ने स्वतंत्रता के बाद के भारत में राज्य के हस्तक्षेप और एक नियोजित मिश्रित अर्थव्यवस्था की वकालत की थी?",
+        options: [
+          "Gandhian Plan / गांधीवादी योजना",
+          "People's Plan / जन योजना",
+          "Bombay Plan / बॉम्बे प्लान",
+          "Sarvodaya Plan / सर्वोदय योजना",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "The 'Bombay Plan' (1944), authored by 8 leading private industrialists including J.R.D. Tata and G.D. Birla, recognized that India's rapid development required massive state investment in basic infrastructure alongside private enterprise, paving the way for a Mixed Economy.",
+        expHi: "जे.आर.डी. टाटा और जी.डी. बिड़ला सहित 8 प्रमुख निजी उद्योगपतियों द्वारा तैयार किए गए 'बॉम्बे प्लान' (1944) ने स्वीकार किया कि भारत के तीव्र विकास के लिए निजी उद्यम के साथ-साथ बुनियादी ढांचे में बड़े पैमाने पर राज्य निवेश की आवश्यकता है, जिससे मिश्रित अर्थव्यवस्था का मार्ग प्रशस्त हुआ।",
+        fact: "Ardeshir Dalal, J.R.D. Tata, G.D. Birla, Lala Shri Ram, Kasturbhai Lalbhai, A.D. Shroff, Purshottamdas Thakurdas, and John Mathai were the 8 signatories of the Bombay Plan (1944)."
+      },
+      {
+        q: 46,
+        en: "Which sector is the largest contributor to employment generation in India's Mixed Economy?",
+        hi: "भारत की मिश्रित अर्थव्यवस्था में रोजगार सृजन में सबसे बड़ा योगदान किस क्षेत्र का है?",
+        options: [
+          "Organized Public Sector / संगठित सार्वजनिक क्षेत्र",
+          "Organized Private Corporate Sector / संगठित निजी कॉर्पोरेट क्षेत्र",
+          "Private Unorganized Sector (including Agriculture & MSMEs) / निजी असंगठित क्षेत्र (कृषि और एमएसएमई सहित)",
+          "Foreign Multinational Companies / विदेशी बहुराष्ट्रीय कंपनियां",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "In India, practically the entire agricultural sector and the vast majority of Micro, Small, and Medium Enterprises (MSMEs), retail trade, and construction fall under the Private (mostly unorganized) sector, providing over 85–90% of total employment in the country.",
+        expHi: "भारत में, व्यावहारिक रूप से संपूर्ण कृषि क्षेत्र और सूक्ष्म, लघु और मध्यम उद्यमों (MSMEs), खुदरा व्यापार और निर्माण का एक बड़ा हिस्सा निजी (अधिकांशतः असंगठित) क्षेत्र के अंतर्गत आता है, जो देश में कुल रोजगार का 85-90% से अधिक प्रदान करता है।",
+        fact: "Agriculture in India is almost entirely a Private Sector activity, supported by Public Sector subsidies, MSP, and irrigation infrastructure."
+      },
+      {
+        q: 47,
+        en: "Which type of economic system existed in the erstwhile Soviet Union (USSR), from which India borrowed the concept of Five-Year Plans for its Public Sector?",
+        hi: "तत्कालीन सोवियत संघ (USSR) में किस प्रकार की आर्थिक प्रणाली मौजूद थी, जहाँ से भारत ने अपने सार्वजनिक क्षेत्र के लिए पंचवर्षीय योजनाओं की अवधारणा उधार ली थी?",
+        options: [
+          "Free Market Capitalist Economy / मुक्त बाजार पूंजीवादी अर्थव्यवस्था",
+          "Socialist / Command Economy / समाजवादी / आदेशित अर्थव्यवस्था",
+          "Mixed Economy / मिश्रित अर्थव्यवस्था",
+          "Laissez-faire Economy / अहस्तक्षेप अर्थव्यवस्था",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "The erstwhile USSR had a Socialist (Command or Centrally Planned) Economy where the state owned all means of production. India integrated Soviet-style Five-Year Planning with parliamentary democracy and a large private sector to create a democratic Mixed Economy.",
+        expHi: "तत्कालीन सोवियत संघ (USSR) में एक समाजवादी (कमांड या केंद्रीय रूप से नियोजित) अर्थव्यवस्था थी जहाँ उत्पादन के सभी साधनों पर राज्य का स्वामित्व था। भारत ने लोकतांत्रिक मिश्रित अर्थव्यवस्था बनाने के लिए संसदीय लोकतंत्र और एक बड़े निजी क्षेत्र के साथ सोवियत शैली की पंचवर्षीय योजना को एकीकृत किया।",
+        fact: "Economic Planning in India is placed in the Concurrent List (समवर्ती सूची) of the Seventh Schedule of the Constitution."
+      },
+      {
+        q: 48,
+        en: "What does the French term 'Laissez-faire' mean in economics?",
+        hi: "अर्थशास्त्र में फ्रांसीसी शब्द 'लेसे-फेयर (Laissez-faire)' का क्या अर्थ है?",
+        options: [
+          "Complete government control over industries / उद्योगों पर पूर्ण सरकारी नियंत्रण",
+          "Non-intervention by the government in economic affairs (Free Private Market) / आर्थिक मामलों में सरकार द्वारा अहस्तक्षेप (मुक्त निजी बाजार)",
+          "Equal distribution of wealth by the state / राज्य द्वारा धन का समान वितरण",
+          "Nationalization of all private banks / सभी निजी बैंकों का राष्ट्रीयकरण",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "'Laissez-faire' means 'let do' or 'leave alone' — a pure capitalist economic doctrine where the private market operates freely via the price mechanism (demand and supply) without government intervention.",
+        expHi: "'लेसे-फेयर (Laissez-faire)' का अर्थ है 'करने दो' या 'अकेला छोड़ दो' — एक विशुद्ध पूंजीवादी आर्थिक सिद्धांत जहाँ निजी बाजार सरकारी हस्तक्षेप के बिना मूल्य तंत्र (मांग और आपूर्ति) के माध्यम से स्वतंत्र रूप से संचालित होता है।",
+        fact: "Unlike a Laissez-faire economy, a Mixed Economy actively uses government regulation, fiscal policy, and public enterprises alongside the market."
+      },
+      {
+        q: 49,
+        en: "How are economic decisions (what to produce, how to produce, and for whom to produce) made in a Mixed Economy like India?",
+        hi: "भारत जैसी मिश्रित अर्थव्यवस्था में आर्थिक निर्णय (क्या उत्पादन करना है, कैसे उत्पादन करना है, और किसके लिए उत्पादन करना है) कैसे लिए जाते हैं?",
+        options: [
+          "Exclusively by the Market Price Mechanism / केवल बाजार मूल्य तंत्र द्वारा",
+          "Exclusively by the Central Planning Authority / केवल केंद्रीय योजना प्राधिकरण द्वारा",
+          "Both by the Market Price Mechanism (in the private sector) and Government Planning/Regulation (in the public sector) / बाजार मूल्य तंत्र (निजी क्षेत्र में) और सरकारी नियोजन/विनियमन (सार्वजनिक क्षेत्र में) दोनों द्वारा",
+          "By foreign trade organizations / विदेशी व्यापार संगठनों द्वारा",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "In a Mixed Economy, the price mechanism (demand and supply) guides the private sector for profit maximization, while government planning, policies, and public sector undertakings ensure social welfare and equity.",
+        expHi: "मिश्रित अर्थव्यवस्था में, मूल्य तंत्र (मांग और आपूर्ति) लाभ अधिकतमकरण के लिए निजी क्षेत्र का मार्गदर्शन करता है, जबकि सरकारी नियोजन, नीतियां और सार्वजनिक क्षेत्र के उपक्रम सामाजिक कल्याण और समानता सुनिश्चित करते हैं।",
+        fact: "Profit motive drives the Private Sector; Social Welfare motive drives the Public Sector."
+      },
+      {
+        q: 50,
+        en: "In which year was the National Investment Fund (NIF) constituted by the Government of India to channelize the proceeds from the disinvestment of Central Public Sector Enterprises (CPSEs)?",
+        hi: "केंद्रीय सार्वजनिक क्षेत्र के उद्यमों (CPSEs) के विनिवेश से प्राप्त राशि को व्यवस्थित करने के लिए भारत सरकार द्वारा राष्ट्रीय निवेश कोष (National Investment Fund - NIF) का गठन किस वर्ष किया गया था?",
+        options: ["1991", "1999", "2005", "2014", OPTION_E],
+        ans: 2,
+        expEn: "The National Investment Fund (NIF) was constituted in November 2005 into which the proceeds from disinvestment of CPSEs were channelized to fund social sector schemes (education, health, employment) and capital investment in viable PSUs.",
+        expHi: "राष्ट्रीय निवेश कोष (NIF) का गठन नवंबर 2005 में किया गया था, जिसमें सामाजिक क्षेत्र की योजनाओं (शिक्षा, स्वास्थ्य, रोजगार) और व्यवहार्य पीएसयू में पूंजी निवेश को वित्तपोषित करने के लिए CPSEs के विनिवेश से प्राप्त राशि को रखा गया था।",
+        fact: "Initially, 75% of NIF income was used for social sector schemes and 25% for reviving/investing in profitable PSUs; since 2013, NIF is maintained within the Public Account of India."
+      },
+      {
+        q: 51,
+        en: "How are Public Sector Enterprises classified based on their legal and organizational structure in India?",
+        hi: "भारत में कानूनी और संगठनात्मक संरचना के आधार पर सार्वजनिक क्षेत्र के उद्यमों को कैसे वर्गीकृत किया जाता है?",
+        options: [
+          "Departmental Undertakings / विभागीय उपक्रम",
+          "Statutory Corporations (Public Corporations) / वैधानिक निगम (सार्वजनिक निगम)",
+          "Government Companies / सरकारी कंपनियां",
+          "All of the above / उपर्युक्त सभी",
+          OPTION_E
+        ],
+        ans: 3,
+        expEn: "According to Class 11 NCERT Business Studies & Indian Economy, Public Sector Enterprises are organized into three forms: (1) Departmental Undertakings (e.g., Indian Railways, India Post), (2) Statutory Corporations created by a special Act of Parliament (e.g., LIC, FCI, ONGC initially), and (3) Government Companies registered under the Companies Act (e.g., SAIL, BHEL).",
+        expHi: "कक्षा 11 एनसीईआरटी व्यवसाय अध्ययन और भारतीय अर्थव्यवस्था के अनुसार, सार्वजनिक क्षेत्र के उद्यमों को तीन रूपों में संगठित किया जाता है: (1) विभागीय उपक्रम (जैसे, भारतीय रेलवे, भारतीय डाक), (2) संसद के विशेष अधिनियम द्वारा निर्मित वैधानिक निगम (जैसे, LIC, FCI), और (3) कंपनी अधिनियम के तहत पंजीकृत सरकारी कंपनियां (जैसे, SAIL, BHEL)।",
+        fact: "Departmental Undertakings have no separate legal identity from the government, whereas Statutory Corporations and Government Companies are separate legal entities."
+      },
+      {
+        q: 52,
+        en: "Which of the following is the oldest and most traditional form of organizing Public Sector Enterprises in India, functioning directly as a wing of a Ministry?",
+        hi: "निम्नलिखित में से कौन सा भारत में सार्वजनिक क्षेत्र के उद्यमों को संगठित करने का सबसे पुराना और सबसे पारंपरिक रूप है, जो सीधे मंत्रालय के एक अंग के रूप में कार्य करता है?",
+        options: [
+          "Departmental Undertaking / विभागीय उपक्रम",
+          "Joint Stock Company / संयुक्त स्टॉक कंपनी",
+          "Statutory Corporation / वैधानिक निगम",
+          "Public-Private Partnership / सार्वजनिक-निजी भागीदारी",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "Departmental Undertakings (like Indian Railways and Department of Posts) are the oldest form of public sector enterprises. Their funding comes directly from the government treasury (annual budget) and their revenues go into the Consolidated Fund of India.",
+        expHi: "विभागीय उपक्रम (जैसे भारतीय रेलवे और डाक विभाग) सार्वजनिक क्षेत्र के उद्यमों का सबसे पुराना रूप हैं। उनका वित्तपोषण सीधे सरकारी खजाने (वार्षिक बजट) से आता है और उनका राजस्व भारत की संचित निधि में जाता है।",
+        fact: "Employees of Departmental Undertakings are Government Servants directly accountable to the concerned Ministry."
+      },
+      {
+        q: 53,
+        en: "Food Corporation of India (FCI) and Life Insurance Corporation of India (LIC), established by special Acts of Parliament, are examples of which type of Public Sector Enterprise?",
+        hi: "भारतीय खाद्य निगम (FCI) और भारतीय जीवन बीमा निगम (LIC), जो संसद के विशेष अधिनियमों द्वारा स्थापित किए गए हैं, किस प्रकार के सार्वजनिक क्षेत्र के उद्यम के उदाहरण हैं?",
+        options: [
+          "Departmental Undertakings / विभागीय उपक्रम",
+          "Statutory (Public) Corporations / वैधानिक (सार्वजनिक) निगम",
+          "Private Limited Companies / प्राइवेट लिमिटेड कंपनियां",
+          "Cooperative Societies / सहकारी समितियां",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Statutory Corporations (also called Public Corporations) are public enterprises brought into existence by a Special Act of the Parliament or State Legislature, which defines their powers, functions, and rules (e.g., LIC Act 1956, Food Corporations Act 1964).",
+        expHi: "वैधानिक निगम (जिन्हें सार्वजनिक निगम भी कहा जाता है) वे सार्वजनिक उद्यम हैं जिन्हें संसद या राज्य विधानमंडल के एक विशेष अधिनियम द्वारा अस्तित्व में लाया जाता है, जो उनकी शक्तियों, कार्यों और नियमों को परिभाषित करता है (जैसे, LIC अधिनियम 1956, खाद्य निगम अधिनियम 1964)।",
+        fact: "FCI was established on 14 January 1965 under the Food Corporations Act, 1964 to manage public foodgrain procurement and distribution."
+      },
+      {
+        q: 54,
+        en: "Which of the following is the eligibility requirement for a Central Public Sector Enterprise (CPSE) to be granted 'Miniratna Category-I' status?",
+        hi: "किसी केंद्रीय सार्वजनिक क्षेत्र के उद्यम (CPSE) को 'मिनीरत्न श्रेणी-I' का दर्जा दिए जाने के लिए निम्नलिखित में से कौन सी पात्रता आवश्यकता है?",
+        options: [
+          "Made profit in the last 3 years continuously and has a positive net worth / पिछले 3 वर्षों में लगातार लाभ कमाया हो और सकारात्मक निवल मूल्य (Net Worth) हो",
+          "Pre-tax profit of ₹30 crore or more in at least one of the 3 years / 3 वर्षों में से कम से कम एक वर्ष में ₹30 करोड़ या उससे अधिक का कर-पूर्व लाभ हो",
+          "Has not defaulted on repayment of loans/interest to the Government / सरकार को ऋण/ब्याज के पुनर्भुगतान में चूक न की हो",
+          "All of the above / उपर्युक्त सभी",
+          OPTION_E
+        ],
+        ans: 3,
+        expEn: "To get Miniratna Category-I status, a CPSE must have made profits continuously for the last 3 years, have a pre-tax profit of ₹30 crore or more in at least one of the 3 years, have a positive net worth, and not defaulted on government loans.",
+        expHi: "मिनीरत्न श्रेणी-I का दर्जा प्राप्त करने के लिए, किसी CPSE ने पिछले 3 वर्षों से लगातार लाभ कमाया हो, 3 वर्षों में से कम से कम एक वर्ष में ₹30 करोड़ या उससे अधिक का कर-पूर्व लाभ हो, सकारात्मक नेट वर्थ हो, और सरकारी ऋणों पर चूक न की हो।",
+        fact: "Miniratna Category-I CPSEs can incur capital expenditure up to ₹500 crore (or equal to their net worth, whichever is lower) without prior government approval."
+      },
+      {
+        q: 55,
+        en: "Under the Industrial Policy of 1977 (introduced by the Janata Party government), special emphasis was laid on the promotion of which sector?",
+        hi: "1977 की औद्योगिक नीति (जनता पार्टी सरकार द्वारा प्रस्तुत) के तहत, किस क्षेत्र को बढ़ावा देने पर विशेष जोर दिया गया था?",
+        options: [
+          "Large Foreign Multinationals / बड़ी विदेशी बहुराष्ट्रीय कंपनियां",
+          "Tiny, Cottage, and Small-Scale Industries (District Industries Centres - DIC) / अति लघु (Tiny), कुटीर और लघु उद्योग (जिला उद्योग केंद्र - DIC)",
+          "Heavy Nuclear Plants / भारी परमाणु संयंत्र",
+          "Privatization of Railways / रेलवे का निजीकरण",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "The Industrial Policy Statement of December 1977 (presented by George Fernandes) focused on decentralizing industrial growth by promoting the Tiny Sector, Cottage, and Small-Scale Industries (predominantly in the private/cooperative sector) and setting up District Industries Centres (DICs) in 1978.",
+        expHi: "दिसंबर 1977 के औद्योगिक नीति वक्तव्य (जॉर्ज फर्नांडिस द्वारा प्रस्तुत) ने अति लघु क्षेत्र (Tiny Sector), कुटीर और लघु उद्योगों (मुख्य रूप से निजी/सहकारी क्षेत्र में) को बढ़ावा देकर और 1978 में जिला उद्योग केंद्र (DIC) स्थापित करके औद्योगिक विकास के विकेंद्रीकरण पर ध्यान केंद्रित किया।",
+        fact: "The concept of 'Tiny Sector' (अति लघु क्षेत्र) and 'District Industries Centre (DIC - 1978)' was introduced by the Industrial Policy of 1977."
+      },
+      {
+        q: 56,
+        en: "Which committee formed in 1995 recommended the abolition of reservation of items for exclusive manufacture in the Small-Scale Sector to improve private sector competitiveness?",
+        hi: "निजी क्षेत्र की प्रतिस्पर्धात्मकता में सुधार के लिए लघु उद्योग क्षेत्र में विशेष विनिर्माण के लिए वस्तुओं के आरक्षण को समाप्त करने की सिफारिश 1995 में गठित किस समिति ने की थी?",
+        options: [
+          "Abid Hussain Committee / आबिद हुसैन समिति",
+          "Karve Committee / कर्वे समिति",
+          "Mahalanobis Committee / महालनोबिस समिति",
+          "Sarkaria Commission / सरकारिया आयोग",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "The Abid Hussain Committee on Small Enterprises (constituted in 1995, report submitted in 1997) recommended the gradual abolition of reservation of items exclusively for the small-scale sector so that Indian private industries could achieve economies of scale after the 1991 reforms.",
+        expHi: "लघु उद्यमों पर आबिद हुसैन समिति (1995 में गठित, 1997 में रिपोर्ट प्रस्तुत) ने लघु क्षेत्र के लिए विशेष रूप से वस्तुओं के आरक्षण को क्रमिक रूप से समाप्त करने की सिफारिश की ताकि 1991 के सुधारों के बाद भारतीय निजी उद्योग बड़े पैमाने की मितव्ययिता प्राप्त कर सकें।",
+        fact: "Earlier in 1955, the Village and Small-Scale Industries Committee was known as the 'Karve Committee'."
+      },
+      {
+        q: 57,
+        en: "In which year was the Coal Industry in India nationalized, leading to the formation of Coal India Limited (CIL) in the Public Sector?",
+        hi: "भारत में कोयला उद्योग का राष्ट्रीयकरण किस वर्ष किया गया, जिसके परिणामस्वरूप सार्वजनिक क्षेत्र में कोल इंडिया लिमिटेड (CIL) का गठन हुआ?",
+        options: ["1956", "1972–73", "1985", "1991", OPTION_E],
+        ans: 1,
+        expEn: "Coking coal mines were nationalized in 1971–72 and non-coking coal mines were nationalized in 1973 (under the Coal Mines Nationalisation Act, 1973). Subsequently, Coal India Limited (CIL) was established in November 1975 as a Public Sector enterprise.",
+        expHi: "कोकिंग कोयला खदानों का 1971-72 में और गैर-कोकिंग कोयला खदानों का 1973 में (कोयला खान राष्ट्रीयकरण अधिनियम, 1973 के तहत) राष्ट्रीयकरण किया गया था। इसके बाद, नवंबर 1975 में सार्वजनिक क्षेत्र के उद्यम के रूप में कोल इंडिया लिमिटेड (CIL) की स्थापना की गई।",
+        fact: "In 2018–2020, the government opened up commercial coal mining to the Private Sector, ending CIL's nearly 5-decade monopoly."
+      },
+      {
+        q: 58,
+        en: "Which landmark reform was introduced by the Government of India in 2020 in the Space Sector to boost Private Sector participation?",
+        hi: "निजी क्षेत्र की भागीदारी को बढ़ावा देने के लिए भारत सरकार द्वारा 2020 में अंतरिक्ष क्षेत्र (Space Sector) में कौन सा ऐतिहासिक सुधार शुरू किया गया था?",
+        options: [
+          "Closing ISRO / इसरो को बंद करना",
+          "Creation of IN-SPACe (Indian National Space Promotion and Authorization Centre) / इन-स्पेस (भारतीय राष्ट्रीय अंतरिक्ष संवर्धन और प्राधिकरण केंद्र) का निर्माण",
+          "Banning private satellites / निजी उपग्रहों पर प्रतिबंध लगाना",
+          "Merging ISRO with DRDO / इसरो का डीआरडीओ में विलय",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In June 2020, the Government created IN-SPACe (Indian National Space Promotion and Authorization Centre) as a single-window autonomous nodal agency to promote, permit, and regulate private sector companies and startups (like Skyroot Aerospace, Agnikul Cosmos) in India's space activities alongside ISRO.",
+        expHi: "जून 2020 में, सरकार ने इसरो (ISRO) के साथ-साथ भारत की अंतरिक्ष गतिविधियों में निजी क्षेत्र की कंपनियों और स्टार्टअप्स (जैसे स्काईरूट एयरोस्पेस, अग्निकुल कॉसमॉस) को बढ़ावा देने, अनुमति देने और विनियमित करने के लिए सिंगल-विंडो स्वायत्त नोडल एजेंसी के रूप में IN-SPACe (भारतीय राष्ट्रीय अंतरिक्ष संवर्धन और प्राधिकरण केंद्र) का निर्माण किया।",
+        fact: "'Vikram-S' (launched in Nov 2022 by Skyroot Aerospace) was India's first privately developed rocket."
+      },
+      {
+        q: 59,
+        en: "Which Five-Year Plan explicitly stated for the first time that the 'Private Sector has come of age' and assigned a greater investment share to the Private Sector than the Public Sector?",
+        hi: "किस पंचवर्षीय योजना में पहली बार स्पष्ट रूप से कहा गया कि 'निजी क्षेत्र परिपक्व हो गया है' और सार्वजनिक क्षेत्र की तुलना में निजी क्षेत्र को अधिक निवेश हिस्सा सौंपा गया?",
+        options: [
+          "Third Five-Year Plan (1961–66) / तीसरी पंचवर्षीय योजना (1961-66)",
+          "Fifth Five-Year Plan (1974–79) / पांचवीं पंचवर्षीय योजना (1974-79)",
+          "Eighth Five-Year Plan (1992–97) / आठवीं पंचवर्षीय योजना (1992-97)",
+          "Second Five-Year Plan (1956–61) / दूसरी पंचवर्षीय योजना (1956-61)",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "Launched immediately after the 1991 LPG reforms, the Eighth Five-Year Plan (1992–1997) marked the transition from centralised imperative planning to indicative planning, significantly increasing the share of Private Sector investment over Public Sector investment.",
+        expHi: "1991 के एलपीजी सुधारों के तुरंत बाद शुरू की गई आठवीं पंचवर्षीय योजना (1992-1997) ने केंद्रीकृत आदेशात्मक नियोजन से सांकेतिक नियोजन (Indicative Planning) की ओर संक्रमण को चिह्नित किया, जिससे सार्वजनिक क्षेत्र के निवेश की तुलना में निजी क्षेत्र के निवेश की हिस्सेदारी में काफी वृद्धि हुई।",
+        fact: "The Eighth Plan (1992–97) was based on the John W. Miller model and focused on human resource development and market-friendly reforms."
+      },
+      {
+        q: 60,
+        en: "What is meant by 'Indicative Planning' (सांकेतिक नियोजन), which India adopted after the 1991 economic reforms?",
+        hi: "'सांकेतिक नियोजन (Indicative Planning)' से क्या तात्पर्य है, जिसे भारत ने 1991 के आर्थिक सुधारों के बाद अपनाया?",
+        options: [
+          "The state controls every price and production quota / राज्य प्रत्येक मूल्य और उत्पादन कोटा को नियंत्रित करता है",
+          "The state sets broad national targets and provides incentives/direction, while allowing the Private Sector and market forces to operate freely to achieve them / राज्य व्यापक राष्ट्रीय लक्ष्य निर्धारित करता है और प्रोत्साहन/दिशा प्रदान करता है, जबकि उन्हें प्राप्त करने के लिए निजी क्षेत्र और बाजार शक्तियों को स्वतंत्र रूप से कार्य करने की अनुमति देता है",
+          "Abolition of all government ministries / सभी सरकारी मंत्रालयों का उन्मूलन",
+          "Planning done only for defense / केवल रक्षा के लिए किया गया नियोजन",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Indicative Planning (originally pioneered in France) is a form of economic planning in a Mixed Economy where the government sets broad macro targets and coordinates information, guiding the private sector through fiscal/monetary incentives rather than rigid commands or quotas.",
+        expHi: "सांकेतिक नियोजन (मूल रूप से फ्रांस में शुरू) मिश्रित अर्थव्यवस्था में आर्थिक नियोजन का एक रूप है जहाँ सरकार व्यापक लक्ष्य निर्धारित करती है और कठोर आदेशों या कोटा के बजाय राजकोषीय/मौद्रिक प्रोत्साहनों के माध्यम से निजी क्षेत्र का मार्गदर्शन करती है।",
+        fact: "NITI Aayog (formed on 1 January 2015 replacing the Planning Commission) functions on the principles of cooperative federalism and strategic indicative policy guidance."
+      },
+      {
+        q: 61,
+        en: "When the Government borrows heavily from the domestic market to finance Public Sector deficits, leaving less credit and higher interest rates for Private Sector investment, what is this phenomenon called in economics?",
+        hi: "जब सरकार सार्वजनिक क्षेत्र के घाटे को पूरा करने के लिए घरेलू बाजार से भारी उधार लेती है, जिससे निजी क्षेत्र के निवेश के लिए कम ऋण और उच्च ब्याज दरें बचती हैं, तो अर्थशास्त्र में इस घटना को क्या कहा जाता है?",
+        options: [
+          "Crowding-in Effect / क्राउडिंग-इन प्रभाव",
+          "Crowding-out Effect / क्राउडिंग-आउट प्रभाव",
+          "Trickle-down Effect / ट्रिकल-डाउन प्रभाव",
+          "Multiplier Effect / गुणक प्रभाव",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "The 'Crowding-out Effect' occurs when excessive government borrowing absorbs available financial savings in the economy and pushes up interest rates, thereby discouraging or 'crowding out' private sector investment. Conversely, public infrastructure investment that stimulates private investment is called the 'Crowding-in Effect'.",
+        expHi: "'क्राउडिंग-आउट प्रभाव' तब होता है जब अत्यधिक सरकारी उधारी अर्थव्यवस्था में उपलब्ध वित्तीय बचत को अवशोषित कर लेती है और ब्याज दरों को बढ़ा देती है, जिससे निजी क्षेत्र का निवेश हतोत्साहित या 'बाहर (Crowd out)' हो जाता है। इसके विपरीत, सार्वजनिक बुनियादी ढांचा निवेश जो निजी निवेश को प्रोत्साहित करता है, उसे 'क्राउडिंग-इन प्रभाव' कहा जाता है।",
+        fact: "Public capital expenditure on highways, railways, and ports creates a 'Crowding-in Effect' for the private sector."
+      },
+      {
+        q: 62,
+        en: "In which year was the Board for Industrial and Financial Reconstruction (BIFR) established by the Government of India to deal with sick industrial companies in the Public and Private sectors?",
+        hi: "सार्वजनिक और निजी क्षेत्रों में रुग्ण (बीमार) औद्योगिक कंपनियों से निपटने के लिए भारत सरकार द्वारा औद्योगिक और वित्तीय पुनर्निर्माण बोर्ड (BIFR) की स्थापना किस वर्ष की गई थी?",
+        options: ["1981", "1987", "1992", "2001", OPTION_E],
+        ans: 1,
+        expEn: "BIFR was set up in January 1987 under the Sick Industrial Companies (Special Provisions) Act (SICA), 1985 to determine the preventive, ameliorative, and remedial measures for reviving potentially viable sick industrial units or shutting down unviable ones.",
+        expHi: "संभावित रूप से व्यवहार्य रुग्ण (बीमार) औद्योगिक इकाइयों को पुनर्जीवित करने या अव्यवहार्य इकाइयों को बंद करने के उपायों का निर्धारण करने के लिए रुग्ण औद्योगिक कंपनी (विशेष प्रावधान) अधिनियम (SICA), 1985 के तहत जनवरी 1987 में BIFR की स्थापना की गई थी।",
+        fact: "BIFR was dissolved in 2016 and replaced by the Insolvency and Bankruptcy Code (IBC), 2016 (NCLT mechanism)."
+      },
+      {
+        q: 63,
+        en: "Which mechanism was created in 1992 during the New Economic Policy to provide social security, retraining, and compensation to workers affected by the restructuring or closure of Public Sector Undertakings (PSUs)?",
+        hi: "सार्वजनिक क्षेत्र के उपक्रमों (PSUs) के पुनर्गठन या बंद होने से प्रभावित श्रमिकों को सामाजिक सुरक्षा, पुनर्प्रशिक्षण और मुआवजा प्रदान करने के लिए नई आर्थिक नीति के दौरान 1992 में कौन सा तंत्र बनाया गया था?",
+        options: [
+          "National Investment Fund (NIF) / राष्ट्रीय निवेश कोष (NIF)",
+          "National Renewal Fund (NRF) / राष्ट्रीय नवीनीकरण कोष (NRF)",
+          "Prime Minister's Relief Fund / प्रधानमंत्री राहत कोष",
+          "Employees' Provident Fund (EPF) / कर्मचारी भविष्य निधि (EPF)",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "The National Renewal Fund (NRF) was set up in February 1992 to provide a social safety net (including Voluntary Retirement Scheme - VRS compensation and retraining) to workers retrenched due to technological upgradation, restructuring, or closure of sick PSUs.",
+        expHi: "तकनीकी उन्नयन, पुनर्गठन, या बीमार पीएसयू के बंद होने के कारण छंटनी किए गए श्रमिकों को सामाजिक सुरक्षा कवच (स्वैच्छिक सेवानिवृत्ति योजना - VRS मुआवजे और पुनर्प्रशिक्षण सहित) प्रदान करने के लिए फरवरी 1992 में राष्ट्रीय नवीनीकरण कोष (NRF) की स्थापना की गई थी।",
+        fact: "NRF (1992) was specifically linked to funding the 'Golden Handshake' (Voluntary Retirement Scheme - VRS) in PSUs."
+      },
+      {
+        q: 64,
+        en: "What is the popular term 'Golden Handshake' associated with in the context of Public Sector Undertakings (PSUs)?",
+        hi: "सार्वजनिक क्षेत्र के उपक्रमों (PSUs) के संदर्भ में लोकप्रिय शब्द 'गोल्डन हैंडशेक (Golden Handshake)' किससे संबंधित है?",
+        options: [
+          "Hiring foreign CEOs / विदेशी सीईओ की नियुक्ति",
+          "Voluntary Retirement Scheme (VRS) with attractive severance compensation to reduce surplus staff / अतिरिक्त कर्मचारियों को कम करने के लिए आकर्षक मुआवजे के साथ स्वैच्छिक सेवानिवृत्ति योजना (VRS)",
+          "Signing a trade agreement between two countries / दो देशों के बीच व्यापार समझौते पर हस्ताक्षर करना",
+          "Giving bonus shares to private investors / निजी निवेशकों को बोनस शेयर देना",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "'Golden Handshake' refers to the Voluntary Retirement Scheme (VRS) introduced in Public Sector Enterprises and banks to shed excess manpower painlessly by offering employees a generous lump-sum financial package upon voluntary retirement before superannuation.",
+        expHi: "'गोल्डन हैंडशेक' सार्वजनिक क्षेत्र के उद्यमों और बैंकों में अतिरिक्त जनशक्ति को बिना किसी विवाद के कम करने के लिए शुरू की गई स्वैच्छिक सेवानिवृत्ति योजना (VRS) को संदर्भित करता है, जिसमें कर्मचारियों को सेवानिवृत्ति की आयु से पहले स्वैच्छिक सेवानिवृत्ति पर एक उदार एकमुश्त वित्तीय पैकेज की पेशकश की जाती है।",
+        fact: "Frequently asked vocabulary question in Indian Economy for UPSSSC & SSC exams."
+      },
+      {
+        q: 65,
+        en: "In which year was the Board for Reconstruction of Public Sector Enterprises (BRPSE) constituted to advise the government on reviving sick Central Public Sector Enterprises?",
+        hi: "रुग्ण (बीमार) केंद्रीय सार्वजनिक क्षेत्र के उद्यमों को पुनर्जीवित करने पर सरकार को सलाह देने के लिए सार्वजनिक क्षेत्र के उद्यमों के पुनर्निर्माण बोर्ड (BRPSE) का गठन किस वर्ष किया गया था?",
+        options: ["1991", "1997", "2004", "2015", OPTION_E],
+        ans: 2,
+        expEn: "The Board for Reconstruction of Public Sector Enterprises (BRPSE) was established in December 2004 as an advisory body to advise the Government on strategies and measures for strengthening, modernizing, reviving, or closing sick CPSEs.",
+        expHi: "रुग्ण CPSEs को मजबूत करने, आधुनिकीकरण करने, पुनर्जीवित करने या बंद करने की रणनीतियों और उपायों पर सरकार को सलाह देने के लिए दिसंबर 2004 में एक सलाहकार निकाय के रूप में सार्वजनिक क्षेत्र के उद्यमों के पुनर्निर्माण बोर्ड (BRPSE) की स्थापना की गई थी।",
+        fact: "BRPSE was later wound up in November 2015 as the Department of Public Enterprises took over the monitoring mechanism."
+      },
+      {
+        q: 66,
+        en: "In which year did the Government of India open the Insurance Sector to Private Sector companies and establish IRDAI as the statutory regulator?",
+        hi: "भारत सरकार ने किस वर्ष बीमा क्षेत्र को निजी क्षेत्र की कंपनियों के लिए खोल दिया और वैधानिक नियामक के रूप में IRDAI की स्थापना की?",
+        options: ["1991–92", "1999–2000", "2005–06", "2014–15", OPTION_E],
+        ans: 1,
+        expEn: "Based on the recommendations of the R.N. Malhotra Committee (1993), the Parliament passed the IRDA Act in 1999 (establishing IRDAI in April 2000), which ended the public sector monopoly of LIC and GIC and allowed private and foreign players into the Indian insurance sector.",
+        expHi: "आर.एन. मल्होत्रा समिति (1993) की सिफारिशों के आधार पर, संसद ने 1999 में IRDA अधिनियम पारित किया (अप्रैल 2000 में IRDAI की स्थापना की), जिसने LIC और GIC के सार्वजनिक क्षेत्र के एकाधिकार को समाप्त कर दिया और भारतीय बीमा क्षेत्र में निजी और विदेशी खिलाड़ियों को अनुमति दी।",
+        fact: "R.N. Malhotra Committee (1993) is associated with Insurance Sector reforms and the creation of IRDAI (Headquarters: Hyderabad)."
+      },
+      {
+        q: 67,
+        en: "Which committee recommended the lowering of Statutory Liquidity Ratio (SLR) and Cash Reserve Ratio (CRR) and allowing the entry of new Private Sector Banks in India in 1991?",
+        hi: "किस समिति ने 1991 में वैधानिक तरलता अनुपात (SLR) और नकद आरक्षित अनुपात (CRR) को कम करने और भारत में नए निजी क्षेत्र के बैंकों के प्रवेश की अनुमति देने की सिफारिश की थी?",
+        options: [
+          "Narasimham Committee-I (Committee on the Financial System, 1991) / नरसिम्हम समिति-I (वित्तीय प्रणाली पर समिति, 1991)",
+          "Chakravarty Committee / चक्रवर्ती समिति",
+          "Raja Chelliah Committee / राजा चेलैया समिति",
+          "Sarkaria Committee / सरकारिया समिति",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "The M. Narasimham Committee-I (1991) on Financial System Reforms recommended ending the freeze on new private banks, leading to the establishment of major new-generation Private Sector Banks like HDFC Bank, ICICI Bank, Axis Bank (formerly UTI Bank), and IndusInd Bank in 1993–94.",
+        expHi: "वित्तीय प्रणाली सुधारों पर एम. नरसिम्हम समिति-I (1991) ने नए निजी बैंकों पर लगी रोक को समाप्त करने की सिफारिश की, जिससे 1993-94 में HDFC बैंक, ICICI बैंक, एक्सिस बैंक (पूर्व में UTI बैंक) और इंडसइंड बैंक जैसे प्रमुख नई पीढ़ी के निजी क्षेत्र के बैंकों की स्थापना हुई।",
+        fact: "M. Narasimham chaired two committees on banking reforms: First in 1991 and Second in 1998."
+      },
+      {
+        q: 68,
+        en: "What is the maximum investment autonomy (without prior Government approval) granted to a 'Navratna' CPSE for investing in a single project?",
+        hi: "किसी एकल परियोजना में निवेश करने के लिए एक 'नवरत्न' CPSE को (पूर्व सरकारी अनुमोदन के बिना) दी गई अधिकतम निवेश स्वायत्तता क्या है?",
+        options: [
+          "Up to ₹500 crore / ₹500 करोड़ तक",
+          "Up to ₹1,000 crore (or 15% of its net worth on a single project) / ₹1,000 करोड़ तक (या एकल परियोजना पर अपनी निवल संपत्ति का 15%)",
+          "Up to ₹5,000 crore / ₹5,000 करोड़ तक",
+          "Unlimited investment / असीमित निवेश",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "A 'Navratna' CPSE has the financial autonomy to invest up to ₹1,000 crore or 15% of its net worth on a single project (and up to 30% of its net worth in a whole year) without seeking prior approval from the Government of India.",
+        expHi: "एक 'नवरत्न' CPSE को भारत सरकार से पूर्व अनुमोदन लिए बिना किसी एकल परियोजना पर ₹1,000 करोड़ या अपनी नेट वर्थ का 15% तक (और पूरे वर्ष में अपनी नेट वर्थ का 30% तक) निवेश करने की वित्तीय स्वायत्तता होती है।",
+        fact: "Maharatna limit = ₹5,000 crore; Navratna limit = ₹1,000 crore; Miniratna-I limit = ₹500 crore; Miniratna-II limit = ₹300 crore."
+      },
+      {
+        q: 69,
+        en: "Which of the following is the apex body representing Central Public Sector Enterprises (CPSEs) in India, established in 1970?",
+        hi: "1970 में स्थापित भारत में केंद्रीय सार्वजनिक क्षेत्र के उद्यमों (CPSEs) का प्रतिनिधित्व करने वाला शीर्ष निकाय निम्नलिखित में से कौन सा है?",
+        options: [
+          "FICCI / फिक्की",
+          "CII / सीआईआई",
+          "SCOPE (Standing Conference of Public Enterprises) / स्कोप (सार्वजनिक उद्यमों का स्थायी सम्मेलन)",
+          "ASSOCHAM / एसोचैम",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "SCOPE (Standing Conference of Public Enterprises), established in 1970 and headquartered in New Delhi, is the apex professional organization representing Central Public Sector Enterprises (CPSEs). FICCI, CII, and ASSOCHAM primarily represent business and private industry chambers.",
+        expHi: "स्कोप (Standing Conference of Public Enterprises - SCOPE), जिसकी स्थापना 1970 में हुई और मुख्यालय नई दिल्ली में है, केंद्रीय सार्वजनिक क्षेत्र के उद्यमों (CPSEs) का प्रतिनिधित्व करने वाला शीर्ष पेशेवर संगठन है। FICCI, CII और ASSOCHAM मुख्य रूप से व्यापार और निजी उद्योग मंडलों का प्रतिनिधित्व करते हैं।",
+        fact: "FICCI was founded in 1927 by G.D. Birla and Purshottamdas Thakurdas on the advice of Mahatma Gandhi."
+      },
+      {
+        q: 70,
+        en: "In which year was the Competition Act passed by the Indian Parliament to replace the archaic MRTP Act, 1969 and promote fair competition between Public and Private sector enterprises?",
+        hi: "पुराने MRTP अधिनियम, 1969 को बदलने और सार्वजनिक तथा निजी क्षेत्र के उद्यमों के बीच निष्पक्ष प्रतिस्पर्धा को बढ़ावा देने के लिए भारतीय संसद द्वारा प्रतिस्पर्धा अधिनियम (Competition Act) किस वर्ष पारित किया गया था?",
+        options: ["1991", "1999", "2002", "2009", OPTION_E],
+        ans: 2,
+        expEn: "On the recommendations of the S.V.S. Raghavan Committee, the Parliament enacted the Competition Act, 2002 (replacing the MRTP Act, 1969) to prevent anti-competitive practices, abuse of dominant position, and regulate combinations across both private and public enterprises.",
+        expHi: "एस.वी.एस. राघवन समिति की सिफारिशों पर, संसद ने प्रतिस्पर्धा-विरोधी प्रथाओं, प्रमुख स्थिति के दुरुपयोग को रोकने और निजी तथा सार्वजनिक दोनों उद्यमों में संयोजनों को विनियमित करने के लिए प्रतिस्पर्धा अधिनियम, 2002 (MRTP अधिनियम, 1969 के स्थान पर) अधिनियमित किया।",
+        fact: "The Competition Commission of India (CCI) was established in October 2003 under the Competition Act, 2002 (and became fully functional in 2009)."
+      },
+      {
+        q: 71,
+        en: "Which sector in India is famously known as the 'Third Sector' or a bridge between the Public and Private sectors, exemplified by AMUL and IFFCO?",
+        hi: "भारत में किस क्षेत्र को 'तीसरा क्षेत्र' या सार्वजनिक और निजी क्षेत्रों के बीच एक सेतु के रूप में जाना जाता है, जिसका उदाहरण अमूल (AMUL) और इफको (IFFCO) हैं?",
+        options: [
+          "Foreign Sector / विदेशी क्षेत्र",
+          "Cooperative Sector / सहकारी क्षेत्र",
+          "Defense Sector / रक्षा क्षेत्र",
+          "IT Sector / आईटी क्षेत्र",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In India's Mixed Economy, the Cooperative Sector (सहकारी क्षेत्र) operates alongside the Public and Private sectors. It combines private voluntary member ownership with democratic control and social welfare objectives ('Sahakar se Samriddhi'), as seen in AMUL (dairy), IFFCO/KRIBHCO (fertilizers), and sugar cooperatives.",
+        expHi: "भारत की मिश्रित अर्थव्यवस्था में, सहकारी क्षेत्र (Cooperative Sector) सार्वजनिक और निजी क्षेत्रों के साथ-साथ कार्य करता है। यह लोकतांत्रिक नियंत्रण और सामाजिक कल्याण के उद्देश्यों ('सहकार से समृद्धि') के साथ निजी स्वैच्छिक सदस्य स्वामित्व को जोड़ता है, जैसा कि अमूल (डेयरी), इफको/कृभको (उर्वरक) और चीनी सहकारी समितियों में देखा जाता है।",
+        fact: "The Union Ministry of Cooperation (सहकारिता मंत्रालय) was created in July 2021 to strengthen the cooperative movement in India."
+      },
+      {
+        q: 72,
+        en: "Under which Constitutional Amendment Act were the words 'Socialist' and 'Secular' added to the Preamble of the Indian Constitution, reinforcing the welfare role of the State in the economy?",
+        hi: "किस संविधान संशोधन अधिनियम के तहत भारतीय संविधान की प्रस्तावना में 'समाजवादी (Socialist)' और 'पंथनिरपेक्ष (Secular)' शब्द जोड़े गए, जिसने अर्थव्यवस्था में राज्य की कल्याणकारी भूमिका को सुदृढ़ किया?",
+        options: [
+          "24th Amendment Act, 1971 / 24वां संशोधन अधिनियम, 1971",
+          "42nd Amendment Act, 1976 / 42वां संशोधन अधिनियम, 1976",
+          "44th Amendment Act, 1978 / 44वां संशोधन अधिनियम, 1978",
+          "86th Amendment Act, 2002 / 86वां संशोधन अधिनियम, 2002",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "The 42nd Constitutional Amendment Act, 1976 added the word 'Socialist' to the Preamble. As clarified by the Supreme Court of India, 'Democratic Socialism' in India does not mean abolition of private property/enterprise, but rather a Mixed Economy aimed at ending poverty, ignorance, disease, and inequality of opportunity.",
+        expHi: "42वें संविधान संशोधन अधिनियम, 1976 ने प्रस्तावना में 'समाजवादी' शब्द जोड़ा। जैसा कि भारत के सर्वोच्च न्यायालय द्वारा स्पष्ट किया गया है, भारत में 'लोकतांत्रिक समाजवाद' का अर्थ निजी संपत्ति/उद्यम का उन्मूलन नहीं है, बल्कि गरीबी, अज्ञानता, बीमारी और अवसर की असमानता को समाप्त करने के उद्देश्य से एक मिश्रित अर्थव्यवस्था है।",
+        fact: "Indian Socialism is a 'Democratic Socialism' based on a Mixed Economy, blending Gandhian and Marxist elements (leaning heavily towards Gandhian socialism)."
+      },
+      {
+        q: 73,
+        en: "Which Articles of the Directive Principles of State Policy (DPSP) in the Indian Constitution direct the State to ensure that the ownership and control of material resources serve the common good and do not result in the concentration of wealth?",
+        hi: "भारतीय संविधान में राज्य के नीति निदेशक तत्वों (DPSP) के कौन से अनुच्छेद राज्य को यह सुनिश्चित करने का निर्देश देते हैं कि भौतिक संसाधनों का स्वामित्व और नियंत्रण सामूहिक हित की पूर्ति करे और धन का संकेंद्रण न हो?",
+        options: [
+          "Article 14 and 15 / अनुच्छेद 14 और 15",
+          "Article 39(b) and 39(c) / अनुच्छेद 39(b) और 39(c)",
+          "Article 44 and 45 / अनुच्छेद 44 और 45",
+          "Article 50 and 51 / अनुच्छेद 50 और 51",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Article 39(b) (equitable distribution of material resources of the community for common good) and Article 39(c) (preventing concentration of wealth and means of production to the common detriment) formed the constitutional basis for India's Industrial Policies of 1948 & 1956, nationalization of banks, and the MRTP Act.",
+        expHi: "अनुच्छेद 39(b) (सामूहिक हित के लिए समुदाय के भौतिक संसाधनों का समान वितरण) और अनुच्छेद 39(c) (धन और उत्पादन के साधनों के अहितकारी संकेंद्रण को रोकना) ने भारत की 1948 और 1956 की औद्योगिक नीतियों, बैंकों के राष्ट्रीयकरण और MRTP अधिनियम के लिए संवैधानिक आधार तैयार किया।",
+        fact: "Articles 38 and 39 embody the economic justice ideals of the Indian Constitution."
+      },
+      {
+        q: 74,
+        en: "Which major Public Sector Enterprise was established in 1975 to drive large-scale thermal power generation in India?",
+        hi: "भारत में बड़े पैमाने पर ताप विद्युत उत्पादन को गति देने के लिए 1975 में किस प्रमुख सार्वजनिक क्षेत्र के उद्यम की स्थापना की गई थी?",
+        options: [
+          "BHEL / भेल",
+          "NTPC Limited (National Thermal Power Corporation) / एनटीपीसी लिमिटेड (नेशनल थर्मल पावर कॉर्पोरेशन)",
+          "PGCIL / पीजीसीआईएल",
+          "NHPC / एनएचपीसी",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Both NTPC (National Thermal Power Corporation) and NHPC (National Hydroelectric Power Corporation) as well as Coal India Limited (CIL) were established in 1975 in the Public Sector to meet India's growing energy demands.",
+        expHi: "भारत की बढ़ती ऊर्जा मांगों को पूरा करने के लिए 1975 में सार्वजनिक क्षेत्र में NTPC (नेशनल थर्मल पावर कॉर्पोरेशन) और NHPC (नेशनल हाइड्रोइलेक्ट्रिक पावर कॉर्पोरेशन) के साथ-साथ कोल इंडिया लिमिटेड (CIL) की स्थापना की गई थी।",
+        fact: "NTPC was founded on 7 November 1975, headquartered in New Delhi, and is a Maharatna PSU."
+      },
+      {
+        q: 75,
+        en: "In which year was the Oil and Natural Gas Commission (now ONGC Limited) established by the Government of India for petroleum exploration in the Public Sector?",
+        hi: "सार्वजनिक क्षेत्र में पेट्रोलियम अन्वेषण के लिए भारत सरकार द्वारा तेल और प्राकृतिक गैस आयोग (अब ONGC लिमिटेड) की स्थापना किस वर्ष की गई थी?",
+        options: ["1948", "1956", "1965", "1974", OPTION_E],
+        ans: 1,
+        expEn: "ONGC was set up on 14 August 1956 as a commission (later made a statutory body in 1959 and converted into a Public Sector corporation in 1993) to develop the petroleum and natural gas sector under Schedule A of the 1956 Industrial Policy.",
+        expHi: "1956 की औद्योगिक नीति की अनुसूची A के तहत पेट्रोलियम और प्राकृतिक गैस क्षेत्र को विकसित करने के लिए 14 अगस्त 1956 को एक आयोग के रूप में ONGC की स्थापना की गई थी (बाद में 1959 में इसे एक वैधानिक निकाय बनाया गया और 1993 में सार्वजनिक क्षेत्र के निगम में परिवर्तित किया गया)।",
+        fact: "ONGC is India's largest crude oil and natural gas company and is a Maharatna CPSE."
+      },
+      {
+        q: 76,
+        en: "In which year was Steel Authority of India Limited (SAIL) incorporated as a Public Sector holding company to manage India's state-owned steel plants?",
+        hi: "भारत के राज्य के स्वामित्व वाले इस्पात संयंत्रों के प्रबंधन के लिए सार्वजनिक क्षेत्र की होल्डिंग कंपनी के रूप में स्टील अथॉरिटी ऑफ इंडिया लिमिटेड (SAIL) को किस वर्ष निगमित किया गया था?",
+        options: ["1954", "1964", "1973", "1984", OPTION_E],
+        ans: 2,
+        expEn: "Steel Authority of India Limited (SAIL) was incorporated on 24 January 1973 (replacing Hindustan Steel Limited, which had been set up in 1954) to bring all major public sector integrated steel plants (Bhilai, Rourkela, Durgapur, Bokaro, Burnpur) under one umbrella.",
+        expHi: "सभी प्रमुख सार्वजनिक क्षेत्र के एकीकृत इस्पात संयंत्रों (भिलाई, राउरकेला, दुर्गापुर, बोकारो, बर्नपुर) को एक छत के नीचे लाने के लिए 24 जनवरी 1973 को स्टील अथॉरिटी ऑफ इंडिया लिमिटेड (SAIL) को निगमित किया गया था (हिंदुस्तान स्टील लिमिटेड के स्थान पर, जिसे 1954 में स्थापित किया गया था)।",
+        fact: "SAIL (1973) is a Maharatna CPSE headquartered in New Delhi."
+      },
+      {
+        q: 77,
+        en: "Bharat Heavy Electricals Limited (BHEL), one of India's oldest engineering and manufacturing Public Sector Undertakings, was established in which year?",
+        hi: "भारत के सबसे पुराने इंजीनियरिंग और विनिर्माण सार्वजनिक क्षेत्र के उपक्रमों में से एक, भारत हेवी इलेक्ट्रिकल्स लिमिटेड (BHEL) की स्थापना किस वर्ष की गई थी?",
+        options: ["1950", "1956", "1964", "1975", OPTION_E],
+        ans: 2,
+        expEn: "Bharat Heavy Electricals Limited (BHEL) was formally incorporated in November 1964 (though India's first heavy electrical equipment plant, HEIL, was set up in Bhopal in 1956 and later merged into BHEL).",
+        expHi: "भारत हेवी इलेक्ट्रिकल्स लिमिटेड (BHEL) को औपचारिक रूप से नवंबर 1964 में निगमित किया गया था (हालांकि भारत का पहला भारी विद्युत उपकरण संयंत्र, HEIL, 1956 में भोपाल में स्थापित किया गया था और बाद में BHEL में मिला दिया गया था)।",
+        fact: "BHEL (1964) is a Maharatna PSU and India's largest power generation equipment manufacturer."
+      },
+      {
+        q: 78,
+        en: "After the 1991 Industrial Policy, licensing was abolished for almost all industries in the Private Sector EXCEPT for a small list of industries related to security, strategic, and environmental concerns. Currently, how many industries require compulsory industrial licensing under the IDRA Act?",
+        hi: "1991 की औद्योगिक नीति के बाद, सुरक्षा, रणनीतिक और पर्यावरणीय चिंताओं से संबंधित उद्योगों की एक छोटी सूची को छोड़कर निजी क्षेत्र में लगभग सभी उद्योगों के लिए लाइसेंसिंग को समाप्त कर दिया गया था। वर्तमान में, IDRA अधिनियम के तहत कितने उद्योगों को अनिवार्य औद्योगिक लाइसेंस की आवश्यकता होती है?",
+        options: [
+          "Only 2 industries / केवल 2 उद्योग",
+          "Only 4–5 industries (such as defense equipment, industrial explosives, hazardous chemicals, cigars/cigarettes of tobacco) / केवल 4-5 उद्योग (जैसे रक्षा उपकरण, औद्योगिक विस्फोटक, खतरनाक रसायन, तंबाकू के सिगार/सिगरेट)",
+          "18 industries / 18 उद्योग",
+          "24 industries / 24 उद्योग",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In 1991, compulsory licensing was reduced to 18 industries, and subsequently pruned down to just 4–5 categories: (1) Electronic aerospace and defense equipment, (2) Industrial explosives, (3) Specified hazardous chemicals, and (4) Cigars and cigarettes of tobacco (with alcoholic drinks regulated by state governments).",
+        expHi: "1991 में, अनिवार्य लाइसेंसिंग को 18 उद्योगों तक कम कर दिया गया था, और बाद में इसे घटाकर केवल 4-5 श्रेणियों तक सीमित कर दिया गया: (1) इलेक्ट्रॉनिक एयरोस्पेस और रक्षा उपकरण, (2) औद्योगिक विस्फोटक, (3) निर्दिष्ट खतरनाक रसायन, और (4) तंबाकू के सिगार और सिगरेट (मादक पेय राज्य सरकारों द्वारा विनियमित होते हैं)।",
+        fact: "Don't confuse Public Sector Reservation (2 sectors: Atomic Energy & Railways) with Compulsory Industrial Licensing for Private Sector (4–5 hazardous/strategic items)."
+      },
+      {
+        q: 79,
+        en: "What was the 'National Monetisation Pipeline' (NMP) launched by the Government of India and NITI Aayog in August 2021?",
+        hi: "अगस्त 2021 में भारत सरकार और नीति आयोग द्वारा शुरू की गई 'राष्ट्रीय मुद्रीकरण पाइपलाइन (National Monetisation Pipeline - NMP)' क्या थी?",
+        options: [
+          "Selling ownership of public land permanently to foreign countries / विदेशी देशों को सार्वजनिक भूमि का स्वामित्व स्थायी रूप से बेचना",
+          "Leasing out brownfield (existing) Public Sector infrastructure assets to the Private Sector for a fixed tenure to raise funds for new greenfield infrastructure, while retaining government ownership / सरकारी स्वामित्व को बनाए रखते हुए, नए ग्रीनफील्ड बुनियादी ढांचे के लिए धन जुटाने हेतु ब्राउनफील्ड (मौजूदा) सार्वजनिक क्षेत्र की बुनियादी ढांचा संपत्तियों को एक निश्चित अवधि के लिए निजी क्षेत्र को पट्टे (लीज) पर देना",
+          "Printing new currency notes by RBI / आरबीआई द्वारा नए करेंसी नोट छापना",
+          "Nationalizing private IT companies / निजी आईटी कंपनियों का राष्ट्रीयकरण करना",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Under the National Monetisation Pipeline (NMP), brownfield (already operational) public sector infrastructure assets (like roads, railway tracks/stations, power transmission lines, warehouses) are leased to private operators for a fixed period to unlock ₹6 lakh crore in upfront capital, while actual ownership remains with the government.",
+        expHi: "राष्ट्रीय मुद्रीकरण पाइपलाइन (NMP) के तहत, ब्राउनफील्ड (पहले से चालू) सार्वजनिक क्षेत्र की बुनियादी ढांचा संपत्तियों (जैसे सड़कें, रेलवे ट्रैक/स्टेशन, बिजली पारेषण लाइनें, गोदाम) को ₹6 लाख करोड़ की पूंजी जुटाने के लिए एक निश्चित अवधि के लिए निजी ऑपरेटरों को पट्टे पर दिया जाता है, जबकि वास्तविक स्वामित्व सरकार के पास ही रहता है।",
+        fact: "NMP mantra is 'Asset Creation through Asset Monetisation' — involving only Brownfield assets and no transfer of land ownership."
+      },
+      {
+        q: 80,
+        en: "In the context of Public and Private sector investments, what is the difference between a 'Greenfield Project' and a 'Brownfield Project'?",
+        hi: "सार्वजनिक और निजी क्षेत्र के निवेश के संदर्भ में, 'ग्रीनफील्ड प्रोजेक्ट' और 'ब्राउनफील्ड प्रोजेक्ट' के बीच क्या अंतर है?",
+        options: [
+          "Greenfield is related to agriculture, Brownfield is related to mining / ग्रीनफील्ड कृषि से संबंधित है, ब्राउनफील्ड खनन से संबंधित है",
+          "Greenfield refers to building a completely new facility from scratch, whereas Brownfield refers to expanding, upgrading, or leasing an already existing facility / ग्रीनफील्ड का अर्थ बिल्कुल शुरुआत से एक नई सुविधा का निर्माण करना है, जबकि ब्राउनफील्ड का अर्थ पहले से मौजूद सुविधा का विस्तार, उन्नयन या पट्टे पर लेना है",
+          "Greenfield is only for the Public Sector, Brownfield is only for the Private Sector / ग्रीनफील्ड केवल सार्वजनिक क्षेत्र के लिए है, ब्राउनफील्ड केवल निजी क्षेत्र के लिए है",
+          "Both mean the exact same thing / दोनों का अर्थ बिल्कुल एक ही है",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In economics and infrastructure, a 'Greenfield Investment/Project' means constructing a brand-new asset from the ground up on undeveloped land (e.g., Noida International Airport at Jewar), whereas a 'Brownfield Project' involves modifying, upgrading, or operating an existing asset.",
+        expHi: "अर्थशास्त्र और बुनियादी ढांचे में, 'ग्रीनफील्ड निवेश/परियोजना' का अर्थ अविकसित भूमि पर बिल्कुल शुरुआत से एक नई संपत्ति का निर्माण करना है (जैसे, जेवर में नोएडा अंतर्राष्ट्रीय हवाई अड्डा), जबकि 'ब्राउनफील्ड परियोजना' में मौजूदा संपत्ति को संशोधित करना, अपग्रेड करना या संचालित करना शामिल है।",
+        fact: "Jewar Airport (Noida) and Navi Mumbai Airport are examples of Greenfield PPP airports in India."
+      },
+      {
+        q: 81,
+        en: "Under the Companies Act, 2013, India became one of the first countries in the world to mandate 'Corporate Social Responsibility' (CSR), requiring eligible large Private and Public sector companies to spend at least what percentage of their average net profits of the preceding 3 years on social welfare?",
+        hi: "कंपनी अधिनियम, 2013 के तहत, भारत 'कॉर्पोरेट सामाजिक उत्तरदायित्व' (CSR) को अनिवार्य करने वाला दुनिया के पहले देशों में से एक बन गया, जिसके तहत पात्र बड़ी निजी और सार्वजनिक क्षेत्र की कंपनियों को सामाजिक कल्याण पर पिछले 3 वर्षों के अपने औसत शुद्ध लाभ का कम से कम कितना प्रतिशत खर्च करना आवश्यक है?",
+        options: ["1%", "2%", "5%", "10%", OPTION_E],
+        ans: 1,
+        expEn: "Section 135 of the Companies Act, 2013 mandates that every company (private or public) having a net worth of ₹500 crore or more, OR turnover of ₹1,000 crore or more, OR net profit of ₹5 crore or more must spend at least 2% of its average net profits of the immediately preceding 3 financial years on CSR activities.",
+        expHi: "कंपनी अधिनियम, 2013 की धारा 135 अनिवार्य करती है कि ₹500 करोड़ या अधिक की निवल संपत्ति (Net Worth), या ₹1,000 करोड़ या अधिक का टर्नओवर, या ₹5 करोड़ या अधिक का शुद्ध लाभ रखने वाली प्रत्येक कंपनी (निजी या सार्वजनिक) को पिछले 3 वित्तीय वर्षों के अपने औसत शुद्ध लाभ का कम से कम 2% CSR गतिविधियों पर खर्च करना होगा।",
+        fact: "CSR bridges the gap between Private Sector profit-making and Public Sector social welfare in India's Mixed Economy (Minimum 2% of 3-year average net profit)."
+      },
+      {
+        q: 82,
+        en: "What is the 'Production Linked Incentive' (PLI) Scheme launched by the Government of India in 2020?",
+        hi: "2020 में भारत सरकार द्वारा शुरू की गई 'उत्पादन आधारित प्रोत्साहन (Production Linked Incentive - PLI)' योजना क्या है?",
+        options: [
+          "A scheme to nationalize private factories / निजी कारखानों के राष्ट्रीयकरण की योजना",
+          "A scheme offering financial incentives (4% to 6% on incremental sales) to domestic and foreign private manufacturers to boost domestic manufacturing and exports across key sectors / प्रमुख क्षेत्रों में घरेलू विनिर्माण और निर्यात को बढ़ावा देने के लिए घरेलू और विदेशी निजी निर्माताओं को वित्तीय प्रोत्साहन (वृद्धिशील बिक्री पर 4% से 6%) देने वाली योजना",
+          "A scheme only for agricultural crops / केवल कृषि फसलों के लिए एक योजना",
+          "A pension scheme for PSU employees / पीएसयू कर्मचारियों के लिए एक पेंशन योजना",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Under the Atmanirbhar Bharat initiative (2020–21), the Government introduced the PLI Scheme across 14 key manufacturing sectors (like mobile phones, electronics, pharmaceuticals, automobiles, solar PV, textiles) to incentivize private sector investment and make India a global manufacturing hub.",
+        expHi: "आत्मनिर्भर भारत पहल (2020-21) के तहत, सरकार ने निजी क्षेत्र के निवेश को प्रोत्साहित करने और भारत को वैश्विक विनिर्माण केंद्र बनाने के लिए 14 प्रमुख विनिर्माण क्षेत्रों (जैसे मोबाइल फोन, इलेक्ट्रॉनिक्स, फार्मास्यूटिकल्स, ऑटोमोबाइल, सोलर पीवी, कपड़ा) में PLI योजना शुरू की।",
+        fact: "The PLI scheme covers 14 key sectors with an outlay of around ₹1.97 lakh crore."
+      },
+      {
+        q: 83,
+        en: "Which major reform was enacted in 1973 to strictly regulate foreign companies and foreign exchange in India, which was later replaced by the more liberal FEMA in 1999?",
+        hi: "भारत में विदेशी कंपनियों और विदेशी मुद्रा को सख्ती से विनियमित करने के लिए 1973 में कौन सा प्रमुख सुधार अधिनियमित किया गया था, जिसे बाद में 1999 में अधिक उदार फेमा (FEMA) द्वारा प्रतिस्थापित किया गया?",
+        options: [
+          "FERA (Foreign Exchange Regulation Act, 1973) / फेरा (विदेशी मुद्रा विनियमन अधिनियम, 1973)",
+          "PMLA / पीएमएलए",
+          "SEZ Act / सेज अधिनियम",
+          "SARFAESI Act / सरफेसी अधिनियम",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "FERA (Foreign Exchange Regulation Act, 1973) imposed strict controls on foreign equity (capping it at 40% for most companies, leading to the exit of IBM and Coca-Cola in 1977). Following the 1991 liberalization, FERA was replaced by the Foreign Exchange Management Act (FEMA), 1999 to facilitate external trade and private foreign investment.",
+        expHi: "FERA (विदेशी मुद्रा विनियमन अधिनियम, 1973) ने विदेशी इक्विटी पर सख्त नियंत्रण लगाया (अधिकांश कंपनियों के लिए इसे 40% पर सीमित कर दिया, जिससे 1977 में आईबीएम और कोका-कोला भारत से बाहर हो गए)। 1991 के उदारीकरण के बाद, बाहरी व्यापार और निजी विदेशी निवेश को सुगम बनाने के लिए FERA को विदेशी मुद्रा प्रबंधन अधिनियम (FEMA), 1999 द्वारा प्रतिस्थापित किया गया।",
+        fact: "FERA was passed in 1973; FEMA was passed in 1999 (and came into force on 1 June 2000)."
+      },
+      {
+        q: 84,
+        en: "In India's National Income Accounting, which two sectors account for the highest share of Domestic Savings (घरेलू बचत) and Gross Capital Formation (सकल पूंजी निर्माण) respectively?",
+        hi: "भारत के राष्ट्रीय आय लेखांकन में, घरेलू बचत (Domestic Savings) और सकल पूंजी निर्माण (Gross Capital Formation) में सबसे अधिक हिस्सेदारी क्रमशः किन दो क्षेत्रों की होती है?",
+        options: [
+          "Public Sector in both / दोनों में सार्वजनिक क्षेत्र",
+          "Household Sector (in Savings) and Private Corporate & Household Sector (in Capital Formation) / घरेलू क्षेत्र (बचत में) और निजी कॉर्पोरेट एवं घरेलू क्षेत्र (पूंजी निर्माण में)",
+          "Foreign Sector in both / दोनों में विदेशी क्षेत्र",
+          "Cooperative Sector in both / दोनों में सहकारी क्षेत्र",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In the Indian economy, the Household Sector (घरेलू क्षेत्र) consistently contributes the largest share to Gross Domestic Savings, while the Private Corporate Sector and Household Sector together account for over 70–75% of Gross Fixed Capital Formation (investment), far exceeding the Public Sector's share in the post-1991 era.",
+        expHi: "भारतीय अर्थव्यवस्था में, सकल घरेलू बचत में घरेलू क्षेत्र (Household Sector) का योगदान लगातार सबसे अधिक रहता है, जबकि 1991 के बाद के युग में सकल स्थायी पूंजी निर्माण (निवेश) में निजी कॉर्पोरेट क्षेत्र और घरेलू क्षेत्र की संयुक्त हिस्सेदारी 70-75% से अधिक है, जो सार्वजनिक क्षेत्र की हिस्सेदारी से कहीं अधिक है।",
+        fact: "Household Sector is the #1 contributor to Gross Domestic Savings in India."
+      },
+      {
+        q: 85,
+        en: "Which type of goods — characterized by 'Non-rivalry' and 'Non-excludability' (such as National Defense, Street Lighting, and Law & Order) — must be provided by the Public Sector because the Private Sector cannot price them through the market mechanism?",
+        hi: "किस प्रकार की वस्तुएं — जिनकी विशेषता 'गैर-प्रतिद्वंद्विता (Non-rivalry)' और 'गैर-अपवर्जनीयता (Non-excludability)' है (जैसे राष्ट्रीय रक्षा, स्ट्रीट लाइटिंग और कानून व्यवस्था) — सार्वजनिक क्षेत्र द्वारा ही प्रदान की जानी चाहिए क्योंकि निजी क्षेत्र बाजार तंत्र के माध्यम से उनकी कीमत तय नहीं कर सकता है?",
+        options: [
+          "Private Goods / निजी वस्तुएं",
+          "Public Goods / सार्वजनिक वस्तुएं (लोक वस्तुएं)",
+          "Giffen Goods / गिफेन वस्तुएं",
+          "Veblen Goods / वेबलेन वस्तुएं",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "'Public Goods' (सार्वजनिक वस्तुएं) have two defining features: (1) Non-excludability (no one can be excluded from using them even if they don't pay, causing the 'Free-Rider Problem') and (2) Non-rivalry (consumption by one person does not reduce availability for others). Because of this market failure, the Public Sector must provide them via tax revenues.",
+        expHi: "'सार्वजनिक वस्तुओं (Public Goods)' की दो मुख्य विशेषताएं हैं: (1) गैर-अपवर्जनीयता (भुगतान न करने पर भी किसी को उनके उपयोग से वंचित नहीं किया जा सकता, जिससे 'मुफ्तखोरी की समस्या' पैदा होती है) और (2) गैर-प्रतिद्वंद्विता (एक व्यक्ति द्वारा उपभोग से दूसरों के लिए उपलब्धता कम नहीं होती)। इस बाजार विफलता के कारण, सार्वजनिक क्षेत्र को कर राजस्व के माध्यम से इन्हें प्रदान करना पड़ता है।",
+        fact: "Non-rival and Non-excludable goods = Public Goods (provided by the Government)."
+      },
+      {
+        q: 86,
+        en: "Which telecom Public Sector Undertaking (PSU) was formed on 1 October 2000 by corporatizing the Department of Telecom Operations to compete with private telecom operators?",
+        hi: "निजी टेलीकॉम ऑपरेटरों के साथ प्रतिस्पर्धा करने के लिए दूरसंचार संचालन विभाग का निगमीकरण करके 1 अक्टूबर 2000 को किस दूरसंचार सार्वजनिक क्षेत्र के उपक्रम (PSU) का गठन किया गया था?",
+        options: [
+          "VSNL / वीएसएनएल",
+          "MTNL / एमटीएनएल",
+          "BSNL (Bharat Sanchar Nigam Limited) / बीएसएनएल (भारत संचार निगम लिमिटेड)",
+          "TRAI / ट्राई",
+          OPTION_E
+        ],
+        ans: 2,
+        expEn: "Bharat Sanchar Nigam Limited (BSNL) was incorporated on 15 September 2000 and took over telecom service operations from the central government departments on 1 October 2000. Earlier, MTNL was set up in 1986 for Delhi and Mumbai, while VSNL (1986) was privatized in 2002 (acquired by Tata Group and renamed Tata Communications).",
+        expHi: "भारत संचार निगम लिमिटेड (BSNL) को 15 सितंबर 2000 को निगमित किया गया था और 1 अक्टूबर 2000 को केंद्र सरकार के विभागों से दूरसंचार सेवा संचालन का कार्यभार संभाला था। इससे पहले, दिल्ली और मुंबई के लिए 1986 में MTNL की स्थापना की गई थी, जबकि VSNL (1986) का 2002 में निजीकरण कर दिया गया था (टाटा समूह द्वारा अधिग्रहित और टाटा कम्युनिकेशंस नाम दिया गया)।",
+        fact: "TRAI (Telecom Regulatory Authority of India) was established in 1997 as an independent regulator to ensure a level playing field between public (BSNL/MTNL) and private telecom operators."
+      },
+      {
+        q: 87,
+        en: "Why did the Government of India establish independent statutory regulators like SEBI (1992), TRAI (1997), IRDAI (1999), and CERC (1998) after the 1991 economic reforms?",
+        hi: "1991 के आर्थिक सुधारों के बाद भारत सरकार ने SEBI (1992), TRAI (1997), IRDAI (1999) और CERC (1998) जैसे स्वतंत्र वैधानिक नियामकों की स्थापना क्यों की?",
+        options: [
+          "To re-impose the License Raj / लाइसेंस राज को फिर से लागू करने के लिए",
+          "To act as a neutral referee ensuring fair competition, consumer protection, and a level playing field between Public Sector and Private Sector players / सार्वजनिक क्षेत्र और निजी क्षेत्र के खिलाड़ियों के बीच निष्पक्ष प्रतिस्पर्धा, उपभोक्ता संरक्षण और समान अवसर (Level playing field) सुनिश्चित करने वाले एक तटस्थ रेफरी के रूप में कार्य करने के लिए",
+          "To ban private companies from stock markets / शेयर बाजारों से निजी कंपनियों पर प्रतिबंध लगाने के लिए",
+          "To collect income tax / आयकर एकत्र करने के लिए",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Before 1991, the government was both the sole player (via PSUs) and the regulator. Once sectors like banking, insurance, telecom, and power were opened to the Private Sector in the Mixed Economy, independent statutory regulators were needed to ensure transparent rules and prevent monopolies.",
+        expHi: "1991 से पहले, सरकार अकेली खिलाड़ी (पीएसयू के माध्यम से) और नियामक दोनों थी। एक बार जब मिश्रित अर्थव्यवस्था में बैंकिंग, बीमा, दूरसंचार और बिजली जैसे क्षेत्रों को निजी क्षेत्र के लिए खोल दिया गया, तो पारदर्शी नियम सुनिश्चित करने और एकाधिकार को रोकने के लिए स्वतंत्र वैधानिक नियामकों की आवश्यकता पड़ी।",
+        fact: "In a modern Mixed Economy, the role of the State shifts from being a 'Controller/Producer' to a 'Facilitator and Regulator'."
+      },
+      {
+        q: 88,
+        en: "What is the 'Swiss Challenge' method, often used in awarding Public-Private Partnership (PPP) infrastructure projects in India?",
+        hi: "भारत में सार्वजनिक-निजी भागीदारी (PPP) बुनियादी ढांचा परियोजनाओं को आवंटित करने में अक्सर उपयोग की जाने वाली 'स्विस चैलेंज (Swiss Challenge)' पद्धति क्या है?",
+        options: [
+          "A method where only Swiss companies can bid / एक ऐसी पद्धति जहाँ केवल स्विस कंपनियां ही बोली लगा सकती हैं",
+          "A bidding process where a private company submits an unsolicited innovative project proposal to the government, and third parties are invited to offer better bids, with the original proponent getting a right to match the best bid / एक बोली प्रक्रिया जहाँ एक निजी कंपनी सरकार को एक स्वतःस्फूर्त अभिनव परियोजना प्रस्ताव प्रस्तुत करती है, और तीसरे पक्ष को बेहतर बोली लगाने के लिए आमंत्रित किया जाता है, जिसमें मूल प्रस्तावक को सर्वश्रेष्ठ बोली की बराबरी करने का अधिकार मिलता है",
+          "A lottery system for awarding contracts / अनुबंध देने के लिए एक लॉटरी प्रणाली",
+          "A tax-free banking system / एक कर-मुक्त बैंकिंग प्रणाली",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Under the Swiss Challenge method of public procurement, an original private proponent submits a project idea to the government. The government then publishes the proposal and invites competing counter-proposals from other private players; if a better bid comes, the original proponent is given the chance to match it.",
+        expHi: "सार्वजनिक खरीद की स्विस चैलेंज पद्धति के तहत, एक मूल निजी प्रस्तावक सरकार को एक परियोजना विचार प्रस्तुत करता है। सरकार तब प्रस्ताव प्रकाशित करती है और अन्य निजी खिलाड़ियों से प्रतिस्पर्धी प्रस्ताव आमंत्रित करती है; यदि कोई बेहतर बोली आती है, तो मूल प्रस्तावक को उसकी बराबरी करने का अवसर दिया जाता है।",
+        fact: "The Vijay Kelkar Committee (2015) discouraged the use of the Swiss Challenge method in routine projects due to information asymmetry risks, though it has been used in state projects and stressed asset resolution."
+      },
+      {
+        q: 89,
+        en: "Which of the following statements correctly describes the 'Mahalanobis Model' adopted in the Second Five-Year Plan (1956–1961)?",
+        hi: "निम्नलिखित में से कौन सा कथन द्वितीय पंचवर्षीय योजना (1956-1961) में अपनाए गए 'महालनोबिस मॉडल' का सही वर्णन करता है?",
+        options: [
+          "It focused exclusively on agricultural exports / इसने विशेष रूप से कृषि निर्यात पर ध्यान केंद्रित किया",
+          "It emphasized rapid industrialization through Public Sector investment in heavy and capital goods industries ('Machine-building industries') / इसने भारी और पूंजीगत वस्तु उद्योगों ('मशीन-निर्माण उद्योग') में सार्वजनिक क्षेत्र के निवेश के माध्यम से तीव्र औद्योगीकरण पर जोर दिया",
+          "It recommended complete privatization of all state enterprises / इसने सभी राज्य उद्यमों के पूर्ण निजीकरण की सिफारिश की",
+          "It was prepared by Raghuram Rajan / इसे रघुराम राजन द्वारा तैयार किया गया था",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Formulated by Prof. P.C. Mahalanobis in 1953–56, the Mahalanobis Model was a two-sector/four-sector growth model that placed the Public Sector at the core of India's industrialization by investing heavily in capital goods (steel, heavy machinery, power) so that long-term industrial capacity would expand.",
+        expHi: "प्रो. पी.सी. महालनोबिस द्वारा 1953-56 में तैयार किया गया महालनोबिस मॉडल एक विकास मॉडल था जिसने पूंजीगत वस्तुओं (इस्पात, भारी मशीनरी, बिजली) में भारी निवेश करके सार्वजनिक क्षेत्र को भारत के औद्योगीकरण के केंद्र में रखा ताकि दीर्घकालिक औद्योगिक क्षमता का विस्तार हो सके।",
+        fact: "P.C. Mahalanobis is known as the architect of the Second Five-Year Plan and the founder of the Indian Statistical Institute (ISI, Kolkata)."
+      },
+      {
+        q: 90,
+        en: "In 1956, the Industrial Policy Resolution used the famous phrase 'Commanding Heights of the Economy'. Which sector was given control over these 'Commanding Heights'?",
+        hi: "1956 में, औद्योगिक नीति संकल्प ने प्रसिद्ध वाक्यांश 'अर्थव्यवस्था के सर्वोच्च शिखर (Commanding Heights of the Economy)' का प्रयोग किया। इन 'सर्वोच्च शिखरों' पर किस क्षेत्र को नियंत्रण दिया गया था?",
+        options: [
+          "Private Sector / निजी क्षेत्र",
+          "Public Sector (The State) / सार्वजनिक क्षेत्र (राज्य)",
+          "Foreign Multinational Corporations / विदेशी बहुराष्ट्रीय निगम",
+          "Non-Governmental Organizations / गैर-सरकारी संगठन",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Jawaharlal Nehru and the 1956 Industrial Policy advocated that the Public Sector (State) must control the 'Commanding Heights of the Economy' — meaning strategic infrastructure, heavy industries, defence, energy, transport, and banking — so that private monopoly is prevented and national development serves social welfare.",
+        expHi: "जवाहरलाल नेहरू और 1956 की औद्योगिक नीति ने वकालत की कि सार्वजनिक क्षेत्र (राज्य) को 'अर्थव्यवस्था के सर्वोच्च शिखरों (Commanding Heights)' — अर्थात् रणनीतिक बुनियादी ढांचे, भारी उद्योग, रक्षा, ऊर्जा, परिवहन और बैंकिंग — को नियंत्रित करना चाहिए ताकि निजी एकाधिकार को रोका जा सके और राष्ट्रीय विकास सामाजिक कल्याण की पूर्ति करे।",
+        fact: "Direct NCERT Class 12 (Indian Economic Development, Chapter 2) concept frequently tested in UPSSSC exams."
+      },
+      {
+        q: 91,
+        en: "What was the 'Memorandum of Understanding' (MoU) system introduced in 1987–88 for Public Sector Undertakings (PSUs) in India?",
+        hi: "भारत में सार्वजनिक क्षेत्र के उपक्रमों (PSUs) के लिए 1987-88 में शुरू की गई 'समझौता ज्ञापन (Memorandum of Understanding - MoU)' प्रणाली क्या थी?",
+        options: [
+          "An agreement to sell all PSUs to foreign governments / सभी पीएसयू को विदेशी सरकारों को बेचने का समझौता",
+          "A performance evaluation agreement between the management of a PSU and the administrative Ministry, granting operational autonomy in exchange for achieving agreed targets / किसी पीएसयू के प्रबंधन और प्रशासनिक मंत्रालय के बीच एक प्रदर्शन मूल्यांकन समझौता, जो सहमत लक्ष्यों को प्राप्त करने के बदले में परिचालन स्वायत्तता प्रदान करता है",
+          "A trade treaty with the World Bank / विश्व बैंक के साथ एक व्यापार संधि",
+          "A wage agreement with private trade unions / निजी ट्रेड यूनियनों के साथ वेतन समझौता",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "On the recommendation of the Arjun Sengupta Committee (1984), the Government of India introduced the MoU system in 1987–88. It is a mutually negotiated performance contract between the administrative Ministry and the management of a CPSE to balance operational autonomy with accountability.",
+        expHi: "अर्जुन सेनगुप्ता समिति (1984) की सिफारिश पर, भारत सरकार ने 1987-88 में MoU प्रणाली शुरू की। यह जवाबदेही के साथ परिचालन स्वायत्तता को संतुलित करने के लिए प्रशासनिक मंत्रालय और CPSE के प्रबंधन के बीच पारस्परिक रूप से तय किया गया एक प्रदर्शन अनुबंध है।",
+        fact: "Arjun Sengupta Committee (1984) recommended the MoU system for reforming Public Sector Undertakings."
+      },
+      {
+        q: 92,
+        en: "Which major private sector conglomerate acquired the state-owned Nilachal Ispat Nigam Limited (NINL) in 2022 under the government's strategic disinvestment programme?",
+        hi: "सरकार के रणनीतिक विनिवेश कार्यक्रम के तहत 2022 में किस प्रमुख निजी क्षेत्र के समूह ने राज्य के स्वामित्व वाली नीलाचल इस्पात निगम लिमिटेड (NINL) का अधिग्रहण किया?",
+        options: [
+          "Adani Group / अदानी समूह",
+          "Tata Steel Long Products (Tata Group) / टाटा स्टील लॉन्ग प्रोडक्ट्स (टाटा समूह)",
+          "Vedanta Group / वेदांता समूह",
+          "Mahindra Group / महिंद्रा समूह",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In July 2022, Tata Steel Long Products (part of the Tata Group) completed the acquisition of Odisha-based public sector steel company Nilachal Ispat Nigam Limited (NINL) for around ₹12,100 crore under strategic disinvestment.",
+        expHi: "जुलाई 2022 में, टाटा स्टील लॉन्ग प्रोडक्ट्स (टाटा समूह का हिस्सा) ने रणनीतिक विनिवेश के तहत लगभग ₹12,100 करोड़ में ओडिशा स्थित सार्वजनिक क्षेत्र की इस्पात कंपनी नीलाचल इस्पात निगम लिमिटेड (NINL) का अधिग्रहण पूरा किया।",
+        fact: "Earlier in 2001–02, the Vajpayee government had strategically disinvested BALCO and Hindustan Zinc Limited (HZL) to Sterlite Industries (Vedanta Group)."
+      },
+      {
+        q: 93,
+        en: "Which Union Ministry was created for the first time in December 1999 to specifically accelerate the privatization and disinvestment of Public Sector Undertakings?",
+        hi: "सार्वजनिक क्षेत्र के उपक्रमों के निजीकरण और विनिवेश में विशेष रूप से तेजी लाने के लिए दिसंबर 1999 में पहली बार किस केंद्रीय मंत्रालय का गठन किया गया था?",
+        options: [
+          "Ministry of Corporate Affairs / कॉर्पोरेट कार्य मंत्रालय",
+          "Department/Ministry of Disinvestment / विनिवेश विभाग/मंत्रालय",
+          "Ministry of Skill Development / कौशल विकास मंत्रालय",
+          "Ministry of Cooperation / सहकारिता मंत्रालय",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "A separate Department of Disinvestment was set up in December 1999 and upgraded to a full-fledged Ministry of Disinvestment in September 2001 (with Arun Shourie as Minister). In May 2004, it was converted back into a Department under the Ministry of Finance, and renamed DIPAM in 2016.",
+        expHi: "दिसंबर 1999 में एक अलग विनिवेश विभाग की स्थापना की गई थी और सितंबर 2001 में इसे एक पूर्ण विनिवेश मंत्रालय (अरुण शौरी मंत्री के रूप में) में अपग्रेड किया गया था। मई 2004 में, इसे वापस वित्त मंत्रालय के तहत एक विभाग में बदल दिया गया, और 2016 में इसका नाम बदलकर DIPAM कर दिया गया।",
+        fact: "During 1999–2004, major strategic sales like Modern Food Industries, BALCO, Hindustan Zinc, IPCL, and VSNL took place."
+      },
+      {
+        q: 94,
+        en: "Which was the very first Central Public Sector Enterprise (CPSE) in India to be privatized through Strategic Sale in January 2000?",
+        hi: "जनवरी 2000 में रणनीतिक बिक्री (Strategic Sale) के माध्यम से निजीकृत होने वाला भारत का पहला केंद्रीय सार्वजनिक क्षेत्र का उद्यम (CPSE) कौन सा था?",
+        options: [
+          "Modern Food Industries Limited (MFIL) / मॉडर्न फूड इंडस्ट्रीज लिमिटेड (MFIL)",
+          "Maruti Udyog Limited / मारुति उद्योग लिमिटेड",
+          "Air India / एयर इंडिया",
+          "LIC / एलआईसी",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "Modern Food Industries Limited (MFIL), the maker of 'Modern Bread' set up in 1965, became the first Central PSU to be privatized by the Government of India in January 2000 when 74% of its equity with management control was sold to Hindustan Lever Limited (HLL, now HUL).",
+        expHi: "1965 में स्थापित 'मॉडर्न ब्रेड' की निर्माता कंपनी मॉडर्न फूड इंडस्ट्रीज लिमिटेड (MFIL), जनवरी 2000 में भारत सरकार द्वारा निजीकृत होने वाली पहली केंद्रीय पीएसयू बन गई, जब प्रबंधन नियंत्रण के साथ इसकी 74% इक्विटी हिंदुस्तान लीवर लिमिटेड (HLL, अब HUL) को बेच दी गई।",
+        fact: "First PSU privatized via strategic sale in India = Modern Food Industries Limited (January 2000)."
+      },
+      {
+        q: 95,
+        en: "When LIC (Life Insurance Corporation of India) launched India's largest-ever Initial Public Offering (IPO) in May 2022 by selling 3.5% government stake to the public, what type of process was this?",
+        hi: "जब LIC (भारतीय जीवन बीमा निगम) ने मई 2022 में जनता को 3.5% सरकारी हिस्सेदारी बेचकर भारत का अब तक का सबसे बड़ा आरंभिक सार्वजनिक प्रस्ताव (IPO) लॉन्च किया, तो यह किस प्रकार की प्रक्रिया थी?",
+        options: [
+          "Complete Privatization / पूर्ण निजीकरण",
+          "Minority Stake Disinvestment (retaining Public Sector character with 96.5% government ownership) / अल्पमत हिस्सेदारी विनिवेश (96.5% सरकारी स्वामित्व के साथ सार्वजनिक क्षेत्र के चरित्र को बनाए रखना)",
+          "Nationalization / राष्ट्रीयकरण",
+          "Liquidation / परिसमापन",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "In Minority Stake Disinvestment (अल्पमत हिस्सेदारी विनिवेश), the government sells a small portion of shares (like 3.5% in LIC's IPO in May 2022 raising ~₹21,000 crore) to raise revenue and improve public listing governance, while retaining more than 51% ownership and full management control in the Public Sector.",
+        expHi: "अल्पमत हिस्सेदारी विनिवेश (Minority Stake Disinvestment) में, सरकार राजस्व जुटाने और सार्वजनिक लिस्टिंग शासन में सुधार करने के लिए शेयरों का एक छोटा हिस्सा (जैसे मई 2022 में LIC के IPO में 3.5% बेचकर ~₹21,000 करोड़ जुटाना) बेचती है, जबकि सार्वजनिक क्षेत्र में 51% से अधिक स्वामित्व और पूर्ण प्रबंधन नियंत्रण बनाए रखती है।",
+        fact: "Minority Disinvestment keeps the company a PSU (Govt share ≥ 51%); Strategic Disinvestment/Privatization transfers ownership and management control to a private buyer."
+      },
+      {
+        q: 96,
+        en: "What are 'Exchange Traded Funds' (ETFs) like 'CPSE ETF' and 'Bharat 22 ETF' used for by the Government of India?",
+        hi: "भारत सरकार द्वारा 'CPSE ETF' और 'भारत 22 ETF' जैसे 'एक्सचेंज ट्रेडेड फंड (ETFs)' का उपयोग किसके लिए किया जाता है?",
+        options: [
+          "For importing crude oil / कच्चे तेल के आयात के लिए",
+          "As a market mechanism for disinvesting government shares in a basket of Public Sector Enterprises / सार्वजनिक क्षेत्र के उद्यमों के एक समूह में सरकारी शेयरों के विनिवेश के लिए एक बाजार तंत्र के रूप में",
+          "For paying salaries of state government employees / राज्य सरकार के कर्मचारियों के वेतन का भुगतान करने के लिए",
+          "For agricultural loan waivers / कृषि ऋण माफी के लिए",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "CPSE ETF (launched in 2014) and Bharat 22 ETF (launched in 2017) are Exchange Traded Funds created by the Government of India (DIPAM) to bundle shares of top-performing Public Sector Undertakings (and government holdings in blue-chip companies) and sell them to retail and institutional investors as part of its disinvestment programme.",
+        expHi: "CPSE ETF (2014 में लॉन्च) और भारत 22 ETF (2017 में लॉन्च) भारत सरकार (DIPAM) द्वारा अपने विनिवेश कार्यक्रम के हिस्से के रूप में शीर्ष प्रदर्शन करने वाले सार्वजनिक क्षेत्र के उपक्रमों के शेयरों को एक समूह (बास्केट) में बांधने और उन्हें खुदरा तथा संस्थागत निवेशकों को बेचने के लिए बनाए गए एक्सचेंज ट्रेडेड फंड हैं।",
+        fact: "Bharat Bond ETF (launched in December 2019) was India's first corporate bond ETF to raise debt funds for CPSEs."
+      },
+      {
+        q: 97,
+        en: "Which National Master Plan for Multi-Modal Connectivity was launched in October 2021 to coordinate infrastructure projects across 16 Ministries and crowd-in Private Sector logistics investment?",
+        hi: "16 मंत्रालयों में बुनियादी ढांचा परियोजनाओं का समन्वय करने और निजी क्षेत्र के लॉजिस्टिक्स निवेश को आकर्षित करने के लिए अक्टूबर 2021 में मल्टी-मॉडल कनेक्टिविटी के लिए कौन सा राष्ट्रीय मास्टर प्लान लॉन्च किया गया था?",
+        options: [
+          "Make in India / मेक इन इंडिया",
+          "PM Gati Shakti National Master Plan / पीएम गति शक्ति राष्ट्रीय मास्टर प्लान",
+          "Startup India / स्टार्टअप इंडिया",
+          "Digital India / डिजिटल इंडिया",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "Launched on 13 October 2021, the PM Gati Shakti National Master Plan integrates infrastructure planning (roads, railways, ports, waterways, airports) across ministries on a digital GIS platform to reduce logistics costs and facilitate seamless Public-Private Partnership (PPP) investments.",
+        expHi: "13 अक्टूबर 2021 को लॉन्च किया गया पीएम गति शक्ति राष्ट्रीय मास्टर प्लान लॉजिस्टिक्स लागत को कम करने और निर्बाध सार्वजनिक-निजी भागीदारी (PPP) निवेश को सुगम बनाने के लिए एक डिजिटल जीआईएस प्लेटफॉर्म पर मंत्रालयों के बीच बुनियादी ढांचा नियोजन (सड़क, रेलवे, बंदरगाह, जलमार्ग, हवाई अड्डे) को एकीकृत करता है।",
+        fact: "PM Gati Shakti is driven by 7 engines: Roads, Railways, Airports, Ports, Mass Transport, Waterways, and Logistics Infrastructure."
+      },
+      {
+        q: 98,
+        en: "Which institution was set up in 2015 as India's first sovereign wealth-like fund to attract long-term domestic and international private capital into Indian infrastructure projects alongside government equity (49%)?",
+        hi: "सरकारी इक्विटी (49%) के साथ-साथ भारतीय बुनियादी ढांचा परियोजनाओं में दीर्घकालिक घरेलू और अंतर्राष्ट्रीय निजी पूंजी को आकर्षित करने के लिए भारत के पहले सॉवरेन वेल्थ-जैसे फंड के रूप में 2015 में किस संस्था की स्थापना की गई थी?",
+        options: [
+          "NIIF (National Investment and Infrastructure Fund) / एनआईआईएफ (राष्ट्रीय निवेश और अवसंरचना कोष)",
+          "NABARD / नाबार्ड",
+          "SIDBI / सिडबी",
+          "EXIM Bank / एक्जिम बैंक",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "The National Investment and Infrastructure Fund (NIIF) was established in December 2015 as a collaborative investment platform where the Government of India holds a 49% stake and the remaining 51% is raised from domestic and global private institutional investors to finance greenfield and brownfield infrastructure.",
+        expHi: "राष्ट्रीय निवेश और अवसंरचना कोष (NIIF) की स्थापना दिसंबर 2015 में एक सहयोगात्मक निवेश मंच के रूप में की गई थी जहाँ भारत सरकार की 49% हिस्सेदारी है और शेष 51% ग्रीनफील्ड और ब्राउनफील्ड बुनियादी ढांचे के वित्तपोषण के लिए घरेलू और वैश्विक निजी संस्थागत निवेशकों से जुटाया जाता है।",
+        fact: "Because the Government holds 49% (less than 50%) in NIIF, it functions with private-sector agility while backed by sovereign credibility."
+      },
+      {
+        q: 99,
+        en: "Which of the following correctly highlights the fundamental difference between the Public Sector and the Private Sector in India's Mixed Economy?",
+        hi: "निम्नलिखित में से कौन सा भारत की मिश्रित अर्थव्यवस्था में सार्वजनिक क्षेत्र और निजी क्षेत्र के बीच मौलिक अंतर को सही ढंग से उजागर करता है?",
+        options: [
+          "Public Sector is owned/controlled by the State with a primary focus on social welfare and strategic infrastructure, while Private Sector is owned by individuals/corporations driven primarily by profit and market efficiency / सार्वजनिक क्षेत्र का स्वामित्व/नियंत्रण राज्य के पास होता है जिसका प्राथमिक ध्यान सामाजिक कल्याण और रणनीतिक बुनियादी ढांचे पर होता है, जबकि निजी क्षेत्र का स्वामित्व व्यक्तियों/निगमों के पास होता है जो मुख्य रूप से लाभ और बाजार दक्षता से प्रेरित होते हैं",
+          "Public Sector pays no wages, while Private Sector pays wages / सार्वजनिक क्षेत्र कोई वेतन नहीं देता है, जबकि निजी क्षेत्र वेतन देता है",
+          "Private Sector only produces agricultural goods, while Public Sector only produces services / निजी क्षेत्र केवल कृषि वस्तुओं का उत्पादन करता है, जबकि सार्वजनिक क्षेत्र केवल सेवाओं का उत्पादन करता है",
+          "Public Sector is regulated by RBI, while Private Sector has no laws / सार्वजनिक क्षेत्र आरबीआई द्वारा विनियमित होता है, जबकि निजी क्षेत्र के लिए कोई कानून नहीं है",
+          OPTION_E
+        ],
+        ans: 0,
+        expEn: "In a Mixed Economy, the Public Sector and Private Sector complement each other: the Public Sector focuses on equity, social welfare, public goods, and strategic areas, whereas the Private Sector drives innovation, consumer choice, capital efficiency, and wealth creation.",
+        expHi: "एक मिश्रित अर्थव्यवस्था में, सार्वजनिक क्षेत्र और निजी क्षेत्र एक-दूसरे के पूरक होते हैं: सार्वजनिक क्षेत्र समानता, सामाजिक कल्याण, सार्वजनिक वस्तुओं और रणनीतिक क्षेत्रों पर ध्यान केंद्रित करता है, जबकि निजी क्षेत्र नवाचार, उपभोक्ता विकल्प, पूंजी दक्षता और धन सृजन को गति देता है।",
+        fact: "Both sectors operate within the constitutional and regulatory framework of India to achieve 'Growth with Social Justice'."
+      },
+      {
+        q: 100,
+        en: "How has the nature of India's Mixed Economy evolved from the 1950s to the present day?",
+        hi: "1950 के दशक से लेकर आज तक भारत की मिश्रित अर्थव्यवस्था की प्रकृति कैसे विकसित हुई है?",
+        options: [
+          "It has shifted from a Capitalist Economy to a Communist Economy / यह पूंजीवादी अर्थव्यवस्था से साम्यवादी अर्थव्यवस्था में बदल गई है",
+          "It has evolved from a State-dominated, License-controlled Mixed Economy (1950–1990) to a Market-oriented, Private-sector-led Mixed Economy with the State acting as an Enabler and Regulator (Post-1991) / यह राज्य-प्रधान, लाइसेंस-नियंत्रित मिश्रित अर्थव्यवस्था (1950-1990) से विकसित होकर एक बाजार-उन्मुख, निजी-क्षेत्र-आधारित मिश्रित अर्थव्यवस्था बन गई है जिसमें राज्य एक प्रवर्तक (Enabler) और नियामक (Regulator) के रूप में कार्य करता है (1991 के बाद)",
+          "The Private Sector has been completely abolished / निजी क्षेत्र को पूरी तरह से समाप्त कर दिया गया है",
+          "The Public Sector has been 100% shut down / सार्वजनिक क्षेत्र को 100% बंद कर दिया गया है",
+          OPTION_E
+        ],
+        ans: 1,
+        expEn: "From 1950 to 1990, India followed an inward-looking, public-sector-dominated Mixed Economy model. Since the 1991 LPG reforms, India has transitioned into a dynamic, market-driven Mixed Economy where the Private Sector leads industrial and service growth, while the Public Sector focuses on strategic sectors, welfare delivery, and regulatory oversight.",
+        expHi: "1950 से 1990 तक, भारत ने सार्वजनिक-क्षेत्र-प्रधान मिश्रित अर्थव्यवस्था मॉडल का पालन किया। 1991 के एलपीजी सुधारों के बाद से, भारत एक गतिशील, बाजार-संचालित मिश्रित अर्थव्यवस्था में परिवर्तित हो गया है जहाँ निजी क्षेत्र औद्योगिक और सेवा विकास का नेतृत्व करता है, जबकि सार्वजनिक क्षेत्र रणनीतिक क्षेत्रों, कल्याण वितरण और नियामक देखरेख पर ध्यान केंद्रित करता है।",
+        fact: "India remains a Mixed Economy today, balancing competitive private enterprise with robust public digital/physical infrastructure and social welfare schemes."
+      }
+    ];
+
+    const LETTERS = ["A", "B", "C", "D", "E"];
+
+    // State per question:
+    // status: 'not-visited' | 'unanswered' | 'correct' | 'incorrect' | 'skipped'
+    // review: boolean
+    // selected: number | null
+    const userState = questionsData.map(() => ({
+      status: "not-visited",
+      review: false,
+      selected: null
+    }));
+
+    let currentIndex = 0;
+
+    function initSimulator() {
+      userState[0].status = "unanswered";
+      renderQuestion();
+      updateScoreAndCounts();
+    }
+
+    function renderQuestion() {
+      const qObj = questionsData[currentIndex];
+      const st = userState[currentIndex];
+
+      if (st.status === "not-visited") {
+        st.status = "unanswered";
+      }
+
+      document.getElementById("questionCounter").textContent = `Question ${qObj.q} of 100`;
+      document.getElementById("qStemEn").textContent = `Q${qObj.q}. ${qObj.en}`;
+      document.getElementById("qStemHi").textContent = qObj.hi;
+
+      const optionsContainer = document.getElementById("optionsContainer");
+      optionsContainer.innerHTML = "";
+
+      const isLocked = st.selected !== null || st.status === "skipped";
+
+      qObj.options.forEach((optText, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "option-card";
+        if (isLocked) btn.classList.add("locked");
+
+        if (st.selected !== null) {
+          if (idx === qObj.ans) {
+            btn.classList.add("correct-choice");
+          } else if (idx === st.selected && st.selected !== qObj.ans) {
+            btn.classList.add("wrong-choice");
+          }
+        } else if (st.status === "skipped" && idx === qObj.ans) {
+          btn.classList.add("correct-choice");
+        }
+
+        btn.innerHTML = `
+          <span class="option-badge">${LETTERS[idx]}</span>
+          <span class="option-text">${optText}</span>
+        `;
+
+        if (!isLocked) {
+          btn.onclick = () => selectOption(idx);
+        }
+
+        optionsContainer.appendChild(btn);
+      });
+
+      // Update Skip & Review buttons
+      const skipBtn = document.getElementById("skipBtn");
+      skipBtn.disabled = isLocked;
+
+      const reviewBtn = document.getElementById("reviewBtn");
+      if (st.review) {
+        reviewBtn.classList.add("active-review");
+        reviewBtn.textContent = "🟣 Marked for Review";
+      } else {
+        reviewBtn.classList.remove("active-review");
+        reviewBtn.textContent = "🟣 Mark for Review";
+      }
+
+      // Explanation box visibility
+      const expBox = document.getElementById("explanationBox");
+      if (isLocked) {
+        expBox.style.display = "block";
+        const badge = document.getElementById("expStatusBadge");
+        if (st.status === "correct") {
+          badge.className = "status-badge status-correct";
+          badge.textContent = "✅ Correct (+1.00 Mark)";
+        } else if (st.status === "incorrect") {
+          badge.className = "status-badge status-incorrect";
+          badge.textContent = `❌ Incorrect (-0.25 Mark) | Your Choice: (${LETTERS[st.selected]})`;
+        } else {
+          badge.className = "status-badge status-skipped";
+          badge.textContent = "⚪ Explicitly Skipped (0.00 Marks)";
+        }
+
+        document.getElementById("expCorrectKey").textContent = `Correct Option: (${LETTERS[qObj.ans]})`;
+        document.getElementById("expEn").innerHTML = `<strong>🇬🇧 English Explanation:</strong> ${qObj.expEn}`;
+        document.getElementById("expHi").innerHTML = `<strong>🇮🇳 हिंदी व्याख्या:</strong> ${qObj.expHi}`;
+        document.getElementById("expFact").innerHTML = `📌 <strong>UPSSSC High-Yield Key Fact:</strong> ${qObj.fact}`;
+      } else {
+        expBox.style.display = "none";
+      }
+
+      // Navigation buttons
+      document.getElementById("prevBtn").disabled = currentIndex === 0;
+      const nextBtn = document.getElementById("nextBtn");
+      if (currentIndex === questionsData.length - 1) {
+        nextBtn.textContent = "Finish & View Dashboard ➔";
+      } else {
+        nextBtn.textContent = "Next Question ➔";
+      }
+
+      updateScoreAndCounts();
+    }
+
+    function selectOption(idx) {
+      const st = userState[currentIndex];
+      const qObj = questionsData[currentIndex];
+      if (st.selected !== null || st.status === "skipped") return;
+
+      st.selected = idx;
+      if (idx === qObj.ans) {
+        st.status = "correct";
+      } else {
+        st.status = "incorrect";
+      }
+
+      renderQuestion();
+    }
+
+    function skipQuestion() {
+      const st = userState[currentIndex];
+      if (st.selected !== null || st.status === "skipped") return;
+      st.status = "skipped";
+      renderQuestion();
+    }
+
+    function toggleMarkForReview() {
+      const st = userState[currentIndex];
+      st.review = !st.review;
+      renderQuestion();
+    }
+
+    function navigateStep(delta) {
+      if (delta === 1 && currentIndex === questionsData.length - 1) {
+        showFinalDashboard();
+        return;
+      }
+      const nextIdx = currentIndex + delta;
+      if (nextIdx >= 0 && nextIdx < questionsData.length) {
+        currentIndex = nextIdx;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    function updateScoreAndCounts() {
+      let correct = 0;
+      let incorrect = 0;
+      let unanswered = 0;
+      let skipped = 0;
+      let review = 0;
+      let notVisited = 0;
+
+      userState.forEach((st) => {
+        if (st.review) review++;
+        if (st.status === "correct") correct++;
+        else if (st.status === "incorrect") incorrect++;
+        else if (st.status === "skipped") skipped++;
+        else if (st.status === "unanswered") unanswered++;
+        else notVisited++;
+      });
+
+      const netScore = (correct * 1.0) - (incorrect * 0.25);
+      const sign = netScore >= 0 ? "+" : "";
+      document.getElementById("liveScoreBadge").textContent = `Net Score: ${sign}${netScore.toFixed(2)} Marks`;
+
+      document.getElementById("cntCorrect").textContent = correct;
+      document.getElementById("cntIncorrect").textContent = incorrect;
+      document.getElementById("cntUnanswered").textContent = unanswered;
+      document.getElementById("cntSkipped").textContent = skipped;
+      document.getElementById("cntReview").textContent = review;
+      document.getElementById("cntNotVisited").textContent = notVisited;
+    }
+
+    function openPalette() {
+      const grid = document.getElementById("paletteGrid");
+      grid.innerHTML = "";
+
+      userState.forEach((st, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "p-btn";
+        if (idx === currentIndex) btn.classList.add("current-q");
+
+        if (st.review) {
+          btn.classList.add("st-review");
+        } else if (st.status === "correct") {
+          btn.classList.add("st-correct");
+        } else if (st.status === "incorrect") {
+          btn.classList.add("st-incorrect");
+        } else if (st.status === "skipped") {
+          btn.classList.add("st-skipped");
+        } else if (st.status === "unanswered") {
+          btn.classList.add("st-unanswered");
+        } else {
+          btn.classList.add("st-not-visited");
+        }
+
+        btn.textContent = idx + 1;
+        btn.onclick = () => jumpToQuestion(idx);
+        grid.appendChild(btn);
+      });
+
+      document.getElementById("paletteBackdrop").classList.add("open");
+    }
+
+    function closePalette() {
+      document.getElementById("paletteBackdrop").classList.remove("open");
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target.id === "paletteBackdrop") {
+        closePalette();
+      }
+    }
+
+    function jumpToQuestion(idx) {
+      currentIndex = idx;
+      closePalette();
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showFinalDashboard() {
+      closePalette();
+      document.getElementById("testContainer").style.display = "none";
+      document.getElementById("subBar").style.display = "none";
+      document.getElementById("dashboardContainer").style.display = "block";
+
+      let correct = 0;
+      let incorrect = 0;
+      let skippedOrUnattempted = 0;
+
+      userState.forEach((st) => {
+        if (st.status === "correct") correct++;
+        else if (st.status === "incorrect") incorrect++;
+        else skippedOrUnattempted++;
+      });
+
+      const netScore = (correct * 1.0) - (incorrect * 0.25);
+      const attempted = correct + incorrect;
+      const accuracy = attempted > 0 ? ((correct / attempted) * 100).toFixed(1) : "0.0";
+
+      document.getElementById("finalNetScore").textContent = (netScore >= 0 ? "+" : "") + netScore.toFixed(2);
+      document.getElementById("finalCorrect").textContent = correct;
+      document.getElementById("finalIncorrect").textContent = incorrect;
+      document.getElementById("finalSkipped").textContent = skippedOrUnattempted;
+      document.getElementById("finalAccuracy").textContent = `${accuracy}%`;
+
+      const reviewList = document.getElementById("fullReviewList");
+      reviewList.innerHTML = "";
+
+      questionsData.forEach((qObj, idx) => {
+        const st = userState[idx];
+        let badgeHtml = "";
+        if (st.status === "correct") {
+          badgeHtml = `<span class="status-badge status-correct">✅ Correct (+1.00)</span>`;
+        } else if (st.status === "incorrect") {
+          badgeHtml = `<span class="status-badge status-incorrect">❌ Incorrect (-0.25) | Chosen: (${LETTERS[st.selected]})</span>`;
+        } else {
+          badgeHtml = `<span class="status-badge status-skipped">⚪ Skipped / Unattempted (0.00)</span>`;
+        }
+
+        const item = document.createElement("div");
+        item.className = "review-item";
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.65rem;">
+            <strong>Question ${qObj.q}</strong>
+            ${badgeHtml}
+          </div>
+          <div style="font-weight:600; margin-bottom:0.3rem;">${qObj.en}</div>
+          <div style="color:#334155; margin-bottom:0.75rem;">${qObj.hi}</div>
+          <div style="font-size:0.92rem; font-weight:700; color:var(--green-correct); margin-bottom:0.6rem;">
+            ✔ Correct Answer: (${LETTERS[qObj.ans]}) ${qObj.options[qObj.ans]}
+          </div>
+          <div style="font-size:0.9rem; margin-bottom:0.35rem;"><strong>🇬🇧 Explanation:</strong> ${qObj.expEn}</div>
+          <div style="font-size:0.9rem; margin-bottom:0.5rem;"><strong>🇮🇳 व्याख्या:</strong> ${qObj.expHi}</div>
+          <div class="key-fact-box">📌 <strong>Key Exam Fact:</strong> ${qObj.fact}</div>
+        `;
+        reviewList.appendChild(item);
+      });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function returnToSimulator() {
+      document.getElementById("dashboardContainer").style.display = "none";
+      document.getElementById("subBar").style.display = "flex";
+      document.getElementById("testContainer").style.display = "block";
+      renderQuestion();
+    }
+
+    window.onload = initSimulator;
+  </script>
+</body>
+</html>

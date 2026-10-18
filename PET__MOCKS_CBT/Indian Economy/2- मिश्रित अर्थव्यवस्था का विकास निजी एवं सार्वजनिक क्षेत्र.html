@@ -1,0 +1,2524 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPSSSC PET CBT Simulator - भारतीय अर्थव्यवस्था (मिश्रित अर्थव्यवस्था)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #121316;
+      --bg-card: #1e2024;
+      --bg-card-alt: #25282e;
+      --border-color: #2f343b;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --purple: #8b5cf6;
+      --slate: #64748b;
+      --dark-gray: #374151;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* TOP BAR */
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-badge {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .stat-badge strong {
+      color: var(--primary);
+    }
+
+    .btn-palette {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s ease;
+    }
+
+    .btn-palette:hover {
+      background: var(--primary-hover);
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .q-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.75rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .q-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .q-number {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .q-marking {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .q-stem {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .q-stem .stem-en {
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: #fff;
+    }
+
+    .q-stem .stem-hi {
+      font-weight: 500;
+      color: #d1d5db;
+    }
+
+    /* OPTIONS */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .opt-btn {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      text-align: left;
+      cursor: pointer;
+      color: var(--text-main);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .opt-btn:hover:not(.locked) {
+      border-color: var(--primary);
+      background: #2b2f38;
+    }
+
+    .opt-key {
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 24px;
+    }
+
+    .opt-btn.correct {
+      background: rgba(16, 185, 129, 0.18) !important;
+      border-color: var(--success) !important;
+      color: #6ee7b7 !important;
+    }
+
+    .opt-btn.incorrect {
+      background: rgba(239, 68, 68, 0.18) !important;
+      border-color: var(--danger) !important;
+      color: #fca5a5 !important;
+    }
+
+    .opt-btn.highlight-correct {
+      border-color: var(--success) !important;
+      box-shadow: 0 0 0 1px var(--success);
+    }
+
+    .opt-btn.locked {
+      cursor: default;
+    }
+
+    /* EXPLANATION CARD */
+    .explanation-card {
+      display: none;
+      background: #17202a;
+      border-left: 4px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem;
+      margin-top: 1.2rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .explanation-card h4 {
+      color: #93c5fd;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .explanation-card p {
+      margin-bottom: 0.6rem;
+    }
+
+    .key-fact-box {
+      margin-top: 0.8rem;
+      background: rgba(59, 130, 246, 0.12);
+      border-radius: 6px;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.85rem;
+      color: #bfdbfe;
+    }
+
+    /* ACTION BUTTONS */
+    .actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .btn-group-left, .btn-group-right {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .btn-action {
+      background: var(--bg-card-alt);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 0.6rem 1.1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: #2e333d;
+    }
+
+    .btn-skip {
+      color: var(--slate);
+    }
+
+    .btn-review {
+      color: #c084fc;
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-next {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-next:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-finish {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    /* SLIDE-IN MODAL PALETTE */
+    .palette-drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .palette-drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .palette-drawer {
+      background: var(--bg-card);
+      width: 100%;
+      max-width: 440px;
+      height: 100%;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s ease-out;
+      border-left: 1px solid var(--border-color);
+    }
+
+    .palette-drawer-overlay.active .palette-drawer {
+      transform: translateX(0);
+    }
+
+    .palette-header {
+      padding: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .palette-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .btn-close-palette {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .btn-close-palette:hover {
+      color: #fff;
+      border-color: #fff;
+    }
+
+    .palette-legend {
+      padding: 0.9rem 1.2rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      background: var(--bg-card-alt);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text-muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    .palette-body {
+      padding: 1.2rem;
+      overflow-y: auto;
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+    }
+
+    .pal-btn {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: var(--dark-gray);
+      color: #e5e7eb;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s ease;
+    }
+
+    .pal-btn:hover {
+      transform: scale(1.06);
+    }
+
+    .pal-btn.current {
+      outline: 2px solid #fff;
+      outline-offset: 1px;
+    }
+
+    /* STATUS COLORS */
+    .status-correct { background: var(--success) !important; color: #fff !important; }
+    .status-incorrect { background: var(--danger) !important; color: #fff !important; }
+    .status-unanswered { background: var(--warning) !important; color: #111 !important; }
+    .status-skipped { background: var(--slate) !important; color: #fff !important; }
+    .status-review { background: var(--purple) !important; color: #fff !important; }
+    .status-notvisited { background: var(--dark-gray) !important; color: #9ca3af !important; }
+
+    /* REPORT DASHBOARD */
+    #dashboard-view {
+      display: none;
+      background: var(--bg-card);
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      margin-top: 1rem;
+    }
+
+    .dash-scorecard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .dash-metric {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+
+    .dash-metric-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .dash-metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    .review-table-wrapper {
+      max-height: 480px;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    table.review-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    table.review-table th, table.review-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    table.review-table th {
+      background: var(--bg-card-alt);
+      color: var(--text-muted);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    .btn-restart {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+      .palette-drawer { max-width: 100%; }
+      .actions-bar { flex-direction: column; align-items: stretch; }
+      .btn-group-left, .btn-group-right { width: 100%; justify-content: space-between; }
+      .dash-scorecard { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header>
+    <div class="brand-title">
+      UPSSSC PET: भारतीय अर्थव्यवस्था
+      <span>मिश्रित अर्थव्यवस्था का विकास: निजी एवं सार्वजनिक क्षेत्र</span>
+    </div>
+    <div class="header-stats">
+      <div class="stat-badge" id="counter-badge">Q: 1 / 100</div>
+      <div class="stat-badge">Net Score: <strong id="live-score">0.00</strong></div>
+      <button class="btn-palette" id="btn-open-palette">📋 Open Palette</button>
+    </div>
+  </header>
+
+  <!-- MAIN CBT QUESTION CARD -->
+  <main id="cbt-main">
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-number" id="display-q-num">Question 1 of 100</span>
+        <span class="q-marking">+1.00 for Correct | -0.25 for Incorrect</span>
+      </div>
+
+      <div class="q-stem">
+        <div class="stem-en" id="q-stem-en">Loading...</div>
+        <div class="stem-hi" id="q-stem-hi">लोड हो रहा है...</div>
+      </div>
+
+      <div class="options-grid" id="options-container"></div>
+
+      <!-- EXPLANATION VIEW -->
+      <div class="explanation-card" id="explanation-container">
+        <h4>💡 Rationale &amp; Analysis / प्रमाणित व्याख्या</h4>
+        <p><strong>English:</strong> <span id="exp-en"></span></p>
+        <p><strong>हिंदी व्याख्या:</strong> <span id="exp-hi"></span></p>
+        <div class="key-fact-box">
+          <strong>Key Exam Fact:</strong> <span id="exp-fact"></span>
+        </div>
+      </div>
+
+      <!-- BOTTOM ACTIONS -->
+      <div class="actions-bar">
+        <div class="btn-group-left">
+          <button class="btn-action btn-skip" id="btn-skip">Skip</button>
+          <button class="btn-action btn-review" id="btn-review">Mark for Review</button>
+        </div>
+        <div class="btn-group-right">
+          <button class="btn-action" id="btn-prev">⬅ Previous</button>
+          <button class="btn-action btn-next" id="btn-next">Next Question ➔</button>
+          <button class="btn-action btn-finish" id="btn-submit-test">Submit Exam</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FINAL REPORT DASHBOARD -->
+  <main id="dashboard-view">
+    <h2 style="margin-bottom: 0.5rem;">CBT Examination Report Card</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">
+      Section: Indian Economy | Topic: Development of Mixed Economy: Private & Public Sector
+    </p>
+
+    <div class="dash-scorecard">
+      <div class="dash-metric">
+        <div class="dash-metric-label">Net Score</div>
+        <div class="dash-metric-value" id="dash-net-score" style="color: var(--primary);">0.00</div>
+      </div>
+      <div class="dash-metric">
+        <div class="dash-metric-label">Accuracy</div>
+        <div class="dash-metric-value" id="dash-accuracy" style="color: var(--purple);">0.0%</div>
+      </div>
+      <div class="dash-metric">
+        <div class="dash-metric-label">Correct (+1.00)</div>
+        <div class="dash-metric-value" id="dash-correct" style="color: var(--success);">0</div>
+      </div>
+      <div class="dash-metric">
+        <div class="dash-metric-label">Incorrect (-0.25)</div>
+        <div class="dash-metric-value" id="dash-incorrect" style="color: var(--danger);">0</div>
+      </div>
+      <div class="dash-metric">
+        <div class="dash-metric-label">Skipped / Left</div>
+        <div class="dash-metric-value" id="dash-skipped" style="color: var(--slate);">0</div>
+      </div>
+    </div>
+
+    <h3>Detailed 100-Question Review Matrix</h3>
+    <div class="review-table-wrapper">
+      <table class="review-table">
+        <thead>
+          <tr>
+            <th>Q#</th>
+            <th>Your Answer</th>
+            <th>Correct Answer</th>
+            <th>Outcome</th>
+            <th>Marks</th>
+          </tr>
+        </thead>
+        <tbody id="review-table-body"></tbody>
+      </table>
+    </div>
+
+    <button class="btn-restart" id="btn-restart">Retake Examination</button>
+  </main>
+
+  <!-- ON-DEMAND MODAL QUESTION PALETTE -->
+  <div class="palette-drawer-overlay" id="palette-overlay">
+    <div class="palette-drawer">
+      <div class="palette-header">
+        <div class="palette-title">Question Palette (100)</div>
+        <button class="btn-close-palette" id="btn-close-palette">✕</button>
+      </div>
+
+      <div class="palette-legend">
+        <div class="legend-item"><span class="legend-dot" style="background: var(--success);"></span> Correct (+1.00)</div>
+        <div class="legend-item"><span class="legend-dot" style="background: var(--danger);"></span> Incorrect (-0.25)</div>
+        <div class="legend-item"><span class="legend-dot" style="background: var(--warning);"></span> Unanswered</div>
+        <div class="legend-item"><span class="legend-dot" style="background: var(--slate);"></span> Skipped</div>
+        <div class="legend-item"><span class="legend-dot" style="background: var(--purple);"></span> Marked Review</div>
+        <div class="legend-item"><span class="legend-dot" style="background: var(--dark-gray);"></span> Not Visited</div>
+      </div>
+
+      <div class="palette-body" id="palette-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    /* COMPREHENSIVE 100-QUESTION VERIFIED DATASET */
+    const questions = [
+      /* BATCH 1 (Q1-Q25) */
+      {
+        id: 1,
+        stemEn: "Which of the following defines a \"Mixed Economy\"?",
+        stemHi: "निम्नलिखित में से कौन-सा 'मिश्रित अर्थव्यवस्था' को परिभाषित करता है?",
+        options: [
+          "Coexistence of small-scale and heavy industries / लघु एवं भारी उद्योगों का सह-अस्तित्व",
+          "Coexistence of public and private sectors / सार्वजनिक एवं निजी क्षेत्र का सह-अस्तित्व",
+          "Coexistence of agriculture and manufacturing / कृषि एवं विनिर्माण क्षेत्र का सह-अस्तित्व",
+          "Coexistence of domestic and foreign multinational corporations / घरेलू एवं विदेशी बहुराष्ट्रीय निगमों का सह-अस्तित्व",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "A mixed economy is an economic system that incorporates aspects of both capitalism and socialism, characterized fundamentally by the coexistence of both the public and private sectors.",
+        expHi: "मिश्रित अर्थव्यवस्था वह प्रणाली है जिसमें पूँजीवाद और समाजवाद दोनों के तत्व समाहित होते हैं। इसकी मुख्य पहचान सार्वजनिक और निजी दोनों क्षेत्रों की सक्रिय सहभागिता है।",
+        fact: "India formally adopted the path of a Mixed Economy right after Independence."
+      },
+      {
+        id: 2,
+        stemEn: "Under which Industrial Policy Resolution was the concept of a Mixed Economy officially given concrete institutional shape in Independent India?",
+        stemHi: "स्वतंत्र भारत में किस औद्योगिक नीति संकल्प के तहत 'मिश्रित अर्थव्यवस्था' की अवधारणा को आधिकारिक रूप से संस्थागत स्वरूप प्रदान किया गया?",
+        options: [
+          "Industrial Policy Resolution, 1948 / औद्योगिक नीति संकल्प, 1948",
+          "Industrial Policy Resolution, 1956 / औद्योगिक नीति संकल्प, 1956",
+          "Industrial Policy Statement, 1977 / औद्योगिक नीति वक्तव्य, 1977",
+          "New Economic Policy, 1991 / नई आर्थिक नीति, 1991",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Industrial Policy Resolution of April 6, 1948, presented by Dr. Syama Prasad Mookerjee, laid the formal foundation of a mixed economy in India.",
+        expHi: "6 अप्रैल 1948 को घोषित प्रथम औद्योगिक नीति संकल्प ने भारत में मिश्रित अर्थव्यवस्था की औपचारिक आधारशिला रखी।",
+        fact: "IPR 1948 divided Indian industries into four distinct strategic categories."
+      },
+      {
+        id: 3,
+        stemEn: "The Industrial Policy Resolution (IPR) of 1956 is famously regarded as which of the following?",
+        stemHi: "औद्योगिक नीति संकल्प (IPR), 1956 को मुख्य रूप से किस नाम से जाना जाता है?",
+        options: [
+          "The Charter of Private Freedom / निजी स्वतंत्रता का चार्टर",
+          "The Economic Constitution of India / भारत का आर्थिक संविधान",
+          "The Agricultural Development Charter / कृषि विकास चार्टर",
+          "The Foreign Trade Foundation Act / विदेश व्यापार आधारभूत अधिनियम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Industrial Policy Resolution of 1956 gave the public sector the commanding heights and is widely called the 'Economic Constitution of India'.",
+        expHi: "1956 की औद्योगिक नीति ने राज्य को अर्थव्यवस्था के शीर्ष नियंत्रण पर स्थापित किया। इसे भारतीय अर्थशास्त्र में 'भारत का आर्थिक संविधान' कहा जाता है।",
+        fact: "The Second Five-Year Plan was guided directly by the 1956 Industrial Policy Resolution."
+      },
+      {
+        id: 4,
+        stemEn: "In the Industrial Policy Resolution of 1956, how many strategic industries were reserved exclusively for the public sector under 'Schedule A'?",
+        stemHi: "1956 के औद्योगिक नीति संकल्प में 'अनुसूची A' (Schedule A) के तहत कितने रणनीतिक उद्योगों को पूरी तरह से सार्वजनिक क्षेत्र के लिए आरक्षित किया गया था?",
+        options: ["12", "17", "21", "8", "None of these / इनमें से कोई नहीं"],
+        correct: 1,
+        expEn: "Schedule A of IPR 1956 contained 17 industries exclusively reserved for the State (railways, defense, atomic energy, iron and steel, etc.).",
+        expHi: "IPR 1956 की अनुसूची 'A' में 17 उद्योग शामिल थे, जिनका पूर्ण स्वामित्व और विस्तार केवल राज्य (सरकार) के पास था।",
+        fact: "Currently, only 2 industries remain strictly reserved for the public sector: Atomic Energy and Railway Operations."
+      },
+      {
+        id: 5,
+        stemEn: "What was the primary motive behind assigning \"Commanding Heights\" to the Public Sector in early post-independence planning?",
+        stemHi: "स्वतंत्रता के बाद शुरुआती योजना काल में सार्वजनिक क्षेत्र को 'कमांडिंग हाइट्स' (प्रमुख स्थान) सौंपने का मुख्य उद्देश्य क्या था?",
+        options: [
+          "Maximizing short-term fiscal revenue for the Treasury / राजकोष के लिए अल्पकालिक राजस्व को अधिकतम करना",
+          "Building heavy infrastructure and capital goods where private investment was inadequate / भारी बुनियादी ढाँचा व पूँजीगत सामान तैयार करना जहाँ निजी पूँजी अपर्याप्त थी",
+          "Eliminating private enterprise completely from consumer markets / उपभोक्ता बाज़ार से निजी उद्यम को पूरी तरह समाप्त करना",
+          "Encouraging foreign multinational monopolies / विदेशी बहुराष्ट्रीय कंपनियों के एकाधिकार को बढ़ावा देना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Independent India lacked sufficient private capital to build heavy core infrastructure, requiring the state to take the primary lead.",
+        expHi: "स्वतंत्रता के समय भारतीय निजी क्षेत्र के पास विशाल पूँजी और लंबी अवधि वाली बुनियादी परियोजनाओं (इस्पात, मशीनरी) में निवेश का अभाव था।",
+        fact: "The phrase 'Commanding Heights' was originally formulated by Vladimir Lenin."
+      },
+      {
+        id: 6,
+        stemEn: "What is the fundamental operational motive that differentiates private sector enterprises from public sector enterprises?",
+        stemHi: "निजी क्षेत्र के उपक्रमों को सार्वजनिक क्षेत्र के उपक्रमों से अलग करने वाला मूलभूत परिचालन उद्देश्य क्या है?",
+        options: [
+          "Private sector operates primarily for social welfare / निजी क्षेत्र मुख्यतः सामाजिक कल्याण हेतु कार्य करता है",
+          "Private sector operates primarily for profit maximization / निजी क्षेत्र मुख्यतः लाभ अधिकतम करने हेतु कार्य करता है",
+          "Public sector is funded entirely through equity share issuance to foreign investors / सार्वजनिक क्षेत्र पूरी तरह विदेशी निवेशकों के शेयर से वित्तपोषित होता है",
+          "Public sector operates under zero statutory regulation / सार्वजनिक क्षेत्र बिना किसी कानूनी विनियमन के कार्य करता है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Private sector enterprises are driven primarily by profit maximization, whereas public sector enterprises prioritize social welfare and equitable infrastructure.",
+        expHi: "निजी क्षेत्र का प्राथमिक उद्देश्य लाभ कमाना (Profit Motive) होता है, जबकि सार्वजनिक क्षेत्र का ध्येय जनकल्याण और बुनियादी सुविधाओं की सुलभता है।",
+        fact: "In a mixed economy, the price mechanism drives private firms, while social plans guide state firms."
+      },
+      {
+        id: 7,
+        stemEn: "In an enterprise, what minimum percentage of equity voting shares must be owned by the government to qualify it as a \"Government Company\" under the Companies Act, 2013?",
+        stemHi: "कंपनी अधिनियम, 2013 के अनुसार, किसी उद्यम को 'सरकारी कंपनी' के रूप में योग्य ठहराने के लिए सरकार के पास न्यूनतम कितने प्रतिशत चुकता शेयर पूँजी होनी चाहिए?",
+        options: ["Exactly 50% / ठीक 50%", "At least 51% / कम से कम 51%", "More than 75% / 75% से अधिक", "At least 26% / कम से कम 26%", "None of these / इनमें से कोई नहीं"],
+        correct: 1,
+        expEn: "Under Section 2(45) of the Companies Act, 2013, a Government Company means any company in which not less than 51% of paid-up share capital is held by the Central or State Governments.",
+        expHi: "कंपनी अधिनियम, 2013 की धारा 2(45) के अनुसार, सरकारी कंपनी वह है जिसकी चुकता शेयर पूँजी का कम से कम 51% हिस्सा सरकार के पास हो।",
+        fact: "If state equity drops below 51%, the company ceases to be a statutory Government Company."
+      },
+      {
+        id: 8,
+        stemEn: "Which major economic reform introduced in July 1991 altered the balance between the Public and Private sectors in India?",
+        stemHi: "जुलाई 1991 में शुरू किए गए किस प्रमुख आर्थिक सुधार ने भारत में सार्वजनिक और निजी क्षेत्र के बीच संतुलन को बदल दिया?",
+        options: [
+          "Green Revolution / हरित क्रांति",
+          "LPG Reforms (Liberalisation, Privatisation, Globalisation) / एलपीजी सुधार (उदारीकरण, निजीकरण, वैश्वीकरण)",
+          "Nationalisation of Banks / बैंकों का राष्ट्रीयकरण",
+          "Abolition of Zamindari System / ज़मींदारी उन्मूलन प्रणाली",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The New Economic Policy of July 1991 introduced LPG reforms, deregulating industries and reducing the monopoly of public sector enterprises.",
+        expHi: "जुलाई 1991 के एलपीजी सुधारों ने निजी क्षेत्र से लाइसेंसिंग प्रतिबंध हटाए और अर्थव्यवस्था का उदारीकरण किया।",
+        fact: "The New Industrial Policy was announced on July 24, 1991."
+      },
+      {
+        id: 9,
+        stemEn: "What term is used for the process of selling government-held equity shares of Public Sector Undertakings (PSUs) to private investors or the public?",
+        stemHi: "सार्वजनिक क्षेत्र के उपक्रमों (PSUs) में सरकार द्वारा धारित इक्विटी शेयरों को निजी निवेशकों या आम जनता को बेचने की प्रक्रिया को क्या कहा जाता है?",
+        options: [
+          "Nationalisation / राष्ट्रीयकरण",
+          "Disinvestment / विनिवेश",
+          "Amortisation / ऋणमुक्ति (परिशोधन)",
+          "Demonetisation / विमुद्रीकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Disinvestment refers to the dilution or sale of government equity holding in public sector enterprises to mobilize capital and enhance efficiency.",
+        expHi: "जब सरकार सार्वजनिक उपक्रमों में अपनी शेयर पूँजी का हिस्सा बेचती है, तो इसे 'विनिवेश' (Disinvestment) कहा जाता है।",
+        fact: "The first Disinvestment Commission in India was constituted in 1996 under G.V. Ramakrishna."
+      },
+      {
+        id: 10,
+        stemEn: "Which nodal department under the Ministry of Finance manages the disinvestment program and capital restructuring of Central Public Sector Enterprises (CPSEs)?",
+        stemHi: "वित्त मंत्रालय के अंतर्गत कौन-सा नोडल विभाग केंद्रीय सार्वजनिक क्षेत्र के उद्यमों (CPSEs) के विनिवेश कार्यक्रम और पूँजी प्रबंधन का संचालन करता है?",
+        options: [
+          "Department of Revenue / राजस्व विभाग",
+          "DIPAM (Department of Investment and Public Asset Management) / दीपम (निवेश और सार्वजनिक परिसंपत्ति प्रबंधन विभाग)",
+          "Department of Financial Services / वित्तीय सेवाएं विभाग",
+          "Department of Economic Affairs / आर्थिक कार्य विभाग",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "DIPAM (Department of Investment and Public Asset Management) under the Ministry of Finance oversees equity disinvestment and public assets.",
+        expHi: "DIPAM वित्त मंत्रालय के अंतर्गत केंद्रीय सार्वजनिक उद्यमों में विनिवेश और सरकारी परिसंपत्तियों का प्रबंधन करता है।",
+        fact: "DIPAM was renamed from the Department of Disinvestment in April 2016."
+      },
+      {
+        id: 11,
+        stemEn: "The abolition of the 'License-Permit-Quota Raj' was a major feature of which economic transformation in India?",
+        stemHi: "'लाइसेंस-परमिट-कोटा राज' का उन्मूलन भारत में किस आर्थिक परिवर्तन की प्रमुख विशेषता थी?",
+        options: [
+          "First Five-Year Plan / प्रथम पंचवर्षीय योजना",
+          "Industrial Deregulation under 1991 Liberalisation / 1991 के उदारीकरण के तहत औद्योगिक अविनियमन",
+          "Bank Nationalisation of 1969 / 1969 का बैंक राष्ट्रीयकरण",
+          "Monopolies and Restrictive Trade Practices (MRTP) Act, 1969 / एमआरटीपी अधिनियम, 1969",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The 1991 reforms abolished the cumbersome licensing regime for most industries, allowing private enterprise to freely invest and expand.",
+        expHi: "1991 के सुधारों में औद्योगिक लाइसेंसिंग व्यवस्था (लाइसेंस-परमिट राज) समाप्त कर निजी क्षेत्र को नौकरशाही नियंत्रण से मुक्त किया गया।",
+        fact: "Only a handful of hazardous and defense items still require mandatory industrial licensing."
+      },
+      {
+        id: 12,
+        stemEn: "What was the central objective of the Monopolies and Restrictive Trade Practices (MRTP) Act, enacted in 1969?",
+        stemHi: "1969 में लागू किए गए एकाधिकार और प्रतिबंधात्मक व्यापार व्यवहार (MRTP) अधिनियम का मुख्य उद्देश्य क्या था?",
+        options: [
+          "To facilitate rapid corporate mergers of private monopolies / निजी एकाधिकारों के त्वरित कॉर्पोरेट विलय को सुविधाजनक बनाना",
+          "To prevent concentration of economic power in a few private hands / कुछ चुनिंदा निजी हाथों में आर्थिक शक्ति के संकेंद्रण को रोकना",
+          "To mandate privatization of core infrastructure / बुनियादी ढाँचे के अनिवार्य निजीकरण को लागू करना",
+          "To eliminate consumer protection laws / उपभोक्ता संरक्षण कानूनों को समाप्त करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The MRTP Act, 1969 was designed to ensure that the economic system did not result in the concentration of wealth in private monopolies.",
+        expHi: "MRTP अधिनियम, 1969 का उद्देश्य आर्थिक शक्ति के संकेंद्रण को रोकना तथा बड़े घरानों के अनुचित व्यापार व्यवहार पर अंकुश लगाना था।",
+        fact: "The MRTP Act was repealed and replaced by the Competition Act, 2002."
+      },
+      {
+        id: 13,
+        stemEn: "How many major private commercial banks were nationalized by the Government of India in the first round of bank nationalization in July 1969?",
+        stemHi: "जुलाई 1969 में बैंक राष्ट्रीयकरण के पहले चरण में भारत सरकार द्वारा कितने प्रमुख निजी वाणिज्यिक बैंकों का राष्ट्रीयकरण किया गया था?",
+        options: ["6", "14", "20", "10", "None of these / इनमें से कोई नहीं"],
+        correct: 1,
+        expEn: "On July 19, 1969, Prime Minister Indira Gandhi nationalized 14 major private commercial banks each having deposits of ₹50 crore or more.",
+        expHi: "19 जुलाई 1969 को 50 करोड़ रुपये या अधिक जमा वाले 14 बड़े निजी वाणिज्यिक बैंकों का राष्ट्रीयकरण किया गया था।",
+        fact: "In April 1980, a second round nationalized 6 more commercial banks."
+      },
+      {
+        id: 14,
+        stemEn: "What primary rationale led the Indian state to nationalize private commercial banks in 1969?",
+        stemHi: "1969 में निजी वाणिज्यिक बैंकों के राष्ट्रीयकरण के पीछे मुख्य तर्क क्या था?",
+        options: [
+          "Directing formal institutional credit to agriculture, small industries, and rural areas / कृषि, लघु उद्योग और ग्रामीण क्षेत्रों में संस्थागत ऋण का प्रवाह सुनिश्चित करना",
+          "Facilitating complete foreign ownership of the banking network / बैंकिंग नेटवर्क में पूर्ण विदेशी स्वामित्व को बढ़ावा देना",
+          "Closing down commercial bank branches across urban centers / शहरी केंद्रों में वाणिज्यिक बैंक शाखाओं को बंद करना",
+          "Diverting all public savings exclusively to private stock markets / सभी सार्वजनिक बचतों को केवल निजी शेयर बाज़ार में लगाना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Private banks focused almost entirely on large urban industrial houses, neglecting rural sectors. Nationalization ensured credit flowed to agriculture and priority sectors.",
+        expHi: "निजी बैंक कृषि और ग्रामीण क्षेत्रों की उपेक्षा कर केवल बड़े उद्योगपतियों को ऋण देते थे। सामाजिक प्राथमिकताओं की पूर्ति हेतु राष्ट्रीयकरण किया गया।",
+        fact: "RBI's Priority Sector Lending (PSL) guidelines emerged directly from this development."
+      },
+      {
+        id: 15,
+        stemEn: "Under the Mahalanobis Planning Model, which sector was given utmost primacy to achieve long-term self-reliance?",
+        stemHi: "महालानोबिस योजना मॉडल के अंतर्गत दीर्घकालिक आत्मनिर्भरता प्राप्त करने के लिए किस क्षेत्र को सर्वोच्च प्राथमिकता दी गई थी?",
+        options: [
+          "Fast-moving consumer goods industry / उपभोक्ता वस्तुओं (FMCG) का उद्योग",
+          "Basic heavy and capital goods industries in the public sector / सार्वजनिक क्षेत्र में आधारभूत भारी एवं पूँजीगत वस्तु उद्योग",
+          "Foreign luxury import-export agencies / विदेशी विलासिता आयात-निर्यात एजेंसियां",
+          "Private informal micro-retail / निजी अनौपचारिक सूक्ष्म खुदरा बाज़ार",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Prof. P.C. Mahalanobis' model for the Second Five-Year Plan prioritized capital goods and heavy basic industries (steel, machinery) led by state investments.",
+        expHi: "द्वितीय पंचवर्षीय योजना में प्रो. महालानोबिस के मॉडल पर आधारित भारी उद्योगों व पूँजीगत वस्तुओं के निर्माण को सर्वोच्च प्राथमिकता दी गई।",
+        fact: "Public sector steel plants at Bhilai, Durgapur, and Rourkela were constructed during this phase."
+      },
+      {
+        id: 16,
+        stemEn: "Which classification system was introduced in 1997 by the Government of India to grant greater financial and operational autonomy to high-performing Central Public Sector Enterprises (CPSEs)?",
+        stemHi: "उत्कृष्ट प्रदर्शन करने वाले केंद्रीय सार्वजनिक क्षेत्र के उद्यमों (CPSEs) को अधिक वित्तीय एवं परिचालन स्वायत्तता प्रदान करने के लिए भारत सरकार द्वारा 1997 में कौन-सी वर्गीकरण प्रणाली शुरू की गई थी?",
+        options: [
+          "Navratna and Miniratna scheme / नवरत्न और मिनीरत्न योजना",
+          "License Autonomy Board / लाइसेंस स्वायत्तता बोर्ड",
+          "State Trading Status / राज्य व्यापार दर्जा",
+          "Golden Handshake Scheme / गोल्डन हैंडशेक योजना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "In 1997, the Government launched the Navratna and Miniratna schemes to empower profit-making CPSEs to make capital investment decisions autonomously.",
+        expHi: "1997 में लाभ अर्जित करने वाले सार्वजनिक उपक्रमों को अधिक वित्तीय अधिकार देने के लिए 'नवरत्न' और 'मिनीरत्न' का दर्जा शुरू किया गया।",
+        fact: "The higher tier of 'Maharatna' was subsequently added in 2009."
+      },
+      {
+        id: 17,
+        stemEn: "In which year was the 'Maharatna' category created to empower mega-sized Central Public Sector Enterprises to expand global footprints?",
+        stemHi: "अति-विशाल केंद्रीय सार्वजनिक क्षेत्र के उद्यमों को वैश्विक स्तर पर विस्तार करने के लिए 'महारत्न' (Maharatna) श्रेणी किस वर्ष सृजित की गई थी?",
+        options: ["1991", "2001", "2009", "2014", "None of these / इनमें से कोई नहीं"],
+        correct: 2,
+        expEn: "The Union Cabinet established the Maharatna status in December 2009 to facilitate mega-sized CPSEs to expand investments globally without government approval up to ₹5,000 crore.",
+        expHi: "दिसंबर 2009 में सरकार ने महारत्न श्रेणी का सृजन किया ताकि प्रमुख नवरत्न कंपनियों को ₹5,000 करोड़ तक के स्वतंत्र निवेश की शक्ति मिल सके।",
+        fact: "A Maharatna board can invest up to 15% of its net worth in a single project without prior Cabinet sanction."
+      },
+      {
+        id: 18,
+        stemEn: "What is the fundamental role of the Private Sector in a Mixed Economy?",
+        stemHi: "मिश्रित अर्थव्यवस्था में निजी क्षेत्र की मूलभूत भूमिका क्या है?",
+        options: [
+          "Operating exclusively as an administrative wing of state ministries / सरकारी मंत्रालयों की प्रशासनिक शाखा के रूप में काम करना",
+          "Fostering innovation, market competition, consumer choice, and employment generation / नवाचार, बाज़ार प्रतिस्पर्धा, उपभोक्ता विकल्प और रोज़गार सृजन को बढ़ावा देना",
+          "Formulating national monetary and fiscal taxation policies / राष्ट्रीय मौद्रिक और राजकोषीय कर नीतियां तैयार करना",
+          "Enforcing criminal jurisprudence across industries / उद्योगों में आपराधिक कानूनों को लागू करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The private sector fosters competition, consumer variety, operational innovation, dynamic technology adoption, and widespread employment in a mixed economy.",
+        expHi: "मिश्रित अर्थव्यवस्था में निजी क्षेत्र बाज़ार प्रतिस्पर्धा बढ़ाता है, उपभोक्ता विविधता लाता है और बड़े पैमाने पर रोज़गार व तकनीकी नवाचार सृजित करता है।",
+        fact: "Adam Smith described the self-regulating nature of competitive markets as the 'Invisible Hand'."
+      },
+      {
+        id: 19,
+        stemEn: "What does the term \"Strategic Disinvestment\" mean in the context of Public Sector Enterprises?",
+        stemHi: "सार्वजनिक क्षेत्र के उद्यमों के संदर्भ में \"रणनीतिक विनिवेश\" (Strategic Disinvestment) का क्या अर्थ है?",
+        options: [
+          "Selling 1% to 2% shares in open stock exchanges / खुले स्टॉक एक्सचेंज में 1% से 2% शेयर बेचना",
+          "Transferring 50% or more government shareholding along with the transfer of management control / प्रबंधन नियंत्रण के हस्तांतरण के साथ 50% या अधिक सरकारी शेयरधारिता का हस्तांतरण",
+          "Nationalising a private loss-making firm / घाटे में चल रही किसी निजी कंपनी का राष्ट्रीयकरण करना",
+          "Merging two statutory public sector banks into the Reserve Bank of India / दो सार्वजनिक बैंकों का रिज़र्व बैंक में विलय करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Strategic Disinvestment involves the sale of substantial state shareholding (typically 50% or more) along with the transfer of management control to a private strategic buyer.",
+        expHi: "रणनीतिक विनिवेश से तात्पर्य सरकारी हिस्सेदारी के बड़े भाग को बेचने के साथ-साथ प्रबंधन नियंत्रण (Management Control) निजी खरीदार को सौंपने से है।",
+        fact: "The transfer of Air India to Tata Group in 2022 is an example of strategic disinvestment."
+      },
+      {
+        id: 20,
+        stemEn: "Which of the following is an example of an institutional Joint Venture / Public-Private Partnership (PPP) model?",
+        stemHi: "निम्नलिखित में से कौन-सा एक सार्वजनिक-निजी भागीदारी (PPP) मॉडल का उदाहरण है?",
+        options: [
+          "BOT (Build-Operate-Transfer) / बीओटी (निर्माण-संचालन-हस्तांतरण)",
+          "Complete uncompensated state nationalisation / राज्य द्वारा बिना मुआवज़े का पूर्ण राष्ट्रीयकरण",
+          "Absolute state departmental monopoly / पूर्ण राज्य विभागीय एकाधिकार",
+          "Pure barter exchange system / वस्तु-विनिमय प्रणाली",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Build-Operate-Transfer (BOT) is a quintessential PPP framework where the private partner constructs and operates an infrastructure asset before handing it to the government.",
+        expHi: "बीओटी (Build-Operate-Transfer) एक प्रमुख PPP मॉडल है जिसमें निजी कंपनी ढाँचा बनाती और चलाती है, और फिर सरकार को सौंप देती है।",
+        fact: "NHAI heavily relies on BOT and Hybrid Annuity models for national expressway construction."
+      },
+      {
+        id: 21,
+        stemEn: "What constitutes a \"Departmental Undertaking\" (विभागीय उपक्रम), the oldest form of public sector enterprise in India?",
+        stemHi: "भारत में सार्वजनिक क्षेत्र के सबसे पुराने रूप \"विभागीय उपक्रम\" की पहचान क्या है?",
+        options: [
+          "An autonomous registered private startup / एक स्वायत्त पंजीकृत निजी स्टार्टअप",
+          "An enterprise organized, financed, and operated directly by a government ministry as a department / एक उद्यम जो सीधे किसी सरकारी मंत्रालय द्वारा विभाग के रूप में संचालित, वित्तपोषित और प्रबंधित होता है",
+          "An offshore entity registered in a foreign tax haven / विदेशी टैक्स हेवन में पंजीकृत कोई इकाई",
+          "A cooperative credit society formed by farmers / किसानों द्वारा गठित एक सहकारी ऋण समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Departmental undertakings are run directly as departments under ministries without a separate legal identity, funded straight from the state exchequer.",
+        expHi: "विभागीय उपक्रम सीधे संबंधित सरकारी मंत्रालय के अधीन विभाग के रूप में कार्य करते हैं और इनका बजट सीधे सरकारी खजाने से आता है।",
+        fact: "Indian Railways and India Post are prime examples of Departmental Undertakings."
+      },
+      {
+        id: 22,
+        stemEn: "What is a \"Statutory Corporation\" (वैधानिक निगम) in the Indian public sector?",
+        stemHi: "भारतीय सार्वजनिक क्षेत्र में 'वैधानिक निगम' (Statutory Corporation) क्या होता है?",
+        options: [
+          "A private partnership firm registered under the Partnership Act, 1932 / भागीदारी अधिनियम, 1932 के तहत पंजीकृत एक निजी फर्म",
+          "A public enterprise established by a special Act of Parliament or State Legislature / संसद या राज्य विधानमंडल के एक विशेष अधिनियम द्वारा स्थापित एक सार्वजनिक उद्यम",
+          "A purely informal municipal bazaar / एक पूर्णतः अनौपचारिक नगरपालिका बाज़ार",
+          "An unregistered corporate entity / एक गैर-पंजीकृत कॉर्पोरेट इकाई",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "A Statutory Corporation is formed by a dedicated Act of Parliament which delineates its statutory powers, corporate functions, and operational autonomy.",
+        expHi: "वैधानिक निगम संसद या राज्य विधानमंडल के एक विशेष कानून द्वारा अस्तित्व में आता है, जैसे LIC, RBI और SBI।",
+        fact: "LIC of India was established under the Life Insurance Corporation Act of 1956."
+      },
+      {
+        id: 23,
+        stemEn: "Which committee's recommendations formed the bedrock for the modern disinvestment policy and disinvestment processes in India during the 1990s?",
+        stemHi: "1990 के दशक के दौरान भारत में आधुनिक विनिवेश नीति और प्रक्रियाओं का आधार किस समिति की सिफारिशें थीं?",
+        options: [
+          "C. Rangarajan Committee (1993) / सी. रंगराजन समिति (1993)",
+          "Balwant Rai Mehta Committee / बलवंत राय मेहता समिति",
+          "Sarkaria Commission / सरकारिया आयोग",
+          "Kothari Commission / कोठारी आयोग",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Committee on the Disinvestment of Shares in PSEs (1993) headed by Dr. C. Rangarajan provided the core framework and targets for disinvestment in India.",
+        expHi: "1993 में गठित डॉ. सी. रंगराजन समिति ने सार्वजनिक उपक्रमों में विनिवेश के तौर-तरीकों और शेयर सीमाओं पर दिशानिर्देश तय किए थे।",
+        fact: "The Rangarajan Committee suggested reducing government equity to 26% in non-strategic industries."
+      },
+      {
+        id: 24,
+        stemEn: "In the Union Budget 2021-22, the Government of India classified sectors for its Public Sector Enterprises Policy into which two primary categories?",
+        stemHi: "केंद्रीय बजट 2021-22 में, भारत सरकार ने अपनी सार्वजनिक उद्यम नीति के लिए क्षेत्रों को किन दो प्राथमिक श्रेणियों में वर्गीकृत किया?",
+        options: [
+          "Heavy Sectors and Light Sectors / भारी क्षेत्र और हल्के क्षेत्र",
+          "Strategic and Non-Strategic Sectors / रणनीतिक (Strategic) और गैर-रणनीतिक (Non-Strategic) क्षेत्र",
+          "Primary Sectors and Tertiary Sectors / प्राथमिक क्षेत्र और तृतीयक क्षेत्र",
+          "Urban Sectors and Rural Sectors / शहरी क्षेत्र और ग्रामीण क्षेत्र",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Budget 2021-22 demarcated Strategic Sectors (bare minimum CPSE presence) and Non-Strategic Sectors (where CPSEs will be privatized or closed).",
+        expHi: "बजट 2021-22 में घोषित नीति ने CPSEs को रणनीतिक और गैर-रणनीतिक क्षेत्रों में वर्गीकृत किया।",
+        fact: "The 4 strategic sectors include Atomic energy/Defence, Transport/Telecom, Power/Petroleum/Coal, and Financial Services."
+      },
+      {
+        id: 25,
+        stemEn: "Which economic principle highlights that private market forces fail to provide public infrastructure and street lighting efficiently, necessitating the public sector?",
+        stemHi: "कौन-सा आर्थिक सिद्धांत यह रेखांकित करता है कि निजी बाज़ार शक्तियाँ सार्वजनिक बुनियादी ढाँचे और स्ट्रीट लाइटिंग की कुशल आपूर्ति में विफल रहती हैं, जिससे सार्वजनिक क्षेत्र की आवश्यकता होती है?",
+        options: [
+          "Market Failure in Public Goods provision / सार्वजनिक वस्तुओं (Public Goods) की आपूर्ति में बाज़ार विफलता",
+          "Absolute Advantage Theory / निरपेक्ष लाभ सिद्धांत",
+          "Gresham's Law / ग्रेशम का नियम",
+          "Say's Law of Markets / से का बाज़ार नियम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Public goods are non-excludable and non-rival. Because private markets face the 'free-rider problem', they fail to provide them profitably, necessitating state funding.",
+        expHi: "सार्वजनिक वस्तुएं गैर-अपवर्जित और गैर-प्रतिस्पर्धी होती हैं। 'फ्री-राइडर समस्या' के कारण निजी क्षेत्र इन्हें नहीं बना पाता, जिससे बाज़ार विफलता होती है।",
+        fact: "Market failure is the foundational economic argument for public sector intervention."
+      },
+
+      /* BATCH 2 (Q26-Q50) */
+      {
+        id: 26,
+        stemEn: "What was the central feature of the \"Bombay Plan\" drafted in 1944 by prominent Indian industrialists?",
+        stemHi: "प्रमुख भारतीय उद्योगपतियों द्वारा 1944 में तैयार किए गए \"बॉम्बे प्लान\" की मुख्य विशेषता क्या थी?",
+        options: [
+          "Total abolition of state planning and economic regulation / राज्य नियोजन और आर्थिक विनियमन का पूर्ण उन्मूलन",
+          "Advocacy for active state intervention and public investment in heavy infrastructure / बुनियादी और भारी उद्योगों में सक्रिय राज्य हस्तक्षेप व सार्वजनिक निवेश का समर्थन",
+          "Immediate privatization of all existing rail networks / सभी मौजूदा रेल नेटवर्कों का तत्काल निजीकरण",
+          "Ban on domestic private joint-stock companies / घरेलू निजी संयुक्त पूँजी कंपनियों पर प्रतिबंध",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Drafted by top industrialists like J.R.D. Tata and G.D. Birla, the Bombay Plan called for heavy state investment in key infrastructure which private capital couldn't finance.",
+        expHi: "1944 के बॉम्बे प्लान में उद्योगपतियों ने स्वयं भारी बुनियादी उद्योगों में राज्य के बड़े निवेश और सक्रिय हस्तक्षेप की मांग की थी।",
+        fact: "The Bombay Plan served as an intellectual precursor to India's mixed economy planning."
+      },
+      {
+        id: 27,
+        stemEn: "In an economy, goods whose consumption causes positive spillover effects on society (e.g., primary education and basic healthcare) are known as:",
+        stemHi: "किसी अर्थव्यवस्था में वे वस्तुएं या सेवाएं जिनके उपभोग से समाज पर सकारात्मक प्रभाव पड़ता है (जैसे प्राथमिक शिक्षा और बुनियादी स्वास्थ्य), क्या कहलाती हैं?",
+        options: [
+          "Merit Goods / मेरिट वस्तुएं (उत्कृष्ट वस्तुएं)",
+          "Demerit Goods / डिमेरिट वस्तुएं (अपकृष्ट वस्तुएं)",
+          "Veblen Goods / वेब्लेन वस्तुएं",
+          "Giffen Goods / गिफेन वस्तुएं",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Merit goods yield high positive social externalities. Because free private markets underprovide them, the public sector steps in to supply or subsidize them.",
+        expHi: "मेरिट वस्तुएं (जैसे प्राथमिक शिक्षा व स्वास्थ्य) समाज के लिए अत्यंत लाभकारी होती हैं, अतः सार्वजनिक क्षेत्र इनकी व्यवस्था करता है।",
+        fact: "Demerit goods like tobacco are heavily taxed due to negative social externalities."
+      },
+      {
+        id: 28,
+        stemEn: "What is the National Investment Fund (NIF), established by the Government of India in 2005?",
+        stemHi: "2005 में भारत सरकार द्वारा स्थापित राष्ट्रीय निवेश कोष (NIF) क्या है?",
+        options: [
+          "A fund dedicated exclusively to private real estate projects / निजी रियल एस्टेट परियोजनाओं के लिए समर्पित कोष",
+          "A dedicated fund to channel proceeds from the disinvestment of Central Public Sector Enterprises / केंद्रीय सार्वजनिक क्षेत्र के उपक्रमों के विनिवेश से प्राप्त आय को प्रबंधित करने वाला समर्पित कोष",
+          "A sovereign fund for military defense imports / सैन्य रक्षा आयात के लिए एक संप्रभु कोष",
+          "A regulatory penalty fund of the Reserve Bank of India / भारतीय रिज़र्व बैंक का विनियामक जुर्माना कोष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The National Investment Fund (NIF) was established in November 2005 to pool disinvestment proceeds and deploy them into social infrastructure and viable CPSEs.",
+        expHi: "राष्ट्रीय निवेश कोष (NIF) में केंद्रीय सार्वजनिक उद्यमों के विनिवेश से प्राप्त राशि जमा की जाती है, जिसे सामाजिक विकास में खर्च किया जाता है।",
+        fact: "The NIF is maintained outside the Consolidated Fund of India."
+      },
+      {
+        id: 29,
+        stemEn: "Which of the following is considered the primary advantage of the Private Sector over the Public Sector?",
+        stemHi: "निम्नलिखित में से किसे सार्वजनिक क्षेत्र की तुलना में निजी क्षेत्र का मुख्य लाभ माना जाता है?",
+        options: [
+          "Sole commitment to free universal public goods / मुफ़्त सार्वभौमिक सार्वजनिक वस्तुओं के प्रति एकमात्र प्रतिबद्धता",
+          "Operational flexibility, cost efficiency, and commercial responsiveness / परिचालन लचीलापन, लागत दक्षता और वाणिज्यिक जवाबदेही",
+          "Complete exemption from corporate taxation / कॉर्पोरेट कराधान से पूर्ण छूट",
+          "Absolute immunity from statutory market regulations / वैधानिक बाज़ार नियमों से पूर्ण मुक्ति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Private firms benefit from profit incentives, lean managerial structures, quick commercial decisions, and market adaptability.",
+        expHi: "निजी क्षेत्र में बाज़ार माँगों के अनुसार त्वरित निर्णय लिए जाते हैं, जिससे परिचालन दक्षता और लागत प्रभावशीलता बेहतर होती है।",
+        fact: "Bureaucratic delays and political meddling are classic pitfalls of departmental undertakings."
+      },
+      {
+        id: 30,
+        stemEn: "Under which Industrial Policy was the \"Memorandum of Understanding\" (MoU) system introduced to enhance managerial autonomy in Indian Public Sector Undertakings?",
+        stemHi: "भारतीय सार्वजनिक क्षेत्र के उपक्रमों में प्रबंधकीय स्वायत्तता बढ़ाने के लिए किस औद्योगिक नीति/दौर के अंतर्गत 'सहमति पत्र' (MoU) प्रणाली शुरू की गई थी?",
+        options: [
+          "Industrial Policy Statement, 1948 / औद्योगिक नीति संकल्प, 1948",
+          "Arjun Sengupta Committee Recommendations (Late 1980s) / अर्जुन सेनगुप्ता समिति की सिफारिशें (1980 के दशक के अंत में)",
+          "First Five-Year Plan / प्रथम पंचवर्षीय योजना",
+          "Industrial Policy of 1973 / 1973 की औद्योगिक नीति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The MoU system was implemented in 1987-88 on the recommendations of the Dr. Arjun Sengupta Committee (1984) to grant operational freedom against clear targets.",
+        expHi: "अर्जुन सेनगुप्ता समिति की सिफारिश पर 1987-88 में MoU प्रणाली शुरू हुई, जिसके तहत मंत्रालय और PSU प्रबंधन के बीच वार्षिक प्रदर्शन समझौते होते हैं।",
+        fact: "The MoU evaluates CPSEs across financial and physical performance indicators."
+      },
+      {
+        id: 31,
+        stemEn: "Which of the following public sector organizations is categorized as an Indian 'Maharatna' Central Public Sector Enterprise?",
+        stemHi: "निम्नलिखित में से कौन-सा सार्वजनिक उपक्रम भारत की 'महारत्न' केंद्रीय सार्वजनिक क्षेत्र उद्यम की श्रेणी में आता है?",
+        options: [
+          "Oil and Natural Gas Corporation (ONGC) / तेल एवं प्राकृतिक गैस निगम (ONGC)",
+          "Food Corporation of India (FCI) / भारतीय खाद्य निगम (FCI)",
+          "Khadi and Village Industries Commission (KVIC) / खादी और ग्रामोद्योग आयोग (KVIC)",
+          "National Highways Authority of India (NHAI) / भारतीय राष्ट्रीय राजमार्ग प्राधिकरण (NHAI)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "ONGC is an elite Maharatna CPSE. FCI, KVIC, and NHAI are statutory corporations or authorities, not CPSE corporations with Maharatna status.",
+        expHi: "ONGC (तेल एवं प्राकृतिक गैस निगम) भारत की एक प्रमुख महारत्न कंपनी है। अन्य विकल्प वैधानिक संस्थाएं/आयोग हैं।",
+        fact: "Maharatna firms must have an average annual net profit of more than ₹5,000 crore over the last 3 years."
+      },
+      {
+        id: 32,
+        stemEn: "In a mixed economy, when the government sets an upper limit on the price of an essential commodity (such as life-saving medicine), it is enforcing:",
+        stemHi: "मिश्रित अर्थव्यवस्था में, जब सरकार किसी आवश्यक वस्तु (जैसे जीवन रक्षक दवा) की अधिकतम कीमत तय करती है, तो वह क्या लागू कर रही होती है?",
+        options: [
+          "Price Floor / न्यूनतम समर्थन मूल्य (मूल्य तल)",
+          "Price Ceiling / अधिकतम मूल्य सीमा (मूल्य सीमा)",
+          "Market Dumping / बाज़ार डंपिंग",
+          "Shadow Pricing / छाया मूल्य निर्धारण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "A Price Ceiling is an officially enforced maximum legal price to prevent sellers from exploiting consumers for essential goods.",
+        expHi: "मूल्य सीमा (Price Ceiling) वह कानूनी अधिकतम मूल्य है जिससे अधिक कीमत विक्रेता आवश्यक वस्तुओं के लिए नहीं ले सकता।",
+        fact: "The NPPA regulates controlled drug pricing in India under DPCO orders."
+      },
+      {
+        id: 33,
+        stemEn: "What is the defining characteristic of a \"Natural Monopoly\" often managed or regulated by the public sector?",
+        stemHi: "सार्वजनिक क्षेत्र द्वारा प्रबंधित या विनियमित होने वाले \"प्राकृतिक एकाधिकार\" (Natural Monopoly) की पहचान क्या है?",
+        options: [
+          "High initial capital costs and massive economies of scale making a single supplier most efficient / भारी प्रारंभिक पूँजीगत लागत और पैमाने की विशाल बचत, जिससे एक ही आपूर्तिकर्ता सबसे कुशल होता है",
+          "Products made solely from natural organic forest produce / केवल प्राकृतिक जैविक वन उत्पादों से बनी वस्तुएं",
+          "Absolute prohibition of government taxation / सरकारी कराधान से पूर्ण छूट",
+          "Absence of any consumer demand / उपभोक्ता माँग की पूर्ण अनुपस्थिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "A natural monopoly arises where huge fixed capital costs make duplicate infrastructure inefficient (e.g., railway lines, water networks), requiring state ownership or utility regulation.",
+        expHi: "प्राकृतिक एकाधिकार में भारी पूँजीगत ढाँचे के कारण एक ही प्रदाता सबसे सस्ता होता है (जैसे रेल पटरियां), अतः इसका संचालन राज्य करता है।",
+        fact: "Indian Railways' track network is a textbook case of a natural network monopoly."
+      },
+      {
+        id: 34,
+        stemEn: "The \"Core Sectors\" (आठ प्रमुख उद्योग) of the Indian economy, which historically witnessed substantial public sector involvement, include how many infrastructure industries?",
+        stemHi: "भारतीय अर्थव्यवस्था के \"प्रमुख उद्योग\" (Eight Core Industries), जिनमें ऐतिहासिक रूप से व्यापक सार्वजनिक निवेश रहा है, में कितने आधारभूत उद्योग शामिल हैं?",
+        options: ["5", "8", "12", "15", "None of these / इनमें से कोई नहीं"],
+        correct: 1,
+        expEn: "The Eight Core Industries are Coal, Crude Oil, Natural Gas, Refinery Products, Fertilizers, Steel, Cement, and Electricity.",
+        expHi: "भारत के 8 बुनियादी कोर उद्योगों में कोयला, कच्चा तेल, प्राकृतिक गैस, रिफाइनरी उत्पाद, उर्वरक, इस्पात, सीमेंट और बिजली शामिल हैं।",
+        fact: "These eight core sectors constitute 40.27% of the Index of Industrial Production (IIP)."
+      },
+      {
+        id: 35,
+        stemEn: "What is the fundamental role of an independent Regulatory Body (e.g., TRAI, CCI, SEBI) in a mixed economy?",
+        stemHi: "मिश्रित अर्थव्यवस्था में स्वतंत्र विनियामक संस्थाओं (जैसे TRAI, CCI, SEBI) की मूलभूत भूमिका क्या है?",
+        options: [
+          "Directly producing commercial consumer goods in factories / कारखानों में सीधे उपभोक्ता वस्तुओं का उत्पादन करना",
+          "Ensuring fair market competition, preventing abuses of market power, and protecting consumer interests / निष्पक्ष बाज़ार प्रतिस्पर्धा सुनिश्चित करना, एकाधिकारवादी शोषण रोकना और उपभोक्ता हितों की रक्षा करना",
+          "Collecting agricultural land revenues on behalf of village panchayats / ग्राम पंचायतों की ओर से कृषि भूमि लगान एकत्र करना",
+          "Distributing free food grains at railway stations / रेलवे स्टेशनों पर निःशुल्क अनाज वितरित करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Statutory regulators serve as neutral referees to ensure a level playing field between private and state players and safeguard consumers.",
+        expHi: "स्वतंत्र नियामक बाज़ार में निष्पक्ष प्रतिस्पर्धा कायम रखते हैं, एकाधिकारवादी शोषण रोकते हैं और उपभोक्ताओं के हितों की रक्षा करते हैं।",
+        fact: "The Telecom Regulatory Authority of India (TRAI) was enacted by Parliament in 1997."
+      },
+      {
+        id: 36,
+        stemEn: "The policy of \"Reservation of Items for Small Scale Industries\" (SSI) was primarily designed to protect which segment from large corporate dominance?",
+        stemHi: "लघु उद्योगों (SSI) के लिए 'उत्पादों के आरक्षण' की नीति का मुख्य उद्देश्य किस वर्ग को बड़े कॉर्पोरेट प्रभुत्व से बचाना था?",
+        options: [
+          "Labour-intensive decentralized micro and cottage industries / श्रम-प्रधान विकेंद्रीकृत सूक्ष्म एवं कुटीर उद्योग",
+          "Heavy foreign multinational automotive plants / भारी विदेशी बहुराष्ट्रीय ऑटोमोबाइल संयंत्र",
+          "Central defense public sector undertakings / केंद्रीय रक्षा सार्वजनिक क्षेत्र के उपक्रम",
+          "Mega private oil refineries / विशाल निजी तेल रिफाइनरियां",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "SSI reservation protected small, labour-intensive local manufacturers from being driven out of business by big corporations.",
+        expHi: "लघु उद्योग आरक्षण नीति का उद्देश्य विकेंद्रीकृत श्रम-सघन कुटीर व लघु इकाइयों को बड़े पूँजीपतियों के एकाधिकार से बचाना था।",
+        fact: "This reservation framework was phased out after the 1991 reforms."
+      },
+      {
+        id: 37,
+        stemEn: "Which of the following is an example of an incorporated \"Public Sector Enterprise\" operating as a Company under the Companies Act?",
+        stemHi: "निम्नलिखित में से कौन-सा कंपनी अधिनियम के तहत पंजीकृत एक 'सार्वजनिक क्षेत्र का उद्यम' (सरकारी कंपनी) है?",
+        options: [
+          "Steel Authority of India Limited (SAIL) / स्टील अथॉरिटी ऑफ इंडिया लिमिटेड (SAIL)",
+          "Life Insurance Corporation of India (LIC) / भारतीय जीवन बीमा निगम (LIC)",
+          "Reserve Bank of India (RBI) / भारतीय रिज़र्व बैंक (RBI)",
+          "India Post / भारतीय डाक विभाग",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "SAIL is a government company registered under the Companies Act. LIC and RBI are Statutory Corporations, and India Post is a Departmental Undertaking.",
+        expHi: "SAIL कंपनी अधिनियम के तहत पंजीकृत एक सरकारी कंपनी है, जबकि RBI व LIC वैधानिक निगम हैं और डाक विभाग एक विभागीय उपक्रम है।",
+        fact: "SAIL was formally incorporated on January 24, 1973."
+      },
+      {
+        id: 38,
+        stemEn: "What does \"Divestment through IPO\" (Initial Public Offering) mean for a Central Public Sector Enterprise?",
+        stemHi: "किसी केंद्रीय सार्वजनिक क्षेत्र के उपक्रम के लिए \"आईपीओ (IPO) के माध्यम से विनिवेश\" का क्या अर्थ है?",
+        options: [
+          "The enterprise is permanently shut down and liquidated / उपक्रम को स्थायी रूप से बंद और समाप्त कर दिया जाता है",
+          "The enterprise sells its newly issued shares to the general public and institutions on the stock market for the first time / उपक्रम पहली बार शेयर बाज़ार में आम जनता और संस्थागत निवेशकों के लिए अपने शेयर जारी करता है",
+          "The enterprise is merged with the Ministry of Defense / उपक्रम का रक्षा मंत्रालय में विलय कर दिया जाता है",
+          "The enterprise transfers all cash reserves directly to municipal councils / उपक्रम अपने सभी नकद भंडार सीधे नगर परिषदों को स्थानांतरित करता है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "An IPO involves offering an unlisted government company's shares to the public on the stock exchange for the first time.",
+        expHi: "जब कोई गैर-सूचीबद्ध सरकारी उपक्रम पहली बार शेयर बाज़ार में आम जनता के लिए अपने शेयर जारी करता है, तो इसे IPO कहते हैं।",
+        fact: "The LIC IPO in May 2022 was the largest IPO in Indian capital market history."
+      },
+      {
+        id: 39,
+        stemEn: "What is the fundamental difference between an \"Economic Good\" produced by private firms and a \"Public Good\" provided by the state?",
+        stemHi: "निजी कंपनियों द्वारा उत्पादित \"आर्थिक वस्तु\" और राज्य द्वारा प्रदान की जाने वाली \"सार्वजनिक वस्तु\" के बीच क्या मूलभूत अंतर है?",
+        options: [
+          "Public goods are rivalrous and excludable; economic goods are not / सार्वजनिक वस्तुएं प्रतिस्पर्धी और अपवर्जित होती हैं; आर्थिक वस्तुएं नहीं",
+          "Public goods are non-rivalrous and non-excludable; private economic goods are rivalrous and excludable / सार्वजनिक वस्तुएं गैर-प्रतिस्पर्धी और गैर-अपवर्जित होती हैं; जबकि निजी आर्थिक वस्तुएं प्रतिस्पर्धी और अपवर्जित होती हैं",
+          "Public goods are produced solely by foreign imports / सार्वजनिक वस्तुएं केवल विदेशी आयात द्वारा बनाई जाती हैं",
+          "Economic goods are distributed free of cost to all citizens / आर्थिक वस्तुएं सभी नागरिकों को मुफ़्त में वितरित की जाती हैं",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Private goods are rivalrous and excludable by price. Pure public goods (defense, street lighting) can be enjoyed by everyone simultaneously without excluding anyone.",
+        expHi: "सार्वजनिक वस्तुएं गैर-प्रतिस्पर्धी और गैर-अपवर्जित होती हैं, जबकि निजी वस्तुएं प्रतिस्पर्धी और अपवर्जित (बिना भुगतान के उपयोग असंभव) होती हैं।",
+        fact: "Because non-payers cannot be excluded from public goods, private markets fail to supply them."
+      },
+      {
+        id: 40,
+        stemEn: "Which Five-Year Plan in India marked the definitive shift toward opening up sectors to the private sector and encouraging market dynamics?",
+        stemHi: "भारत में किस पंचवर्षीय योजना ने निजी क्षेत्र के लिए रास्ते खोलने और बाज़ार प्रणाली को प्रोत्साहित करने की दिशा में निर्णायक बदलाव की शुरुआत की?",
+        options: [
+          "First Five-Year Plan (1951–56) / प्रथम पंचवर्षीय योजना (1951–56)",
+          "Second Five-Year Plan (1956–61) / द्वितीय पंचवर्षीय योजना (1956–61)",
+          "Eighth Five-Year Plan (1992–97) / आठवीं पंचवर्षीय योजना (1992–97)",
+          "Third Five-Year Plan (1961–66) / तीसरी पंचवर्षीय योजना (1961–66)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Eighth Plan (1992–97), launched right after the 1991 economic reforms, pivoted the role of the state from direct controller to market facilitator.",
+        expHi: "आठवीं पंचवर्षीय योजना (1992-97) 1991 के सुधारों के बाद शुरू हुई, जिसमें निजी क्षेत्र को विकास का मुख्य इंजन बनाया गया।",
+        fact: "The Eighth Plan achieved 6.68% annual GDP growth against a target of 5.6%."
+      },
+      {
+        id: 41,
+        stemEn: "What is the role of \"Corporate Social Responsibility\" (CSR) mandated under Section 135 of the Companies Act, 2013, for both large public and private companies?",
+        stemHi: "कंपनी अधिनियम, 2013 की धारा 135 के तहत बड़े सार्वजनिक और निजी दोनों उद्यमों के लिए अनिवार्य 'कॉर्पोरेट सामाजिक उत्तरदायित्व' (CSR) की भूमिका क्या है?",
+        options: [
+          "Spending at least 2% of average net profits on specified social and developmental activities / पिछले 3 वर्षों के औसत शुद्ध लाभ का कम से कम 2% निर्दिष्ट सामाजिक व विकासात्मक कार्यों पर खर्च करना",
+          "Transferring 50% of annual dividends directly to private political campaigns / वार्षिक लाभांश का 50% सीधे निजी राजनीतिक अभियानों में देना",
+          "Compulsory employment of foreign management teams / विदेशी प्रबंधन टीमों को अनिवार्य रूप से नियुक्त करना",
+          "Donating all factory land to regional transport authorities / कारखाने की समस्त भूमि क्षेत्रीय परिवहन प्राधिकरणों को दान करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Section 135 mandates that qualifying firms spend at least 2% of their average net profit over the preceding 3 years on CSR activities.",
+        expHi: "धारा 135 के तहत पात्र कंपनियों को पिछले 3 वर्षों के औसत शुद्ध लाभ का न्यूनतम 2% सामाजिक कल्याण (शिक्षा, स्वास्थ्य) में खर्च करना अनिवार्य है।",
+        fact: "India was the first country in the world to make CSR spending legally mandatory."
+      },
+      {
+        id: 42,
+        stemEn: "In India, which sector is the largest provider of employment across the private spectrum?",
+        stemHi: "भारत में निजी क्षेत्र के अंतर्गत कौन-सा क्षेत्र सबसे अधिक रोज़गार प्रदान करता है?",
+        options: [
+          "Heavy Defense Manufacturing / भारी रक्षा विनिर्माण",
+          "Agriculture and Allied Activities / कृषि एवं संबद्ध क्षेत्र",
+          "Space and Satellite Technology / अंतरिक्ष एवं उपग्रह प्रौद्योगिकी",
+          "Nuclear Power Generation / परमाणु ऊर्जा उत्पादन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Agriculture is entirely a private sector enterprise comprising millions of individual farming households, employing ~45% of India's workforce.",
+        expHi: "भारतीय कृषि पूर्ण रूप से निजी क्षेत्र के अंतर्गत आती है और देश के लगभग 45% कार्यबल को रोज़गार प्रदान करती है।",
+        fact: "Household farms fall under the private unorganized sector in national accounts."
+      },
+      {
+        id: 43,
+        stemEn: "What is an \"Ancillary Industry\" (अनुषंगी उद्योग) in the context of large public and private sector plants?",
+        stemHi: "बड़े सार्वजनिक और निजी क्षेत्र के संयंत्रों के संदर्भ में \"अनुषंगी उद्योग\" (Ancillary Industry) क्या है?",
+        options: [
+          "A unit that manufactures at least 50% of its output as components, parts, and sub-assemblies for a parent industrial unit / एक इकाई जो अपने कुल उत्पादन का कम से कम 50% हिस्सा किसी मूल उद्योग के लिए कलपुर्जे और घटक बनाने में उपयोग करती है",
+          "An offshore banking shell entity / एक अपतटीय बैंकिंग मुखौटा इकाई",
+          "A firm that produces only raw unrefined agricultural crops / एक फर्म जो केवल कच्चे असंसाधित कृषि उत्पादों का उत्पादन करती है",
+          "A state monopoly on municipal sanitation / नगरपालिका स्वच्छता पर राज्य का एकाधिकार",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Ancillary industries supply parts, components, and maintenance services to a parent factory, creating interconnected supply chains.",
+        expHi: "अनुषंगी उद्योग वे छोटी इकाइयां हैं जो किसी बड़े मूल संयंत्र (जैसे भेल या मारुति) को आवश्यक कलपुर्जे और घटक उपलब्ध कराती हैं।",
+        fact: "Public steel and engineering plants in Bokaro and Ranchi fostered extensive private ancillary clusters."
+      },
+      {
+        id: 44,
+        stemEn: "Which statutory body established in 2003 promotes and sustains fair market competition and prevents monopolistic abuse across private and public firms in India?",
+        stemHi: "भारत में निजी और सार्वजनिक फर्मों में निष्पक्ष बाज़ार प्रतिस्पर्धा को बढ़ावा देने और एकाधिकारवादी दुरुपयोग को रोकने के लिए 2003 में किस वैधानिक निकाय की स्थापना की गई थी?",
+        options: [
+          "Competition Commission of India (CCI) / भारतीय प्रतिस्पर्धा आयोग (CCI)",
+          "Planning Commission / योजना आयोग",
+          "Central Vigilance Commission / केंद्रीय सतर्कता आयोग",
+          "National Development Council / राष्ट्रीय विकास परिषद",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Competition Commission of India (CCI) regulates market competition, checks abuse of dominance, and investigates cartels under the Competition Act, 2002.",
+        expHi: "भारतीय प्रतिस्पर्धा आयोग (CCI) की स्थापना प्रतिस्पर्धा अधिनियम, 2002 के तहत वर्ष 2003 में अस्वस्थ प्रतिस्पर्धा और कार्टेल को रोकने हेतु की गई थी।",
+        fact: "The CCI replaced the outdated MRTP Commission."
+      },
+      {
+        id: 45,
+        stemEn: "What does the term \"Crowding In\" (क्राउडिंग-इन) signify when the public sector invests heavily in core infrastructure?",
+        stemHi: "जब सार्वजनिक क्षेत्र बुनियादी ढाँचे में भारी निवेश करता है, तो \"क्राउडिंग-इन\" (Crowding In) शब्द का क्या अर्थ होता है?",
+        options: [
+          "Public investment lowers transportation/logistical costs, thereby stimulating and attracting private investment / सार्वजनिक निवेश परिवहन और लॉजिस्टिक्स लागत घटाकर निजी निवेश को आकर्षित और प्रोत्साहित करता है",
+          "Government pushes private business completely out of the country / सरकार निजी व्यापार को पूरी तरह देश से बाहर धकेल देती है",
+          "Private banks refuse loans to private manufacturing startups / निजी बैंक निजी विनिर्माण स्टार्टअप को ऋण देने से इनकार करते हैं",
+          "Total collapse of tax collections / कर संग्रह का पूर्ण पतन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Crowding-in occurs when public capital expenditure in roads, ports, and power reduces business costs, prompting private businesses to invest more.",
+        expHi: "जब सरकारी बुनियादी निवेश से निजी कंपनियों की लागत घटती है और वे अधिक निवेश करने के लिए प्रेरित होती हैं, तो इसे क्राउडिंग-इन कहते हैं।",
+        fact: "Crowding-out is the opposite: when heavy state debt soaks up private credit."
+      },
+      {
+        id: 46,
+        stemEn: "What was the core focus of the Hazari Committee (1967) and the Dutt Committee (1969) in India?",
+        stemHi: "भारत में हजारी समिति (1967) और दत्त समिति (1969) का मुख्य विषय क्या था?",
+        options: [
+          "Examination of the industrial licensing system and concentration of economic power / औद्योगिक लाइसेंसिंग प्रणाली की कार्यप्रणाली और आर्थिक शक्ति के संकेंद्रण की जांच",
+          "Restructuring of the national postal courier network / राष्ट्रीय डाक कूरियर नेटवर्क का पुनर्गठन",
+          "Design of currency note printing presses / बैंक नोट मुद्रण प्रेसों की रूपरेखा",
+          "Formulation of school midday meal schemes / स्कूलों में मध्याह्न भोजन योजनाओं का निर्माण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Both committees investigated how industrial licensing led to the concentration of corporate wealth among a few dominant industrial houses.",
+        expHi: "इन समितियों ने पाया कि लाइसेंसिंग राज से केवल बड़े औद्योगिक घरानों को लाभ हुआ और आर्थिक शक्ति का संकेंद्रण हुआ।",
+        fact: "The Dutt Committee's findings directly prompted the enactment of the MRTP Act, 1969."
+      },
+      {
+        id: 47,
+        stemEn: "Which of the following is an example of an institutional Joint Venture / Public-Private Partnership (PPP) model where private operators collect toll revenue to recover capital expenditure?",
+        stemHi: "निम्नलिखित में से कौन-सा एक सार्वजनिक-निजी भागीदारी (PPP) मॉडल है जहाँ निजी संचालक पूँजीगत लागत वसूलने के लिए सीधे टोल एकत्र करते हैं?",
+        options: [
+          "BOT-Toll (Build-Operate-Transfer Toll) / बीओटी-टोल (निर्माण-संचालन-हस्तांतरण टोल)",
+          "Pure Command Allocation / पूर्ण आदेश आवंटन",
+          "Complete Central Budgetary Grant Model / पूर्ण केंद्रीय बजटीय अनुदान मॉडल",
+          "Nationalized Ration Shop / राष्ट्रीयकृत राशन की दुकान",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "In BOT-Toll, the private concessionaire finances construction and collects toll fees directly from highway users to recoup investment.",
+        expHi: "बीओटी-टोल मॉडल में निजी कंपनी सड़क बनाती है और उपयोगकर्ताओं से टोल वसूल कर अपनी लागत और लाभ निकालती है।",
+        fact: "NHAI later brought the HAM model to balance commercial traffic risks."
+      },
+      {
+        id: 48,
+        stemEn: "Which among the following best defines a \"Navratna\" status CPSE in India?",
+        stemHi: "भारत में 'नवरत्न' दर्जा प्राप्त केंद्रीय सार्वजनिक क्षेत्र उद्यम (CPSE) को कौन-सा कथन सर्वोत्तम रूप से परिभाषित करता है?",
+        options: [
+          "A company entitled to invest up to ₹1,000 crore or 15% of its net worth in a single project without prior Cabinet approval / वह कंपनी जिसे किसी एकल परियोजना में पूर्व कैबिनेट मंजूरी के बिना ₹1,000 करोड़ या अपनी कुल संपत्ति का 15% तक निवेश करने का अधिकार प्राप्त हो",
+          "A company with zero percent government ownership / शून्य प्रतिशत सरकारी स्वामित्व वाली कंपनी",
+          "An enterprise reserved exclusively for traditional handicrafts / पारंपरिक हस्तशिल्प के लिए आरक्षित उद्यम",
+          "A sick industrial unit under insolvency liquidation / दिवालियापन परिसमापन के तहत एक रुग्ण औद्योगिक इकाई",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Navratna CPSEs can invest up to ₹1,000 crore or 15% of net worth on a single project without prior Cabinet approval.",
+        expHi: "नवरत्न कंपनियों को ₹1,000 करोड़ या अपनी नेट वर्थ का 15% तक बिना सरकारी मंजूरी के एकल परियोजना में निवेश करने की स्वायत्तता होती है।",
+        fact: "A candidate firm must first be a Miniratna Category-I scoring at least 60/100 points."
+      },
+      {
+        id: 49,
+        stemEn: "What was the fundamental mandate of the Board for Industrial and Financial Reconstruction (BIFR), established in 1987?",
+        stemHi: "1987 में स्थापित औद्योगिक और वित्तीय पुनर्निर्माण बोर्ड (BIFR) का प्राथमिक दायित्व क्या था?",
+        options: [
+          "Identification and revival of sick public and private industrial companies / रुग्ण (घाटे में चल रही) सार्वजनिक और निजी औद्योगिक कंपनियों की पहचान और पुनरुद्धार",
+          "Fixing uniform wholesale prices for raw jute / कच्चे जूट के लिए एक समान थोक मूल्य तय करना",
+          "Conducting competitive recruitment tests for university professors / विश्वविद्यालय प्राध्यापकों के लिए प्रतियोगी भर्ती परीक्षा आयोजित करना",
+          "Managing gold reserves of commercial banks / वाणिज्यिक बैंकों के स्वर्ण भंडार का प्रबंधन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "BIFR was set up under SICA, 1985 to determine industrial sickness and formulate packages for revival or winding up.",
+        expHi: "BIFR का गठन बीमार (रुग्ण) औद्योगिक कंपनियों की पहचान करने और उनके पुनरुद्धार या परिसमापन की रूपरेखा बनाने हेतु हुआ था।",
+        fact: "SICA and BIFR were superseded in 2016 by the Insolvency and Bankruptcy Code (IBC) and NCLT."
+      },
+      {
+        id: 50,
+        stemEn: "How does a Mixed Economy effectively resolve the fundamental economic problem of \"What to produce\"?",
+        stemHi: "एक मिश्रित अर्थव्यवस्था \"क्या उत्पादन किया जाए\" की मूलभूत आर्थिक समस्या का प्रभावी समाधान कैसे करती है?",
+        options: [
+          "Solely through autocratic decree by military tribunals / केवल सैन्य न्यायाधिकरणों के निरंकुश आदेश द्वारा",
+          "Through a dual mechanism of price signals (consumer demand) in the private sector and social priorities in the public sector / निजी क्षेत्र में मूल्य संकेतों (उपभोक्ता माँग) और सार्वजनिक क्षेत्र में सामाजिक प्राथमिकताओं के दोहरे तंत्र द्वारा",
+          "By prohibiting industrial manufacturing entirely / औद्योगिक विनिर्माण को पूरी तरह प्रतिबंधित करके",
+          "Solely through foreign trade embassies / केवल विदेशी व्यापार दूतावासों के माध्यम से",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "In a mixed economy, the price mechanism guides private production based on consumer demand, while state planning allocates public resources to social welfare.",
+        expHi: "मिश्रित अर्थव्यवस्था में माँग और आपूर्ति के मूल्य संकेत निजी क्षेत्र को गाइड करते हैं, जबकि सामाजिक कल्याण सार्वजनिक क्षेत्र के उत्पादन को तय करता है।",
+        fact: "This dual price-and-planning mechanism distinguishes mixed economies from pure capitalism or pure command socialism."
+      },
+
+      /* BATCH 3 (Q51-Q75) */
+      {
+        id: 51,
+        stemEn: "What was the core purpose of establishing the \"State Bank of India\" (SBI) in 1955 by nationalizing the Imperial Bank of India?",
+        stemHi: "इंपीरियल बैंक ऑफ इंडिया का राष्ट्रीयकरण करके 1955 में 'भारतीय स्टेट बैंक' (SBI) की स्थापना का मुख्य उद्देश्य क्या था?",
+        options: [
+          "To extend commercial banking and rural credit facilities across the country under state patronage / राज्य के संरक्षण में देश भर में वाणिज्यिक बैंकिंग और ग्रामीण ऋण सुविधाओं का विस्तार करना",
+          "To finance speculative stock trading in foreign capitals / विदेशी राजधानियों में सट्टा शेयर व्यापार को वित्तपोषित करना",
+          "To shut down all existing cooperative societies / सभी मौजूदा सहकारी समितियों को बंद करना",
+          "To enforce exclusive private monopolistic control over rural moneylending / ग्रामीण साहूकारी पर अनन्य निजी एकाधिकार नियंत्रण लागू करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Based on the Gorwala Committee report, SBI was created in 1955 to build a massive state-supported rural banking credit network.",
+        expHi: "गोरवाला समिति की सिफारिश पर 1955 में इंपीरियल बैंक का राष्ट्रीयकरण कर SBI बनाया गया, ताकि ग्रामीण क्षेत्रों में बैंकिंग ऋण पहुँचाया जा सके।",
+        fact: "State Bank of India was formally established on July 1, 1955."
+      },
+      {
+        id: 52,
+        stemEn: "Which of the following is classified as a \"Miniratna Category-I\" enterprise in the CPSE hierarchy?",
+        stemHi: "CPSE पदानुक्रम में निम्नलिखित में से किसे 'मिनीरत्न श्रेणी-I' उद्यम के रूप में वर्गीकृत करने की प्राथमिक शर्त क्या है?",
+        options: [
+          "It must have made profits continuously for the last 3 years and earned a pre-tax profit of ₹30 crore or more in at least one of the 3 years / इसने पिछले 3 वर्षों से लगातार लाभ कमाया हो तथा कम से कम एक वर्ष में ₹30 करोड़ या उससे अधिक का कर-पूर्व लाभ अर्जित किया हो",
+          "It must have 100% foreign equity participation / इसमें 100% विदेशी इक्विटी भागीदारी होनी चाहिए",
+          "It must be registered as an unlisted non-profit society / इसे एक गैर-सूचीबद्ध गैर-लाभकारी संस्था के रूप में पंजीकृत होना चाहिए",
+          "It must run under zero budgetary control / इसे शून्य बजटीय नियंत्रण के तहत चलना चाहिए",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Miniratna Category-I requires profits continuously for 3 years, positive net worth, and a pre-tax profit of ₹30+ crore in at least one year.",
+        expHi: "मिनीरत्न श्रेणी-I के लिए पिछले 3 वर्षों में लगातार लाभ, सकारात्मक नेट वर्थ और कम से कम एक वर्ष में ₹30 करोड़ का कर-पूर्व लाभ आवश्यक है।",
+        fact: "Miniratna-I CPSEs can incur capital expenditures up to ₹500 crore without prior Cabinet approval."
+      },
+      {
+        id: 53,
+        stemEn: "Under the Industrial Policy Resolution of 1956, industries in 'Schedule B' were characterized by which operational pattern?",
+        stemHi: "1956 के औद्योगिक नीति संकल्प के तहत 'अनुसूची B' (Schedule B) के उद्योगों की क्या परिचालन विशेषता थी?",
+        options: [
+          "Progressive state ownership with the private sector supplementing state efforts / उद्योगों का उत्तरोत्तर राज्य के स्वामित्व में जाना, जिसमें निजी क्षेत्र केवल राज्य के प्रयासों का पूरक होगा",
+          "Total ban on state presence / राज्य की उपस्थिति पर पूर्ण प्रतिबंध",
+          "Immediate disinvestment to foreign multinational corporations / विदेशी बहुराष्ट्रीय कंपनियों को तत्काल विनिवेश",
+          "Exemption from all national planning targets / सभी राष्ट्रीय नियोजन लक्ष्यों से छूट",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Schedule B comprised 12 industries that would be progressively state-owned, with private enterprise playing a complementary role.",
+        expHi: "अनुसूची 'B' में 12 उद्योग शामिल थे, जिनका स्वामित्व धीरे-धीरे राज्य द्वारा लिया जाना था, और निजी क्षेत्र पूरक भूमिका निभाता था।",
+        fact: "Schedule C contained all remaining industries open mainly to the private sector."
+      },
+      {
+        id: 54,
+        stemEn: "What is a \"Joint Sector\" enterprise in the Indian mixed economy framework?",
+        stemHi: "भारतीय मिश्रित अर्थव्यवस्था के ढाँचे में \"संयुक्त क्षेत्र\" (Joint Sector) उद्यम क्या होता है?",
+        options: [
+          "An enterprise where both the government and private enterprise jointly share ownership, capital, and management / एक उद्यम जहाँ सरकार और निजी उद्यमी दोनों संयुक्त रूप से स्वामित्व, पूँजी और प्रबंधन साझा करते हैं",
+          "An enterprise owned exclusively by military personnel / सैन्य कर्मियों द्वारा विशेष रूप से स्वामित्व वाला उद्यम",
+          "An informal village agricultural market / एक अनौपचारिक ग्रामीण कृषि बाज़ार",
+          "An unregulated foreign speculative fund / एक अनियमित विदेशी सट्टा कोष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "A Joint Sector firm is jointly owned, financed, and managed by both the government and private promoters.",
+        expHi: "संयुक्त क्षेत्र वह उद्यम है जिसमें सरकार और निजी उद्योगपति मिलकर पूँजी और प्रबंधन साझा करते हैं।",
+        fact: "The Dutt Committee (1969) formally recommended promoting the Joint Sector."
+      },
+      {
+        id: 55,
+        stemEn: "Why are \"Public Utilities\" (सार्वजनिक उपयोगिता सेवाएं) like water distribution and municipal sewage predominantly managed by the public sector?",
+        stemHi: "जल वितरण और नगरपालिका सीवरेज जैसी \"सार्वजनिक उपयोगिता सेवाएं\" मुख्यतः सार्वजनिक क्षेत्र द्वारा क्यों प्रबंधित की जाती हैं?",
+        options: [
+          "They have non-rival consumption and require equitable, non-exploitative pricing for all citizens / वे गैर-प्रतिस्पर्धी उपभोग वाली होती हैं और सभी नागरिकों के लिए न्यायसंगत व गैर-शोषणकारी मूल्य निर्धारण की मांग करती हैं",
+          "They yield exorbitant short-term speculative market returns / वे अत्यधिक अल्पकालिक सट्टा बाज़ार लाभ देती हैं",
+          "They are legally classified as export-only commodities / वे कानूनी रूप से केवल निर्यात-योग्य वस्तुओं के रूप में वर्गीकृत हैं",
+          "Private citizens are legally barred from using water pipelines / निजी नागरिकों पर पानी की पाइपलाइनों का उपयोग करने पर कानूनी रोक है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Public utilities are essential life services with natural monopoly dynamics. Private profit pricing risks pricing out the poor.",
+        expHi: "सार्वजनिक उपयोगिता सेवाएं जीवन के लिए आवश्यक बुनियादी सेवाएं हैं। यदि इन्हें निजी लाभ पर छोड़ दिया जाए, तो आम जनता का शोषण हो सकता है।",
+        fact: "Public utility charges are administered prices benchmarked on social equity."
+      },
+      {
+        id: 56,
+        stemEn: "What is the fundamental mandate of the \"National Institution for Transforming India\" (NITI Aayog), which replaced the Planning Commission in 2015?",
+        stemHi: "2015 में योजना आयोग के स्थान पर गठित 'नीति आयोग' (NITI Aayog) का मुख्य अधिदेश क्या है?",
+        options: [
+          "To act as a policy think-tank fostering cooperative federalism and providing strategic directions / एक नीति थिंक-टैंक के रूप में कार्य करना जो सहकारी संघवाद को बढ़ावा दे और रणनीतिक दिशा प्रदान करे",
+          "To allocate annual five-year capital budgets directly to private corporations / निजी निगमों को सीधे वार्षिक पंचवर्षीय पूँजीगत बजट आवंटित करना",
+          "To act as a national court for criminal insolvency trials / आपराधिक दिवालियापन मुकदमों के लिए एक राष्ट्रीय न्यायालय के रूप में कार्य करना",
+          "To nationalize all private consumer technology enterprises / सभी निजी उपभोक्ता प्रौद्योगिकी उद्यमों का राष्ट्रीयकरण करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "NITI Aayog was set up on Jan 1, 2015, as a policy think-tank promoting cooperative federalism and strategic advice without allocating state funds.",
+        expHi: "नीति आयोग थिंक-टैंक के रूप में कार्य करता है जो सहकारी संघवाद को बढ़ावा देता है और रणनीतिक नीतिगत सलाह देता है।",
+        fact: "The Prime Minister of India serves as the ex-officio Chairman of NITI Aayog."
+      },
+      {
+        id: 57,
+        stemEn: "Which was the first industrial unit established in the public sector in independent India for chemical fertilizer production?",
+        stemHi: "स्वतंत्र भारत में रासायनिक उर्वरक उत्पादन के लिए सार्वजनिक क्षेत्र में स्थापित पहला औद्योगिक संयंत्र कौन-सा था?",
+        options: [
+          "Sindri Fertilizer Factory (Bihar/Jharkhand) / सिंदरी उर्वरक कारखाना (बिहार/झारखंड)",
+          "Trombay Fertilizer Plant / ट्रॉम्बे उर्वरक संयंत्र",
+          "Hazira Petrochemical Complex / हजीरा पेट्रोकेमिकल कॉम्प्लेक्स",
+          "IFFCO Kalol Unit / इफको कलोल इकाई",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Set up in 1951, the Sindri Fertilizer Factory was independent India's first state-owned modern fertilizer facility to boost food production.",
+        expHi: "1951 में सिंदरी (वर्तमान झारखंड) में स्थापित कारखाना स्वतंत्र भारत का पहला आधुनिक सार्वजनिक उर्वरक संयंत्र था।",
+        fact: "Jawaharlal Nehru famously termed these modern industrial plants the 'Temples of Modern India'."
+      },
+      {
+        id: 58,
+        stemEn: "In economics, the situation where government borrowing absorbs a large share of available savings, raising interest rates and reducing private investment, is termed:",
+        stemHi: "अर्थशास्त्र में वह स्थिति जब सरकारी उधारी उपलब्ध बचतों का एक बड़ा हिस्सा अवशोषित कर लेती है, जिससे ब्याज दरें बढ़ जाती हैं और निजी निवेश घट जाता है, क्या कहलाती है?",
+        options: [
+          "Crowding Out Effect / क्राउडिंग-आउट प्रभाव",
+          "Multiplier Expansion / गुणक विस्तार",
+          "Demonstration Effect / प्रदर्शन प्रभाव",
+          "Pigou Effect / पीगू प्रभाव",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Crowding Out occurs when high government fiscal borrowing depletes available credit, driving interest rates up and reducing private investments.",
+        expHi: "जब सरकार का अत्यधिक ऋण बाज़ार से पूँजी सोख लेता है और ब्याज दरें बढ़ने से निजी निवेश घटता है, तो इसे 'क्राउडिंग-आउट' कहते हैं।",
+        fact: "The FRBM Act, 2003 was enacted to cap fiscal deficits and avoid crowding out."
+      },
+      {
+        id: 59,
+        stemEn: "What type of economic system does India possess, as clearly evidenced by its development plans and constitutional framework?",
+        stemHi: "भारत अपने विकास योजनाओं और संवैधानिक ढाँचे के अनुसार स्पष्ट रूप से किस प्रकार की आर्थिक प्रणाली रखता है?",
+        options: [
+          "Pure Command Communist System / शुद्ध आदेश साम्यवादी प्रणाली",
+          "Pure Laissez-Faire Capitalist System / शुद्ध अहस्तक्षेप पूँजीवादी प्रणाली",
+          "Mixed Economy System / मिश्रित अर्थव्यवस्था प्रणाली",
+          "Feudal Manor Agrarian System / सामंती जागीरदार कृषि प्रणाली",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "India combines a state presence in infrastructure and public welfare with a vibrant market-driven private sector, forming a Mixed Economy.",
+        expHi: "भारत एक मिश्रित अर्थव्यवस्था है जहाँ सार्वजनिक क्षेत्र और निजी क्षेत्र एक साथ आर्थिक विकास में योगदान देते हैं।",
+        fact: "Article 39 of the Constitution outlines the balanced social philosophy of this model."
+      },
+      {
+        id: 60,
+        stemEn: "Which of the following public sector organizations is entrusted with the procurement, storage, and distribution of food grains to support the Public Distribution System (PDS)?",
+        stemHi: "सार्वजनिक वितरण प्रणाली (PDS) का समर्थन करने के लिए खाद्यान्नों की खरीद, भंडारण और वितरण का कार्य किस सार्वजनिक क्षेत्र के संगठन को सौंपा गया है?",
+        options: [
+          "Food Corporation of India (FCI) / भारतीय खाद्य निगम (FCI)",
+          "Securities and Exchange Board of India (SEBI) / भारतीय प्रतिभूति और विनिमय बोर्ड (SEBI)",
+          "Industrial Development Bank of India (IDBI) / भारतीय औद्योगिक विकास बैंक (IDBI)",
+          "Central Board of Direct Taxes (CBDT) / केंद्रीय प्रत्यक्ष कर बोर्ड (CBDT)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "FCI was established under the Food Corporations Act, 1964, to buy crops at MSP, maintain national buffer stocks, and supply grains for the PDS.",
+        expHi: "भारतीय खाद्य निगम (FCI) किसानों से MSP पर अनाज खरीदता है, बफर स्टॉक रखता है और राशन प्रणाली के लिए अनाज उपलब्ध कराता है।",
+        fact: "FCI functions under the Ministry of Consumer Affairs, Food and Public Distribution."
+      },
+      {
+        id: 61,
+        stemEn: "What does the term \"Divestment by ETF\" (Exchange Traded Fund) like BHARAT 22 mean in the context of CPSEs?",
+        stemHi: "CPSEs के संदर्भ में 'भारत 22' जैसे 'ईटीएफ (ETF) के माध्यम से विनिवेश' का क्या अर्थ है?",
+        options: [
+          "The government bundles minority equity shares of diverse CPSEs and sells them to investors as a single traded fund / सरकार विभिन्न CPSEs के अल्पसंख्यक शेयरों को एक बास्केट में समूहित कर निवेशकों को एकल ट्रेडेड फंड के रूप में बेचती है",
+          "The government directly closes down 22 CPSEs on stock exchanges / सरकार शेयर बाज़ारों पर 22 CPSEs को सीधे बंद कर देती है",
+          "Compulsory conversion of equity into municipal bonds / इक्विटी का नगरपालिका बॉन्ड में अनिवार्य रूपांतरण",
+          "Complete sale of 100% equity to foreign banking consortia / विदेशी बैंकिंग संघों को 100% इक्विटी की पूर्ण बिक्री",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "A CPSE ETF bundles small equity portions of several PSUs into an investible basket traded on exchanges, enabling smooth divestment.",
+        expHi: "ETF के माध्यम से सरकार कई सार्वजनिक कंपनियों के शेयरों का एक समूह बनाकर बेचती है, जिससे बाज़ार में सीधे दबाव के बिना विनिवेश होता है।",
+        fact: "The BHARAT 22 ETF was launched in 2017 comprising 22 state-linked firms."
+      },
+      {
+        id: 62,
+        stemEn: "What is the primary function of the Micro, Small and Medium Enterprises Development (MSMED) Act, 2006?",
+        stemHi: "सूक्ष्म, लघु और मध्यम उद्यम विकास (MSMED) अधिनियम, 2006 का प्राथमिक कार्य क्या है?",
+        options: [
+          "Promoting, facilitating, and enhancing the competitiveness of MSMEs across the private domain / निजी क्षेत्र में MSMEs को बढ़ावा देना, उनके विकास को सुगम बनाना और प्रतिस्पर्धात्मकता को बढ़ाना",
+          "Mandatory nationalization of all artisanal village workshops / सभी पारंपरिक ग्रामीण कार्यशालाओं का अनिवार्य राष्ट्रीयकरण",
+          "Complete ban on machinery imports for small industries / लघु उद्योगों के लिए मशीनरी आयात पर पूर्ण प्रतिबंध",
+          "Abolition of patent rights for domestic innovators / घरेलू नवप्रवर्तकों के लिए पेटेंट अधिकारों का उन्मूलन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The MSMED Act, 2006 created a unified legal structure for MSMEs, addressing classification, credit facilitation, and delayed commercial payments.",
+        expHi: "MSMED अधिनियम, 2006 ने MSMEs के संवर्धन, ऋण उपलब्धता और समय पर भुगतान सुरक्षा के लिए एक कानूनी ढाँचा तैयार किया।",
+        fact: "MSME criteria were updated in 2020 based on combined investment and turnover thresholds."
+      },
+      {
+        id: 63,
+        stemEn: "Which constitutional article under the Directive Principles of State Policy (DPSP) directs the state to prevent the concentration of wealth and means of production to the common detriment?",
+        stemHi: "राज्य के नीति निदेशक तत्वों (DPSP) के अंतर्गत कौन-सा संवैधानिक अनुच्छेद राज्य को संपत्ति और उत्पादन के साधनों के अहितकारी संकेंद्रण को रोकने का निर्देश देता है?",
+        options: [
+          "Article 39(c) / अनुच्छेद 39(ग)",
+          "Article 19(1)(g) / अनुच्छेद 19(1)(छ)",
+          "Article 51A / अनुच्छेद 51क",
+          "Article 324 / अनुच्छेद 324",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Article 39(c) of the Constitution mandates the state to avoid the concentration of wealth and production means to common detriment.",
+        expHi: "अनुच्छेद 39(ग) राज्य को यह सुनिश्चित करने का निर्देश देता है कि उत्पादन के साधनों और धन का सर्वसाधारण के अहित के लिए संकेंद्रण न हो।",
+        fact: "The MRTP Act of 1969 was specifically enacted in furtherance of Article 39(c)."
+      },
+      {
+        id: 64,
+        stemEn: "What was the \"National Manufacturing Policy\" (2011) primarily intended to achieve in the Indian economy?",
+        stemHi: "भारतीय अर्थव्यवस्था में \"राष्ट्रीय विनिर्माण नीति\" (2011) का मुख्य उद्देश्य क्या प्राप्त करना था?",
+        options: [
+          "Increase manufacturing sector share in GDP to at least 25% and create 100 million additional jobs / सकल घरेलू उत्पाद (GDP) में विनिर्माण क्षेत्र की हिस्सेदारी बढ़ाकर कम से कम 25% करना और 10 करोड़ अतिरिक्त रोज़गार सृजित करना",
+          "Abolish all private sector participation in automobile production / ऑटोमोबाइल उत्पादन में सभी निजी क्षेत्र की भागीदारी समाप्त करना",
+          "Relocate all heavy industries to overseas coastal nations / सभी भारी उद्योगों को विदेशी तटीय देशों में स्थानांतरित करना",
+          "Eliminate intellectual property registrations for domestic software / घरेलू सॉफ्टवेयर के लिए बौद्धिक संपदा पंजीकरण समाप्त करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The 2011 National Manufacturing Policy targeted boosting manufacturing's share of GDP to 25% and generating 100 million industrial jobs.",
+        expHi: "राष्ट्रीय विनिर्माण नीति (2011) का उद्देश्य GDP में विनिर्माण का हिस्सा बढ़ाकर 25% करना और 10 करोड़ नए रोज़गार पैदा करना था।",
+        fact: "This policy laid the groundwork for the 'Make in India' campaign in 2014."
+      },
+      {
+        id: 65,
+        stemEn: "Which of the following is an example of an incorporated \"Public Sector Bank\" (PSB) in India?",
+        stemHi: "निम्नलिखित में से कौन-सा भारत में निगमित 'सार्वजनिक क्षेत्र का बैंक' (PSB) है?",
+        options: [
+          "Punjab National Bank (PNB) / पंजाब नेशनल बैंक (PNB)",
+          "HDFC Bank / एचडीएफसी बैंक",
+          "ICICI Bank / आईसीआईसीआई बैंक",
+          "Axis Bank / एक्सिस बैंक",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Punjab National Bank is a major PSB with majority government ownership. HDFC, ICICI, and Axis Banks are private commercial banks.",
+        expHi: "पंजाब नेशनल बैंक (PNB) सार्वजनिक क्षेत्र का प्रमुख बैंक है जिसमें सरकार की बहुमत हिस्सेदारी है। शेष निजी बैंक हैं।",
+        fact: "PNB was established in 1894 at Lahore by leaders including Lala Lajpat Rai."
+      },
+      {
+        id: 66,
+        stemEn: "The concept of \"Corporate Governance\" in both private and public corporations focuses on which primary pillar?",
+        stemHi: "निजी और सार्वजनिक दोनों निगमों में \"कॉर्पोरेट प्रशासन\" (Corporate Governance) की अवधारणा किस मुख्य स्तंभ पर केंद्रित है?",
+        options: [
+          "Transparency, board accountability, ethical management, and protection of minority shareholders / पारदर्शिता, बोर्ड की जवाबदेही, नैतिक प्रबंधन और अल्पसंख्यक शेयरधारकों का संरक्षण",
+          "Ensuring zero tax contribution to the state treasury / सरकारी खजाने में शून्य कर योगदान सुनिश्चित करना",
+          "Total suppression of audited financial statements / लेखापरीक्षित वित्तीय विवरणों का पूर्ण दमन",
+          "Eliminating independent directors from corporate boards / कॉर्पोरेट बोर्डों से स्वतंत्र निदेशकों को हटाना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Corporate Governance sets rules and practices ensuring transparency, ethical leadership, director accountability, and investor rights.",
+        expHi: "कॉर्पोरेट प्रशासन प्रबंधन की पारदर्शिता, बोर्ड की जवाबदेही, नैतिक आचरण और शेयरधारकों के हितों की सुरक्षा सुनिश्चित करता है।",
+        fact: "Kumar Mangalam Birla and Narayana Murthy committees framed key corporate governance standards under SEBI."
+      },
+      {
+        id: 67,
+        stemEn: "In a mixed economy, what is an \"External Cost\" (नकारात्मक बाह्यता) that justifies state regulatory intervention in private industrial operations?",
+        stemHi: "मिश्रित अर्थव्यवस्था में, \"बाह्य लागत\" (Negative Externality) क्या है जो निजी औद्योगिक कार्यों में राज्य के विनियामक हस्तक्षेप को उचित ठहराती है?",
+        options: [
+          "Factory effluent polluting a community river without compensating local residents / कारखाने का अपशिष्ट किसी सामुदायिक नदी को प्रदूषित करता है और स्थानीय निवासियों को कोई मुआवज़ा नहीं मिलता",
+          "Payment of statutory dividends to common shareholders / सामान्य शेयरधारकों को वैधानिक लाभांश का भुगतान",
+          "Providing free drinking water facilities within the factory canteen / कारखाने की कैंटीन में पीने का मुफ़्त पानी उपलब्ध कराना",
+          "Regular payment of electricity bills by private managers / निजी प्रबंधकों द्वारा बिजली बिलों का नियमित भुगतान",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Negative externalities occur when industrial production imposes uncompensated pollution or health damages on society, necessitating state regulation.",
+        expHi: "नकारात्मक बाह्यता वह अनपेक्षित सामाजिक लागत (जैसे जल/वायु प्रदूषण) है जो जनता को भुगतनी पड़ती है; इसे रोकने के लिए राज्य नियम बनाता है।",
+        fact: "The 'Polluter Pays Principle' guides environmental mandates enforced by NGT and CPCB."
+      },
+      {
+        id: 68,
+        stemEn: "What was the central objective of setting up the \"Khadya aur Gramodyog Aayog\" (Khadi and Village Industries Commission - KVIC) in 1957?",
+        stemHi: "1957 में 'खादी और ग्रामोद्योग आयोग' (KVIC) की स्थापना का मुख्य उद्देश्य क्या था?",
+        options: [
+          "Promoting decentralized non-farm rural employment and traditional artisanal production / विकेंद्रीकृत गैर-कृषि ग्रामीण रोज़गार और पारंपरिक कारीगरी उत्पादन को बढ़ावा देना",
+          "Building nuclear-powered submarine reactors / परमाणु संचालित पनडुब्बी रिएक्टर बनाना",
+          "Facilitating foreign corporate takeovers of indigenous handlooms / स्वदेशी हथकरघों पर विदेशी कॉर्पोरेट नियंत्रण की सुविधा देना",
+          "Replacing hand spinning with fully imported nylon textiles / हाथ से सूत कातने के स्थान पर पूरी तरह से आयातित नायलॉन वस्त्रों को लागू करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "KVIC was established under the KVIC Act of 1956 to generate rural employment, empower artisans, and foster village enterprise.",
+        expHi: "KVIC का उद्देश्य ग्रामीण कारीगरों को सशक्त कर खादी और ग्रामोद्योगों के ज़रिए गैर-कृषि रोज़गार पैदा करना था।",
+        fact: "KVIC works under the administrative control of the Ministry of MSME."
+      },
+      {
+        id: 69,
+        stemEn: "What is a \"Holding Company\" structure often adopted to organize groups of Central Public Sector Undertakings?",
+        stemHi: "केंद्रीय सार्वजनिक उपक्रमों के समूहों को व्यवस्थित करने के लिए अक्सर अपनाई जाने वाली \"होल्डिंग कंपनी\" (Holding Company) संरचना क्या है?",
+        options: [
+          "A parent company that holds controlling ownership interest and equity shares in other subsidiary companies / एक मूल कंपनी जो अन्य सहायक कंपनियों में नियंत्रणकारी स्वामित्व और इक्विटी शेयर रखती है",
+          "A company prohibited from owning financial shares / एक कंपनी जिसे वित्तीय शेयर रखने से प्रतिबंधित किया गया है",
+          "A firm that produces only raw timber / एक फर्म जो केवल कच्ची लकड़ी का उत्पादन करती है",
+          "An unregistered village money syndicate / एक गैर-पंजीकृत ग्रामीण साहूकारी समूह",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "A holding company owns controlling equity in subsidiary firms to oversee capital, management, and strategic goals (e.g., Coal India Ltd).",
+        expHi: "होल्डिंग कंपनी वह मूल कंपनी होती है जो अपनी सहायक कंपनियों (Subsidiaries) के अधिकांश शेयरों पर स्वामित्व और नियंत्रण रखती है।",
+        fact: "Coal India Limited (CIL) is the apex holding company for regional coal mining subsidiaries."
+      },
+      {
+        id: 70,
+        stemEn: "In a mixed economy, when the government sets a legal minimum price below which a product cannot be purchased (such as agricultural MSP), it establishes a:",
+        stemHi: "मिश्रित अर्थव्यवस्था में, जब सरकार कानूनी रूप से एक न्यूनतम मूल्य तय करती है जिससे कम पर कोई उत्पाद नहीं खरीदा जा सकता (जैसे कृषि MSP), तो वह क्या स्थापित करती है?",
+        options: [
+          "Price Floor / न्यूनतम समर्थन मूल्य (मूल्य तल)",
+          "Price Ceiling / अधिकतम मूल्य सीमा",
+          "Export Tariff Wall / निर्यात शुल्क दीवार",
+          "Monopoly Quota / एकाधिकार कोटा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "A Price Floor is a statutory minimum price to protect producers. In agriculture, MSP prevents farm-gate price crashes.",
+        expHi: "मूल्य तल (Price Floor) वह न्यूनतम मूल्य है जिससे कम पर वस्तु नहीं खरीदी जा सकती; किसानों के लिए MSP इसका प्रमुख उदाहरण है।",
+        fact: "The CACP recommends MSPs for mandated crops."
+      },
+      {
+        id: 71,
+        stemEn: "What distinguishes \"Privatization\" from \"Commercialization\" of a public enterprise?",
+        stemHi: "किसी सार्वजनिक उद्यम के \"निजीकरण\" और \"व्यावसायीकरण\" में क्या अंतर है?",
+        options: [
+          "Privatization transfers ownership/equity to private parties, while commercialization introduces market-oriented financial discipline while retaining state ownership / निजीकरण में स्वामित्व/इक्विटी निजी हाथों में चली जाती है, जबकि व्यावसायीकरण में राज्य के स्वामित्व में रहते हुए बाज़ारोन्मुख वित्तीय अनुशासन लागू किया जाता है",
+          "Commercialization completely dissolves the physical company assets / व्यावसायीकरण कंपनी की भौतिक संपत्तियों को पूरी तरह समाप्त कर देता है",
+          "Privatization bans corporate dividend payouts / निजीकरण कॉर्पोरेट लाभांश भुगतान पर प्रतिबंध लगाता है",
+          "Commercialization requires foreign equity dominance / व्यावसायीकरण के लिए विदेशी इक्विटी का प्रभुत्व आवश्यक है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Commercialization enforces market and cost discipline under state ownership; privatization actually transfers company equity/control to private owners.",
+        expHi: "व्यावसायीकरण में सरकारी स्वामित्व बनाए रखकर बाज़ार दक्षता अपनाई जाती है, जबकि निजीकरण में मालिकाना हक निजी हाथों में चला जाता है।",
+        fact: "Corporatizing the Ordnance Factory Board into 7 CPSEs in 2021 was a commercialization reform."
+      },
+      {
+        id: 72,
+        stemEn: "What was the core purpose of introducing \"Special Economic Zones\" (SEZs) through the SEZ Act of 2005 in India?",
+        stemHi: "भारत में SEZ अधिनियम, 2005 के माध्यम से \"विशेष आर्थिक क्षेत्र\" (SEZs) स्थापित करने का मुख्य उद्देश्य क्या था?",
+        options: [
+          "Creating duty-free export hubs to stimulate private foreign/domestic investment and generate employment / शुल्क-मुक्त निर्यात केंद्र बनाना ताकि निजी घरेलू व विदेशी निवेश को बढ़ावा मिले और रोज़गार पैदा हो",
+          "Restricting private software firms from operating in coastal zones / निजी सॉफ्टवेयर कंपनियों को तटीय क्षेत्रों में कार्य करने से रोकना",
+          "Enforcing mandatory agricultural crop rotation / अनिवार्य कृषि फसल चक्र लागू करना",
+          "Completely eliminating private container shipping / निजी कंटेनर शिपिंग को पूरी तरह से समाप्त करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The SEZ Act, 2005 established duty-free economic hubs offering tax and customs incentives to attract investment, enhance exports, and create jobs.",
+        expHi: "SEZ अधिनियम, 2005 का उद्देश्य शुल्क-मुक्त क्षेत्र बनाकर निजी व विदेशी निवेश आकर्षित करना और निर्यात व रोज़गार बढ़ाना था।",
+        fact: "Asia's first Export Processing Zone (EPZ) was established in Kandla, Gujarat in 1965."
+      },
+      {
+        id: 73,
+        stemEn: "Which sector of the Indian economy is characterized by high informal self-employment and micro-enterprises with minimal bureaucratic registration?",
+        stemHi: "भारतीय अर्थव्यवस्था के किस क्षेत्र की विशेषता उच्च अनौपचारिक स्वरोज़गार और न्यूनतम आधिकारिक पंजीकरण वाले सूक्ष्म उद्यम हैं?",
+        options: [
+          "The Unorganized / Informal Private Sector / असंगठित / अनौपचारिक निजी क्षेत्र",
+          "Central Public Sector Enterprises / केंद्रीय सार्वजनिक क्षेत्र के उपक्रम",
+          "Statutory Port Trusts / वैधानिक पोर्ट ट्रस्ट",
+          "Departmental Ordnance Factories / विभागीय आयुध कारखाने",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The unorganized private sector comprises millions of unregistered micro-enterprises and self-employed individuals employing over 80% of India's workers.",
+        expHi: "असंगठित निजी क्षेत्र उन अपंजीकृत सूक्ष्म उद्यमों से बना है जहाँ देश का 80% से अधिक कार्यबल बिना औपचारिक अनुबंधों के काम करता है।",
+        fact: "The 'e-Shram' portal was launched in 2021 to register unorganized workers."
+      },
+      {
+        id: 74,
+        stemEn: "Which of the following is an example of an institutional Public-Private Partnership (PPP) model where the private entity designs, builds, finances, and operates an infrastructure asset while the government pays fixed annuities?",
+        stemHi: "निम्नलिखित में से कौन-सा एक संस्थागत सार्वजनिक-निजी भागीदारी (PPP) मॉडल है जहाँ निजी इकाई ढाँचे का डिज़ाइन, निर्माण, वित्तपोषण और संचालन करती है जबकि सरकार निश्चित वार्षिक किस्तें (वार्षिकी) चुकाती है?",
+        options: [
+          "HAM (Hybrid Annuity Model) / हाइब्रिड एन्युइटी मॉडल (HAM)",
+          "Pure Feudal Serfdom / शुद्ध सामंती दासता",
+          "Absolute State Departmental Grant / पूर्ण राज्य विभागीय अनुदान",
+          "Zero Tariff Free Border Barter / शून्य शुल्क मुक्त सीमा वस्तु-विनिमय",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "In HAM, the state contributes 40% during construction and the private concessionaire funds 60%, receiving bi-annual annuity repayments from the state.",
+        expHi: "हाइब्रिड एन्युइटी मॉडल (HAM) में सरकार 40% पूँजी देती है और शेष 60% निजी निवेशक लगाता है; सरकार बाद में निश्चित वार्षिकी (Annuity) चुकाती है।",
+        fact: "HAM was introduced in 2016 to revive private investments in highway corridors."
+      },
+      {
+        id: 75,
+        stemEn: "In a mixed economy, how does the state intervene to curb inflation caused by private market hoarders and speculative traders in essential grains?",
+        stemHi: "मिश्रित अर्थव्यवस्था में, आवश्यक खाद्यान्नों में निजी जमाखोरों और सट्टा व्यापारियों के कारण होने वाली मुद्रास्फीति को रोकने के लिए राज्य कैसे हस्तक्षेप करता है?",
+        options: [
+          "By enforcing stock-holding limits under the Essential Commodities Act and releasing buffer stocks / आवश्यक वस्तु अधिनियम के तहत भंडारण सीमा लागू करके और बफर स्टॉक जारी करके",
+          "By permanently banning all farming across the nation / देश भर में सभी प्रकार की खेती पर स्थायी रूप से प्रतिबंध लगाकर",
+          "By declaring bankruptcy in municipal councils / नगर परिषदों में दिवालियापन घोषित करके",
+          "By destroying public grain warehouses / सरकारी अनाज गोदामों को नष्ट करके",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The state imposes statutory stock limits under the Essential Commodities Act, 1955 and conducts open market grain sales (OMSS) from buffer stocks.",
+        expHi: "सरकार आवश्यक वस्तु अधिनियम, 1955 के तहत व्यापारियों पर स्टॉक सीमा तय करती है और बफर स्टॉक से अनाज बाज़ार में उतारकर कीमतें नियंत्रित करती है।",
+        fact: "The Essential Commodities Act protects consumers against artificial hoarding."
+      },
+
+      /* BATCH 4 (Q76-Q100) */
+      {
+        id: 76,
+        stemEn: "Which of the following steel plants in the public sector was established during the Second Five-Year Plan with technological and financial assistance from the Soviet Union (USSR)?",
+        stemHi: "द्वितीय पंचवर्षीय योजना के दौरान सोवियत संघ (USSR) की तकनीकी और वित्तीय सहायता से सार्वजनिक क्षेत्र में कौन-सा इस्पात संयंत्र स्थापित किया गया था?",
+        options: [
+          "Bhilai Steel Plant (Chhattisgarh) / भिलाई इस्पात संयंत्र (छत्तीसगढ़)",
+          "Rourkela Steel Plant (Odisha) / राउरकेला इस्पात संयंत्र (ओडिशा)",
+          "Durgapur Steel Plant (West Bengal) / दुर्गापुर इस्पात संयंत्र (पश्चिम बंगाल)",
+          "Salem Steel Plant (Tamil Nadu) / सेलम इस्पात संयंत्र (तमिलनाडु)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Bhilai Steel Plant was built in 1955 with Soviet collaboration under the Second Plan. Rourkela was aided by West Germany and Durgapur by Britain.",
+        expHi: "भिलाई इस्पात संयंत्र सोवियत संघ के सहयोग से स्थापित किया गया था। राउरकेला जर्मनी तथा दुर्गापुर ब्रिटेन की सहायता से बने थे।",
+        fact: "Bokaro Steel Plant was subsequently set up in the Third Plan, also with Soviet assistance."
+      },
+      {
+        id: 77,
+        stemEn: "What is the status of the \"Life Insurance Corporation of India\" (LIC) after its Mega Initial Public Offering (IPO) in May 2022?",
+        stemHi: "मई 2022 में मेगा इनिशियल पब्लिक ऑफरिंग (IPO) के बाद 'भारतीय जीवन बीमा निगम' (LIC) की क्या स्थिति है?",
+        options: [
+          "It remains a Public Sector Undertaking, with the Government retaining over 90% majority equity / यह सार्वजनिक क्षेत्र का उपक्रम बना हुआ है, जिसमें सरकार के पास 90% से अधिक बहुमत इक्विटी बरकरार है",
+          "It has been converted into a 100% privately owned foreign company / यह 100% निजी स्वामित्व वाली विदेशी कंपनी में बदल गया है",
+          "It was completely dissolved by Parliament / इसे संसद द्वारा पूरी तरह भंग कर दिया गया था",
+          "It ceased its commercial insurance operations / इसने अपने व्यावसायिक बीमा कार्यों को बंद कर दिया",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The government divested only a 3.5% minority stake in LIC in 2022, retaining 96.5% majority equity and state control.",
+        expHi: "LIC के आईपीओ में सरकार ने केवल 3.5% शेयर बेचे थे, 96.5% शेयर सरकार के पास ही रहे, जिससे यह सरकारी उपक्रम बना हुआ है।",
+        fact: "LIC was originally established on September 1, 1956, by nationalizing 245 private insurers."
+      },
+      {
+        id: 78,
+        stemEn: "In the context of economic reforms, what does the term \"Golden Handshake Scheme\" specifically refer to in public sector undertakings?",
+        stemHi: "आर्थिक सुधारों के संदर्भ में, सार्वजनिक क्षेत्र के उपक्रमों में \"गोल्डन हैंडशेक योजना\" (Golden Handshake Scheme) विशेष रूप से किससे संबंधित है?",
+        options: [
+          "Voluntary Retirement Scheme (VRS) for rationalizing surplus workforce / अधिशेष कार्यबल को युक्तिसंगत बनाने के लिए स्वैच्छिक सेवानिवृत्ति योजना (VRS)",
+          "Rewarding private monopolists with physical gold / निजी एकाधिकारवादियों को भौतिक सोने से पुरस्कृत करना",
+          "Compulsory lifetime employment bonds / अनिवार्य आजीवन रोज़गार अनुबंध",
+          "Granting mining concessions to foreign firms without auction / बिना नीलामी के विदेशी फर्मों को खनन रियायतें देना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Voluntary Retirement Scheme (VRS), dubbed the Golden Handshake, offered attractive payouts to voluntarily reduce excess PSU staffing.",
+        expHi: "'गोल्डन हैंडशेक' स्वैच्छिक सेवानिवृत्ति योजना (VRS) का नाम है, जिसका उपयोग सरकारी उपक्रमों में अतिरिक्त स्टाफ को सम्मानजनक पैकेज देकर कम करने हेतु किया गया।",
+        fact: "The National Renewal Fund (NRF) was created in 1992 to support VRS and retraining."
+      },
+      {
+        id: 79,
+        stemEn: "Which sector was granted 100% Foreign Direct Investment (FDI) under the automatic route in the defense manufacturing sector subject to modern technology conditions?",
+        stemHi: "किस क्षेत्र में आधुनिक तकनीक की शर्तों के अधीन रक्षा विनिर्माण में स्वचालित मार्ग के तहत 74% तक तथा सरकारी मार्ग से 100% तक प्रत्यक्ष विदेशी निवेश (FDI) की अनुमति दी गई है?",
+        options: [
+          "Private and Public Defense Industrial Ecosystem / निजी और सार्वजनिक रक्षा औद्योगिक इकोसिस्टम",
+          "State Municipal Tax Revenue / राज्य नगरपालिका कर राजस्व",
+          "Traditional Village Panchayats / पारंपरिक ग्राम पंचायतें",
+          "Primary School Textbooks Printing / प्राथमिक स्कूल पाठ्यपुस्तक मुद्रण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Defense industrial production permits up to 74% FDI via the automatic route, and up to 100% via the government route for state-of-the-art tech.",
+        expHi: "रक्षा विनिर्माण में स्वचालित मार्ग से 74% और अत्याधुनिक तकनीक मिलने पर सरकारी मार्ग से 100% तक FDI अनुमत है।",
+        fact: "Defense production was opened to private sector participation in May 2001."
+      },
+      {
+        id: 80,
+        stemEn: "What is the main distinction between an \"Administered Price Mechanism\" (APM) and a \"Market Price Mechanism\"?",
+        stemHi: "\"प्रशासित मूल्य प्रणाली\" (APM) और \"बाज़ार मूल्य प्रणाली\" के बीच मुख्य अंतर क्या है?",
+        options: [
+          "APM is determined by government administrative order, while market price is determined by forces of supply and demand / APM सरकारी प्रशासनिक आदेश द्वारा तय होता है, जबकि बाज़ार मूल्य माँग और आपूर्ति की शक्तियों द्वारा निर्धारित होता है",
+          "Market prices are fixed solely by international treaties / बाज़ार मूल्य केवल अंतर्राष्ट्रीय संधियों द्वारा तय किए जाते हैं",
+          "APM is applied exclusively to imported luxury foreign cars / APM विशेष रूप से आयातित विलासिता वाली विदेशी कारों पर लागू होता है",
+          "Market prices are fixed by village postmasters / बाज़ार मूल्य ग्रामीण डाकपालों द्वारा तय किए जाते हैं",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Administered prices are fixed by government decree rather than market demand and supply forces.",
+        expHi: "प्रशासित मूल्य (APM) सरकार द्वारा प्रशासनिक आदेश से तय किया जाता है, जबकि बाज़ार मूल्य माँग और आपूर्ति की शक्तियों से निर्धारित होता है।",
+        fact: "Petrol and diesel were decontrolled from APM in 2010 and 2014, respectively."
+      },
+      {
+        id: 81,
+        stemEn: "The privatization of \"Modern Food Industries Ltd.\" in 1999–2000 was historic because it was:",
+        stemHi: "1999-2000 में 'मॉडर्न फूड इंडस्ट्रीज लिमिटेड' का निजीकरण ऐतिहासिक था क्योंकि यह:",
+        options: [
+          "The first outright strategic sale (privatization) of a Central PSU in India / भारत में किसी केंद्रीय PSU की पहली प्रत्यक्ष रणनीतिक बिक्री (निजीकरण) थी",
+          "The first PSU nationalized under the Second Plan / द्वितीय योजना के तहत राष्ट्रीयकृत पहला PSU था",
+          "The first PSU transformed into a municipal water board / नगरपालिका जल बोर्ड में परिवर्तित पहला PSU था",
+          "The only PSU producing defense jet fighters / रक्षा जेट लड़ाकू विमान बनाने वाला एकमात्र PSU था",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Modern Food Industries Ltd was sold to Hindustan Unilever in 2000, becoming India's first strategic privatization of a CPSE.",
+        expHi: "मॉडर्न फूड इंडस्ट्रीज लिमिटेड भारत में पहली सरकारी कंपनी थी जिसका रणनीतिक निजीकरण हुआ (74% हिस्सा HUL को बेचा गया)।",
+        fact: "This was followed by strategic sales of BALCO and VSNL."
+      },
+      {
+        id: 82,
+        stemEn: "In a mixed economy, how does the state address regional imbalances in industrial development?",
+        stemHi: "मिश्रित अर्थव्यवस्था में, औद्योगिक विकास में क्षेत्रीय असंतुलन को दूर करने के लिए राज्य क्या कदम उठाता है?",
+        options: [
+          "By setting up mega public enterprises in backward regions and offering tax subsidies to private firms setting up there / पिछड़े क्षेत्रों में बड़े सार्वजनिक उपक्रम स्थापित करके और वहाँ उद्योग लगाने वाली निजी फर्मों को कर रियायतें देकर",
+          "By banning all private manufacturing in underdeveloped states / अविकसित राज्यों में सभी निजी विनिर्माण को प्रतिबंधित करके",
+          "By relocating existing populations away from rural areas / मौजूदा आबादी को ग्रामीण क्षेत्रों से दूर स्थानांतरित करके",
+          "By confiscating private bank accounts in rural areas / ग्रामीण क्षेत्रों में निजी बैंक खातों को जब्त करके",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The state builds anchor CPSE plants in underdeveloped areas and offers tax incentives and infrastructure subsidies to attract private firms.",
+        expHi: "सरकार पिछड़े इलाकों में बड़े सार्वजनिक संयंत्र स्थापित करती है और निजी निवेशकों को आकर्षित करने के लिए कर छूट व रियायतें देती है।",
+        fact: "Balanced regional growth was a foundational objective of early Five-Year Plans."
+      },
+      {
+        id: 83,
+        stemEn: "What is the core function of the \"Securities and Exchange Board of India\" (SEBI) regarding private capital markets?",
+        stemHi: "निजी पूँजी बाज़ारों के संबंध में \"भारतीय प्रतिभूति और विनिमय बोर्ड\" (SEBI) का मुख्य कार्य क्या है?",
+        options: [
+          "Regulating securities markets, protecting investors' interests, and promoting transparent capital formation / प्रतिभूति बाज़ार को विनियमित करना, निवेशकों के हितों की रक्षा करना और पारदर्शी पूँजी निर्माण को बढ़ावा देना",
+          "Fixing the annual retail prices of passenger automobiles / यात्री ऑटोमोबाइल के वार्षिक खुदरा मूल्य तय करना",
+          "Printing paper currency notes for general circulation / सामान्य प्रचलन के लिए काग़ज़ी नोट छापना",
+          "Directing agricultural harvest procurement quotas / कृषि फसल खरीद कोटा निर्देशित करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "SEBI regulates stock exchanges, enforces transparency in corporate share offerings, protects retail investors, and penalizes malpractice.",
+        expHi: "SEBI शेयर बाज़ार को विनियमित करता है, इनसाइडर ट्रेडिंग रोकता है और निजी एवं सार्वजनिक दोनों कंपनियों में निवेशकों के हितों की रक्षा करता है।",
+        fact: "SEBI gained statutory authority through the SEBI Act on January 30, 1992."
+      },
+      {
+        id: 84,
+        stemEn: "What is the fundamental rationale behind establishing \"Public Sector Undertakings\" in capital-intensive core sectors rather than relying solely on private enterprise?",
+        stemHi: "निजी उद्यमों पर पूरी तरह निर्भर रहने के बजाय पूँजी-सघन बुनियादी क्षेत्रों में 'सार्वजनिक क्षेत्र के उपक्रमों' की स्थापना के पीछे मूल तर्क क्या है?",
+        options: [
+          "Long gestation periods, huge capital investments, and low initial commercial profit margins that deter private capital / लंबी परिपक्वता अवधि, विशाल पूँजीगत निवेश और कम प्रारंभिक लाभ मार्जिन जो निजी पूँजी को हतोत्साहित करते हैं",
+          "Prohibiting private citizens from earning wages / निजी नागरिकों को मज़दूरी कमाने से रोकना",
+          "Enforcing mandatory migration to urban clusters / शहरी समूहों में अनिवार्य प्रवास लागू करना",
+          "Preventing foreign countries from knowing domestic road routes / विदेशी देशों को घरेलू सड़क मार्गों की जानकारी से रोकना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Massive projects (dams, heavy machinery, power grids) require massive capital and have payback periods of 10-20 years, which private capital avoids.",
+        expHi: "बुनियादी उद्योगों में भारी पूँजी और लंबी निर्माण अवधि (Gestation Period) की आवश्यकता होती है जिसमें तत्काल लाभ नहीं मिलता, अतः राज्य यह दायित्व लेता है।",
+        fact: "This structural rationale drove the Second Plan's heavy public sector investments."
+      },
+      {
+        id: 85,
+        stemEn: "Which of the following is an example of an incorporated statutory corporation in the financial domain?",
+        stemHi: "निम्नलिखित में से कौन-सा वित्तीय क्षेत्र में गठित एक वैधानिक निगम (Statutory Corporation) का उदाहरण है?",
+        options: [
+          "Deposit Insurance and Credit Guarantee Corporation (DICGC) / निक्षेप बीमा और प्रत्यय गारंटी निगम (DICGC)",
+          "Reliance Industries Limited / रिलायंस इंडस्ट्रीज लिमिटेड",
+          "Tata Consultancy Services / टाटा कंसल्टेंसी सर्विसेज",
+          "Infosys Technologies / इन्फोसिस टेक्नोलॉजीज",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "DICGC is a statutory subsidiary of the Reserve Bank of India created under the DICGC Act, 1961 to insure bank deposits.",
+        expHi: "DICGC संसद के कानून (DICGC अधिनियम, 1961) द्वारा स्थापित RBI का एक वैधानिक निगम है जो बैंक जमा का बीमा करता है।",
+        fact: "DICGC insures bank deposits up to ₹5 lakh per depositor per bank."
+      },
+      {
+        id: 86,
+        stemEn: "What is the primary characteristic of an \"Unincorporated Enterprise\" in the private sector?",
+        stemHi: "निजी क्षेत्र में \"अनिगमित उद्यम\" (Unincorporated Enterprise) की प्राथमिक विशेषता क्या है?",
+        options: [
+          "The enterprise is not legally distinct from its owner (sole proprietorships/partnerships) / उद्यम कानूनी रूप से अपने मालिक से अलग नहीं होता (एकल स्वामित्व/साझेदारी)",
+          "It is established exclusively by an Act of Parliament / यह संसद के एक विशेष अधिनियम द्वारा स्थापित होता है",
+          "Its shares are listed on the New York Stock Exchange / इसके शेयर न्यूयॉर्क स्टॉक एक्सचेंज में सूचीबद्ध होते हैं",
+          "It is financed through sovereign foreign debt bonds / यह संप्रभु विदेशी ऋण बॉन्ड द्वारा वित्तपोषित होता है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Unincorporated enterprises (sole proprietorships, informal family units) possess no legal entity separate from their owners, carrying unlimited personal liability.",
+        expHi: "अनिगमित उद्यम (जैसे एकल स्वामित्व या छोटी दुकानें) अपने स्वामी से अलग कानूनी अस्तित्व नहीं रखते और स्वामी का दायित्व असीमित होता है।",
+        fact: "Unincorporated enterprises comprise over 90% of India's informal MSME units."
+      },
+      {
+        id: 87,
+        stemEn: "What does the term \"Divestment Target\" refer to in the Union Budget presented by the Finance Minister?",
+        stemHi: "वित्त मंत्री द्वारा प्रस्तुत केंद्रीय बजट में \"विनिवेश लक्ष्य\" (Disinvestment Target) शब्द का क्या अर्थ है?",
+        options: [
+          "The estimated non-debt capital receipts expected to be mobilized from selling government equity in PSUs during the fiscal year / वित्त वर्ष के दौरान PSUs में सरकारी शेयर बेचने से जुटाए जाने वाले अनुमानित गैर-ऋण पूँजीगत प्राप्तियां",
+          "The targeted increase in central corporate taxes / केंद्रीय कॉर्पोरेट करों में लक्षित वृद्धि",
+          "The total budget for military pension disbursements / सैन्य पेंशन वितरण का कुल बजट",
+          "The compulsory donation quota from private enterprises / निजी उद्यमों से अनिवार्य दान कोटा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The disinvestment target is an item under Non-Debt Capital Receipts estimating government revenue from offloading equity in CPSEs.",
+        expHi: "बजट में विनिवेश लक्ष्य का अर्थ चालू वर्ष में सरकारी कंपनियों के शेयर बेचकर 'गैर-ऋण पूँजीगत प्राप्तियों' के रूप में जुटाई जाने वाली लक्षित राशि से है।",
+        fact: "Disinvestment proceeds are accounted under Capital Receipts in the Union Budget."
+      },
+      {
+        id: 88,
+        stemEn: "Which of the following is a classic example of an \"Indian Private Sector Multinational Corporation\" (MNC)?",
+        stemHi: "निम्नलिखित में से कौन-सा \"भारतीय निजी क्षेत्र की बहुराष्ट्रीय कंपनी\" (MNC) का प्रमुख उदाहरण है?",
+        options: [
+          "Tata Motors / टाटा मोटर्स",
+          "Bharat Heavy Electricals Limited (BHEL) / भारत हेवी इलेक्ट्रिकल्स लिमिटेड (BHEL)",
+          "Ordnance Factory Board / आयुध निर्माणी बोर्ड",
+          "India Government Mint / भारत सरकार टकसाल",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Tata Motors is a private multinational automobile conglomerate. BHEL is a public sector Maharatna company.",
+        expHi: "टाटा मोटर्स भारत की एक निजी क्षेत्र की बहुराष्ट्रीय कंपनी है जिसकी वैश्विक परिचालन इकाइयां हैं। BHEL एक सरकारी कंपनी है।",
+        fact: "Post-1991 liberalization allowed private Indian corporations to acquire global overseas brands."
+      },
+      {
+        id: 89,
+        stemEn: "In which year was the \"New Industrial Policy\" officially unveiled, abolishing the system of industrial capacity licensing for most sectors?",
+        stemHi: "किस वर्ष \"नई औद्योगिक नीति\" का आधिकारिक अनावरण किया गया, जिसने अधिकांश क्षेत्रों के लिए औद्योगिक क्षमता लाइसेंसिंग प्रणाली को समाप्त कर दिया?",
+        options: ["1991", "1985", "1971", "1969", "None of these / इनमें से कोई नहीं"],
+        correct: 0,
+        expEn: "The New Industrial Policy of July 24, 1991, dismantled the industrial licensing regime for almost all product lines.",
+        expHi: "24 जुलाई 1991 को नई औद्योगिक नीति लाई गई थी, जिसने अधिकांश उद्योगों से लाइसेंस राज समाप्त कर दिया था।",
+        fact: "This policy reduced public sector reserved areas from 17 down to 8, and later to 2."
+      },
+      {
+        id: 90,
+        stemEn: "What constitutes a \"Social Good\" or \"Public Infrastructure Asset\" created primarily through public expenditure in a mixed economy?",
+        stemHi: "मिश्रित अर्थव्यवस्था में मुख्यतः सार्वजनिक व्यय के माध्यम से बनाई जाने वाली \"सामाजिक वस्तु\" या \"सार्वजनिक बुनियादी ढाँचा परिसंपत्ति\" क्या है?",
+        options: [
+          "National highway networks and public bridges / राष्ट्रीय राजमार्ग नेटवर्क और सार्वजनिक पुल",
+          "Private penthouses in gated communities / निजी आवासीय परिसरों में पेंटहाउस",
+          "Designer luxury garments / डिज़ाइनर विलासिता वाले वस्त्र",
+          "Proprietary corporate software algorithms / मालिकाना कॉर्पोरेट सॉफ्टवेयर एल्गोरिदम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "National roads, bridges, and irrigation networks are public capital assets funded by the exchequer that benefit the entire economy.",
+        expHi: "राष्ट्रीय राजमार्ग, पुल और नहरें सार्वजनिक बुनियादी ढाँचा हैं जो पूरी अर्थव्यवस्था की उत्पादकता को बढ़ाते हैं।",
+        fact: "The National Infrastructure Pipeline (NIP) aggregates major state and private infrastructure projects."
+      },
+      {
+        id: 91,
+        stemEn: "What was the core purpose of establishing the \"Small Industries Development Bank of India\" (SIDBI) in 1990?",
+        stemHi: "1990 में 'भारतीय लघु उद्योग विकास बैंक' (SIDBI) की स्थापना का मुख्य उद्देश्य क्या था?",
+        options: [
+          "Serving as the principal financial institution for the promotion, financing, and development of MSMEs in the private sector / निजी क्षेत्र में सूक्ष्म, लघु और मध्यम उद्यमों (MSMEs) के संवर्धन, वित्तपोषण और विकास के लिए प्रमुख वित्तीय संस्थान के रूप में कार्य करना",
+          "Overseeing the construction of commercial nuclear submarines / वाणिज्यिक परमाणु पनडुब्बियों के निर्माण की देखरेख करना",
+          "Regulating foreign direct trade tariffs on imported crude oil / आयातित कच्चे तेल पर विदेशी प्रत्यक्ष व्यापार शुल्क को विनियमित करना",
+          "Managing urban municipal election ballots / शहरी नगरपालिका चुनाव मतपत्रों का प्रबंधन करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "SIDBI was established on April 2, 1990, to serve as the apex development financial institution providing credit and developmental support to MSMEs.",
+        expHi: "SIDBI की स्थापना 1990 में लघु एवं मध्यम उद्योगों (MSME) को वित्तीय सहायता और संवर्धन प्रदान करने वाली शीर्ष संस्था के रूप में हुई थी।",
+        fact: "The head office of SIDBI is situated in Lucknow, Uttar Pradesh."
+      },
+      {
+        id: 92,
+        stemEn: "What is meant by \"Disinvestment by Strategic Partner Acquisition\" versus \"Disinvestment by Retail Offer for Sale (OFS)\"?",
+        stemHi: "\"रणनीतिक साझेदार अधिग्रहण द्वारा विनिवेश\" और \"खुदरा बिक्री प्रस्ताव (OFS) द्वारा विनिवेश\" में क्या अंतर है?",
+        options: [
+          "Strategic sale transfers controlling management and substantial equity to a single entity, whereas OFS disperses small equity parcels widely across open financial markets / रणनीतिक बिक्री में प्रबंधन नियंत्रण और बड़ा शेयर किसी एक इकाई को सौंपा जाता है, जबकि OFS में छोटे शेयर खुले बाज़ार में आम निवेशकों को बेचे जाते हैं",
+          "OFS liquidates all physical factories immediately / OFS सभी भौतिक कारखानों को तुरंत बंद कर देता है",
+          "Strategic partner acquisition gives 100% equity exclusively to foreign governments / रणनीतिक अधिग्रहण 100% हिस्सेदारी केवल विदेशी सरकारों को देता है",
+          "OFS transforms CPSEs into municipal police outposts / OFS सरकारी कंपनियों को नगरपालिका पुलिस चौकियों में बदल देता है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "In an OFS, the state sells a modest block of shares through exchanges retaining control; a strategic sale transfers controlling ownership and management.",
+        expHi: "OFS में सरकार नियंत्रण रखे बिना शेयर बाज़ार में थोड़ी हिस्सेदारी बेचती है; रणनीतिक बिक्री में प्रबंधन और बड़ा हिस्सा किसी खरीदार को सौंप दिया जाता है।",
+        fact: "Air India was divested via strategic sale, while ONGC shares are sold through OFS."
+      },
+      {
+        id: 93,
+        stemEn: "Which of the following sectors is legally reserved exclusively for the public sector in present-day India?",
+        stemHi: "वर्तमान भारत में निम्नलिखित में से कौन-सा क्षेत्र कानूनी रूप से पूरी तरह सार्वजनिक क्षेत्र के लिए आरक्षित है?",
+        options: [
+          "Atomic Energy / परमाणु ऊर्जा",
+          "Civil Aviation Passenger Transport / नागरिक उड्डयन यात्री परिवहन",
+          "Automobile Assembly / ऑटोमोबाइल असेंबली",
+          "Commercial Mobile Telecommunications / वाणिज्यिक मोबाइल दूरसंचार",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Only two sectors remain reserved exclusively for the government: Atomic Energy and Railway Operations.",
+        expHi: "वर्तमान में केवल दो क्षेत्र सार्वजनिक क्षेत्र के लिए आरक्षित हैं: (1) परमाणु ऊर्जा और (2) रेलवे संचालन।",
+        fact: "Aviation, telecom, and automotive sectors are open to private operators."
+      },
+      {
+        id: 94,
+        stemEn: "What is the fundamental mandate of the \"Public Sector Enterprises Board\" (PESB) in India?",
+        stemHi: "भारत में \"लोक उद्यम चयन बोर्ड\" (PESB) का प्राथमिक कार्य क्या है?",
+        options: [
+          "Selecting and recommending top personnel for managerial appointments (CMD and Directors) in Central Public Sector Enterprises / केंद्रीय सार्वजनिक क्षेत्र के उद्यमों में शीर्ष पदों (CMD और निदेशकों) पर नियुक्तियों के लिए उपयुक्त व्यक्तियों का चयन और सिफारिश करना",
+          "Regulating private corporate tax exemptions / निजी कॉर्पोरेट कर छूटों को विनियमित करना",
+          "Fixing the retail price of consumer electronics / उपभोक्ता इलेक्ट्रॉनिक्स के खुदरा मूल्य तय करना",
+          "Auditing military border checkpoints / सैन्य सीमा चौकियों का ऑडिट करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The PESB evaluates, interviews, and recommends candidates for Chairmen, Managing Directors, and Functional Directors in CPSEs.",
+        expHi: "लोक उद्यम चयन बोर्ड (PESB) CPSEs में अध्यक्ष, प्रबंध निदेशक (CMD) और निदेशकों जैसे शीर्ष पदों पर नियुक्ति हेतु सिफारिशें करता है।",
+        fact: "PESB functions under the Ministry of Personnel, Public Grievances and Pensions."
+      },
+      {
+        id: 95,
+        stemEn: "How does the Private Sector generate substantial revenue for the government's development programs in a mixed economy?",
+        stemHi: "मिश्रित अर्थव्यवस्था में निजी क्षेत्र सरकार के विकासात्मक कार्यक्रमों के लिए भारी राजस्व कैसे जुटाता है?",
+        options: [
+          "Through payment of corporate income taxes, Goods and Services Tax (GST), excise duties, and customs tariffs / कॉर्पोरेट आयकर, वस्तु एवं सेवा कर (GST), उत्पाद शुल्क और सीमा शुल्क के भुगतान के माध्यम से",
+          "By printing official sovereign legal tender notes / आधिकारिक संप्रभु कानूनी निविदा नोट छापकर",
+          "By taking over military tax collections at district borders / ज़िला सीमाओं पर सैन्य कर संग्रह का कार्यभार संभालकर",
+          "By legally acquiring all public roads / सभी सार्वजनिक सड़कों का कानूनी रूप से अधिग्रहण करके",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Private corporations, MSMEs, and workers pay Corporate Tax, GST, customs, and Income Tax, supplying funds for state infrastructure and welfare.",
+        expHi: "निजी कंपनियाँ और नागरिक करों (कॉर्पोरेट टैक्स, जीएसटी, सीमा शुल्क) के ज़रिए सरकारी खजाने को राजस्व प्रदान करते हैं।",
+        fact: "Corporate Tax and GST form the two largest components of central tax receipts."
+      },
+      {
+        id: 96,
+        stemEn: "What is the term for a commercial situation where a single private or public seller controls the entire supply of a commodity without close substitutes?",
+        stemHi: "ऐसी व्यावसायिक स्थिति को क्या कहा जाता है जहाँ कोई एकल निजी या सार्वजनिक विक्रेता बिना किसी करीबी विकल्प के किसी वस्तु की पूरी आपूर्ति को नियंत्रित करता है?",
+        options: [
+          "Pure Monopoly / पूर्ण एकाधिकार",
+          "Perfect Competition / पूर्ण प्रतियोगिता",
+          "Monopsony / क्रेता एकाधिकार (मोनोप्सनी)",
+          "Bilateral Duopoly / द्विपक्षीय अल्पाधिकार",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "A Pure Monopoly occurs when one seller commands the whole supply of a good or service without close market substitutes.",
+        expHi: "पूर्ण एकाधिकार (Monopoly) वह स्थिति है जिसमें किसी वस्तु या सेवा का केवल एक ही विक्रेता होता है और उसका कोई करीबी स्थानापन्न नहीं होता।",
+        fact: "The Competition Act, 2002 prevents companies from abusing dominant positions."
+      },
+      {
+        id: 97,
+        stemEn: "What is an \"Annuity Payment\" in Public-Private Partnership (PPP) highway projects?",
+        stemHi: "सार्वजनिक-निजी भागीदारी (PPP) राजमार्ग परियोजनाओं में \"वार्षिकी भुगतान\" (Annuity Payment) क्या है?",
+        options: [
+          "A predetermined periodic fixed payment made by the government to the private concessionaire for building and maintaining the asset / सरकार द्वारा निजी रियायतग्राही को संपत्ति के निर्माण और रखरखाव के लिए किया जाने वाला पूर्व-निर्धारित आवधिक निश्चित भुगतान",
+          "A fine imposed by courts for poor construction / खराब निर्माण के लिए अदालतों द्वारा लगाया गया जुर्माना",
+          "A dividend paid exclusively to foreign bondholders / केवल विदेशी बॉन्डधारकों को दिया जाने वाला लाभांश",
+          "A toll fee collected only during natural disasters / केवल प्राकृतिक आपदाओं के दौरान एकत्र किया जाने वाला टोल शुल्क",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "In BOT-Annuity contracts, the government pays the developer periodic fixed annuities, protecting them from user toll traffic risk.",
+        expHi: "BOT-एन्युइटी में सरकार निजी विकासकर्ता को सड़क बनाने व बनाए रखने के लिए समय-समय पर निश्चित राशि (वार्षिकी) का भुगतान करती है।",
+        fact: "This model shields private investors from commercial traffic fluctuations."
+      },
+      {
+        id: 98,
+        stemEn: "Which of the following is considered an institutional disadvantage or systemic risk of excessive public sector dominance in non-strategic consumer industries?",
+        stemHi: "गैर-रणनीतिक उपभोक्ता उद्योगों में अत्यधिक सार्वजनिक क्षेत्र के प्रभुत्व का एक संस्थागत दोष या प्रणालीगत जोखिम क्या माना जाता है?",
+        options: [
+          "Bureaucratic delays, lack of market accountability, inefficiency, and continuous fiscal drain on public tax revenues / लालफीताशाही, बाज़ार जवाबदेही की कमी, अकुशलता और सरकारी कर राजस्व पर लगातार वित्तीय बोझ",
+          "Excessively rapid technological innovation / अत्यधिक तीव्र तकनीकी नवाचार",
+          "Elimination of all trade deficits across borders / सीमाओं के पार सभी व्यापार घाटों का उन्मूलन",
+          "Complete absence of unionization among labor / श्रमिकों के बीच यूनियनों का पूर्ण अभाव",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "State dominance in non-core consumer goods often brings bureaucratic inefficiency, lack of accountability, and persistent fiscal subsidies.",
+        expHi: "गैर-रणनीतिक क्षेत्रों में राज्य के प्रभुत्व से लालफीताशाही, सुस्ती, नवाचार की कमी और सरकारी खजाने पर भारी वित्तीय बोझ पड़ता है।",
+        fact: "Pre-1991 losses in state consumer factories contributed to India's fiscal crisis."
+      },
+      {
+        id: 99,
+        stemEn: "What is the role of the \"National Asset Reconstruction Company Limited\" (NARCL), established with both public and private bank participation?",
+        stemHi: "सार्वजनिक और निजी दोनों बैंकों की भागीदारी से स्थापित 'नेशनल एसेट रिकंस्ट्रक्शन कंपनी लिमिटेड' (NARCL) की मुख्य भूमिका क्या है?",
+        options: [
+          "Functioning as a \"Bad Bank\" to aggregate and resolve non-performing assets (NPAs) from the banking system / बैंकिंग प्रणाली से गैर-निष्पादित परिसंपत्तियों (NPAs) को एकत्र करने और उनका समाधान करने के लिए एक \"बैड बैंक\" के रूप में कार्य करना",
+          "Constructing municipal shopping complexes in capital cities / राजधानियों में नगरपालिका शॉपिंग कॉम्प्लेक्स का निर्माण करना",
+          "Printing postage stamps for rural districts / ग्रामीण जिलों के लिए डाक टिकट छापना",
+          "Regulating airline passenger luggage limits / एयरलाइन यात्री सामान सीमाओं को विनियमित करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "NARCL was set up in 2021 as a Bad Bank, with PSBs holding 51%, to acquire stressed loans from banks and resolve bad debts.",
+        expHi: "NARCL (बैड बैंक) की स्थापना 2021 में बैंकों के फंसे हुए कर्जों (NPA) को खरीदकर उनका समाधान करने और बैलेंस शीट साफ करने हेतु की गई थी।",
+        fact: "The Government provided up to ₹30,600 crore in sovereign guarantees on NARCL security receipts."
+      },
+      {
+        id: 100,
+        stemEn: "In summary, how do the Public and Private sectors complement each other to achieve balanced socio-economic growth in India's mixed economy?",
+        stemHi: "संक्षेप में, भारत की मिश्रित अर्थव्यवस्था में संतुलित सामाजिक-आर्थिक विकास प्राप्त करने के लिए सार्वजनिक और निजी क्षेत्र एक-दूसरे के पूरक कैसे बनते हैं?",
+        options: [
+          "The Public Sector builds infrastructure, regulates markets, and provides social goods, while the Private Sector drives enterprise, production efficiency, innovation, and consumer choices / सार्वजनिक क्षेत्र बुनियादी ढाँचा बनाता है, बाज़ार का नियमन करता है और सामाजिक वस्तुएं प्रदान करता है, जबकि निजी क्षेत्र उद्यमशीलता, उत्पादन दक्षता, नवाचार और उपभोक्ता विकल्पों को आगे बढ़ाता है",
+          "Both sectors completely prohibit each other from entering the labor market / दोनों क्षेत्र एक-दूसरे को श्रम बाज़ार में प्रवेश करने से पूरी तरह प्रतिबंधित करते हैं",
+          "The Private sector assumes exclusive control over state criminal courts / निजी क्षेत्र राज्य की आपराधिक अदालतों पर अनन्य नियंत्रण रखता है",
+          "Both sectors rely entirely on foreign bartering without currency / दोनों क्षेत्र बिना मुद्रा के पूरी तरह से विदेशी वस्तु-विनिमय पर निर्भर हैं",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "India's mixed economy relies on the state for infrastructure, social safety, and strategic leadership, while private enterprise drives efficiency, capital, innovation, and consumer choice.",
+        expHi: "सार्वजनिक क्षेत्र बुनियादी ढाँचा, नियमन व जनकल्याण सुनिश्चित करता है, जबकि निजी क्षेत्र दक्षता, नवाचार, बाज़ार प्रतिस्पर्धा और रोज़गार को गति देता है।",
+        fact: "This dual balance remains the cornerstone of India's economic philosophy from 1948 to the present day."
+      }
+    ];
+
+    /* APP STATE */
+    let currentIndex = 0;
+    // Status per question: 'notvisited', 'unanswered', 'correct', 'incorrect', 'skipped', 'review'
+    const userResponses = Array(100).fill(null); // stores selected option index (0 to 4) or null
+    const questionStatuses = Array(100).fill('notvisited');
+    const isLocked = Array(100).fill(false);
+
+    /* DOM ELEMENTS */
+    const displayQNum = document.getElementById('display-q-num');
+    const counterBadge = document.getElementById('counter-badge');
+    const liveScoreBadge = document.getElementById('live-score');
+    const qStemEn = document.getElementById('q-stem-en');
+    const qStemHi = document.getElementById('q-stem-hi');
+    const optionsContainer = document.getElementById('options-container');
+    const expContainer = document.getElementById('explanation-container');
+    const expEn = document.getElementById('exp-en');
+    const expHi = document.getElementById('exp-hi');
+    const expFact = document.getElementById('exp-fact');
+
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnSkip = document.getElementById('btn-skip');
+    const btnReview = document.getElementById('btn-review');
+    const btnSubmitTest = document.getElementById('btn-submit-test');
+    const btnRestart = document.getElementById('btn-restart');
+
+    const paletteOverlay = document.getElementById('palette-overlay');
+    const btnOpenPalette = document.getElementById('btn-open-palette');
+    const btnClosePalette = document.getElementById('btn-close-palette');
+    const paletteGrid = document.getElementById('palette-grid');
+
+    const cbtMain = document.getElementById('cbt-main');
+    const dashboardView = document.getElementById('dashboard-view');
+
+    /* SCORE ENGINE */
+    function calculateScore() {
+      let correctCount = 0;
+      let incorrectCount = 0;
+      for (let i = 0; i < 100; i++) {
+        if (userResponses[i] !== null) {
+          if (userResponses[i] === questions[i].correct) {
+            correctCount++;
+          } else {
+            incorrectCount++;
+          }
+        }
+      }
+      const net = (correctCount * 1.0) - (incorrectCount * 0.25);
+      return {
+        correct: correctCount,
+        incorrect: incorrectCount,
+        net: net.toFixed(2)
+      };
+    }
+
+    function updateLiveScoreDisplay() {
+      const stats = calculateScore();
+      liveScoreBadge.textContent = stats.net;
+    }
+
+    /* RENDER PALETTE GRID */
+    function renderPaletteGrid() {
+      paletteGrid.innerHTML = '';
+      for (let i = 0; i < 100; i++) {
+        const btn = document.createElement('button');
+        btn.className = `pal-btn status-${questionStatuses[i]}`;
+        if (i === currentIndex) {
+          btn.classList.add('current');
+        }
+        btn.textContent = i + 1;
+        btn.addEventListener('click', () => {
+          jumpToQuestion(i);
+          closePalette();
+        });
+        paletteGrid.appendChild(btn);
+      }
+    }
+
+    /* LOAD QUESTION */
+    function loadQuestion(index) {
+      currentIndex = index;
+      const q = questions[index];
+
+      // If never visited before, mark as unanswered
+      if (questionStatuses[index] === 'notvisited') {
+        questionStatuses[index] = 'unanswered';
+      }
+
+      displayQNum.textContent = `Question ${index + 1} of 100`;
+      counterBadge.textContent = `Q: ${index + 1} / 100`;
+      qStemEn.textContent = `Q${q.id}. ${q.stemEn}`;
+      qStemHi.textContent = q.stemHi;
+
+      optionsContainer.innerHTML = '';
+      const letters = ['(A)', '(B)', '(C)', '(D)', '(E)'];
+
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        if (isLocked[index]) btn.classList.add('locked');
+
+        // Restore locked state styling
+        if (isLocked[index]) {
+          if (optIdx === q.correct) {
+            btn.classList.add('highlight-correct');
+          }
+          if (userResponses[index] === optIdx) {
+            if (optIdx === q.correct) {
+              btn.classList.add('correct');
+            } else {
+              btn.classList.add('incorrect');
+            }
+          }
+        }
+
+        btn.innerHTML = `<span class="opt-key">${letters[optIdx]}</span> <span>${optText}</span>`;
+
+        btn.addEventListener('click', () => {
+          if (isLocked[index]) return;
+          handleOptionSelect(index, optIdx);
+        });
+
+        optionsContainer.appendChild(btn);
+      });
+
+      // Explanation display
+      if (isLocked[index]) {
+        expEn.textContent = q.expEn;
+        expHi.textContent = q.expHi;
+        expFact.textContent = q.fact;
+        expContainer.style.display = 'block';
+      } else {
+        expContainer.style.display = 'none';
+      }
+
+      // Prev / Next button states
+      btnPrev.disabled = (currentIndex === 0);
+      btnPrev.style.opacity = (currentIndex === 0) ? '0.4' : '1';
+      if (currentIndex === 99) {
+        btnNext.style.display = 'none';
+      } else {
+        btnNext.style.display = 'inline-block';
+      }
+
+      updateLiveScoreDisplay();
+      renderPaletteGrid();
+    }
+
+    /* OPTION SELECTION (ONE-TAP LOCK) */
+    function handleOptionSelect(qIdx, selectedOptIdx) {
+      isLocked[qIdx] = true;
+      userResponses[qIdx] = selectedOptIdx;
+
+      if (selectedOptIdx === questions[qIdx].correct) {
+        questionStatuses[qIdx] = 'correct';
+      } else {
+        questionStatuses[qIdx] = 'incorrect';
+      }
+
+      loadQuestion(qIdx);
+    }
+
+    /* ACTIONS */
+    function jumpToQuestion(index) {
+      if (index >= 0 && index < 100) {
+        loadQuestion(index);
+      }
+    }
+
+    btnNext.addEventListener('click', () => {
+      if (currentIndex < 99) {
+        loadQuestion(currentIndex + 1);
+      }
+    });
+
+    btnPrev.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        loadQuestion(currentIndex - 1);
+      }
+    });
+
+    btnSkip.addEventListener('click', () => {
+      if (!isLocked[currentIndex]) {
+        questionStatuses[currentIndex] = 'skipped';
+        renderPaletteGrid();
+      }
+      if (currentIndex < 99) {
+        loadQuestion(currentIndex + 1);
+      }
+    });
+
+    btnReview.addEventListener('click', () => {
+      questionStatuses[currentIndex] = 'review';
+      renderPaletteGrid();
+      if (currentIndex < 99) {
+        loadQuestion(currentIndex + 1);
+      }
+    });
+
+    /* PALETTE MODAL CONTROLS */
+    function openPalette() {
+      renderPaletteGrid();
+      paletteOverlay.classList.add('active');
+    }
+
+    function closePalette() {
+      paletteOverlay.classList.remove('active');
+    }
+
+    btnOpenPalette.addEventListener('click', openPalette);
+    btnClosePalette.addEventListener('click', closePalette);
+    paletteOverlay.addEventListener('click', (e) => {
+      if (e.target === paletteOverlay) {
+        closePalette();
+      }
+    });
+
+    /* FINAL SUBMISSION & DASHBOARD */
+    btnSubmitTest.addEventListener('click', () => {
+      const stats = calculateScore();
+      const attempted = stats.correct + stats.incorrect;
+      const unattempted = 100 - attempted;
+      const confirmMsg = `Are you sure you want to submit your UPSSSC PET examination?\n\nAttempted: ${attempted}\nUnattempted: ${unattempted}\nCurrent Net Score: ${stats.net}`;
+      if (confirm(confirmMsg)) {
+        displayDashboard();
+      }
+    });
+
+    function displayDashboard() {
+      cbtMain.style.display = 'none';
+      dashboardView.style.display = 'block';
+
+      const stats = calculateScore();
+      const attempted = stats.correct + stats.incorrect;
+      const accuracy = attempted > 0 ? ((stats.correct / attempted) * 100).toFixed(1) : '0.0';
+
+      document.getElementById('dash-net-score').textContent = stats.net;
+      document.getElementById('dash-accuracy').textContent = `${accuracy}%`;
+      document.getElementById('dash-correct').textContent = stats.correct;
+      document.getElementById('dash-incorrect').textContent = stats.incorrect;
+      document.getElementById('dash-skipped').textContent = 100 - attempted;
+
+      const letters = ['A', 'B', 'C', 'D', 'E'];
+      const tableBody = document.getElementById('review-table-body');
+      tableBody.innerHTML = '';
+
+      for (let i = 0; i < 100; i++) {
+        const tr = document.createElement('tr');
+        const userAns = userResponses[i] !== null ? letters[userResponses[i]] : '—';
+        const correctAns = letters[questions[i].correct];
+
+        let outcome = '<span style="color: var(--slate);">Skipped</span>';
+        let marks = '0.00';
+
+        if (userResponses[i] !== null) {
+          if (userResponses[i] === questions[i].correct) {
+            outcome = '<span style="color: var(--success); font-weight: 600;">Correct</span>';
+            marks = '+1.00';
+          } else {
+            outcome = '<span style="color: var(--danger); font-weight: 600;">Incorrect</span>';
+            marks = '-0.25';
+          }
+        }
+
+        tr.innerHTML = `
+          <td><strong>Q${i + 1}</strong></td>
+          <td>${userAns}</td>
+          <td><strong style="color: var(--success);">${correctAns}</strong></td>
+          <td>${outcome}</td>
+          <td>${marks}</td>
+        `;
+        tableBody.appendChild(tr);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    btnRestart.addEventListener('click', () => {
+      if (confirm("Do you want to reset all responses and restart the test?")) {
+        for (let i = 0; i < 100; i++) {
+          userResponses[i] = null;
+          questionStatuses[i] = 'notvisited';
+          isLocked[i] = false;
+        }
+        dashboardView.style.display = 'none';
+        cbtMain.style.display = 'block';
+        loadQuestion(0);
+      }
+    });
+
+    // Initialize Simulator
+    loadQuestion(0);
+  </script>
+</body>
+</html>

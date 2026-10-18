@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSSSC PET Simulator - General Hindi (मुहावरे-लोकोक्तियाँ)</title>
+    <style>
+        :root {
+            --bg-main: #121316;
+            --bg-card: #1e2024;
+            --bg-hover: #2a2d35;
+            --text-main: #ffffff;
+            --text-muted: #a0a4b8;
+            --accent: #3b82f6;
+            --correct: #16a34a;
+            --correct-bg: rgba(22, 163, 74, 0.15);
+            --incorrect: #dc2626;
+            --incorrect-bg: rgba(220, 38, 38, 0.15);
+            --unanswered: #f97316;
+            --skipped: #94a3b8;
+            --review: #9333ea;
+            --not-visited: #374151;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Top Header */
+        header {
+            background-color: var(--bg-card);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-title h1 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+        .header-title span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .score-badge {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .btn {
+            cursor: pointer;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-palette {
+            background-color: var(--accent);
+            color: white;
+        }
+        .btn-palette:hover { background-color: #2563eb; }
+
+        /* Main Content */
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .question-card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .q-counter {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .q-stem {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .option-card {
+            background-color: var(--bg-main);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.2s ease;
+        }
+        .option-card:hover:not(.locked) {
+            background-color: var(--bg-hover);
+            border-color: #444;
+        }
+        
+        .opt-badge {
+            background-color: #333;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* Option States */
+        .option-card.locked { cursor: default; }
+        .option-card.correct-opt {
+            background-color: var(--correct-bg);
+            border: 2px solid var(--correct);
+        }
+        .option-card.correct-opt .opt-badge {
+            background-color: var(--correct);
+        }
+        .option-card.incorrect-opt {
+            background-color: var(--incorrect-bg);
+            border: 1px solid var(--incorrect);
+        }
+        .option-card.incorrect-opt .opt-badge {
+            background-color: var(--incorrect);
+        }
+
+        /* Explanation Section */
+        .explanation-card {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 30px;
+        }
+        .explanation-card.active { display: block; animation: fadeIn 0.4s ease; }
+        .exp-title { font-weight: bold; color: var(--accent); margin-bottom: 10px; font-size: 0.95rem; }
+        .exp-text { margin-bottom: 15px; font-size: 0.95rem; color: #ddd; }
+        .exp-fact { font-size: 0.85rem; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 8px 12px; border-radius: 6px;}
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        .left-controls { display: flex; gap: 10px; }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid #444;
+        }
+        .btn-outline:hover { background: #333; color: #fff; }
+        .btn-next {
+            background-color: #fff;
+            color: #000;
+        }
+        .btn-next:hover { background-color: #ccc; }
+
+        /* Slide-in Palette */
+        #paletteModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #paletteModal.active {
+            display: block;
+            opacity: 1;
+        }
+        .palette-drawer {
+            position: absolute;
+            right: -400px;
+            top: 0;
+            width: 100%;
+            max-width: 380px;
+            height: 100%;
+            background-color: var(--bg-card);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+            padding: 20px;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+        }
+        #paletteModal.active .palette-drawer { right: 0; }
+        
+        .palette-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        .btn-close {
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+            font-size: 0.8rem;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+
+        /* Palette Grid */
+        .q-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        .q-btn {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: transform 0.1s;
+        }
+        .q-btn:hover { transform: scale(1.05); }
+
+        /* Status Colors */
+        .bg-correct { background-color: var(--correct); }
+        .bg-incorrect { background-color: var(--incorrect); }
+        .bg-unanswered { background-color: var(--unanswered); }
+        .bg-skipped { background-color: var(--skipped); }
+        .bg-review { background-color: var(--review); }
+        .bg-not-visited { background-color: var(--not-visited); }
+
+        /* Dashboard */
+        #dashboard {
+            display: none;
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+        }
+        .dash-title { font-size: 2rem; margin-bottom: 30px; }
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .dash-box {
+            background: var(--bg-main);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        .dash-box h3 { font-size: 2.5rem; color: var(--accent); margin-bottom: 5px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <h1>सामान्य हिन्दी (General Hindi)</h1>
+            <span>Topic: मुहावरे-लोकोक्तियाँ | UPSSSC PET Standard</span>
+        </div>
+        <div class="header-stats">
+            <div class="score-badge">Live Score: <span id="liveScore">0.00</span></div>
+            <button class="btn btn-palette" onclick="togglePalette(true)">📋 Open Palette</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Question Container -->
+        <div id="questionContainer" class="question-card">
+            <div class="q-counter" id="qCounter">Question 1 of 100</div>
+            <div class="q-stem" id="qStem">Loading...</div>
+            
+            <div class="options-container" id="optionsContainer">
+                <!-- Options injected via JS -->
+            </div>
+
+            <div class="explanation-card" id="explanationCard">
+                <div class="exp-title">व्याख्या (Explanation)</div>
+                <div class="exp-text" id="expText"></div>
+                <div class="exp-fact" id="expFact"></div>
+            </div>
+
+            <div class="controls">
+                <div class="left-controls">
+                    <button class="btn btn-outline" id="btnSkip" onclick="actionSkip()">Skip Question</button>
+                    <button class="btn btn-outline" id="btnReview" onclick="actionReview()">Mark for Review</button>
+                </div>
+                <button class="btn btn-next" id="btnNext" onclick="nextQuestion()">Next Question ➔</button>
+            </div>
+        </div>
+
+        <!-- Final Dashboard -->
+        <div id="dashboard">
+            <h2 class="dash-title">Test Completed!</h2>
+            <div class="dash-grid">
+                <div class="dash-box">
+                    <h3 id="dashScore">0.00</h3>
+                    <p>Final Score</p>
+                </div>
+                <div class="dash-box">
+                    <h3 id="dashCorrect" style="color: var(--correct)">0</h3>
+                    <p>Correct Answers</p>
+                </div>
+                <div class="dash-box">
+                    <h3 id="dashIncorrect" style="color: var(--incorrect)">0</h3>
+                    <p>Incorrect Answers</p>
+                </div>
+            </div>
+            <button class="btn btn-palette" onclick="location.reload()">Restart Simulator</button>
+        </div>
+    </main>
+
+    <!-- Slide-in Palette -->
+    <div id="paletteModal">
+        <div class="palette-drawer">
+            <div class="palette-header">
+                <h2>Question Palette</h2>
+                <button class="btn-close" onclick="togglePalette(false)">✕</button>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="dot bg-correct"></div> Correct (+1)</div>
+                <div class="legend-item"><div class="dot bg-incorrect"></div> Incorrect (-0.25)</div>
+                <div class="legend-item"><div class="dot bg-unanswered"></div> Unanswered</div>
+                <div class="legend-item"><div class="dot bg-skipped"></div> Skipped</div>
+                <div class="legend-item"><div class="dot bg-review"></div> Review</div>
+                <div class="legend-item"><div class="dot bg-not-visited"></div> Not Visited</div>
+            </div>
+            <div class="q-grid" id="paletteGrid">
+                <!-- Buttons injected via JS -->
+            </div>
+        </div>
+    </div>
+
+<script>
+// The Complete 100 Unique Questions Dataset (Batches 1 to 4)
+const questionBank = [
+    // BATCH 1
+    {q:"'अक्ल पर पत्थर पड़ना' मुहावरे का सही अर्थ है?",o:["मूर्ख बन जाना","अपमानजनक बात कहना","बुद्धि भ्रष्ट होना","बहुत अधिक सोचना","इनमें से कोई नहीं"],a:2,e:"'अक्ल पर पत्थर पड़ना' का अर्थ होता है बुद्धि का भ्रष्ट हो जाना या सोचने-समझने की शक्ति खो देना। जैसे- \"विपत्ति आने पर मनुष्य की अक्ल पर पत्थर पड़ जाते हैं।\"",f:"Key Exam Fact: This idiom frequently appears in UPSSSC exams under vocabulary and comprehension sections to test contextual meaning."},
+    {q:"'आँखें बिछाना' मुहावरे का सही अर्थ क्या है?",o:["प्रेम से स्वागत करना","देखने की इच्छा करना","धोखा देना","अत्यधिक क्रोधित होना","इनमें से कोई नहीं"],a:0,e:"'आँखें बिछाना' का तात्पर्य है किसी का बहुत ही आदर और प्रेम के साथ स्वागत करना या बेसब्री से प्रतीक्षा करना।",f:"Key Exam Fact: Commonly tested in UP TET and PET exams to differentiate between similar-sounding idioms like 'आँखें दिखाना' (क्रोध करना)."},
+    {q:"'आसमान सिर पर उठाना' का अर्थ है?",o:["बहुत अभिमान करना","अत्यधिक शोर करना","असंभव काम करना","डर कर भाग जाना","इनमें से कोई नहीं"],a:1,e:"'आसमान सिर पर उठाना' मुहावरे का प्रयोग तब किया जाता है जब कोई बहुत अधिक शोरगुल या उपद्रव करता है। जैसे- \"अध्यापक के जाते ही बच्चों ने आसमान सिर पर उठा लिया।\"",f:"Key Exam Fact: It is an essential idiom for descriptive and objective General Hindi papers in UP State Exams."},
+    {q:"'ईंट से ईंट बजाना' मुहावरे का अर्थ क्या है?",o:["पूरी तरह नष्ट कर देना","पक्का घर बनाना","बहुत अधिक मारपीट करना","किसी को खुली चुनौती देना","इनमें से कोई नहीं"],a:0,e:"'ईंट से ईंट बजाना' का अर्थ है किसी चीज़ का समूल नाश कर देना या पूरी तरह से नष्ट कर देना। (जैसे- भारतीय सेना ने दुश्मनों की ईंट से ईंट बजा दी।)",f:"Key Exam Fact: Repeatedly asked in UPSSSC VDO and PET to test knowledge of aggressive or combative idioms."},
+    {q:"'ऊँट के मुँह में जीरा' लोकोक्ति का अर्थ है?",o:["बहुत अधिक चाहने वाले को बहुत कम देना","जानवर को दवाई खिलाना","बड़े प्राणी को झूठी सांत्वना देना","झूठा दिखावा करना","इनमें से कोई नहीं"],a:0,e:"यह एक प्रसिद्ध लोकोक्ति है जिसका अर्थ होता है- आवश्यकता बहुत अधिक हो लेकिन उसकी तुलना में प्राप्ति बहुत ही कम (नगण्य) हो।",f:"Key Exam Fact: A classic NCERT-level proverb crucial for basic Hindi proficiency tests."},
+    {q:"'काठ का उल्लू' होना मुहावरे का अर्थ है?",o:["निर्जीव या कठोर होना","महामूर्ख होना","अत्यधिक सीधा होना","बहुत चालाक होना","इनमें से कोई नहीं"],a:1,e:"'काठ का उल्लू' का अर्थ है एकदम मूर्ख या बेवकूफ व्यक्ति। 'काठ' (लकड़ी) का होने के कारण उसमें कोई समझ या चेतना नहीं मानी जाती।",f:"Key Exam Fact: Frequently featured in UP Lekhpal exams to assess knowledge of rural-origin idioms."},
+    {q:"'कान भरना' मुहावरे का अर्थ क्या है?",o:["कान में बहुत दर्द होना","किसी के खिलाफ चुगली करना","बात को अनसुना करना","किसी बात पर ध्यान न देना","इनमें से कोई नहीं"],a:1,e:"'कान भरना' का अर्थ होता है किसी व्यक्ति के मन में दूसरे के प्रति झूठी बातें या शिकायतें भरकर उसे भड़काना (चुगली करना)।",f:"Key Exam Fact: Distinguish this from 'कान कतरना' (बहुत चालाक होना) which is a common trick in UPSSSC objective questions."},
+    {q:"'गागर में सागर भरना' मुहावरे का अर्थ क्या है?",o:["पानी से बहुत बड़ा घड़ा भरना","थोड़े शब्दों में बहुत अधिक या गूढ़ बात कहना","लगातार बहुत अधिक बोलते रहना","कोई असंभव कार्य पूरा करना","इनमें से कोई नहीं"],a:1,e:"'गागर में सागर भरना' का तात्पर्य है कम शब्दों में अत्यंत व्यापक, गहरी या महत्त्वपूर्ण बात कह देना। (यह विशेषता कवि बिहारीलाल के दोहों के लिए कही जाती है)।",f:"Key Exam Fact: Closely associated with Hindi Sahitya (Bihari's poetry), making it a high-yield dual-purpose question for PET."},
+    {q:"'चिकना घड़ा होना' मुहावरे का अर्थ है?",o:["देखने में बहुत सुंदर होना","निर्लज्ज होना (जिस पर किसी बात का असर न हो)","बहुत होशियार और चतुर होना","अपनी बात से मुकर जाना","इनमें से कोई नहीं"],a:1,e:"'चिकना घड़ा' उस व्यक्ति को कहते हैं जो पूरी तरह से बेशरम या निर्लज्ज हो चुका हो, जिस पर किसी की बात या डांट का कोई प्रभाव नहीं पड़ता।",f:"Key Exam Fact: Standard idiom tested to check vocabulary regarding human behavior and personality traits."},
+    {q:"'छाती पर मूंग दलना' का अर्थ है?",o:["पास रहकर अत्यंत दुःख देना","किसी को बहुत परेशान करना","किसी से पुराना कर्ज वसूल करना","रणभूमि में वीरता दिखाना","इनमें से कोई नहीं"],a:0,e:"'छाती पर मूंग दलना' का अर्थ है किसी के सामने या उसके पास रहकर ऐसे कार्य करना जिससे उसे मानसिक कष्ट या पीड़ा हो।",f:"Key Exam Fact: A household idiom commonly found in Class 10th Hindi grammar syllabus (UP Board)."},
+    {q:"'टेढ़ी खीर' होना मुहावरे का अर्थ है?",o:["स्वादिष्ट और उत्तम भोजन","बहुत कठिन कार्य","बिल्कुल असंभव कार्य","बहुत ही आसान काम","इनमें से कोई नहीं"],a:1,e:"'टेढ़ी खीर' का अर्थ है ऐसा कार्य जिसे करना बहुत मुश्किल या चुनौतीपूर्ण हो। (जैसे- बिना मेहनत के परीक्षा पास करना टेढ़ी खीर है।)",f:"Key Exam Fact: Highly repetitive question in UPSSSC Junior Assistant and PET exams."},
+    {q:"'तलवे चाटना' मुहावरे का अर्थ क्या है?",o:["पैरों की मालिश करना","खुशामद या चापलूसी करना","सरेआम बेइज्जती करना","किसी की अधीनता स्वीकार करना","इनमें से कोई नहीं"],a:1,e:"'तलवे चाटना' का अर्थ है अपना स्वार्थ सिद्ध करने के लिए किसी की अत्यधिक चापलूसी (खुशामद) या जी-हुजूरी करना।",f:"Key Exam Fact: Used frequently in modern comprehension passages to denote sycophancy."},
+    {q:"'दाँत खट्टे करना' मुहावरे का अर्थ है?",o:["बहुत खट्टी चीज़ खा लेना","युद्ध या मुकाबले में परास्त करना (हराना)","दांतों में अचानक दर्द होना","अपनों को धोखा देना","इनमें से कोई नहीं"],a:1,e:"'दाँत खट्टे करना' का अर्थ है किसी को युद्ध, प्रतियोगिता या बहस में बुरी तरह हरा देना या परास्त कर देना। (जैसे- झाँसी की रानी ने अंग्रेजों के दाँत खट्टे कर दिए थे।)",f:"Key Exam Fact: Essential historical idiom, part of the standard UP Board grammar curriculum."},
+    {q:"'नौ दो ग्यारह होना' मुहावरे का अर्थ है?",o:["सब लोगों का मिलकर काम करना","चुपचाप भाग जाना","बच्चों को गिनती सिखाना","किसी को बीच में धोखा देना","इनमें से कोई नहीं"],a:1,e:"'नौ दो ग्यारह होना' का अर्थ है खतरे का अहसास होते ही या मौका पाते ही वहां से रफूचक्कर हो जाना (भाग जाना)।",f:"Key Exam Fact: One of the most fundamental number-based idioms in Hindi, frequently tested at the Group-C level."},
+    {q:"'पत्थर की लकीर' होना मुहावरे का अर्थ है?",o:["हृदय का कठोर होना","अमिट या पक्की बात होना","कोई मुश्किल रास्ता होना","स्वभाव से बहुत जिद्दी होना","इनमें से कोई नहीं"],a:1,e:"'पत्थर की लकीर' उस बात या वादे को कहते हैं जो पक्का हो, जिसे किसी भी हाल में बदला या मिटाया न जा सके।",f:"Key Exam Fact: Often used in sentence correction and fill-in-the-blank type questions in UP exams."},
+    {q:"'मुँह की खाना' मुहावरे का अर्थ है?",o:["पेट भर भोजन करना","बुरी तरह हारना या अपमानित होना","मुँह में गंभीर चोट लगना","किसी का एहसान मानना","इनमें से कोई नहीं"],a:1,e:"'मुँह की खाना' का अर्थ होता है किसी कार्य, बहस या मुकाबले में बुरी तरह पराजित होना और शर्मिंदा होना।",f:"Key Exam Fact: Keep an eye on similar idioms like 'मुँह ताकना' (दूसरे पर निर्भर रहना) for elimination tactics."},
+    {q:"'लोहे के चने चबाना' मुहावरे का अर्थ है?",o:["बहुत कठिन कार्य या संघर्ष करना","अपने दांतों को मजबूत करना","अत्यधिक भूख को सहन करना","कोई मूर्खतापूर्ण कार्य करना","इनमें से कोई नहीं"],a:0,e:"'लोहे के चने चबाना' का अर्थ है जीवन में भारी कठिनाइयों का सामना करना या कोई अत्यंत दुष्कर कार्य करना।",f:"Key Exam Fact: Standard Group C exam idiom symbolizing hard work and perseverance."},
+    {q:"'श्रीगणेश करना' मुहावरे का अर्थ है?",o:["मंदिर में पूजा करना","किसी कार्य का आरंभ (शुरुआत) करना","किसी कार्य को समाप्त करना","भगवान गणेश जी की वंदना करना","इनमें से कोई नहीं"],a:1,e:"'श्रीगणेश करना' का अर्थ है किसी भी शुभ कार्य की शुरुआत या आरंभ करना। इसका विलोम मुहावरा 'इतिश्री करना' (समाप्त करना) होता है।",f:"Key Exam Fact: Understanding both the idiom and its opposite ('इतिश्री') is critical for UPSSSC PET."},
+    {q:"'सिर आँखों पर बैठाना' मुहावरे का सही अर्थ है?",o:["बहुत आदर-सत्कार या सम्मान करना","सिर और आँखों में दर्द होना","किसी को जबरदस्ती पास बिठाना","बच्चों से अत्यधिक प्रेम करना","इनमें से कोई नहीं"],a:0,e:"'सिर आँखों पर बैठाना' का तात्पर्य है किसी का बहुत अधिक मान-सम्मान करना या उसकी हर आज्ञा का ख़ुशी-ख़ुशी पालन करना।",f:"Key Exam Fact: Tests the candidate's grasp of traditional Indian values expressed through language."},
+    {q:"'हाथ मलना' मुहावरे का अर्थ है?",o:["हाथों को अच्छी तरह साफ़ करना","अवसर निकल जाने पर पछताना","बहुत अधिक सर्दी लगना","किसी बड़े काम की तैयारी करना","इनमें से कोई नहीं"],a:1,e:"'हाथ मलना' मुहावरे का अर्थ है समय या अवसर हाथ से निकल जाने के बाद पश्चाताप करना (पछताना)।",f:"Key Exam Fact: Widely used proverb indicating missed opportunities, common in general proficiency tests."},
+    {q:"'हवा से बातें करना' मुहावरे का अर्थ है?",o:["बहुत तेज गति से दौड़ना या चलना","अकेले में बहुत अधिक बोलना","मानसिक रूप से विक्षिप्त हो जाना","आसमान में ऊँची उड़ान भरना","इनमें से कोई नहीं"],a:0,e:"'हवा से बातें करना' का अर्थ है बहुत ही तीव्र गति से चलना या दौड़ना। (जैसे- महाराणा प्रताप का घोड़ा चेतक हवा से बातें करता था।)",f:"Key Exam Fact: Historical references make this a staple in UP school-level grammar books."},
+    {q:"'कलेजा ठंडा होना' मुहावरे का अर्थ है?",o:["मन को पूर्ण शांति या संतोष मिलना","किसी बात पर बहुत क्रोधित होना","हृदय गति रुक जाना (मृत्यु होना)","किसी भयानक दृश्य को देखकर डर जाना","इनमें से कोई नहीं"],a:0,e:"'कलेजा ठंडा होना' का अर्थ है मन को तसल्ली मिलना, शांति प्राप्त होना या संतोष होना। (दुश्मन की हार देखकर उसका कलेजा ठंडा हो गया।)",f:"Key Exam Fact: Important for distinguishing between body-part idioms (e.g., कलेजा मुँह को आना - बहुत घबराना)."},
+    {q:"'गड़े मुर्दे उखाड़ना' मुहावरे का अर्थ है?",o:["श्मशान में जाकर कब्र खोदना","पुरानी और भूली हुई बातों को फिर से दोहराना","किसी गहरे रहस्य का पता लगाना","कोई व्यर्थ और घिनौना कार्य करना","इनमें से कोई नहीं"],a:1,e:"'गड़े मुर्दे उखाड़ना' का अर्थ है उन पुरानी अप्रिय बातों या विवादों को फिर से छेड़ना जिन्हें लोग भूल चुके हों।",f:"Key Exam Fact: UPSSSC exams frequently test idioms related to social behavior and communication flaws."},
+    {q:"'घोड़े बेचकर सोना' मुहावरे का अर्थ है?",o:["पूरी तरह से निश्चिंत होकर गहरी नींद में सोना","अपने व्यापार या व्यवसाय में घाटा सहना","अपनी सारी जिम्मेदारियों को बेच देना","बहुत अधिक परिश्रम के बाद थक जाना","इनमें से कोई नहीं"],a:0,e:"'घोड़े बेचकर सोना' का अर्थ है सब तरफ से बेफिक्र या निश्चिंत होकर चैन की नींद सोना।",f:"Key Exam Fact: A very popular phrase in daily Hindi conversation, tested to check practical language proficiency."},
+    {q:"'आँख का तारा' होना मुहावरे का अर्थ है?",o:["आँखों से जुड़ी कोई गंभीर बीमारी","अत्यंत प्रिय या दुलारा होना","बहुत दूर रहने वाला कोई व्यक्ति","देखने में बहुत ही सुंदर होना","इनमें से कोई नहीं"],a:1,e:"'आँख का तारा' (या आँखों का तारा) उस व्यक्ति को कहते हैं जो सबको बहुत अधिक प्रिय हो।",f:"Key Exam Fact: A direct Class 10th NCERT vocabulary standard, perfectly aligned with the PET syllabus."},
+    
+    // BATCH 2
+    {q:"'न नौ मन तेल होगा, न राधा नाचेगी' लोकोक्ति का सही अर्थ है?",o:["बहुत अधिक धन खर्च करना","किसी काम को करने के लिए तैयार रहना","काम से बचने के लिए असंभव शर्त रख देना","नृत्य का आयोजन न हो पाना","इनमें से कोई नहीं"],a:2,e:"इस लोकोक्ति का अर्थ है किसी काम को टालने के उद्देश्य से ऐसी शर्त रख देना जो कभी पूरी ही न हो सके।",f:"Key Exam Fact: Commonly tested in UPSSSC exams to check the candidate's understanding of situational proverbs."},
+    {q:"'अंधों में काना राजा' लोकोक्ति का अर्थ है?",o:["राजा का एक आँख से अंधा होना","मूर्खों या अज्ञानियों के बीच अल्पज्ञानी की मान्यता होना","अत्यधिक गरीब लोगों के बीच रहना","समाज में सबसे अधिक बुद्धिमान होना","इनमें से कोई नहीं"],a:1,e:"जहाँ सब लोग मूर्ख या अज्ञानी हों, वहाँ थोड़ा जानने वाले (अल्पज्ञ) व्यक्ति को भी बहुत विद्वान और श्रेष्ठ मान लिया जाता है।",f:"Key Exam Fact: A direct NCERT level idiom essential for standard competitive Hindi tests."},
+    {q:"'अक्ल का दुश्मन' मुहावरे का अर्थ है?",o:["बहुत बड़ा शत्रु","महामूर्ख व्यक्ति","चालाक और स्वार्थी व्यक्ति","जो कभी किसी की बात न माने","इनमें से कोई नहीं"],a:1,e:"'अक्ल का दुश्मन' उस व्यक्ति को कहा जाता है जो एकदम मूर्ख हो और सोचने-समझने का कार्य न करता हो।",f:"Key Exam Fact: This idiom is a staple in basic vocabulary questions across UP State exams."},
+    {q:"'अपनी खिचड़ी अलग पकाना' मुहावरे का अर्थ क्या है?",o:["अपने लिए स्वयं खाना बनाना","सबसे मिल-जुलकर काम करना","दूसरों के काम में दखल देना","सबसे अलग-थलग रहना या अपना काम अलग करना","इनमें से कोई नहीं"],a:3,e:"'अपनी खिचड़ी अलग पकाना' का अर्थ होता है समाज या समूह से अलग होकर अपना ही काम या स्वार्थ सिद्ध करते रहना।",f:"Key Exam Fact: Frequently appears in sentences requiring appropriate idiom substitutions."},
+    {q:"'अधजल गगरी छलकत जाय' लोकोक्ति का सही अर्थ है?",o:["कम ज्ञान या गुण होने पर भी अधिक दिखावा करना","आधे भरे हुए बर्तन से पानी गिरना","ज्ञानी व्यक्ति का हमेशा शांत रहना","बिना सोचे समझे कोई भी काम कर देना","इनमें से कोई नहीं"],a:0,e:"इस लोकोक्ति का प्रयोग उन लोगों के लिए किया जाता है जिनमें योग्यता या ज्ञान कम होता है, लेकिन वे उसका दिखावा बहुत ज्यादा करते हैं।",f:"Key Exam Fact: A high-frequency proverb in PET and UP Police Constable exams."},
+    {q:"'अपना उल्लू सीधा करना' मुहावरे का अर्थ है?",o:["रात के समय में जागना","किसी मूर्ख व्यक्ति को मनाना","अपना स्वार्थ सिद्ध करना या अपना मतलब निकालना","किसी का नुकसान करना","इनमें से कोई नहीं"],a:2,e:"'अपना उल्लू सीधा करना' का अर्थ है किसी भी तरह से अपना मतलब पूरा करना या अपना स्वार्थ साधना।",f:"Key Exam Fact: Essential idiom for assessing comprehension of selfish motives in literary contexts."},
+    {q:"'ईद का चाँद होना' मुहावरे का अर्थ है?",o:["बहुत सुंदर दिखाई देना","खुशियों का त्योहार मनाना","बहुत दिनों बाद दिखाई देना","हमेशा साथ-साथ रहना","इनमें से कोई नहीं"],a:2,e:"'ईद का चाँद' कभी-कभार ही दिखाई देता है। अतः जो व्यक्ति बहुत दिनों बाद या दुर्लभ रूप से मिलता है, उसे ईद का चाँद कहा जाता है।",f:"Key Exam Fact: A very popular proverb often given as a direct meaning question in Group C exams."},
+    {q:"'एक अनार सौ बीमार' लोकोक्ति का क्या अर्थ है?",o:["एक ही व्यक्ति का कई बीमारियों से ग्रसित होना","किसी वस्तु की माँग अधिक और आपूर्ति कम होना","बहुत अधिक धन खर्च करके कम लाभ पाना","सबको एक समान दृष्टि से देखना","इनमें से कोई नहीं"],a:1,e:"जब कोई वस्तु मात्रा में बहुत कम हो लेकिन उसे चाहने वाले (माँग) बहुत अधिक हों, तब इस लोकोक्ति का प्रयोग होता है।",f:"Key Exam Fact: Important for understanding demand-supply analogies in Hindi idioms."},
+    {q:"'एक पंथ दो काज' लोकोक्ति का सही अर्थ है?",o:["दो अलग-अलग रास्तों पर चलना","एक ही प्रयास में दो काम बन जाना (दोहरा लाभ)","किसी कार्य में पूरी तरह से विफल होना","हमेशा दुविधा में फंसे रहना","इनमें से कोई नहीं"],a:1,e:"'एक पंथ दो काज' का अर्थ है एक साधन या एक ही मेहनत से दो अलग-अलग कार्यों को सफलतापूर्वक पूरा कर लेना।",f:"Key Exam Fact: Frequently tested alongside synonymous phrases like 'आम के आम गुठलियों के दाम'."},
+    {q:"'घर का भेदी लंका ढाए' लोकोक्ति का अर्थ है?",o:["आपसी फूट से सर्वनाश होना","घर का रहस्य छिपाकर रखना","किसी की लंका या संपत्ति को जला देना","दूसरों की निंदा करना","इनमें से कोई नहीं"],a:0,e:"रामायण के प्रसंग पर आधारित इस लोकोक्ति का अर्थ है कि अपनों के बीच की दुश्मनी या आपसी फूट से भारी विनाश होता है।",f:"Key Exam Fact: Historical/Mythological proverbs are a strong focus area for the UPSSSC PET syllabus."},
+    {q:"'छक्के छुड़ाना' मुहावरे का सही अर्थ है?",o:["क्रिकेट के खेल में अच्छा प्रदर्शन करना","बहुत अधिक डरा देना","बुरी तरह से पराजित करना या हरा देना","बिना किसी बात के बहुत अधिक खुश होना","इनमें से कोई नहीं"],a:2,e:"'छक्के छुड़ाना' का अर्थ होता है किसी को युद्ध या किसी भी प्रतियोगिता में बुरी तरह परास्त कर देना, उसके हौसले पस्त कर देना।",f:"Key Exam Fact: Commonly seen in passages related to patriotism or sports in exam papers."},
+    {q:"'छठी का दूध याद आना' मुहावरे का अर्थ है?",o:["बचपन की यादों में खो जाना","अपनी माँ की याद आना","बहुत अधिक भूखा होना","अत्यधिक कष्ट या परेशानी का अनुभव होना","इनमें से कोई नहीं"],a:3,e:"जब व्यक्ति अत्यंत कठिन परिस्थिति में फँस जाता है और उसे बहुत भारी कष्ट या मुसीबत का सामना करना पड़ता है, तब यह मुहावरा प्रयुक्त होता है।",f:"Key Exam Fact: Standard idiom highlighting severe hardship, highly relevant for competitive exams."},
+    {q:"'चिराग तले अँधेरा' लोकोक्ति का अर्थ है?",o:["चिराग के नीचे रोशनी न होना","अपना दोष स्वयं को दिखाई न देना","रात के समय अंधेरे में छिप जाना","किसी भी काम को गलत ढंग से करना","इनमें से कोई नहीं"],a:1,e:"जिस प्रकार दीपक सबको रोशनी देता है लेकिन उसके अपने नीचे अंधेरा रहता है, वैसे ही दूसरों को उपदेश देने वाले ज्ञानी व्यक्ति को अपना अज्ञान या दोष दिखाई नहीं देता।",f:"Key Exam Fact: Deep philosophical proverbs like this are favorite choices for examiner's moderate-to-hard level questions."},
+    {q:"'चूना लगाना' मुहावरे का अर्थ है?",o:["मकान में पुताई करना","धोखा देकर ठग लेना या नुकसान पहुँचाना","किसी का बहुत आदर करना","पुरानी बातों को भूल जाना","इनमें से कोई नहीं"],a:1,e:"'चूना लगाना' आम बोलचाल का एक प्रसिद्ध मुहावरा है जिसका अर्थ होता है किसी को बेवकूफ बनाकर उससे पैसे ठग लेना या नुकसान करना।",f:"Key Exam Fact: Tests awareness of colloquial language accepted in standard Hindi exams."},
+    {q:"'छप्पर फाड़कर देना' मुहावरे का क्या अर्थ है?",o:["घर की छत को तोड़ देना","बहुत भारी मुसीबत आ जाना","बिना परिश्रम के अचानक बहुत अधिक धन प्राप्त होना","जानबूझकर किसी का नुकसान करना","इनमें से कोई नहीं"],a:2,e:"जब ईश्वर किसी पर मेहरबान होता है और उसे बिना किसी विशेष मेहनत के अचानक अप्रत्याशित रूप से ढेर सारी संपत्ति या सफलता मिल जाती है, तो उसे 'छप्पर फाड़कर देना' कहते हैं।",f:"Key Exam Fact: Often used in options to confuse candidates with terms like 'आसमान फटना' (अचानक मुसीबत आना)."},
+    {q:"'दाल में काला होना' मुहावरे का अर्थ है?",o:["दाल का रंग खराब हो जाना","किसी बात पर शक या संदेह होना","बहुत स्वादिष्ट भोजन होना","दाल में कोई कीड़ा गिर जाना","इनमें से कोई नहीं"],a:1,e:"'दाल में काला होना' मुहावरे का प्रयोग तब किया जाता है जब कोई स्थिति संदेहास्पद लगे या यह लगे कि भीतर ही भीतर कोई गड़बड़ या साजिश है।",f:"Key Exam Fact: Core Hindi proverb frequently tested in quick fill-in-the-blank questions."},
+    {q:"'दूर के ढोल सुहावने लगते हैं' लोकोक्ति का अर्थ है?",o:["ढोल की आवाज दूर से अच्छी लगती है","दूर की चीजें या बातें हमेशा अच्छी प्रतीत होती हैं","पास की चीजों का सम्मान न करना","हमेशा कल्पना की दुनिया में खोए रहना","इनमें से कोई नहीं"],a:1,e:"जो व्यक्ति या वस्तु हमसे दूर होती है, उसकी असलियत हमें पता नहीं होती, इसलिए वह हमें बहुत आकर्षक और अच्छी लगती है।",f:"Key Exam Fact: Highly repetitive question designed to test comprehension of human psychology through idioms."},
+    {q:"'नमक-मिर्च लगाना' मुहावरे का अर्थ क्या है?",o:["खाने को बहुत तीखा बना देना","किसी घाव को और अधिक दर्द देना","किसी बात को बहुत बढ़ा-चढ़ाकर (अतिशयोक्ति के साथ) कहना","किसी का अपमान करना","इनमें से कोई नहीं"],a:2,e:"जब कोई व्यक्ति किसी सामान्य सी बात में अपनी तरफ से झूठी-सच्ची बातें जोड़कर उसे और अधिक रोचक या उत्तेजक बनाकर प्रस्तुत करता है, तब यह मुहावरा प्रयुक्त होता है।",f:"Key Exam Fact: Frequently matched with proverbs having similar meanings like 'राई का पहाड़ बनाना'."},
+    {q:"'नाकों चने चबवाना' मुहावरे का अर्थ है?",o:["बहुत अधिक परेशान या तंग करना","नाक से सांस लेने में कठिनाई होना","बहुत कड़ा भोजन खाना","किसी से बहुत अधिक प्रेम करना","इनमें से कोई नहीं"],a:0,e:"'नाकों चने चबवाना' का अर्थ होता है किसी व्यक्ति को अत्यधिक कष्ट देना या उसे बहुत बुरी तरह से परेशान करके रख देना।",f:"Key Exam Fact: Often used in passages describing struggle or rebellion, a standard UP Board grammar topic."},
+    {q:"'नाच न जाने आँगन टेढ़ा' लोकोक्ति का अर्थ है?",o:["नृत्य कला में निपुण न होना","आँगन का सही से न बना होना","अपनी अयोग्यता या कमी का दोष दूसरों पर मढ़ना","किसी दूसरे का काम बिगाड़ देना","इनमें से कोई नहीं"],a:2,e:"जब किसी व्यक्ति को स्वयं कोई कार्य करना नहीं आता, तो वह अपनी नाकामी छुपाने के लिए साधनों या दूसरों को दोष देता है।",f:"Key Exam Fact: A top-tier, must-know proverb that has appeared in nearly every major UP state level exam."},
+    {q:"'मुँह में राम, बगल में छुरी' लोकोक्ति का क्या अर्थ है?",o:["ईश्वर का नाम लेकर हिंसा करना","ऊपर से मित्र होने का दिखावा, परंतु भीतर से कपट या शत्रुता रखना","हमेशा हथियार अपने पास रखना","बहुत ही धार्मिक और सच्चा व्यक्ति होना","इनमें से कोई नहीं"],a:1,e:"यह लोकोक्ति ऐसे पाखंडी या धोखेबाज व्यक्ति के लिए इस्तेमाल की जाती है जो सामने से तो बहुत मीठा बोलता है, लेकिन मन में बुराई और धोखा रखने वाला कपटी मित्र होता है।",f:"Key Exam Fact: Crucial for evaluating candidates on moral/behavioral idiomatic expressions."},
+    {q:"'राई का पहाड़ बनाना' मुहावरे का अर्थ है?",o:["राई के दानों को इकट्ठा करना","असंभव कार्य को संभव कर दिखाना","छोटी सी बात को बहुत बढ़ा-चढ़ाकर बड़ा बना देना","बहुत अधिक परिश्रम से बड़ा काम करना","इनमें से कोई नहीं"],a:2,e:"'राई का पहाड़ बनाना' का अर्थ है किसी बहुत ही मामूली या छोटी सी बात का बतंगड़ बना देना और उसे बहुत बड़ा रूप दे देना।",f:"Key Exam Fact: Synonym to 'तिल का ताड़ बनाना', tests vocabulary flexibility."},
+    {q:"'लकीर का फकीर होना' मुहावरे का अर्थ है?",o:["लकीर पर चलने वाला साधु","अत्यंत गरीब हो जाना","पुरानी रीति-रिवाजों या परंपराओं का अंधानुकरण करना","नया रास्ता खोजना","इनमें से कोई नहीं"],a:2,e:"'लकीर का फकीर' उस रूढ़िवादी व्यक्ति को कहते हैं जो बिना सोचे-समझे पुरानी प्रथाओं और परंपराओं से चिपका रहता है और बदलाव स्वीकार नहीं करता।",f:"Key Exam Fact: Tests understanding of societal proverbs in the Group C objective papers."},
+    {q:"'सोने पर सुहागा' मुहावरे का सही अर्थ है?",o:["सोने के आभूषण बनाना","किसी अच्छी वस्तु में और अधिक गुण जुड़ जाना","बहुत अधिक कीमती वस्तु का खो जाना","अत्यधिक लालची होना","इनमें से कोई नहीं"],a:1,e:"जब किसी व्यक्ति, वस्तु या परिस्थिति में पहले से ही कोई अच्छाई हो और उसमें कोई और अच्छा गुण या बात जुड़ जाए, तो उसे 'सोने पर सुहागा' कहा जाता है। (अर्थात, दुगना लाभ या अच्छाई)।",f:"Key Exam Fact: A highly recurring phrase used to assess positive connotations in Hindi grammar."},
+    {q:"'हाथ कंगन को आरसी क्या' लोकोक्ति का अर्थ है?",o:["हाथों में सुंदर गहने पहनना","प्रत्यक्ष बात के लिए किसी प्रमाण (सबूत) की आवश्यकता नहीं होती","शीशे में अपने हाथ देखना","सच को छुपाना बहुत मुश्किल है","इनमें से कोई नहीं"],a:1,e:"यह बहुत ही प्रसिद्ध लोकोक्ति है (पूरा वाक्य: 'हाथ कंगन को आरसी क्या, पढ़े-लिखे को फारसी क्या')। इसका अर्थ है जो बात प्रत्यक्ष या सामने हो, उसे सिद्ध करने के लिए किसी सबूत की जरूरत नहीं होती।",f:"Key Exam Fact: Considered a moderate-to-difficult question for candidates lacking foundational NCERT reading."},
+
+    // BATCH 3
+    {q:"'उल्टे उस्तरे से मूँड़ना' मुहावरे का सही अर्थ है?",o:["नाई द्वारा बाल काटना","किसी को पूरी तरह से ठगना या बेवकूफ बनाना","अपने ही हाथों अपना नुकसान करना","बहुत कठोर दंड देना","इनमें से कोई नहीं"],a:1,e:"'उल्टे उस्तरे से मूँड़ना' का अर्थ होता है किसी व्यक्ति को बहुत ही चालाकी से पूरी तरह ठग लेना या उसे मूर्ख बनाकर उसका सर्वस्व लूट लेना।",f:"Key Exam Fact: This phrase highlights cunning deception and is highly rated in UPSSSC exams for vocabulary depth."},
+    {q:"'एक आँख से देखना' मुहावरे का अर्थ क्या है?",o:["काना होना (एक आँख ख़राब होना)","सबको एक समान या बराबर समझना (समदर्शी होना)","किसी एक पक्ष का ही समर्थन करना","बहुत ध्यानपूर्वक किसी को घूरना","इनमें से कोई नहीं"],a:1,e:"'एक आँख से देखना' का अर्थ है किसी के साथ भेदभाव न करना और सभी को एक समान दृष्टि से देखना (समान व्यवहार करना)।",f:"Key Exam Fact: Frequently asked in questions testing positive behavioral idioms in competitive Hindi."},
+    {q:"'औंधे मुँह गिरना' मुहावरे का अर्थ है?",o:["मुँह के बल ज़मीन पर गिरना","किसी कार्य में अचानक भारी धोखा खाना या असफल होना","बहुत अधिक थक कर सो जाना","किसी का अपमान करना","इनमें से कोई नहीं"],a:1,e:"'औंधे मुँह गिरना' का अर्थ है किसी कार्य या योजना में अचानक और बुरी तरह से विफल होना या धोखा खाना।",f:"Key Exam Fact: Common in UP Lekhpal and PET comprehension passages related to failure or business loss."},
+    {q:"'कूप मण्डूक होना' मुहावरे का सही अर्थ है?",o:["कुएँ के अंदर रहने वाला मेंढक","बहुत गहरा और रहस्यमयी होना","अत्यंत सीमित ज्ञान या अनुभव होना","बहुत अधिक शोर मचाना","इनमें से कोई नहीं"],a:2,e:"'कूप मण्डूक' (कुएँ का मेंढक) उस व्यक्ति को कहा जाता है जिसका ज्ञान या अनुभव बहुत सीमित हो और जो बाहरी दुनिया के बारे में कुछ न जानता हो।",f:"Key Exam Fact: A classic NCERT standard idiom; a staple for UP State exam objective tests."},
+    {q:"'खटाई में पड़ना' मुहावरे का अर्थ क्या है?",o:["स्वाद में बहुत खट्टा होना","कार्य में व्यवधान आना या काम अनिश्चित काल के लिए टल जाना","अचार बनाने की प्रक्रिया","किसी बात पर बहुत अधिक बहस होना","इनमें से कोई नहीं"],a:1,e:"'खटाई में पड़ना' का अर्थ है किसी काम में अड़चन आ जाना जिससे वह काम लटक जाए या अनिश्चित समय के लिए टल जाए।",f:"Key Exam Fact: Very relevant for bureaucratic or administrative context questions in UPSSSC exams."},
+    {q:"'खरी-खोटी सुनाना' मुहावरे का अर्थ है?",o:["सच्ची बातें कहना","बिना सोचे समझे बोलना","भला-बुरा कहना या कठोर शब्दों में निंदा करना","किसी को उपदेश देना","इनमें से कोई नहीं"],a:2,e:"'खरी-खोटी सुनाना' का तात्पर्य है किसी पर बहुत क्रोधित होकर उसे भला-बुरा कहना या डाँटना-फटकारना।",f:"Key Exam Fact: Tests standard everyday vocabulary used in rural and urban Hindi dialogues."},
+    {q:"'खाक छानना' मुहावरे का अर्थ है?",o:["मिट्टी साफ करना","दर-दर भटकना या मारे-मारे फिरना","बहुत गहरा अध्ययन करना","पुरानी चीज़ों को इकट्ठा करना","इनमें से कोई नहीं"],a:1,e:"'खाक छानना' का अर्थ है किसी चीज़ की तलाश में या नौकरी आदि के लिए दर-दर की ठोकरें खाना या व्यर्थ में भटकना।",f:"Key Exam Fact: A common expression reflecting struggle, widely used in Hindi essay topics and objective tests."},
+    {q:"'गुलछर्रे उड़ाना' मुहावरे का अर्थ क्या है?",o:["हवा में फूल उछालना","मौज-मस्ती करना या व्यर्थ में आनंद लूटना","बहुत अधिक धन कमाना","किसी बात पर जोर-जोर से हँसना","इनमें से कोई नहीं"],a:1,e:"'गुलछर्रे उड़ाना' का अर्थ है बिना किसी चिंता के ऐशो-आराम की ज़िंदगी जीना और मौज-मस्ती करना।",f:"Key Exam Fact: Appears in exams to test the understanding of colloquial idioms denoting extravagance."},
+    {q:"'घी के दीये जलाना' मुहावरे का अर्थ है?",o:["मंदिर में पूजा करना","बहुत अधिक धन खर्च करना","अप्रत्याशित खुशी या आनंद मनाना","दीवाली का त्योहार मनाना","इनमें से कोई नहीं"],a:2,e:"'घी के दीये जलाना' का अर्थ है बहुत अधिक प्रसन्नता व्यक्त करना या खुशी मनाना, विशेषकर जब कोई बहुत बड़ी सफलता या अच्छी खबर मिले।",f:"Key Exam Fact: Essential cultural idiom frequently tested during the festival season in state exams."},
+    {q:"'चाँदी का जूता मारना' मुहावरे का सही अर्थ क्या है?",o:["बहुत कीमती जूता पहनना","रिश्वत देना या धन के बल पर अपना काम करवाना","किसी को बहुत अपमानित करना","दिखावा करना","इनमें से कोई नहीं"],a:1,e:"'चाँदी का जूता मारना' का अर्थ है पैसे का घमंड दिखाना या धन का प्रलोभन (रिश्वत) देकर किसी से अपना अनुचित काम निकलवाना।",f:"Key Exam Fact: A high-frequency idiom relating to corruption and administration, perfect for UPSSSC questions."},
+    {q:"'चेहरे पर हवाइयाँ उड़ना' मुहावरे का अर्थ है?",o:["बहुत तेज़ हवा चलना","अचानक डर या घबराहट से चेहरे का रंग उड़ जाना","हवाई जहाज़ की यात्रा करना","बहुत अधिक खुशी से चेहरा खिल उठना","इनमें से कोई नहीं"],a:1,e:"'चेहरे पर हवाइयाँ उड़ना' का प्रयोग तब होता है जब कोई व्यक्ति अचानक किसी डर, घबराहट या शर्मिंदगी के कारण बदहवास हो जाए और उसके चेहरे का रंग फीका पड़ जाए।",f:"Key Exam Fact: Tests the candidate's grasp of physical expression idioms (Body-part idioms)."},
+    {q:"'छक्के छूटना' मुहावरे का सही अर्थ है?",o:["बहुत खुश हो जाना","खेल में हार जाना","बुरी तरह घबरा जाना या हिम्मत हार जाना","भारी नुकसान होना","इनमें से कोई नहीं"],a:2,e:"'छक्के छूटना' का अर्थ है भय, संकट या कठिन परिस्थिति के कारण बुरी तरह घबरा जाना और होश उड़ जाना (साहस टूट जाना)।",f:"Key Exam Fact: Candidates must carefully distinguish this from 'छक्के छुड़ाना' (बुरी तरह हराना) which means to defeat someone."},
+    {q:"'जहर का घूँट पीना' मुहावरे का अर्थ क्या है?",o:["विषपान करना","अत्यंत कड़वी दवाई पीना","अपमान या दुःख को चुपचाप सहन कर लेना","गुस्से में आकर किसी को मारना","इनमें से कोई नहीं"],a:2,e:"'जहर का घूँट पीना' का अर्थ है किसी बड़े अपमान, कड़वी बात या अन्याय को बिना किसी प्रतिक्रिया के चुपचाप सह लेना।",f:"Key Exam Fact: Important behavioral idiom often used in reading comprehension sections."},
+    {q:"'टाँग अड़ाना' मुहावरे का अर्थ है?",o:["किसी को गिराने का प्रयास करना","किसी के काम में अकारण बाधा या रुकावट डालना","किसी की मदद करना","अपनी बात मनवाने की जिद करना","इनमें से कोई नहीं"],a:1,e:"'टाँग अड़ाना' का अर्थ होता है किसी दूसरे के बनते हुए काम में बिना वजह रुकावट डालना या दखल देना।",f:"Key Exam Fact: Frequently asked in lower subordinate services to evaluate understanding of negative action phrases."},
+    {q:"'डंके की चोट पर कहना' मुहावरे का अर्थ है?",o:["डंडा मारकर बात मनवाना","ढोल-नगाड़े बजाना","सबके सामने स्पष्ट और निर्भय होकर कोई बात कहना","बहुत शोर करके बोलना","इनमें से कोई नहीं"],a:2,e:"'डंके की चोट पर कहना' का तात्पर्य है किसी बात को बिना किसी डर या झिझक के खुलेआम, स्पष्टता और विश्वास के साथ सबके सामने रखना।",f:"Key Exam Fact: Denotes confidence and assertiveness; common in general Hindi proficiency tests."},
+    {q:"'तलवार की धार पर चलना' मुहावरे का सही अर्थ है?",o:["बहुत बड़ा करतब दिखाना","अत्यंत कठिन और जोखिम भरा कार्य करना","युद्ध की तैयारी करना","किसी को चुनौती देना","इनमें से कोई नहीं"],a:1,e:"'तलवार की धार पर चलना' का अर्थ है ऐसा कार्य करना जो बहुत ही कठिन, चुनौतीपूर्ण और खतरों (जोखिम) से भरा हो।",f:"Key Exam Fact: Classic UP Board vocabulary representing bravery or extremely perilous situations."},
+    {q:"'तूती बोलना' मुहावरे का अर्थ है?",o:["बहुत मीठा बोलना","किसी वाद्य यंत्र का बजना","अत्यधिक प्रभाव या दबदबा होना","लगातार बोलते रहना","इनमें से कोई नहीं"],a:2,e:"'तूती बोलना' का अर्थ है समाज या क्षेत्र में किसी व्यक्ति का बहुत अधिक प्रभाव, यश या दबदबा (रुतबा) होना।",f:"Key Exam Fact: Essential for UPSSSC PET, denoting authority or fame in administrative or social contexts."},
+    {q:"'थूक कर चाटना' मुहावरे का सही अर्थ है?",o:["अत्यंत घिनौना कार्य करना","अपनी कही हुई बात या वादे से मुकर जाना","किसी से बहुत अधिक प्रेम करना","बार-बार एक ही गलती दोहराना","इनमें से कोई नहीं"],a:1,e:"'थूक कर चाटना' मुहावरे का प्रयोग तब किया जाता है जब कोई व्यक्ति अपना वादा तोड़ दे या अपनी ही कही हुई बात से पलट जाए।",f:"Key Exam Fact: Strong negative idiom often used in matching (मिलान) questions in state exams."},
+    {q:"'दाँतों तले उंगली दबाना' मुहावरे का अर्थ क्या है?",o:["दांत में बहुत तेज़ दर्द होना","भूख के मारे बेहाल हो जाना","अत्यधिक आश्चर्यचकित या चकित होना","कोई बहुत बड़ा अपराध करना","इनमें से कोई नहीं"],a:2,e:"'दाँतों तले उंगली दबाना' का अर्थ है किसी अद्भुत या अप्रत्याशित बात को देखकर बहुत अधिक हैरान या आश्चर्यचकित रह जाना।",f:"Key Exam Fact: Frequently tests the candidate's understanding of body-language-related metaphors."},
+    {q:"'पापड़ बेलना' मुहावरे का अर्थ है?",o:["खाना बनाने का काम करना","जीवन में बहुत कठिन संघर्ष करना या मुसीबतें उठाना","खाली समय बर्बाद करना","छोटे-मोटे काम करना","इनमें से कोई नहीं"],a:1,e:"'पापड़ बेलना' का तात्पर्य है किसी लक्ष्य को पाने के लिए बहुत अधिक कठिनाइयों का सामना करना या कड़ा संघर्ष करना। (जैसे- नौकरी पाने के लिए बहुत पापड़ बेलने पड़ते हैं।)",f:"Key Exam Fact: Relatable everyday proverb heavily favored by UPSSSC paper setters."},
+    {q:"'बाल-बाल बचना' मुहावरे का सही अर्थ है?",o:["बालों को झड़ने से रोकना","किसी भयंकर खतरे या संकट से बहुत मुश्किल से (थोड़े से अंतर से) बचना","किसी पर पूरा दोष लगा देना","बहुत चालाकी दिखाना","इनमें से कोई नहीं"],a:1,e:"'बाल-बाल बचना' का अर्थ है किसी बड़े खतरे, दुर्घटना या संकट से अत्यंत सूक्ष्म अंतर (मार्जिन) से सुरक्षित निकल जाना।",f:"Key Exam Fact: Very common expression used to test basic situational understanding in Hindi."},
+    {q:"'भैंस के आगे बीन बजाना' लोकोक्ति का अर्थ है?",o:["जानवरों से प्रेम करना","मूर्ख व्यक्ति के सामने ज्ञान या समझदारी की बातें करना","संगीत का अभ्यास करना","किसी का अपमान करना","इनमें से कोई नहीं"],a:1,e:"'भैंस के आगे बीन बजाना' का अर्थ है किसी ऐसे व्यक्ति को उपदेश देना या समझाना जो बिल्कुल मूर्ख हो और जिसे अच्छी बात की कोई कद्र न हो।",f:"Key Exam Fact: High-priority classic proverb for UP Lekhpal and PET syllabus."},
+    {q:"'मुँह में पानी आना' मुहावरे का अर्थ है?",o:["मुँह में छाले हो जाना","बहुत जोर से प्यास लगना","किसी अच्छी चीज़ को देखकर ललचा जाना या लालच आना","बहुत अधिक बोलना","इनमें से कोई नहीं"],a:2,e:"'मुँह में पानी आना' का अर्थ है किसी स्वादिष्ट वस्तु या अच्छी चीज़ को देखकर मन में तीव्र इच्छा या लालच पैदा होना।",f:"Key Exam Fact: Basic physiological idiom tested in lower difficulty spectrums of UP state exams."},
+    {q:"'रंग में भंग पड़ना' मुहावरे का अर्थ क्या है?",o:["होली के त्योहार में लड़ाई हो जाना","रंगों का आपस में मिल जाना","खुशी या उत्साह के माहौल में अचानक बाधा या विघ्न आ जाना","रंगमंच पर नाटक का समाप्त होना","इनमें से कोई नहीं"],a:2,e:"'रंग में भंग पड़ना' का अर्थ है उल्लास, खुशी या उत्सव के समय अचानक कोई अप्रिय घटना या बाधा उत्पन्न हो जाना जिससे मज़ा किरकिरा हो जाए।",f:"Key Exam Fact: Tests understanding of contextual rhyming phrases in standard Hindi grammar."},
+    {q:"'हथेली पर सरसों जमाना' मुहावरे का अर्थ है?",o:["खेती-किसानी का काम करना","असंभव कार्य को तुरंत कर दिखाने का प्रयास करना","बहुत अधिक जल्दबाजी करना","जादू टोना दिखाना","इनमें से कोई नहीं"],a:1,e:"'हथेली पर सरसों जमाना' का तात्पर्य है किसी ऐसे काम को तुरंत और बहुत जल्दी पूरा करने की कोशिश करना जो असंभव हो या जिसमें काफी समय लगता हो।",f:"Key Exam Fact: Essential idiom for assessing patience and impossibility themes in objective Hindi."},
+
+    // BATCH 4
+    {q:"'आसमान से बातें करना' मुहावरे का सही अर्थ है?",o:["कल्पना में खोए रहना","बहुत अधिक ऊँचा होना","हवा में उड़ान भरना","अत्यधिक शोर मचाना","इनमें से कोई नहीं"],a:1,e:"'आसमान से बातें करना' का अर्थ है किसी वस्तु (जैसे इमारत या पहाड़) का बहुत अधिक ऊँचा होना। (जैसे- मुंबई की इमारतें आसमान से बातें करती हैं।)",f:"Key Exam Fact: Often confused with 'हवा से बातें करना' (बहुत तेज़ दौड़ना). UPSSSC asks this to test fine distinctions."},
+    {q:"'गले का हार होना' मुहावरे का अर्थ है?",o:["गले में पहनने वाला आभूषण","गले में दर्द होना","किसी का अत्यंत प्रिय होना","किसी पर बोझ बन जाना","इनमें से कोई नहीं"],a:2,e:"'गले का हार होना' का अर्थ है किसी का बहुत अधिक दुलारा या अत्यंत प्रिय होना।",f:"Key Exam Fact: A classic NCERT phrase reflecting affection, regularly seen in Group C vocabulary sections."},
+    {q:"'घाट-घाट का पानी पीना' लोकोक्ति का सही अर्थ क्या है?",o:["हर तीर्थ स्थान की यात्रा करना","बहुत अधिक अनुभवी और होशियार होना","अत्यधिक प्यास लगना","अलग-अलग नदियों का जल चखना","इनमें से कोई नहीं"],a:1,e:"'घाट-घाट का पानी पीना' उस व्यक्ति के लिए प्रयुक्त होता है जिसने दुनिया के बहुत से अनुभव प्राप्त किए हों और जो बहुत अनुभवी तथा चालाक हो।",f:"Key Exam Fact: Very frequent in UP State examinations to describe seasoned or shrewd individuals."},
+    {q:"'टूट पड़ना' मुहावरे का अर्थ है?",o:["किसी चीज़ का अचानक टूट जाना","बहुत जोर से रोना","अचानक और ज़ोरदार हमला कर देना","आसमान से गिरना","इनमें से कोई नहीं"],a:2,e:"'टूट पड़ना' का अर्थ है किसी पर अचानक और पूरी ताकत के साथ आक्रमण या हमला कर देना।",f:"Key Exam Fact: Commonly found in historical reading comprehension passages in the PET exam."},
+    {q:"'टोपी उछालना' मुहावरे का अर्थ है?",o:["खुशी से झूमना","किसी का सरेआम अपमान करना या बेइज्जती करना","हवा में अपनी टोपी फेंकना","किसी को सम्मान देना","इनमें से कोई नहीं"],a:1,e:"'टोपी उछालना' का अर्थ है समाज या सभा में किसी की पगड़ी/टोपी उछालना अर्थात उसे सरेआम अपमानित करना।",f:"Key Exam Fact: Denotes loss of honor (इज्जत) and is heavily tested in UP Board Hindi grammar."},
+    {q:"'ठगा सा रह जाना' मुहावरे का अर्थ क्या है?",o:["पैसे चोरी हो जाना","आश्चर्यचकित या हतप्रभ रह जाना","किसी को धोखा देना","चुपचाप सब कुछ सह लेना","इनमें से कोई नहीं"],a:1,e:"'ठगा सा रह जाना' का अर्थ है किसी अप्रत्याशित घटना को देखकर अवाक (स्तब्ध) या अत्यधिक आश्चर्यचकित रह जाना।",f:"Key Exam Fact: Important expression used to show shock or disbelief in descriptive passages."},
+    {q:"'डूबते को तिनके का सहारा' लोकोक्ति का अर्थ है?",o:["पानी में डूब जाना","भारी विपत्ति में थोड़ी सी मदद भी बहुत होती है","नाव से नदी पार करना","तिनके से नाव बनाना","इनमें से कोई नहीं"],a:1,e:"जब कोई व्यक्ति बहुत बड़ी मुसीबत या संकट में हो, तो उस समय उसे मिलने वाली एक छोटी सी सहायता भी बहुत बड़ी जान पड़ती है।",f:"Key Exam Fact: One of the most fundamental proverbs in Hindi literature, a strict standard for PET."},
+    {q:"'ढिंढोरा पीटना' मुहावरे का अर्थ है?",o:["ढोल-नगाड़े बजाना","किसी बात का बहुत अधिक प्रचार करना या सबको बता देना","किसी की बहुत अधिक पिटाई करना","झूठी बातें गढ़ना","इनमें से कोई नहीं"],a:1,e:"'ढिंढोरा पीटना' का तात्पर्य है किसी बात या खबर को छिपाने के बजाय उसे बढ़ा-चढ़ाकर सबके सामने प्रचारित कर देना।",f:"Key Exam Fact: Regularly appears in UP Police and UPSSSC exams regarding communication idioms."},
+    {q:"'तारे गिनना' मुहावरे का सही अर्थ है?",o:["बहुत बड़ा खगोलशास्त्री होना","रात भर नींद न आना या बेचैनी में रात काटना","आसमान की ओर देखना","किसी की प्रतीक्षा में खड़े रहना","इनमें से कोई नहीं"],a:1,e:"'तारे गिनना' का प्रयोग तब किया जाता है जब व्यक्ति किसी दुःख, चिंता या बेचैनी के कारण रात भर सो नहीं पाता और जागकर रात गुजारता है।",f:"Key Exam Fact: Evaluates candidate's understanding of poetic/emotional idiomatic expressions."},
+    {q:"'थाह लेना' मुहावरे का अर्थ क्या है?",o:["समुद्र की गहराई मापना","किसी के मन की बात या रहस्य जान लेना","किसी को बहुत गहराई तक मारना","ज़मीन खरीदना","इनमें से कोई नहीं"],a:1,e:"'थाह लेना' का अर्थ है किसी व्यक्ति के मन के विचारों, उसके भेदों या उसकी वास्तविकता का पता लगा लेना।",f:"Key Exam Fact: Crucial idiom for vocabulary sections testing psychological depth."},
+    {q:"'दाल न गलना' मुहावरे का अर्थ है?",o:["दाल का कच्चा रह जाना","युक्ति सफल न होना या अपना मतलब पूरा न होना","अत्यधिक महँगाई होना","स्वादिष्ट भोजन न मिलना","इनमें से कोई नहीं"],a:1,e:"'दाल न गलना' का अर्थ है किसी काम को करने की योजना या चाल का विफल हो जाना और मकसद पूरा न हो पाना।",f:"Key Exam Fact: Extremely common in daily vernacular and frequently featured in state-level MCQs."},
+    {q:"'धूल में मिलाना' मुहावरे का अर्थ है?",o:["गंदगी फैलाना","पूरी तरह नष्ट कर देना या बर्बाद कर देना","किसी बात को भूल जाना","ज़मीन पर लेटना","इनमें से कोई नहीं"],a:1,e:"'धूल में मिलाना' या 'खाक में मिलाना' का अर्थ है किसी चीज़, प्रतिष्ठा या व्यक्ति को पूरी तरह से समाप्त कर देना।",f:"Key Exam Fact: Standard combative idiom akin to 'ईंट से ईंट बजाना'."},
+    {q:"'नहले पर दहला मारना' मुहावरे का सही अर्थ है?",o:["ताश का खेल खेलना","किसी की चाल का करारा और बढ़कर जवाब देना","धोखा देकर पैसे लूटना","किसी को बेवकूफ समझना","इनमें से कोई नहीं"],a:1,e:"'नहले पर दहला मारना' का तात्पर्य है किसी व्यक्ति की चालाकी या चाल का उससे भी बड़ी चालाकी से मुँहतोड़ जवाब देना।",f:"Key Exam Fact: Tested to check candidate's grasp on idioms originating from local games/culture."},
+    {q:"'पगड़ी उछालना' मुहावरे का अर्थ क्या है?",o:["पगड़ी को हवा में फेंकना","किसी की इज़्ज़त उतारना या सरेआम अपमानित करना","खुशी मनाना","सम्मान के साथ स्वागत करना","इनमें से कोई नहीं"],a:1,e:"पगड़ी को सम्मान का प्रतीक माना जाता है। इसलिए 'पगड़ी उछालना' का अर्थ है किसी व्यक्ति की प्रतिष्ठा को नष्ट करना या उसे बेइज्जत करना।",f:"Key Exam Fact: Deeply rooted in rural Indian culture, making it highly relevant for UP Lekhpal/VDO exams."},
+    {q:"'फूंक-फूंक कर कदम रखना' मुहावरे का अर्थ है?",o:["बहुत धीरे-धीरे चलना","अत्यंत सावधानी और विचार-विमर्श करके कार्य करना","गरम चीज़ पर पैर रखना","डरपोक होना","इनमें से कोई नहीं"],a:1,e:"'फूंक-फूंक कर कदम रखना' का अर्थ है किसी भी कार्य को जल्दबाजी में न करके, हर पहलू पर बहुत सावधानी से सोच-विचार कर करना।",f:"Key Exam Fact: Often used in sentence correction exercises."},
+    {q:"'बगुला भगत होना' मुहावरे का अर्थ है?",o:["बहुत बड़ा साधु या संत होना","ढोंगी, पाखंडी या कपटी व्यक्ति होना","बगुले की तरह ध्यान लगाना","भगवान की सच्ची भक्ति करना","इनमें से कोई नहीं"],a:1,e:"बगुला पानी में ध्यान मग्न होने का नाटक करता है और मछली आते ही उसे खा जाता है। इसी तरह 'बगुला भगत' उस व्यक्ति को कहते हैं जो ऊपर से सज्जन दिखता है पर अंदर से कपटी होता है।",f:"Key Exam Fact: A vital animal-based idiom used to test behavioral descriptors."},
+    {q:"'भण्डा फूटना' मुहावरे का सही अर्थ है?",o:["मटका टूट जाना","किसी गुप्त रहस्य या साजिश का पर्दाफाश हो जाना","अचानक बहुत गुस्सा आना","बहुत ज़ोर से आवाज़ आना","इनमें से कोई नहीं"],a:1,e:"'भण्डा फूटना' (या भंडाफोड़ होना) का अर्थ है किसी व्यक्ति के छिपे हुए भेद, बुरे कार्यों या किसी राज़ का सबके सामने उजागर हो जाना।",f:"Key Exam Fact: Very frequent in news reading and standard Hindi comprehension tests."},
+    {q:"'मुट्ठी गर्म करना' मुहावरे का अर्थ क्या है?",o:["आग से हाथ सेंकना","अपना काम निकालने के लिए किसी को रिश्वत (घूस) देना","बहुत अधिक क्रोधित होना","किसी को पीटने की तैयारी करना","इनमें से कोई नहीं"],a:1,e:"'मुट्ठी गर्म करना' मुहावरे का अर्थ है भ्रष्टाचार करना या गैरकानूनी काम करवाने के लिए किसी अधिकारी को पैसे (रिश्वत) देना।",f:"Key Exam Fact: High relevance in UPSSSC exams testing bureaucratic and social vocabulary."},
+    {q:"'रंगा सियार होना' मुहावरे का अर्थ है?",o:["होली के रंग में रंगा होना","बहुत सुंदर दिखाई देना","ऊपर से सज्जन दिखने वाला धोखेबाज और धूर्त व्यक्ति","किसी जंगली जानवर का शिकार करना","इनमें से कोई नहीं"],a:2,e:"'रंगा सियार' पंचतंत्र की कहानी से लिया गया मुहावरा है, जिसका अर्थ है वह व्यक्ति जो अपने असल रूप (बुराई) को छिपाकर अच्छा होने का ढोंग करता है।",f:"Key Exam Fact: A classic moral story idiom that candidates are expected to know from NCERT Hindi."},
+    {q:"'लोहा मानना' मुहावरे का सही अर्थ है?",o:["लोहे के हथियार बनाना","किसी की शक्ति, श्रेष्ठता या बहादुरी को स्वीकार कर लेना","बहुत कठोर हृदय का होना","हार मानकर भाग जाना","इनमें से कोई नहीं"],a:1,e:"'लोहा मानना' का तात्पर्य है किसी दूसरे व्यक्ति की वीरता, सामर्थ्य या श्रेष्ठता को हृदय से स्वीकार कर लेना।",f:"Key Exam Fact: Essential patriotic/historical idiom frequent in UP Board grammar books."},
+    {q:"'सब्ज़बाग दिखाना' मुहावरे का अर्थ क्या है?",o:["हरे-भरे बगीचे की सैर कराना","झूठे और बड़े-बड़े प्रलोभन देकर धोखा देना","बहुत अधिक उम्मीदें लगाना","प्रकृति से प्रेम करना","इनमें से कोई नहीं"],a:1,e:"'सब्ज़बाग दिखाना' का अर्थ है किसी व्यक्ति को बड़ी-बड़ी झूठी आशाएं या लालच देकर अपने जाल में फंसाना और धोखा देना।",f:"Key Exam Fact: A very standard and slightly advanced idiom regularly checked in UPSSSC PET."},
+    {q:"'हथियार डाल देना' मुहावरे का अर्थ है?",o:["अस्त्र-शस्त्र ज़मीन पर रख देना","शत्रु के सामने हार मान लेना या आत्मसमर्पण करना","नया हथियार खरीदना","युद्ध की तैयारी करना","इनमें से कोई नहीं"],a:1,e:"'हथियार डाल देना' का अर्थ है मुकाबले में अपनी हार स्वीकार कर लेना और दुश्मन के सामने आत्मसमर्पण (Surrender) कर देना।",f:"Key Exam Fact: Important for military and historical context paragraphs."},
+    {q:"'हवा लगना' मुहावरे का अर्थ है?",o:["तेज़ आंधी आना","गर्मी में हवा का आनंद लेना","किसी बुरी संगति या वातावरण का असर पड़ना","बहुत तेज़ दौड़ना","इनमें से कोई नहीं"],a:2,e:"'हवा लगना' मुहावरे का प्रयोग तब होता है जब किसी व्यक्ति पर किसी नए स्थान, समाज या बुरी संगत का प्रभाव (असर) पड़ने लगता है।",f:"Key Exam Fact: Commonly used in sentences requiring contextual fill-in-the-blanks."},
+    {q:"'हाथ पाँव मारना' मुहावरे का सही अर्थ है?",o:["पानी में तैरना","किसी से लड़ाई-झगड़ा करना","किसी काम को पूरा करने के लिए बहुत अधिक प्रयास और संघर्ष करना","क्रोध में आकर चीजें तोड़ना","इनमें से कोई नहीं"],a:2,e:"'हाथ पाँव मारना' का अर्थ है किसी लक्ष्य की प्राप्ति या संकट से निकलने के लिए अपनी पूरी ताकत लगाकर कोशिश (प्रयास) करना।",f:"Key Exam Fact: Strongly aligned with the candidate's own struggle/preparation context."},
+    {q:"'सिर मुंडाते ही ओले पड़ना' लोकोक्ति का अर्थ है?",o:["बाल कटवाते ही बारिश होना","काम शुरू होते ही उसमें भारी विघ्न या रुकावट आ जाना","अचानक बहुत बड़ा नुकसान हो जाना","किसी काम में बहुत अधिक लाभ होना","इनमें से कोई नहीं"],a:1,e:"इस लोकोक्ति का अर्थ है जैसे ही किसी कार्य का शुभारंभ किया गया, वैसे ही तुरंत शुरुआत में कोई बड़ी बाधा या विपत्ति आ खड़ी होना।",f:"Key Exam Fact: A premium-level proverb heavily favored by examiners for its distinct cultural imagery."}
+];
+
+const TOTAL_QUESTIONS = questionBank.length; // 100
+const labels = ['A', 'B', 'C', 'D', 'E'];
+
+// State tracking
+let currentIndex = 0;
+let userAnswers = Array.from({length: TOTAL_QUESTIONS}, () => ({
+    visited: false,
+    answered: false,
+    correct: false,
+    skipped: false,
+    review: false,
+    selectedIdx: -1
+}));
+
+// DOM Elements
+const qCounter = document.getElementById('qCounter');
+const qStem = document.getElementById('qStem');
+const optionsContainer = document.getElementById('optionsContainer');
+const explanationCard = document.getElementById('explanationCard');
+const liveScore = document.getElementById('liveScore');
+const btnNext = document.getElementById('btnNext');
+const paletteModal = document.getElementById('paletteModal');
+const paletteGrid = document.getElementById('paletteGrid');
+const questionContainer = document.getElementById('questionContainer');
+const dashboard = document.getElementById('dashboard');
+
+// Init
+function init() {
+    renderPaletteGrid();
+    loadQuestion(0);
+}
+
+function loadQuestion(index) {
+    currentIndex = index;
+    const qData = questionBank[index];
+    const state = userAnswers[index];
+    
+    // Mark visited
+    if (!state.visited) state.visited = true;
+
+    // Update UI
+    qCounter.innerText = `Question ${index + 1} of ${TOTAL_QUESTIONS}`;
+    qStem.innerText = qData.q;
+    
+    // Render Options
+    optionsContainer.innerHTML = '';
+    qData.o.forEach((optText, i) => {
+        const optCard = document.createElement('div');
+        optCard.className = 'option-card';
+        if(state.answered) optCard.classList.add('locked');
+        
+        // Restore previous answer visuals
+        if(state.answered) {
+            if(i === qData.a) {
+                optCard.classList.add('correct-opt');
+            } else if (i === state.selectedIdx && i !== qData.a) {
+                optCard.classList.add('incorrect-opt');
+            }
+        }
+
+        optCard.innerHTML = `<div class="opt-badge">${labels[i]}</div><div>${optText}</div>`;
+        
+        if(!state.answered) {
+            optCard.onclick = () => selectOption(i);
+        }
+        
+        optionsContainer.appendChild(optCard);
+    });
+
+    // Handle Explanation Card
+    if(state.answered) {
+        showExplanation(qData);
+    } else {
+        explanationCard.classList.remove('active');
+    }
+
+    // Button state
+    if (index === TOTAL_QUESTIONS - 1) {
+        btnNext.innerText = "Finish Test ➔";
+    } else {
+        btnNext.innerText = "Next Question ➔";
+    }
+
+    updatePaletteVisuals();
+}
+
+function selectOption(selectedIdx) {
+    const qData = questionBank[currentIndex];
+    const state = userAnswers[currentIndex];
+    
+    if(state.answered) return; // Prevent double click
+
+    const isCorrect = (selectedIdx === qData.a);
+    state.answered = true;
+    state.correct = isCorrect;
+    state.selectedIdx = selectedIdx;
+    state.skipped = false;
+    state.review = false;
+
+    updateScore();
+    loadQuestion(currentIndex); // re-render to show correct/incorrect styling and lock
+}
+
+function showExplanation(qData) {
+    document.getElementById('expText').innerText = qData.e;
+    document.getElementById('expFact').innerText = qData.f;
+    explanationCard.classList.add('active');
+}
+
+function actionSkip() {
+    const state = userAnswers[currentIndex];
+    if(!state.answered) {
+        state.skipped = true;
+        state.review = false;
+        updatePaletteVisuals();
+        nextQuestion();
+    }
+}
+
+function actionReview() {
+    const state = userAnswers[currentIndex];
+    state.review = !state.review; // Toggle review
+    updatePaletteVisuals();
+}
+
+function nextQuestion() {
+    if (currentIndex < TOTAL_QUESTIONS - 1) {
+        loadQuestion(currentIndex + 1);
+    } else {
+        finishTest();
+    }
+}
+
+function updateScore() {
+    let correctCount = 0;
+    let incorrectCount = 0;
+
+    userAnswers.forEach(ans => {
+        if(ans.answered) {
+            if(ans.correct) correctCount++;
+            else incorrectCount++;
+        }
+    });
+
+    const netScore = (correctCount * 1.0) - (incorrectCount * 0.25);
+    liveScore.innerText = netScore.toFixed(2);
+}
+
+// Palette Functions
+function togglePalette(show) {
+    if (show) {
+        paletteModal.classList.add('active');
+    } else {
+        paletteModal.classList.remove('active');
+    }
+}
+
+function renderPaletteGrid() {
+    paletteGrid.innerHTML = '';
+    for(let i=0; i<TOTAL_QUESTIONS; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'q-btn bg-not-visited';
+        btn.innerText = i + 1;
+        btn.id = `palBtn-${i}`;
+        btn.onclick = () => {
+            loadQuestion(i);
+            togglePalette(false);
+        };
+        paletteGrid.appendChild(btn);
+    }
+}
+
+function updatePaletteVisuals() {
+    userAnswers.forEach((state, i) => {
+        const btn = document.getElementById(`palBtn-${i}`);
+        if(!btn) return;
+        
+        btn.className = 'q-btn'; // reset
+        
+        if(state.review) {
+            btn.classList.add('bg-review');
+        } else if (state.answered) {
+            if(state.correct) btn.classList.add('bg-correct');
+            else btn.classList.add('bg-incorrect');
+        } else if (state.skipped) {
+            btn.classList.add('bg-skipped');
+        } else if (state.visited) {
+            btn.classList.add('bg-unanswered');
+        } else {
+            btn.classList.add('bg-not-visited');
+        }
+    });
+}
+
+function finishTest() {
+    questionContainer.style.display = 'none';
+    dashboard.style.display = 'block';
+    
+    let c = 0, ic = 0;
+    userAnswers.forEach(ans => {
+        if(ans.answered) {
+            if(ans.correct) c++;
+            else ic++;
+        }
+    });
+
+    const finalScore = (c * 1.0) - (ic * 0.25);
+    document.getElementById('dashScore').innerText = finalScore.toFixed(2);
+    document.getElementById('dashCorrect').innerText = c;
+    document.getElementById('dashIncorrect').innerText = ic;
+}
+
+// Start Simulator
+init();
+</script>
+</body>
+</html>

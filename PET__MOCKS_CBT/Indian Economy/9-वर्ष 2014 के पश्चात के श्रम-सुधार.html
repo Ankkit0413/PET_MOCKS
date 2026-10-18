@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSSSC PET CBT Simulator - श्रम-सुधार (100 Questions)</title>
+<style>
+  :root {
+    --bg-main: #121316;
+    --card-bg: #1e2024;
+    --card-border: #2c2f36;
+    --text-primary: #f0f2f5;
+    --text-secondary: #9ba1a6;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --correct-bg: rgba(16, 185, 129, 0.2);
+    --correct-border: #10b981;
+    --wrong-bg: rgba(239, 68, 68, 0.2);
+    --wrong-border: #ef4444;
+    --review-color: #a855f7;
+    --skipped-color: #64748b;
+    --unanswered-color: #f97316;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    padding: 12px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .exam-info h1 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .exam-info p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background-color: #272a30;
+    border: 1px solid var(--card-border);
+  }
+  .score-badge { color: #38bdf8; }
+
+  button.btn-palette {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  button.btn-palette:hover { background-color: var(--accent-hover); }
+
+  main {
+    flex: 1;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+  }
+
+  .card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .q-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 10px;
+  }
+  .q-number { font-size: 1rem; font-weight: 700; color: #38bdf8; }
+  .marking-scheme { font-size: 0.8rem; color: var(--text-secondary); }
+
+  .q-stem {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .q-stem-hi {
+    font-weight: 500;
+    color: #e2e8f0;
+    margin-top: 6px;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .option-card {
+    background-color: #272a30;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .option-card:hover:not(.locked) {
+    background-color: #32363e;
+    border-color: #4b5563;
+  }
+  .option-card.locked { cursor: default; }
+
+  .option-key {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #38bdf8;
+    min-width: 26px;
+  }
+  .option-text {
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .option-card.user-selected-wrong {
+    background-color: var(--wrong-bg) !important;
+    border-color: var(--wrong-border) !important;
+    color: #fca5a5;
+  }
+  .option-card.correct-answer {
+    background-color: var(--correct-bg) !important;
+    border-color: var(--correct-border) !important;
+    color: #86efac;
+  }
+
+  .explanation-card {
+    display: none;
+    background-color: #191c20;
+    border-left: 4px solid var(--accent);
+    padding: 18px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .explanation-card h4 {
+    font-size: 0.95rem;
+    color: #60a5fa;
+    margin-bottom: 8px;
+  }
+  .explanation-content {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .fact-badge {
+    background-color: #272a30;
+    border-left: 3px solid #f59e0b;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: #fde68a;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .bottom-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid var(--card-border);
+    padding-top: 18px;
+  }
+
+  .action-group-left, .action-group-right {
+    display: flex;
+    gap: 10px;
+  }
+
+  button.btn {
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  button.btn-prev { background-color: #374151; color: white; }
+  button.btn-prev:hover { background-color: #4b5563; }
+  button.btn-next { background-color: var(--accent); color: white; }
+  button.btn-next:hover { background-color: var(--accent-hover); }
+  button.btn-skip { background-color: transparent; border: 1px solid #4b5563; color: #d1d5db; }
+  button.btn-skip:hover { background-color: #2a2e35; }
+  button.btn-review { background-color: transparent; border: 1px solid #9333ea; color: #d8b4fe; }
+  button.btn-review:hover { background-color: rgba(147, 51, 234, 0.15); }
+
+  /* Slide-over Palette */
+  .palette-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 200;
+    display: none;
+    justify-content: flex-end;
+  }
+  .palette-drawer {
+    width: 380px;
+    max-width: 90vw;
+    background-color: var(--card-bg);
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.6);
+  }
+  .palette-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+  }
+  .palette-header h3 { font-size: 1.1rem; font-weight: 700; }
+  button.btn-close-palette {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    cursor: pointer;
+  }
+  button.btn-close-palette:hover { color: white; }
+
+  .palette-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 0.75rem;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .dot-correct { background-color: #10b981; }
+  .dot-incorrect { background-color: #ef4444; }
+  .dot-unanswered { background-color: var(--unanswered-color); }
+  .dot-skipped { background-color: var(--skipped-color); }
+  .dot-review { background-color: var(--review-color); }
+  .dot-notvisited { background-color: #374151; }
+
+  .palette-grid {
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    padding-right: 4px;
+  }
+  .palette-btn {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    border: 1px solid var(--card-border);
+    background-color: #272a30;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s;
+  }
+  .palette-btn:hover { transform: scale(1.05); }
+  .palette-btn.active { outline: 2px solid #38bdf8; outline-offset: 1px; }
+
+  .palette-btn.status-correct { background-color: #10b981; color: white; border-color: #059669; }
+  .palette-btn.status-incorrect { background-color: #ef4444; color: white; border-color: #dc2626; }
+  .palette-btn.status-unanswered { background-color: var(--unanswered-color); color: white; border-color: #ea580c; }
+  .palette-btn.status-skipped { background-color: var(--skipped-color); color: white; border-color: #475569; }
+  .palette-btn.status-review { background-color: var(--review-color); color: white; border-color: #9333ea; }
+  .palette-btn.status-notvisited { background-color: #272a30; color: #9ca3af; }
+
+  /* Finish / Score modal */
+  .finish-btn {
+    margin-top: 16px;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .finish-btn:hover { background-color: #059669; }
+
+  .report-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .report-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+  }
+  .report-card h2 { font-size: 1.5rem; margin-bottom: 8px; color: #38bdf8; }
+  .score-display {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #10b981;
+    margin: 16px 0;
+  }
+  .report-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+  .report-stat-box {
+    background: #272a30;
+    padding: 10px 14px;
+    border-radius: 6px;
+  }
+  .report-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="exam-info">
+    <h1>UPSSSC PET - वर्ष 2014 के पश्चात के श्रम-सुधार</h1>
+    <p>100 Questions | Single-Choice CBT Engine (+1.00 / -0.25)</p>
+  </div>
+  <div class="header-actions">
+    <div class="badge" id="qCounterBadge">Question 1 of 100</div>
+    <div class="badge score-badge" id="scoreBadge">Net Score: 0.00</div>
+    <button class="btn-palette" id="openPaletteBtn">📋 Open Palette</button>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="q-header">
+      <span class="q-number" id="displayQNum">Q1</span>
+      <span class="marking-scheme">Correct: +1.00 | Incorrect: -0.25</span>
+    </div>
+
+    <div class="q-stem">
+      <div id="qStemEn">English stem goes here</div>
+      <div class="q-stem-hi" id="qStemHi">Hindi stem goes here</div>
+    </div>
+
+    <div class="options-container" id="optionsContainer">
+      <!-- Options rendered dynamically -->
+    </div>
+
+    <div class="explanation-card" id="explanationCard">
+      <h4>💡 Verified Explanation / विस्तृत व्याख्या</h4>
+      <div class="explanation-content" id="expEn"></div>
+      <div class="explanation-content" id="expHi"></div>
+      <div class="fact-badge" id="keyFact"></div>
+    </div>
+
+    <div class="bottom-actions">
+      <div class="action-group-left">
+        <button class="btn btn-prev" id="prevBtn" onclick="navigateQuestion(-1)">&#8592; Previous</button>
+        <button class="btn btn-next" id="nextBtn" onclick="navigateQuestion(1)">Next &#8594;</button>
+      </div>
+      <div class="action-group-right">
+        <button class="btn btn-skip" id="skipBtn" onclick="skipQuestion()">Skip</button>
+        <button class="btn btn-review" id="reviewBtn" onclick="markForReview()">Mark Review</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Slide-over Palette -->
+<div class="palette-overlay" id="paletteOverlay">
+  <div class="palette-drawer">
+    <div class="palette-header">
+      <h3>Question Palette (1 - 100)</h3>
+      <button class="btn-close-palette" id="closePaletteBtn">&times;</button>
+    </div>
+    <div class="palette-legend">
+      <div class="legend-item"><span class="dot dot-correct"></span> Correct (+1.0)</div>
+      <div class="legend-item"><span class="dot dot-incorrect"></span> Incorrect (-0.25)</div>
+      <div class="legend-item"><span class="dot dot-unanswered"></span> Visited (Orange)</div>
+      <div class="legend-item"><span class="dot dot-skipped"></span> Skipped (Slate)</div>
+      <div class="legend-item"><span class="dot dot-review"></span> Review (Purple)</div>
+      <div class="legend-item"><span class="dot dot-notvisited"></span> Not Visited</div>
+    </div>
+    <div class="palette-grid" id="paletteGrid">
+      <!-- 100 buttons rendered dynamically -->
+    </div>
+    <button class="finish-btn" onclick="openReportModal()">Finish Test & View Scorecard</button>
+  </div>
+</div>
+
+<!-- Score Report Modal -->
+<div class="report-overlay" id="reportOverlay">
+  <div class="report-card">
+    <h2>Performance Scorecard</h2>
+    <p style="color: var(--text-secondary); font-size: 0.85rem;">UPSSSC PET Subject: Indian Economy (Labour Reforms)</p>
+    <div class="score-display" id="finalNetScore">0.00</div>
+    <div class="report-stats">
+      <div class="report-stat-box"><strong>Total Questions:</strong> 100</div>
+      <div class="report-stat-box"><strong>Attempted:</strong> <span id="statAttempted">0</span></div>
+      <div class="report-stat-box" style="color: #10b981;"><strong>Correct (+1):</strong> <span id="statCorrect">0</span></div>
+      <div class="report-stat-box" style="color: #ef4444;"><strong>Incorrect (-0.25):</strong> <span id="statIncorrect">0</span></div>
+      <div class="report-stat-box" style="color: var(--skipped-color);"><strong>Skipped / Left:</strong> <span id="statSkipped">100</span></div>
+      <div class="report-stat-box" style="color: #38bdf8;"><strong>Accuracy:</strong> <span id="statAccuracy">0%</span></div>
+    </div>
+    <div class="report-actions">
+      <button class="btn btn-prev" onclick="closeReportModal()">Back to Review</button>
+      <button class="btn btn-next" onclick="location.reload()">Restart Test</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// COMPLETE 100 VERIFIED QUESTIONS CORPUS (PHASE 1 VERBATIM)
+const questions = [
+  // --- BATCH 1 (Q1 - Q25) ---
+  {
+    num: 1,
+    stemEn: "Under the post-2014 labour reforms, into how many broad Labour Codes were 29 central labour laws consolidated?",
+    stemHi: "वर्ष 2014 के पश्चात के श्रम सुधारों के तहत, 29 केंद्रीय श्रम कानूनों को कितने श्रम संहिताओं (Labour Codes) में समेकित किया गया है?",
+    options: [
+      "3 Codes / 3 संहिताएं",
+      "4 Codes / 4 संहिताएं",
+      "5 Codes / 5 संहिताएं",
+      "6 Codes / 6 संहिताएं",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under the comprehensive economic and labour reforms post-2014, the Government of India consolidated 29 complex central labour enactments into 4 streamlined Labour Codes: (1) Code on Wages (2019), (2) Industrial Relations Code (2020), (3) Social Security Code (2020), and (4) Occupational Safety, Health and Working Conditions Code (2020).",
+    expHi: "वर्ष 2014 के बाद केंद्र सरकार ने श्रम कानूनों को सरल, तर्कसंगत और आधुनिक बनाने के उद्देश्य से 29 केंद्रीय श्रम कानूनों को 4 व्यापक संहिताओं में समेकित किया: (1) मजदूरी संहिता, 2019, (2) औद्योगिक संबंध संहिता, 2020, (3) सामाजिक सुरक्षा संहिता, 2020, और (4) OSH संहिता, 2020।",
+    keyFact: "The Second National Commission on Labour (headed by Ravindra Varma) had recommended grouping central labour laws into broader functional codes."
+  },
+  {
+    num: 2,
+    stemEn: "Which of the following four Labour Codes was the first to be passed by the Indian Parliament?",
+    stemHi: "निम्नलिखित में से कौन सी श्रम संहिता भारतीय संसद द्वारा सबसे पहले पारित की गई थी?",
+    options: [
+      "Industrial Relations Code / औद्योगिक संबंध संहिता",
+      "Social Security Code / सामाजिक सुरक्षा संहिता",
+      "Code on Wages / मजदूरी संहिता",
+      "Occupational Safety, Health and Working Conditions Code / उपजीविकाजन्य सुरक्षा, स्वास्थ्य और कार्यदशा संहिता",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The Code on Wages was passed by Parliament in August 2019 and received Presidential assent on August 8, 2019. The other three codes (Industrial Relations, Social Security, and OSH) were passed subsequently in September 2020.",
+    expHi: "मजदूरी संहिता (Code on Wages) को संसद द्वारा अगस्त 2019 में पारित किया गया था तथा 8 अगस्त 2019 को इसे राष्ट्रपति की सहमति प्राप्त हुई थी। शेष तीन संहिताएं सितंबर 2020 में संसद द्वारा पारित की गईं।",
+    keyFact: "The Code on Wages, 2019 consolidated 4 existing acts: Payment of Wages Act 1936, Minimum Wages Act 1948, Payment of Bonus Act 1965, and Equal Remuneration Act 1976."
+  },
+  {
+    num: 3,
+    stemEn: "What is the official web portal launched under the 'Shramev Jayate' initiative to provide a single-window interface for labour compliance and inspections?",
+    stemHi: "'श्रमेव जयते' पहल के तहत श्रम अनुपालन और पारदर्शी निरीक्षण के लिए एकल-खिड़की इंटरफेस प्रदान करने वाला आधिकारिक पोर्टल कौन सा है?",
+    options: [
+      "Shram Suvidha Portal / श्रम सुविधा पोर्टल",
+      "e-Shram Portal / ई-श्रम पोर्टल",
+      "SAMADHAN Portal / समाधान पोर्टल",
+      "PENCIL Portal / पेंसिल पोर्टल",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 0, // A
+    expEn: "Launched in October 2014 as part of the Pt. Deendayal Upadhyay Shramev Jayate Karyakram, the 'Shram Suvidha Portal' provides a single unified online platform for allotment of Unique Labour Identification Number (LIN), filing of online annual returns, and transparent, computer-generated inspection schemes.",
+    expHi: "अक्टूबर 2014 में 'पंडित दीनदयाल उपाध्याय श्रमेव जयते कार्यक्रम' के अंतर्गत 'श्रम सुविधा पोर्टल' लॉन्च किया गया था। इसका उद्देश्य व्यवसायों को श्रम पहचान संख्या (LIN) आवंटित करना, वार्षिक रिटर्न ऑनलाइन दाखिल करना और पारदर्शी निरीक्षण प्रणाली सुनिश्चित करना है।",
+    keyFact: "The Shram Suvidha Portal eliminates inspector discretion by allocating inspections through a centralized objective algorithm."
+  },
+  {
+    num: 4,
+    stemEn: "Under the Industrial Relations Code, 2020, what is the revised employee threshold for an industrial establishment to require prior government permission before lay-off, retrenchment, or closure?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत किसी औद्योगिक प्रतिष्ठान द्वारा छंटनी (retrenchment), कामबंदी (lay-off) या बंदी (closure) के लिए पूर्व सरकारी अनुमति की अनिवार्यता हेतु कर्मचारियों की सीमा बढ़ाकर कितनी कर दी गई है?",
+    options: [
+      "50 workers / 50 श्रमिक",
+      "100 workers / 100 श्रमिक",
+      "300 workers / 300 श्रमिक",
+      "500 workers / 500 श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under the earlier Industrial Disputes Act, 1947, industrial units employing 100 or more workers required prior government permission for lay-off, retrenchment, or closure. The Industrial Relations Code, 2020 raised this threshold to 300 workers, providing greater operational flexibility to enterprises.",
+    expHi: "पूर्ववर्ती औद्योगिक विवाद अधिनियम, 1947 के अनुसार 100 या अधिक श्रमिकों वाले कारखानों को कामबंदी, छंटनी या इकाई बंद करने के लिए सरकार से पूर्व अनुमति लेनी होती थी। औद्योगिक संबंध संहिता, 2020 ने इस सीमा को बढ़ाकर 300 श्रमिक कर दिया है।",
+    keyFact: "Raising the threshold to 300 workers aims to promote ease of doing business and encourage manufacturing firms to scale up employment."
+  },
+  {
+    num: 5,
+    stemEn: "What is the minimum national pension guaranteed under the 'Pradhan Mantri Shram Yogi Maan-dhan' (PM-SYM) Yojana upon attaining 60 years of age?",
+    stemHi: "'प्रधानमंत्री श्रम योगी मान-धन' (PM-SYM) योजना के तहत 60 वर्ष की आयु प्राप्त करने के बाद न्यूनतम कितनी मासिक राष्ट्रीय पेंशन की गारंटी दी जाती है?",
+    options: [
+      "₹1,000 per month / ₹1,000 प्रति माह",
+      "₹2,000 per month / ₹2,000 प्रति माह",
+      "₹3,000 per month / ₹3,000 प्रति माह",
+      "₹5,000 per month / ₹5,000 प्रति माह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The PM-SYM Yojana was launched in 2019 to provide old-age social security to unorganised workers. Beneficiaries receive an assured monthly pension of ₹3,000 after attaining the age of 60 years, on a 50:50 contributory basis between the subscriber and the Central Government.",
+    expHi: "2019 में असंगठित क्षेत्र के कामगारों के लिए शुरू की गई 'प्रधानमंत्री श्रम योगी मान-धन' (PM-SYM) योजना के तहत 60 वर्ष की आयु पूरी होने पर लाभार्थी को ₹3,000 प्रति माह की सुनिश्चित न्यूनतम पेंशन प्रदान की जाती है। इसमें 50% अंशदान लाभार्थी तथा 50% केंद्र सरकार देती है।",
+    keyFact: "PM-SYM is targeted at unorganised workers aged 18 to 40 years with a monthly income not exceeding ₹15,000."
+  },
+  {
+    num: 6,
+    stemEn: "What is the entry age bracket eligible to enroll in the Pradhan Mantri Shram Yogi Maan-dhan (PM-SYM) scheme?",
+    stemHi: "प्रधानमंत्री श्रम योगी मान-धन (PM-SYM) योजना में नामांकन के लिए पात्र प्रवेश आयु वर्ग क्या है?",
+    options: [
+      "21 to 50 years / 21 से 50 वर्ष",
+      "18 to 60 years / 18 से 60 वर्ष",
+      "18 to 40 years / 18 से 40 वर्ष",
+      "25 to 45 years / 25 से 45 वर्ष",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The eligible entry age for PM-SYM is 18 to 40 years. Depending on the age of joining, monthly contributions range from ₹55 (at age 18) to ₹200 (at age 40), matched by an equal amount from the Government of India.",
+    expHi: "PM-SYM योजना में प्रवेश की निर्धारित आयु 18 से 40 वर्ष है। प्रवेश आयु के आधार पर अंशदान ₹55 (18 वर्ष पर) से लेकर ₹200 (40 वर्ष पर) प्रति माह निर्धारित है, जिसमें बराबर का अंशदान केंद्र सरकार करती है।",
+    keyFact: "The scheme is administered by the Ministry of Labour and Employment and implemented through the Life Insurance Corporation of India (LIC)."
+  },
+  {
+    num: 7,
+    stemEn: "In which year was the 'e-Shram' portal launched for creating a comprehensive national database of unorganised workers seeded with Aadhaar?",
+    stemHi: "आधार से जुड़े असंगठित कामगारों का एक व्यापक राष्ट्रीय डेटाबेस तैयार करने के लिए 'ई-श्रम' (e-Shram) पोर्टल किस वर्ष शुरू किया गया था?",
+    options: [
+      "2016",
+      "2019",
+      "2021",
+      "2023",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The Ministry of Labour and Employment launched the e-Shram portal in August 2021. It generates a 12-digit Universal Account Number (UAN) for unorganised workers to facilitate social security benefits portability.",
+    expHi: "श्रम एवं रोजगार मंत्रालय द्वारा अगस्त 2021 में 'ई-श्रम' (e-Shram) पोर्टल की शुरुआत की गई थी। इसके अंतर्गत असंगठित कामगारों को 12 अंकों का विशिष्ट यूनिवर्सल अकाउंट नंबर (UAN) कार्ड प्रदान किया जाता है।",
+    keyFact: "Registered workers on e-Shram were initially provided accidental insurance cover of ₹2 lakh in case of accidental death or permanent disability under PMSBY."
+  },
+  {
+    num: 8,
+    stemEn: "How many digits comprise the Universal Account Number (UAN) issued to unorganised workers upon registration on the e-Shram portal?",
+    stemHi: "ई-श्रम पोर्टल पर पंजीकरण के पश्चात असंगठित कामगारों को कितने अंकों का यूनिवर्सल अकाउंट नंबर (UAN) जारी किया जाता है?",
+    options: [
+      "10 digits / 10 अंक",
+      "12 digits / 12 अंक",
+      "14 digits / 14 अंक",
+      "16 digits / 16 अंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The e-Shram card issued to verified unorganised workers carries a 12-digit Universal Account Number (UAN), identical in length to the standard EPFO UAN and Aadhaar number, valid across India.",
+    expHi: "ई-श्रम पोर्टल पर पंजीकरण कराने वाले कामगारों को 12 अंकों का स्थायी यूनिवर्सल अकाउंट नंबर (UAN) दिया जाता है, जो पूरे भारत में मान्य होता है।",
+    keyFact: "This 12-digit UAN allows single-point identification for delivering various welfare schemes run by central and state governments."
+  },
+  {
+    num: 9,
+    stemEn: "In which year was the Maternity Benefit Amendment Act passed, increasing paid maternity leave from 12 weeks to 26 weeks?",
+    stemHi: "मातृत्व लाभ संशोधन अधिनियम किस वर्ष पारित किया गया, जिसने सवेतन मातृत्व अवकाश को 12 सप्ताह से बढ़ाकर 26 सप्ताह कर दिया?",
+    options: [
+      "2015",
+      "2017",
+      "2019",
+      "2021",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The Maternity Benefit (Amendment) Act, 2017 amended the 1961 Act to increase paid maternity leave from 12 weeks to 26 weeks for female employees working in establishments with 10 or more employees (for up to the first two surviving children).",
+    expHi: "मातृत्व लाभ (संशोधन) अधिनियम, 2017 द्वारा 10 या अधिक कर्मचारियों वाले प्रतिष्ठानों में कार्यरत महिला कर्मचारियों के लिए सवेतन मातृत्व अवकाश को 12 सप्ताह से बढ़ाकर 26 सप्ताह (प्रथम दो जीवित बच्चों के लिए) कर दिया गया।",
+    keyFact: "The 2017 amendment also mandated a crèche facility for every establishment employing 50 or more employees."
+  },
+  {
+    num: 10,
+    stemEn: "Under the Maternity Benefit (Amendment) Act, 2017, an establishment must provide a crèche facility if it employs at least how many employees?",
+    stemHi: "मातृत्व लाभ (संशोधन) अधिनियम, 2017 के तहत किसी प्रतिष्ठान में कम से कम कितने कर्मचारी होने पर क्रेच (शिशुगृह) सुविधा प्रदान करना अनिवार्य है?",
+    options: [
+      "20 employees / 20 कर्मचारी",
+      "30 employees / 30 कर्मचारी",
+      "50 employees / 50 कर्मचारी",
+      "100 employees / 100 कर्मचारी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Section 11A inserted by the 2017 amendment specifies that every establishment with 50 or more employees must have a crèche facility within a prescribed distance, and the mother must be allowed four visits daily to the crèche.",
+    expHi: "2017 के संशोधन के तहत धारा 11A जोड़कर यह अनिवार्य किया गया कि जिस प्रतिष्ठान में 50 या अधिक कर्मचारी हों, वहां निर्धारित दूरी के भीतर क्रेच (शिशुगृह) की व्यवस्था होगी और महिला कर्मी को दिन में 4 बार जाने की अनुमति होगी।",
+    keyFact: "It also allows employers to permit work from home for nursing mothers after the 26-week period, based on mutual agreement."
+  },
+  {
+    num: 11,
+    stemEn: "Under the Child Labour (Prohibition and Regulation) Amendment Act, 2016, a person aged between 14 and 18 years is categorized as:",
+    stemHi: "बाल श्रम (निषेध और विनियमन) संशोधन अधिनियम, 2016 के तहत 14 से 18 वर्ष के बीच की आयु के व्यक्ति को किस रूप में वर्गीकृत किया गया है?",
+    options: [
+      "Minor / अवयस्क",
+      "Adolescent / किशोर",
+      "Young Worker / युवा श्रमिक",
+      "Dependent / आश्रित",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The Child Labour (Prohibition and Regulation) Amendment Act, 2016 introduced a clear distinction: a 'Child' is defined as any person under 14 years of age, whereas a person between 14 and 18 years is defined as an 'Adolescent', prohibited from working in hazardous occupations and processes.",
+    expHi: "2016 के संशोधन अधिनियम के अनुसार 14 वर्ष से कम आयु वाले को 'बालक' (Child) तथा 14 से 18 वर्ष की आयु वाले व्यक्ति को 'किशोर' (Adolescent) के रूप में वर्गीकृत किया गया है। किशोरों को खतरनाक व्यवसायों/प्रक्रियाओं में नियोजित करना प्रतिबंधित है।",
+    keyFact: "The 2016 Act aligned the definition of child labour with the Right of Children to Free and Compulsory Education (RTE) Act, 2009."
+  },
+  {
+    num: 12,
+    stemEn: "What is the full form of the online portal 'PENCIL' launched in 2017 by the Ministry of Labour and Employment?",
+    stemHi: "श्रम एवं रोजगार मंत्रालय द्वारा 2017 में शुरू किए गए ऑनलाइन पोर्टल 'PENCIL' का पूर्ण रूप (Full Form) क्या है?",
+    options: [
+      "Platform for Effective Enforcement for No Child Labour",
+      "Program for Eradication of Neglected Child Labour",
+      "Portal for Elimination of National Child Labour",
+      "Public Enforcement Network for Child Integrated Labour",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 0, // A
+    expEn: "'PENCIL' stands for 'Platform for Effective Enforcement for No Child Labour'. It is an electronic portal designed to ensure effective implementation of the Child Labour Act and the National Child Labour Project (NCLP) through coordinated inter-departmental action.",
+    expHi: "'PENCIL' का पूर्ण रूप 'Platform for Effective Enforcement for No Child Labour' (बाल श्रम निषेध के प्रभावी प्रवर्तन हेतु मंच) है। यह केंद्र, राज्य, जिला स्तर के अधिकारियों और पुलिस के बीच समन्वय हेतु एक समर्पित पोर्टल है।",
+    keyFact: "PENCIL contains components including Child Tracking System, Complaint Corner, State Government, District Nodal Officer, and Project Society."
+  },
+  {
+    num: 13,
+    stemEn: "In which year was the Code on Wages passed by the Parliament of India?",
+    stemHi: "मजदूरी संहिता (Code on Wages) किस वर्ष भारतीय संसद द्वारा पारित की गई थी?",
+    options: [
+      "2015",
+      "2017",
+      "2019",
+      "2021",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The Code on Wages was passed by the Lok Sabha on July 30, 2019, by the Rajya Sabha on August 2, 2019, and received Presidential assent on August 8, 2019. It was the first of the four labour codes to be enacted.",
+    expHi: "मजदूरी संहिता को लोकसभा द्वारा 30 जुलाई 2019 और राज्यसभा द्वारा 2 अगस्त 2019 को पारित किया गया, तथा 8 अगस्त 2019 को राष्ट्रपति की स्वीकृति प्राप्त हुई।",
+    keyFact: "The Code on Wages universally applies minimum wage provisions to all workers across all sectors (both organized and unorganized)."
+  },
+  {
+    num: 14,
+    stemEn: "The Code on Wages, 2019 subsumed how many existing central labour statutes?",
+    stemHi: "मजदूरी संहिता, 2019 ने कितने मौजूदा केंद्रीय श्रम कानूनों को अपने में समाहित किया?",
+    options: [
+      "2 statutes / 2 कानून",
+      "3 statutes / 3 कानून",
+      "4 statutes / 4 कानून",
+      "5 statutes / 5 कानून",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The Code on Wages, 2019 subsumed exactly 4 central statutes: (1) Payment of Wages Act, 1936; (2) Minimum Wages Act, 1948; (3) Payment of Bonus Act, 1965; and (4) Equal Remuneration Act, 1976.",
+    expHi: "मजदूरी संहिता, 2019 ने 4 केंद्रीय कानूनों का विलय किया: (1) मजदूरी संदाय अधिनियम 1936, (2) न्यूनतम मजदूरी अधिनियम 1948, (3) बोनस संदाय अधिनियम 1965, और (4) समान पारिश्रमिक अधिनियम 1976।",
+    keyFact: "Under the new Code, gender-based wage discrimination is explicitly prohibited for the same work or work of similar nature."
+  },
+  {
+    num: 15,
+    stemEn: "Under the Code on Wages, 2019, what statutory concept empowers the Central Government to establish a baseline wage below which no State Government can set its minimum wage?",
+    stemHi: "मजदूरी संहिता, 2019 के तहत कौन सी वैधानिक अवधारणा केंद्र सरकार को एक ऐसी न्यूनतम आधारभूत मजदूरी तय करने का अधिकार देती है, जिससे कम कोई भी राज्य सरकार अपनी न्यूनतम मजदूरी निर्धारित नहीं कर सकती?",
+    options: [
+      "Universal Basic Wage / सार्वभौमिक मूल मजदूरी",
+      "National Floor Wage / राष्ट्रीय आधार स्तर मजदूरी (फ्लोर वेज)",
+      "Standard Industrial Wage / मानक औद्योगिक मजदूरी",
+      "Living Benchmark Wage / निर्वाह बेंचमार्क मजदूरी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The Code on Wages, 2019 introduced the concept of the 'Floor Wage' (National Floor Level Minimum Wage). The Central Government fixes the floor wage taking into account minimum living standards across geographical areas; state minimum wages cannot be set lower than this floor wage.",
+    expHi: "मजदूरी संहिता, 2019 में 'फ्लोर वेज' (National Floor Wage - राष्ट्रीय आधार स्तर मजदूरी) की वैधानिक व्यवस्था की गई है। केंद्र सरकार विभिन्न भौगोलिक क्षेत्रों के आधार पर फ्लोर वेज तय करेगी और कोई भी राज्य सरकार इससे कम न्यूनतम मजदूरी तय नहीं कर सकती।",
+    keyFact: "Before this reform, National Floor Level Minimum Wage was non-statutory and merely advisory for states."
+  },
+  {
+    num: 16,
+    stemEn: "What legal status is granted to 'Fixed Term Employment' (FTE) under the Industrial Relations Code, 2020?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत 'नियत अवधि रोजगार' (Fixed Term Employment - FTE) को क्या कानूनी दर्जा प्रदान किया गया है?",
+    options: [
+      "It has been banned / इसे प्रतिबंधित कर दिया गया है",
+      "It requires a middleman/contractor / इसके लिए बिचौलिये/ठेकेदार की आवश्यकता अनिवार्य है",
+      "It is legally formalized with statutory benefits equal to permanent employees / इसे स्थायी कर्मचारियों के समान वैधानिक लाभों के साथ कानूनी मान्यता दी गई है",
+      "Workers are ineligible for gratuity / कामगार ग्रेच्युटी के हकदार नहीं हैं",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The Industrial Relations Code, 2020 formally recognizes Fixed Term Employment (FTE), allowing employers to hire workers on direct fixed-term contracts without intermediaries. Crucially, FTE workers receive parity in wages, hours, allowances, and statutory benefits (including pro-rata gratuity) equivalent to permanent workers.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 नियत अवधि रोजगार (FTE) को औपचारिक मान्यता देती है। इसमें कंपनियों को अनुबंध पर सीधे कामगार रखने की अनुमति है तथा उन्हें स्थायी कर्मचारियों के समान वेतन, भत्ते एवं आनुपातिक ग्रेच्युटी लाभ दिए जाने का प्रावधान है।",
+    keyFact: "Under FTE, workers are eligible for pro-rata gratuity even if they serve for a contract period of only 1 year (unlike the normal 5-year requirement)."
+  },
+  {
+    num: 17,
+    stemEn: "Under the Social Security Code, 2020, what is the reduced eligibility period of continuous service required for Fixed Term Employees to receive gratuity?",
+    stemHi: "सामाजिक सुरक्षा संहिता, 2020 के तहत नियत अवधि के कर्मचारियों (Fixed Term Employees) को ग्रेच्युटी प्राप्त करने के लिए निरंतर सेवा की पात्रता अवधि घटाकर कितनी कर दी गई है?",
+    options: [
+      "3 years / 3 वर्ष",
+      "2 years / 2 वर्ष",
+      "1 year / 1 वर्ष",
+      "6 months / 6 महीने",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "While regular employees generally require a minimum of 5 years of continuous service for gratuity eligibility under the Social Security Code, 2020, fixed-term employees are made eligible on a pro-rata basis if they render continuous service of just 1 year.",
+    expHi: "सामाजिक सुरक्षा संहिता, 2020 के तहत स्थायी कर्मचारियों के लिए ग्रेच्युटी पात्रता की सामान्य शर्त 5 वर्ष की निरंतर सेवा है, लेकिन फिक्स्ड टर्म कर्मचारियों (FTE) के लिए यह अवधि घटाकर मात्र 1 वर्ष कर दी गई है।",
+    keyFact: "Section 53 of the Social Security Code specifically mandates payment of pro-rata gratuity on completion of one year of fixed-term contract."
+  },
+  {
+    num: 18,
+    stemEn: "Which two modern categories of the workforce have been officially defined and brought under social security frameworks for the first time in India under the Social Security Code, 2020?",
+    stemHi: "सामाजिक सुरक्षा संहिता, 2020 के तहत भारत में पहली बार किन दो आधुनिक कार्यबल श्रेणियों को आधिकारिक रूप से परिभाषित कर सामाजिक सुरक्षा के दायरे में लाया गया है?",
+    options: [
+      "Gig Workers and Platform Workers / गिग वर्कर्स और प्लेटफॉर्म वर्कर्स",
+      "Apprentices and Trainees / अप्रेंटिस और प्रशिक्षु",
+      "Domestic Servants and Gardeners / घरेलू नौकर और माली",
+      "Daily Wage Hawkers and Vendors / दैनिक वेतनभोगी फेरीवाले और विक्रेता",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 0, // A
+    expEn: "The Social Security Code, 2020 is historic for introducing formal definitions of 'Gig Worker' (a person who performs work outside of traditional employer-employee relationship) and 'Platform Worker' (work accessed through an online platform).",
+    expHi: "सामाजिक सुरक्षा संहिता, 2020 में भारत के कानूनी इतिहास में पहली बार 'गिग वर्कर' और 'प्लेटफॉर्म वर्कर' को वैधानिक रूप से परिभाषित किया गया तथा उनके लिए सामाजिक सुरक्षा कोष और कल्याण योजनाओं की रूपरेखा बनाई गई।",
+    keyFact: "The Code mandates that platform aggregators contribute 1% to 2% of their annual turnover towards the Social Security Fund."
+  },
+  {
+    num: 19,
+    stemEn: "Under the Occupational Safety, Health and Working Conditions (OSH) Code, 2020, what is the employee threshold for an establishment to be classified as a factory if it uses power?",
+    stemHi: "उपजीविकाजन्य सुरक्षा, स्वास्थ्य और कार्यदशा (OSH) संहिता, 2020 के तहत बिजली (Power) का उपयोग करने वाले प्रतिष्ठान को 'कारखाना' (Factory) माने जाने हेतु कर्मचारियों की न्यूनतम सीमा क्या है?",
+    options: [
+      "10 or more workers / 10 या अधिक श्रमिक",
+      "20 or more workers / 20 या अधिक श्रमिक",
+      "40 or more workers / 40 या अधिक श्रमिक",
+      "50 or more workers / 50 या अधिक श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under the Factories Act, 1948, the threshold was 10 workers for power-using units and 20 for non-power units. The OSH Code, 2020 increased these thresholds to 20 or more workers for power-driven establishments and 40 or more workers for non-power establishments.",
+    expHi: "कारखाना अधिनियम, 1948 में बिजली के उपयोग वाले कारखानों के लिए न्यूनतम 10 श्रमिकों की सीमा थी। OSH संहिता, 2020 के तहत इस सीमा को बढ़ाकर बिजली से चलने वाले कारखानों के लिए 20 या अधिक श्रमिक और बिना बिजली वाले कारखानों के लिए 40 या अधिक श्रमिक कर दिया गया है।",
+    keyFact: "Doubling the factory threshold from 10 to 20 workers reduces compliance burdens for Micro and Small manufacturing enterprises."
+  },
+  {
+    num: 20,
+    stemEn: "Under the Pradhan Mantri Rojgar Protsahan Yojana (PMRPY) launched in 2016, what percentage of the employer's full contribution to EPF and EPS was borne by the Central Government for new employees?",
+    stemHi: "2016 में शुरू की गई 'प्रधानमंत्री रोजगार प्रोत्साहन योजना' (PMRPY) के तहत नए कर्मचारियों के लिए EPF और EPS में नियोक्ता के पूरे अंशदान का कितना प्रतिशत केंद्र सरकार द्वारा वहन किया गया था?",
+    options: [
+      "5%",
+      "8.33%",
+      "10%",
+      "12%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 3, // D
+    expEn: "Initially launched paying 8.33% EPS, the scheme was enhanced from April 1, 2018, such that the Government of India paid the entire 12% employer's contribution (comprising 8.33% for EPS and 3.67% for EPF) for all eligible new employees registered with EPFO for their first 3 years of employment.",
+    expHi: "PMRPY योजना के तहत 1 अप्रैल 2018 से भारत सरकार ने EPFO में पंजीकृत नए पात्र कर्मचारियों के लिए नियोक्ता का पूरा 12% अंशदान (8.33% ईपीएस + 3.67% ईपीएफ) पहले 3 वर्षों के लिए स्वयं वहन किया, ताकि रोजगार सृजन को प्रोत्साहन मिले।",
+    keyFact: "PMRPY was applicable to workers earning up to ₹15,000 per month."
+  },
+  {
+    num: 21,
+    stemEn: "What is the maximum monthly wage ceiling prescribed for unorganised workers to be eligible for the Pradhan Mantri Shram Yogi Maan-dhan (PM-SYM) scheme?",
+    stemHi: "प्रधानमंत्री श्रम योगी मान-धन (PM-SYM) योजना के तहत पात्र होने के लिए असंगठित कामगारों की अधिकतम मासिक आय सीमा क्या निर्धारित है?",
+    options: [
+      "₹10,000 per month / ₹10,000 प्रति माह",
+      "₹12,000 per month / ₹12,000 प्रति माह",
+      "₹15,000 per month / ₹15,000 प्रति माह",
+      "₹21,000 per month / ₹21,000 प्रति माह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "To enroll in PM-SYM, the monthly income of the unorganised worker must not exceed ₹15,000. Additionally, the applicant must not be an income taxpayer or a member of EPFO/ESIC/NPS.",
+    expHi: "PM-SYM योजना में शामिल होने के लिए असंगठित कामगार की मासिक आय ₹15,000 या उससे कम होनी चाहिए। साथ ही वह आयकर दाता नहीं होना चाहिए और न ही EPFO/ESIC/NPS का सदस्य होना चाहिए।",
+    keyFact: "Rickshaw pullers, street vendors, agricultural labourers, and domestic workers are the primary target beneficiaries."
+  },
+  {
+    num: 22,
+    stemEn: "Under the Industrial Relations Code, 2020, how many days of advance notice must workers give before going on strike in an industrial establishment?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत औद्योगिक प्रतिष्ठानों में श्रमिकों को हड़ताल पर जाने से पूर्व कितने दिनों का अग्रिम नोटिस देना अनिवार्य है?",
+    options: [
+      "At least 7 days / कम से कम 7 दिन",
+      "At least 14 days / कम से कम 14 दिन",
+      "At least 30 days / कम से कम 30 दिन",
+      "At least 60 days / कम से कम 60 दिन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under Section 62 of the Industrial Relations Code, 2020, no person shall go on strike without giving notice of strike within 60 days before striking, and within 14 days of giving such notice. Thus, at least 14 days of advance notice is mandatory for all industrial establishments.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 की धारा 62 के तहत, कोई भी कर्मचारी हड़ताल के 60 दिनों के भीतर और ऐसा नोटिस देने के 14 दिनों के भीतर बिना नोटिस दिए हड़ताल नहीं कर सकता। अर्थात हड़ताल पर जाने से पूर्व कम से कम 14 दिन का अग्रिम नोटिस देना अनिवार्य है।",
+    keyFact: "Earlier, this 14-day notice requirement applied only to 'public utility services'; the 2020 Code extended it to all industrial establishments."
+  },
+  {
+    num: 23,
+    stemEn: "Which Constitutional Schedule and Entry govern labour laws in India, placing labour under the Concurrent List?",
+    stemHi: "भारतीय संविधान की कौन सी अनुसूची और प्रविष्टि श्रम कानूनों को नियंत्रित करती है, जिसके तहत श्रम समवर्ती सूची (Concurrent List) का विषय है?",
+    options: [
+      "Seventh Schedule, Union List / सातवीं अनुसूची, संघ सूची",
+      "Seventh Schedule, State List / सातवीं अनुसूची, राज्य सूची",
+      "Seventh Schedule, List III (Concurrent List) / सातवीं अनुसूची, सूची III (समवर्ती सूची)",
+      "Sixth Schedule, Autonomous Areas / छठी अनुसूची, स्वायत्त क्षेत्र",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Labour is a subject under the Concurrent List (List III) of the Seventh Schedule of the Indian Constitution (Entries 22, 23, and 24). This empowers both Parliament and State Legislatures to enact labour legislation.",
+    expHi: "भारतीय संविधान की 7वीं अनुसूची की समवर्ती सूची (सूची-III) में प्रविष्टि 22, 23 और 24 के तहत श्रम विषय आता है। इसी कारण केंद्र और राज्य दोनों को श्रम सुधारों और विधानों पर कानून बनाने का अधिकार प्राप्त है।",
+    keyFact: "Because labour is on the Concurrent List, both Central and State Governments must notify rules under the four Labour Codes for nationwide implementation."
+  },
+  {
+    num: 24,
+    stemEn: "Under the Payment of Bonus (Amendment) Act, 2015, what was the statutory calculation ceiling per month raised to for determining employee bonus?",
+    stemHi: "बोनस संदाय (संशोधन) अधिनियम, 2015 के तहत कर्मचारियों के बोनस की गणना के लिए मासिक वैधानिक गणना सीमा बढ़ाकर कितनी कर दी गई थी?",
+    options: [
+      "₹3,500 per month / ₹3,500 प्रति माह",
+      "₹5,000 per month / ₹5,000 प्रति माह",
+      "₹7,000 per month (or minimum wage, whichever is higher) / ₹7,000 प्रति माह (या न्यूनतम मजदूरी, जो भी अधिक हो)",
+      "₹10,000 per month / ₹10,000 प्रति माह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The Payment of Bonus (Amendment) Act, 2015 doubled the wage eligibility ceiling from ₹10,000 to ₹21,000 per month, and raised the calculation ceiling from ₹3,500 to ₹7,000 per month (or the minimum wage for the scheduled employment, whichever is higher).",
+    expHi: "बोनस संदाय (संशोधन) अधिनियम, 2015 द्वारा बोनस गणना की सीमा को ₹3,500 से बढ़ाकर ₹7,000 प्रति माह (या संबंधित रोजगार के लिए निर्धारित न्यूनतम मजदूरी, जो भी अधिक हो) कर दिया गया तथा पात्रता सीमा ₹10,000 से बढ़ाकर ₹21,000 कर दी गई।",
+    keyFact: "The amendment was made retrospectively applicable from April 1, 2014."
+  },
+  {
+    num: 25,
+    stemEn: "In which year was the 'Atmanirbhar Bharat Rojgar Yojana' (ABRY) announced to incentivize employers for generating new employment during the COVID-19 pandemic recovery?",
+    stemHi: "कोविड-19 महामारी के बाद सुधार के दौरान नए रोजगार सृजन के लिए नियोक्ताओं को प्रोत्साहित करने हेतु 'आत्मनिर्भर भारत रोजगार योजना' (ABRY) की घोषणा किस वर्ष की गई थी?",
+    options: [
+      "2016",
+      "2017",
+      "2018",
+      "2019",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 4, // E
+    expEn: "The Atmanirbhar Bharat Rojgar Yojana (ABRY) was announced in November 2020 (effective October 1, 2020) as part of the Atmanirbhar Bharat 3.0 economic stimulus package. None of the options (A) 2016, (B) 2017, (C) 2018, or (D) 2019 are correct, making Option (E) the valid answer.",
+    expHi: "आत्मनिर्भर भारत रोजगार योजना (ABRY) की घोषणा नवंबर 2020 (प्रभावी तिथि 1 अक्टूबर 2020) में 'आत्मनिर्भर भारत 3.0' पैकेज के तहत की गई थी। चूंकि विकल्प (A) 2016, (B) 2017, (C) 2018 तथा (D) 2019 सभी गलत हैं, अतः सही उत्तर विकल्प (E) है।",
+    keyFact: "Under ABRY, the Central Government credited both employee (12%) and employer (12%) EPF contributions (total 24%) for 2 years in establishments employing up to 1,000 workers."
+  },
+
+  // --- BATCH 2 (Q26 - Q50) ---
+  {
+    num: 26,
+    stemEn: "Under the Apprentices (Amendment) Act, 2014, the quota for trade apprentices in an establishment was reformed to what percentage range of the total workforce?",
+    stemHi: "शिक्षु (संशोधन) अधिनियम, 2014 के तहत किसी प्रतिष्ठान में ट्रेड शिक्षुओं (Apprentices) का कोटा कुल कार्यबल के कितने प्रतिशत के दायरे में निर्धारित किया गया?",
+    options: [
+      "1% to 5% / 1% से 5%",
+      "2.5% to 15% / 2.5% से 15%",
+      "10% to 25% / 10% से 25%",
+      "15% to 30% / 15% से 30%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The Apprentices (Amendment) Act, 2014 and the subsequent Apprenticeship Rules reformed the rigid trade-wise apprentice quotas, allowing employers to engage apprentices within a flexible band of 2.5% to 15% of the total workforce (including contractual staff), with at least 5% reserved for fresher apprentices.",
+    expHi: "शिक्षु (संशोधन) अधिनियम, 2014 और संशोधित नियमों के अंतर्गत प्रतिष्ठानों में शिक्षुओं को रखने की पुरानी कठोर सीमाओं को बदलकर कुल कर्मचारियों (अनुबंध कर्मचारियों सहित) का 2.5% से 15% का लचीला बैंड निर्धारित किया गया।",
+    keyFact: "The amendment also abolished imprisonment penalties for employers who fail to comply with apprentice engagement norms, replacing them with financial penalties."
+  },
+  {
+    num: 27,
+    stemEn: "In which year was the National Apprenticeship Promotion Scheme (NAPS) launched to provide financial incentives to enterprises engaging apprentices?",
+    stemHi: "शिक्षुओं को जोड़ने वाले उद्यमों को वित्तीय प्रोत्साहन प्रदान करने के उद्देश्य से राष्ट्रीय शिक्षुता संवर्धन योजना (NAPS) किस वर्ष शुरू की गई थी?",
+    options: [
+      "2014",
+      "2015",
+      "2016",
+      "2018",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The National Apprenticeship Promotion Scheme (NAPS) was launched in August 2016 by the Ministry of Skill Development and Entrepreneurship to share the stipend cost (up to 25% or max ₹1,500/month per apprentice) with employers.",
+    expHi: "राष्ट्रीय शिक्षुता संवर्धन योजना (NAPS) की शुरुआत अगस्त 2016 में कौशल विकास एवं उद्यमिता मंत्रालय द्वारा की गई थी। इसके अंतर्गत सरकार नियोक्ताओं द्वारा दिए जाने वाले वजीफे (Stipend) का 25% (अधिकतम ₹1,500 प्रति माह) साझा करती है।",
+    keyFact: "NAPS aims to bridge the gap between academic education and industry shop-floor requirements."
+  },
+  {
+    num: 28,
+    stemEn: "What is the minimum threshold of members required for a trade union to be officially registered under the Industrial Relations Code, 2020?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत एक ट्रेड यूनियन के आधिकारिक पंजीकरण हेतु सदस्यों की न्यूनतम संख्या या प्रतिशत कितना होना आवश्यक है?",
+    options: [
+      "At least 5 workers / कम से कम 5 श्रमिक",
+      "At least 7 workers or 10% of workers, whichever is less / कम से कम 7 श्रमिक या 10% श्रमिक, जो भी कम हो",
+      "At least 7 workers and at least 10% (or 100 workers) of the establishment / कम से कम 7 श्रमिक तथा प्रतिष्ठान के कम से कम 10% (या 100 श्रमिक)",
+      "At least 50 workers or 25% of workers / कम से कम 50 श्रमिक या 25% श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under Section 6 of the Industrial Relations Code, 2020, an application to register a trade union must be made by at least 7 members, and the trade union must have at least 10% or 100 workers (whichever is less) engaged or employed in the industrial establishment.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 की धारा 6 के अनुसार, ट्रेड यूनियन के पंजीकरण के लिए कम से कम 7 सदस्यों द्वारा आवेदन होना चाहिए तथा इसमें प्रतिष्ठान के कम से कम 10% या 100 कामगार (जो भी कम हो) शामिल होने अनिवार्य हैं।",
+    keyFact: "This threshold prevents multiplicity of non-representative splinter unions within industrial units."
+  },
+  {
+    num: 29,
+    stemEn: "Under the Industrial Relations Code, 2020, what percentage of worker support must a single trade union have to be recognized as the sole 'Negotiating Union'?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत किसी एकल ट्रेड यूनियन को एकमात्र 'वार्ताकार संघ' (Negotiating Union) के रूप में मान्यता प्राप्त करने के लिए कितने प्रतिशत श्रमिकों का समर्थन आवश्यक है?",
+    options: [
+      "25% or more / 25% या अधिक",
+      "33% or more / 33% या अधिक",
+      "51% or more / 51% या अधिक",
+      "75% or more / 75% या अधिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Section 14 of the Industrial Relations Code, 2020 provides that if there is only one trade union, or if a trade union has 51% or more of the workers on the muster roll as members, it shall be recognized as the sole 'Negotiating Union'.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 की धारा 14 के अनुसार, यदि किसी प्रतिष्ठान में एक से अधिक यूनियनें हैं, तो मस्टर रोल पर दर्ज श्रमिकों के न्यूनतम 51% सदस्यों वाली ट्रेड यूनियन को प्रबंधन के साथ द्विपक्षीय चर्चा हेतु एकमात्र 'वार्ताकार संघ' (Negotiating Union) का दर्जा दिया जाएगा।",
+    keyFact: "If no union has 51% support, a 'Negotiating Council' is constituted comprising representatives from unions having at least 20% membership."
+  },
+  {
+    num: 30,
+    stemEn: "Under the Industrial Relations Code, 2020, what minimum membership threshold must a union have to get representation on the 'Negotiating Council' when no single union has 51% membership?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के अनुसार, यदि किसी भी यूनियन के पास 51% समर्थन न हो, तो 'वार्ता परिषद' (Negotiating Council) में प्रतिनिधित्व पाने हेतु किसी यूनियन के पास न्यूनतम कितने प्रतिशत सदस्य होने चाहिए?",
+    options: [
+      "10%",
+      "15%",
+      "20%",
+      "30%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "When no single trade union achieves the 51% threshold, the employer must constitute a Negotiating Council consisting of representatives of trade unions that have not less than 20% of the total workers employed in the establishment.",
+    expHi: "जब किसी भी एक ट्रेड यूनियन को 51% श्रमिकों का समर्थन प्राप्त नहीं होता, तो नियोक्ता एक 'वार्ता परिषद' का गठन करता है, जिसमें उन सभी यूनियनों को प्रतिनिधि दिया जाता है जिनके पास कुल श्रमिकों का कम से कम 20% समर्थन प्राप्त हो।",
+    keyFact: "The council allocates one representative for every 20% of workers supported by that union."
+  },
+  {
+    num: 31,
+    stemEn: "Under the Occupational Safety, Health and Working Conditions Code, 2020, what is the maximum permissible daily working hour limit set across establishments (subject to a weekly cap of 48 hours)?",
+    stemHi: "उपजीविकाजन्य सुरक्षा, स्वास्थ्य और कार्यदशा (OSH) संहिता, 2020 के तहत प्रतिष्ठानों में दैनिक कार्य के अधिकतम कितने घंटे निर्धारित किए गए हैं (साप्ताहिक 48 घंटे की सीमा के अधीन)?",
+    options: [
+      "6 hours / 6 घंटे",
+      "8 hours / 8 घंटे",
+      "10 hours / 10 घंटे",
+      "12 hours / 12 घंटे",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The statutory normal daily working limit remains standardized at 8 hours per day, with the weekly working limit strictly maintained at 48 hours under Chapter VIII of the OSH Code, 2020.",
+    expHi: "OSH संहिता, 2020 के अध्याय VIII के अनुसार सामान्य दैनिक कार्य की मानक सीमा 8 घंटे प्रति दिन तथा साप्ताहिक कार्य की सीमा 48 घंटे प्रति सप्ताह निर्धारित रखी गई है।",
+    keyFact: "Any work performed beyond 8 hours a day or 48 hours a week entitles the worker to overtime wages at twice the ordinary rate of wages."
+  },
+  {
+    num: 32,
+    stemEn: "Under the OSH Code, 2020, overtime work must be compensated at what rate compared to ordinary wages?",
+    stemHi: "OSH संहिता, 2020 के तहत ओवरटाइम (अतिकाल) कार्य के लिए सामान्य मजदूरी दर की तुलना में किस दर से भुगतान किया जाना अनिवार्य है?",
+    options: [
+      "1.25 times / 1.25 गुना",
+      "1.5 times / 1.5 गुना",
+      "2.0 times (Twice the ordinary rate) / 2.0 गुना (दोगुनी दर)",
+      "2.5 times / 2.5 गुना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under Section 27 of the Occupational Safety, Health and Working Conditions Code, 2020, where a worker works beyond standard working hours, they are entitled to overtime wages at twice the ordinary rate of wages.",
+    expHi: "OSH संहिता, 2020 की धारा 27 के तहत, यदि कोई श्रमिक निर्धारित दैनिक या साप्ताहिक कार्य घंटों से अधिक कार्य करता है, तो वह सामान्य दर से दोगुनी दर (Twice the ordinary rate) पर ओवरटाइम मजदूरी पाने का हकदार है।",
+    keyFact: "Overtime cannot be extracted forcibly; it requires the consent of the worker and is subject to quarterly overtime ceilings."
+  },
+  {
+    num: 33,
+    stemEn: "Which post-2014 reform scheme was launched to provide social security to street vendors by offering micro-credit working capital loans?",
+    stemHi: "रेहड़ी-पटरी वालों (स्ट्रीट वेंडरों) को सामाजिक-आर्थिक सुरक्षा और कार्यशील पूंजी ऋण प्रदान करने के लिए वर्ष 2020 में कौन सी केंद्रीय योजना शुरू की गई थी?",
+    options: [
+      "PM SVANidhi / पीएम स्वनिधि",
+      "PM Mudra Yojana / पीएम मुद्रा योजना",
+      "PM Vishwakarma / पीएम विश्वकर्मा",
+      "Stand-Up India / स्टैंड-अप इंडिया",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 0, // A
+    expEn: "PM SVANidhi (Pradhan Mantri Street Vendor’s AtmaNirbhar Nidhi) was launched on June 1, 2020, by the Ministry of Housing and Urban Affairs to empower street vendors by providing collateral-free working capital loans of ₹10,000, ₹20,000, and ₹50,000 in tranches with interest subsidies.",
+    expHi: "पीएम स्वनिधि (PM SVANidhi - प्रधानमंत्री स्ट्रीट वेंडर्स आत्मनिर्भर निधि) योजना 1 जून 2020 को शुरू की गई थी, जिसके तहत सड़क विक्रेताओं/रेहड़ी-पटरी वालों को ₹10,000 तक का प्रारंभिक संपार्श्विक-मुक्त कार्यशील पूंजी ऋण प्रदान किया जाता है।",
+    keyFact: "Timely repayment attracts an interest subsidy of 7% per annum credited directly into bank accounts via DBT."
+  },
+  {
+    num: 34,
+    stemEn: "In which year was the 'National Career Service' (NCS) portal launched, replacing the traditional manual Employment Exchanges?",
+    stemHi: "पारंपरिक रोजगार कार्यालयों (Employment Exchanges) का आधुनिकीकरण करते हुए 'राष्ट्रीय करियर सेवा' (NCS) पोर्टल किस वर्ष शुरू किया गया था?",
+    options: [
+      "2014",
+      "2015",
+      "2017",
+      "2019",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The National Career Service (NCS) project was launched by the Prime Minister in July 2015 under the Ministry of Labour and Employment as a digital platform bridging jobseekers, employers, skill trainers, and counselors.",
+    expHi: "राष्ट्रीय करियर सेवा (NCS) परियोजना को जुलाई 2015 में श्रम एवं रोजगार मंत्रालय द्वारा लॉन्च किया गया था, जिसने पुराने रोजगार कार्यालयों को डिजिटल करियर केंद्रों में बदल दिया।",
+    keyFact: "The NCS portal provides free registration and connects directly with DigiLocker and e-Shram databases."
+  },
+  {
+    num: 35,
+    stemEn: "What is the statutory contribution of the employer towards the Employees' Provident Fund (EPF) as a percentage of basic wages and dearness allowance?",
+    stemHi: "कर्मचारी भविष्य निधि (EPF) में मूल वेतन और महंगाई भत्ते का कितने प्रतिशत अंशदान नियोक्ता (Employer) द्वारा कानूनी रूप से जमा किया जाता है?",
+    options: [
+      "8.33%",
+      "10%",
+      "12%",
+      "15%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The statutory EPF contribution for employers in establishments with 20 or more employees is 12% of the basic wage plus Dearness Allowance (DA). Of this 12%, 8.33% goes to the Employees' Pension Scheme (EPS) and 3.67% goes directly to the EPF account.",
+    expHi: "20 या अधिक कर्मचारियों वाले प्रतिष्ठानों में नियोक्ता का वैधानिक अंशदान मूल वेतन और महंगाई भत्ते (DA) का 12% होता है। इसमें से 8.33% पेंशन योजना (EPS) में और 3.67% सीधे EPF खाते में जमा होता है।",
+    keyFact: "The employee also matches this by contributing an identical 12% of their basic wages and DA directly into EPF."
+  },
+  {
+    num: 36,
+    stemEn: "Under the Employees' Provident Funds and Miscellaneous Provisions Act, 1952, what is the mandatory employee wage ceiling per month for EPF coverage?",
+    stemHi: "कर्मचारी भविष्य निधि और विविध प्रावधान अधिनियम, 1952 के तहत अनिवार्य EPF कवरेज के लिए कर्मचारी की मासिक वेतन सीमा क्या निर्धारित है?",
+    options: [
+      "₹6,500 per month / ₹6,500 प्रति माह",
+      "₹10,000 per month / ₹10,000 प्रति माह",
+      "₹15,000 per month / ₹15,000 प्रति माह",
+      "₹21,000 per month / ₹21,000 प्रति माह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "In September 2014, the Government of India revised the statutory wage ceiling for mandatory EPF coverage from ₹6,500 per month to ₹15,000 per month.",
+    expHi: "केंद्र सरकार ने सितंबर 2014 में कर्मचारी भविष्य निधि (EPF) के अनिवार्य कवरेज हेतु मासिक वेतन सीमा को ₹6,500 से बढ़ाकर ₹15,000 प्रति माह कर दिया था।",
+    keyFact: "Alongside this wage ceiling hike in 2014, the minimum monthly pension under EPS-1995 was fixed at ₹1,000."
+  },
+  {
+    num: 37,
+    stemEn: "What is the minimum monthly pension guaranteed to retired members under the Employees' Pension Scheme (EPS-95) pursuant to the 2014 reform?",
+    stemHi: "2014 के सुधार के तहत कर्मचारी पेंशन योजना (EPS-95) के अंतर्गत सेवानिवृत्त सदस्यों को न्यूनतम कितनी मासिक पेंशन की गारंटी दी गई?",
+    options: [
+      "₹500 per month / ₹500 प्रति माह",
+      "₹1,000 per month / ₹1,000 प्रति माह",
+      "₹1,500 per month / ₹1,500 प्रति माह",
+      "₹2,000 per month / ₹2,000 प्रति माह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "In September 2014, the Central Government notified a minimum pension of ₹1,000 per month for pensioners under the Employees' Pension Scheme (EPS), 1995, funding the shortfall through budgetary support.",
+    expHi: "सितंबर 2014 में केंद्र सरकार ने EPS-1995 के तहत न्यूनतम मासिक पेंशन ₹1,000 प्रति माह अधिसूचित की, जिससे लाखों कम वेतन वाले पेंशनभोगियों को बुनियादी सामाजिक सुरक्षा प्राप्त हुई।",
+    keyFact: "Prior to this 2014 reform, many pensioners were receiving negligible monthly amounts (such as ₹100 to ₹250 per month)."
+  },
+  {
+    num: 38,
+    stemEn: "Under the Employees' State Insurance (ESI) Act, what is the monthly wage threshold for coverage of an employee (effective from January 1, 2017)?",
+    stemHi: "कर्मचारी राज्य बीमा (ESI) अधिनियम के तहत किसी कर्मचारी के कवरेज हेतु मासिक वेतन सीमा क्या है (1 जनवरी 2017 से प्रभावी)?",
+    options: [
+      "₹10,000 per month / ₹10,000 प्रति माह",
+      "₹15,000 per month / ₹15,000 प्रति माह",
+      "₹21,000 per month / ₹21,000 प्रति माह",
+      "₹25,000 per month / ₹25,000 प्रति माह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Effective January 1, 2017, the Ministry of Labour and Employment raised the monthly wage ceiling for coverage under the ESI Act from ₹15,000 to ₹21,000 per month (and ₹25,000 for persons with disabilities).",
+    expHi: "श्रम एवं रोजगार मंत्रालय ने 1 जनवरी 2017 से ESI योजना के तहत कवरेज के लिए मासिक वेतन सीमा को ₹15,000 से बढ़ाकर ₹21,000 प्रति माह कर दिया (दिव्यांगजनों के लिए यह सीमा ₹25,000 है)।",
+    keyFact: "This threshold revision brought millions of additional private-sector industrial workers under comprehensive medical and cash benefits."
+  },
+  {
+    num: 39,
+    stemEn: "Effective from July 1, 2019, the Government reduced the total contribution rate under the ESI Act from 6.5% to what combined percentage?",
+    stemHi: "1 जुलाई 2019 से प्रभावी सुधार के तहत सरकार ने ESI अधिनियम के अंतर्गत कुल अंशदान दर को 6.5% से घटाकर कुल कितने प्रतिशत कर दिया?",
+    options: [
+      "3.25%",
+      "4.0%",
+      "4.5%",
+      "5.0%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Effective July 1, 2019, the total ESI contribution was reduced from 6.5% to 4.0% of wages (employer's share reduced from 4.75% to 3.25%, and employee's share reduced from 1.75% to 0.75%), providing relief to both businesses and workers.",
+    expHi: "1 जुलाई 2019 से सरकार ने ESI अंशदान की कुल दर को 6.5% से घटाकर 4.0% कर दिया। इसमें नियोक्ता का हिस्सा 4.75% से घटाकर 3.25% तथा कर्मचारी का हिस्सा 1.75% से घटाकर 0.75% किया गया।",
+    keyFact: "This significant cut was executed to improve statutory compliance and augment the formalization of jobs."
+  },
+  {
+    num: 40,
+    stemEn: "Under the Social Security Code, 2020, what is the minimum employee threshold for the mandatory application of the Employees' Provident Fund (EPF)?",
+    stemHi: "सामाजिक सुरक्षा संहिता, 2020 के तहत कर्मचारी भविष्य निधि (EPF) के अनिवार्य लागू होने हेतु न्यूनतम कर्मचारी सीमा क्या है?",
+    options: [
+      "10 employees / 10 कर्मचारी",
+      "20 employees / 20 कर्मचारी",
+      "50 employees / 50 कर्मचारी",
+      "100 employees / 100 कर्मचारी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under the First Schedule of the Social Security Code, 2020, the Employees' Provident Fund (EPF) provisions mandatorily apply to every establishment in which 20 or more employees are employed.",
+    expHi: "सामाजिक सुरक्षा संहिता, 2020 की पहली अनुसूची के अनुसार, EPF प्रावधान अनिवार्य रूप से उन सभी प्रतिष्ठानों पर लागू होते हैं जहां 20 या अधिक कर्मचारी कार्यरत हैं।",
+    keyFact: "Establishments with fewer than 20 employees can also join EPF voluntarily on a mutual agreement between the employer and the majority of employees."
+  },
+  {
+    num: 41,
+    stemEn: "Under the Social Security Code, 2020, what is the employee threshold for the mandatory application of the Employees' State Insurance (ESI) scheme?",
+    stemHi: "सामाजिक सुरक्षा संहिता, 2020 के तहत कर्मचारी राज्य बीमा (ESI) योजना के अनिवार्य रूप से लागू होने हेतु कर्मचारी सीमा क्या है?",
+    options: [
+      "10 or more employees / 10 या अधिक कर्मचारी",
+      "20 or more employees / 20 या अधिक कर्मचारी",
+      "30 or more employees / 30 या अधिक कर्मचारी",
+      "50 or more employees / 50 या अधिक कर्मचारी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 0, // A
+    expEn: "Under the First Schedule of the Social Security Code, 2020, the ESI scheme mandatorily applies to every establishment employing 10 or more persons.",
+    expHi: "सामाजिक सुरक्षा संहिता, 2020 की पहली अनुसूची के अंतर्गत ESI योजना उन सभी प्रतिष्ठानों पर अनिवार्य रूप से लागू होती है जिनमें 10 या अधिक कर्मचारी कार्यरत हों।",
+    keyFact: "The Code also permits voluntary opt-in for establishments with fewer than 10 workers."
+  },
+  {
+    num: 42,
+    stemEn: "Under the OSH Code, 2020, how many continuous hours of work can an employee perform before being mandatorily entitled to an interval of rest?",
+    stemHi: "OSH संहिता, 2020 के अनुसार, किसी कर्मचारी को विश्राम अंतराल (Interval of Rest) दिए जाने से पूर्व लगातार अधिकतम कितने घंटे तक कार्य कराया जा सकता है?",
+    options: [
+      "4 hours / 4 घंटे",
+      "5 hours / 5 घंटे",
+      "6 hours / 6 घंटे",
+      "7 hours / 7 घंटे",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under Section 25 of the OSH Code, 2020, working hours must be set so that no worker works continuously for more than 5 hours without an interval of rest of at least half an hour.",
+    expHi: "OSH संहिता, 2020 की धारा 25 के तहत, काम के घंटे इस प्रकार तय किए जाने चाहिए कि किसी भी कर्मचारी से कम से कम आधे घंटे के विश्राम अंतराल के बिना 5 घंटे से अधिक निरंतर कार्य न कराया जाए।",
+    keyFact: "The spread-over (inclusive of rest intervals) is capped by state and central rules at 10.5 to 12 hours in a single day."
+  },
+  {
+    num: 43,
+    stemEn: "Under the Industrial Relations Code, 2020, a grievance redressal committee must be set up in every industrial establishment employing at least how many workers?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत प्रत्येक औद्योगिक प्रतिष्ठान में शिकायत निवारण समिति (Grievance Redressal Committee) का गठन करने हेतु न्यूनतम कितने कामगार होना आवश्यक है?",
+    options: [
+      "10 workers / 10 कामगार",
+      "20 workers / 20 कामगार",
+      "50 workers / 50 कामगार",
+      "100 workers / 100 कामगार",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Section 4 of the Industrial Relations Code, 2020 mandates that every industrial establishment employing 20 or more workers must constitute one or more Grievance Redressal Committees for resolution of individual disputes.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 की धारा 4 के अनुसार, 20 या अधिक कामगारों को नियोजित करने वाले प्रत्येक औद्योगिक प्रतिष्ठान में व्यक्तिगत विवादों के समाधान हेतु एक या अधिक 'शिकायत निवारण समिति' का गठन अनिवार्य है।",
+    keyFact: "The committee may have up to 10 members, with adequate and proportionate representation of women workers."
+  },
+  {
+    num: 44,
+    stemEn: "What is the maximum number of members permitted in a Grievance Redressal Committee under the Industrial Relations Code, 2020?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत एक शिकायत निवारण समिति (Grievance Redressal Committee) में अधिकतम कितने सदस्य हो सकते हैं?",
+    options: [
+      "5 members / 5 सदस्य",
+      "10 members / 10 सदस्य",
+      "15 members / 15 सदस्य",
+      "20 members / 20 सदस्य",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The Industrial Relations Code, 2020 provides that the Grievance Redressal Committee shall consist of an equal number of members representing the employer and workers, up to a maximum total of 10 members.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 के प्रावधानों के अनुसार शिकायत निवारण समिति में नियोक्ता और कामगारों के बराबर प्रतिनिधि होंगे और इस समिति में सदस्यों की अधिकतम संख्या 10 हो सकती है।",
+    keyFact: "The committee must conclude its proceedings within 30 days of receiving an application."
+  },
+  {
+    num: 45,
+    stemEn: "Under the OSH Code, 2020, what is the employee threshold for an establishment to mandatorily constitute a 'Safety Committee'?",
+    stemHi: "OSH संहिता, 2020 के अनुसार, किसी प्रतिष्ठान द्वारा अनिवार्य रूप से 'सुरक्षा समिति' (Safety Committee) गठित करने हेतु न्यूनतम कितने कर्मचारियों की सीमा निर्धारित है?",
+    options: [
+      "50 employees / 50 कर्मचारी",
+      "100 employees / 100 कर्मचारी",
+      "250 employees / 250 कर्मचारी",
+      "500 employees / 500 कर्मचारी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Section 22 of the OSH Code, 2020 mandates the constitution of a Safety Committee in factories/establishments employing 250 or more workers (or 100 or more in factories carrying on hazardous processes).",
+    expHi: "OSH संहिता, 2020 की धारा 22 के अनुसार, 250 या उससे अधिक कर्मचारियों वाले सामान्य कारखानों/प्रतिष्ठानों (और खतरनाक प्रक्रिया वाले कारखानों में 100 या अधिक) में एक 'सुरक्षा समिति' (Safety Committee) का गठन अनिवार्य है।",
+    keyFact: "The Safety Committee consists of equal representation of management and worker representatives."
+  },
+  {
+    num: 46,
+    stemEn: "Under the OSH Code, 2020, in which type of establishment are women workers legally permitted to work during night shifts (between 7:00 PM and 6:00 AM) with their consent and mandatory safety conditions?",
+    stemHi: "OSH संहिता, 2020 के तहत महिला श्रमिकों को उनकी सहमति और अनिवार्य सुरक्षा शर्तों के साथ रात्रि पाली (शाम 7:00 बजे से सुबह 6:00 बजे के बीच) में काम करने की अनुमति किस प्रकार के प्रतिष्ठानों में दी गई है?",
+    options: [
+      "Only in IT and BPO sectors / केवल आईटी और बीपीओ क्षेत्र में",
+      "Only in textile factories / केवल कपड़ा मिलों में",
+      "In all establishments across all sectors / सभी क्षेत्रों के सभी प्रतिष्ठानों में",
+      "Only in government hospitals / केवल सरकारी अस्पतालों में",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Section 43 of the OSH Code, 2020 provides that women are entitled to be employed in all establishments for all types of work, including night shifts (between 7 PM and 6 AM), subject to their explicit consent and employer-guaranteed safety, transport, and dignity norms.",
+    expHi: "OSH संहिता, 2020 की धारा 43 सभी प्रतिष्ठानों में सभी प्रकार के कार्यों के लिए महिलाओं को रात्रि पाली (शाम 7:00 बजे से सुबह 6:00 बजे) में काम करने की कानूनी अनुमति देती है, बशर्ते उनकी सहमति हो और नियोक्ता द्वारा सुरक्षा, परिवहन और सम्मानजनक परिस्थितियां सुनिश्चित की जाएं।",
+    keyFact: "Prior to this reform, the Factories Act, 1948 strictly banned women from working between 7 PM and 6 AM in factories without state-specific exemptions."
+  },
+  {
+    num: 47,
+    stemEn: "Under the Code on Wages, 2019, if an employee is paid on a monthly basis, by which day of the following month must their wages be paid?",
+    stemHi: "मजदूरी संहिता, 2019 के अनुसार, यदि किसी कर्मचारी को मासिक आधार पर वेतन दिया जाता है, तो अगले महीने के किस दिन तक उसका वेतन भुगतान किया जाना अनिवार्य है?",
+    options: [
+      "By the 5th day / 5वें दिन तक",
+      "By the 7th day / 7वें दिन तक",
+      "By the 10th day / 10वें दिन तक",
+      "By the 15th day / 15वें दिन तक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under Section 17 of the Code on Wages, 2019, for monthly wage earners, wages must be paid before the expiry of the 7th day of the succeeding month.",
+    expHi: "मजदूरी संहिता, 2019 की धारा 17 के अनुसार, मासिक आधार पर काम करने वाले कर्मचारियों के वेतन का भुगतान अगले महीने के 7वें दिन की समाप्ति से पूर्व किया जाना अनिवार्य है।",
+    keyFact: "Daily wagers must be paid at the end of the shift, and weekly workers on the last day of the working week."
+  },
+  {
+    num: 48,
+    stemEn: "In which year was the 'National Career Service' (NCS) initiative awarded the digital reform mandate to replace traditional employment registries across India?",
+    stemHi: "भारत भर में पारंपरिक रोजगार रजिस्टरों को बदलने के लिए राष्ट्रीय करियर सेवा (NCS) पहल को किस वर्ष शुरू किया गया था?",
+    options: [
+      "2011",
+      "2012",
+      "2013",
+      "2014",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 4, // E
+    expEn: "The National Career Service (NCS) was launched in July 2015. None of the listed years ((A) 2011, (B) 2012, (C) 2013, or (D) 2014) are correct, which makes Option (E) the correct choice.",
+    expHi: "राष्ट्रीय करियर सेवा (NCS) को भारत सरकार द्वारा जुलाई 2015 में शुरू किया गया था। दिए गए विकल्पों में (A) 2011, (B) 2012, (C) 2013 और (D) 2014 सभी गलत हैं, इसलिए सही उत्तर विकल्प (E) है।",
+    keyFact: "NCS integrates job match-making, vocational guidance, and information on training programs through a single multilingual portal."
+  },
+  {
+    num: 49,
+    stemEn: "Under the Payment of Gratuity framework integrated into the Social Security Code, 2020, what is the maximum statutory gratuity ceiling that can be paid tax-free to private-sector employees (as amended in 2018)?",
+    stemHi: "सामाजिक सुरक्षा संहिता, 2020 में एकीकृत ग्रेच्युटी संदाय ढांचे के तहत निजी क्षेत्र के कर्मचारियों को कर-मुक्त भुगतान की जाने वाली अधिकतम वैधानिक ग्रेच्युटी सीमा क्या है (जैसा कि 2018 में संशोधित किया गया था)?",
+    options: [
+      "₹10 Lakh / ₹10 लाख",
+      "₹15 Lakh / ₹15 लाख",
+      "₹20 Lakh / ₹20 लाख",
+      "₹25 Lakh / ₹25 लाख",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The Payment of Gratuity (Amendment) Act, 2018 increased the maximum tax-exempt gratuity ceiling for private-sector employees from ₹10 lakh to ₹20 lakh, aligning it with Central Government employees under the 7th Central Pay Commission.",
+    expHi: "ग्रेच्युटी संदाय (संशोधन) अधिनियम, 2018 द्वारा निजी क्षेत्र के कर्मचारियों के लिए कर-मुक्त ग्रेच्युटी की अधिकतम सीमा ₹10 लाख से बढ़ाकर ₹20 लाख कर दी गई थी।",
+    keyFact: "Gratuity is calculated at the rate of 15 days of wages based on the last drawn salary for each completed year of service."
+  },
+  {
+    num: 50,
+    stemEn: "Under the Social Security Code, 2020, what is the formula for calculating 15 days of wages for gratuity per completed year of service (assuming a standard 26-day working month)?",
+    stemHi: "सामाजिक सुरक्षा संहिता, 2020 के तहत सेवा के प्रत्येक पूर्ण वर्ष के लिए ग्रेच्युटी हेतु 15 दिनों के वेतन की गणना का सूत्र क्या है (एक महीने में 26 कार्य दिवस मानकर)?",
+    options: [
+      "(Last Drawn Wages / 30) × 15",
+      "(Last Drawn Wages / 26) × 15",
+      "(Last Drawn Wages / 31) × 15",
+      "(Last Drawn Wages / 28) × 15",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under the gratuity provisions retained in the Social Security Code, 2020, gratuity is computed as: (Last Drawn Wages / 26) × 15 × Number of completed years of service. The divisor 26 represents total working days in a month excluding four Sundays.",
+    expHi: "सामाजिक सुरक्षा संहिता, 2020 के तहत ग्रेच्युटी की गणना सूत्र (अंतिम आहरित वेतन / 26) × 15 × पूर्ण सेवा वर्ष के आधार पर की जाती है, जहां 26 को महीने के कार्य दिवस माना जाता है।",
+    keyFact: "For seasonal workers, gratuity is calculated at the rate of 7 days' wages for each season worked instead of 15 days."
+  },
+
+  // --- BATCH 3 (Q51 - Q75) ---
+  {
+    num: 51,
+    stemEn: "Under the Industrial Relations Code, 2020, what is the employee threshold above which an industrial establishment must prepare Standing Orders on matters such as classification of workers, shifts, and leaves?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत वह कर्मचारी सीमा क्या है जिसके ऊपर किसी औद्योगिक प्रतिष्ठान के लिए कामगारों के वर्गीकरण, पाली और छुट्टियों से संबंधित स्थायी आदेश (Standing Orders) तैयार करना अनिवार्य है?",
+    options: [
+      "50 workers / 50 श्रमिक",
+      "100 workers / 100 श्रमिक",
+      "300 workers / 300 श्रमिक",
+      "500 workers / 500 श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under the Industrial Employment (Standing Orders) Act, 1946, the threshold was 100 workers. The Industrial Relations Code, 2020 raised this threshold to 300 or more workers, making formal standing orders mandatory only for establishments with at least 300 workers.",
+    expHi: "पूर्ववर्ती औद्योगिक रोजगार (स्थायी आदेश) अधिनियम, 1946 के तहत यह सीमा 100 श्रमिक थी। औद्योगिक संबंध संहिता, 2020 ने इस सीमा को बढ़ाकर 300 या अधिक श्रमिक कर दिया है।",
+    keyFact: "This change gives micro, small, and medium enterprises greater flexibility in defining operational employment terms."
+  },
+  {
+    num: 52,
+    stemEn: "The Industrial Relations Code, 2020 mandates the constitution of a 'Works Committee' in an establishment employing how many workers?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के अनुसार, किसी प्रतिष्ठान में कम से कम कितने कामगार होने पर 'कार्य समिति' (Works Committee) का गठन करने का निर्देश दिया जा सकता है?",
+    options: [
+      "50 or more workers / 50 या अधिक श्रमिक",
+      "100 or more workers / 100 या अधिक श्रमिक",
+      "200 or more workers / 200 या अधिक श्रमिक",
+      "300 or more workers / 300 या अधिक श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under Section 3 of the Industrial Relations Code, 2020, the appropriate government may require an employer of an establishment with 100 or more workers to constitute a Works Committee to promote measures for securing and preserving good relations between the employer and workers.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 की धारा 3 के तहत, उपयुक्त सरकार 100 या अधिक कामगारों वाले औद्योगिक प्रतिष्ठान के नियोक्ता को नियोक्ताओं और कामगारों के बीच सौहार्दपूर्ण संबंध बनाए रखने हेतु 'कार्य समिति' (Works Committee) गठित करने का आदेश दे सकती है।",
+    keyFact: "Worker representatives on the Works Committee cannot be fewer than employer representatives."
+  },
+  {
+    num: 53,
+    stemEn: "Under the Industrial Relations Code, 2020, what specialized fund must be established by the employer for workers who are retrenched?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत छंटनी किए गए कामगारों के पुनर्वास और सहायता हेतु नियोक्ता द्वारा किस विशेष कोष का गठन अनिवार्य किया गया है?",
+    options: [
+      "National Skill Development Fund / राष्ट्रीय कौशल विकास कोष",
+      "Worker Re-skilling Fund / कामगार पुनर्कौशल कोष",
+      "Industrial Rehabilitation Corpus / औद्योगिक पुनर्वास कोष",
+      "Employee Transition Fund / कर्मचारी संक्रमण कोष",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Section 83 of the Industrial Relations Code, 2020 provides for the establishment of a 'Worker Re-skilling Fund'. For every retrenched worker, the employer must contribute an amount equal to 15 days of the last drawn wages of the worker within 45 days of retrenchment.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 की धारा 83 के तहत 'कामगार पुनर्कौशल कोष' (Worker Re-skilling Fund) की स्थापना का प्रावधान है। छंटनी किए जाने पर नियोक्ता को कामगार के अंतिम आहरित 15 दिनों के वेतन के बराबर राशि इस कोष में 45 दिनों के भीतर जमा करनी होती है।",
+    keyFact: "The fund is credited directly to the retrenched worker's bank account within 45 days of retrenchment."
+  },
+  {
+    num: 54,
+    stemEn: "Under the Worker Re-skilling Fund stipulated in the Industrial Relations Code, 2020, an employer must deposit an amount equal to how many days of the worker's last drawn wages?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 में निर्धारित 'कामगार पुनर्कौशल कोष' में नियोक्ता को कामगार के अंतिम आहरित वेतन के कितने दिनों के बराबर राशि जमा करनी होती है?",
+    options: [
+      "7 days / 7 दिन",
+      "10 days / 10 दिन",
+      "15 days / 15 दिन",
+      "30 days / 30 दिन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under the Industrial Relations Code, 2020, the employer's contribution to the Worker Re-skilling Fund is precisely 15 days of the last drawn wages of the retrenched worker.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 के अंतर्गत, छंटनी किए गए कामगार के लिए पुनर्कौशल कोष में नियोक्ता का योगदान उसके अंतिम प्राप्त वेतन के ठीक 15 दिनों के बराबर निर्धारित है।",
+    keyFact: "This amount is in addition to the standard retrenchment compensation paid directly to the worker."
+  },
+  {
+    num: 55,
+    stemEn: "In which year was the 'SAMADHAN' (Software Application for Monitoring And Disposal, Handling of Appraisals) portal launched for industrial disputes?",
+    stemHi: "औद्योगिक विवादों की ऑनलाइन निगरानी और निपटान हेतु 'SAMADHAN' पोर्टल किस वर्ष शुरू किया गया था?",
+    options: [
+      "2015",
+      "2017",
+      "2019",
+      "2021",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The SAMADHAN portal was rolled out in 2017 by the Ministry of Labour and Employment to digitize conciliation, adjudication, and settlement of industrial disputes under the Industrial Disputes Act.",
+    expHi: "श्रम एवं रोजगार मंत्रालय द्वारा औद्योगिक विवादों के ऑनलाइन समाधान और सुलह प्रक्रिया की निगरानी के लिए वर्ष 2017 में 'समाधान' (SAMADHAN) पोर्टल शुरू किया गया था।",
+    keyFact: "Workers and unions can submit industrial dispute representations directly online through SAMADHAN."
+  },
+  {
+    num: 56,
+    stemEn: "What is the contract worker threshold above which the Chapter on Contract Labour in the Occupational Safety, Health and Working Conditions Code, 2020 applies?",
+    stemHi: "उपजीविकाजन्य सुरक्षा, स्वास्थ्य और कार्यदशा (OSH) संहिता, 2020 में अनुबंध श्रम (Contract Labour) से संबंधित अध्याय लागू होने हेतु न्यूनतम अनुबंध श्रमिकों की सीमा क्या है?",
+    options: [
+      "10 or more workers / 10 या अधिक श्रमिक",
+      "20 or more workers / 20 या अधिक श्रमिक",
+      "50 or more workers / 50 या अधिक श्रमिक",
+      "100 or more workers / 100 या अधिक श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under the earlier Contract Labour (Regulation and Abolition) Act, 1970, the law applied to establishments employing 20 or more contract workers. The OSH Code, 2020 raised this applicability threshold to 50 or more contract workers.",
+    expHi: "पूर्ववर्ती अनुबंध श्रम अधिनियम, 1970 के तहत यह सीमा 20 ठेका श्रमिक थी। OSH संहिता, 2020 ने अनुबंध श्रम के प्रावधानों को लागू करने हेतु इस सीमा को बढ़ाकर 50 या अधिक ठेका श्रमिक कर दिया है।",
+    keyFact: "Raising the ceiling to 50 workers exempts small contractors and establishments from burdensome contractor licensing requirements."
+  },
+  {
+    num: 57,
+    stemEn: "Under the OSH Code, 2020, what is the employee threshold for an establishment to provide a free annual health examination to its employees?",
+    stemHi: "OSH संहिता, 2020 के तहत कर्मचारियों के लिए नि:शुल्क वार्षिक स्वास्थ्य जांच (Annual Health Check-up) की व्यवस्था अनिवार्य करने हेतु प्रतिष्ठान में न्यूनतम कितने कर्मचारी होने चाहिए?",
+    options: [
+      "10 or more employees / 10 या अधिक कर्मचारी",
+      "20 or more employees / 20 या अधिक कर्मचारी",
+      "50 or more employees / 50 या अधिक कर्मचारी",
+      "100 or more employees / 100 या अधिक कर्मचारी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 4, // E
+    expEn: "Under the OSH Code rules, employers must provide a free annual health examination to employees who have completed 40 or more years of age (or in designated hazardous establishments), regardless of an arbitrary workforce size such as 10, 20, 50, or 100. Because options (A), (B), (C), and (D) present factually incorrect fixed-establishment-size conditions, Option (E) is the correct key.",
+    expHi: "OSH संहिता 2020 के तहत नियोक्ताओं को 40 वर्ष या उससे अधिक आयु के सभी कर्मचारियों को निःशुल्क वार्षिक स्वास्थ्य जांच उपलब्ध कराना अनिवार्य है, जो कि कर्मचारी की आयु (40 वर्ष) पर आधारित है, न कि 10, 20, 50 या 100 जैसी निश्चित प्रतिष्ठान सीमा पर। अतः सही उत्तर विकल्प (E) है।",
+    keyFact: "The annual medical test under OSH rules is designed to detect occupational diseases and conditions early."
+  },
+  {
+    num: 58,
+    stemEn: "Under the Code on Wages, 2019, who chairs the Central Advisory Board constituted to advise the Central Government on fixing minimum wages?",
+    stemHi: "मजदूरी संहिता, 2019 के तहत न्यूनतम मजदूरी तय करने पर केंद्र सरकार को सलाह देने के लिए गठित केंद्रीय सलाहकार बोर्ड (Central Advisory Board) की अध्यक्षता किसके द्वारा की जाती है?",
+    options: [
+      "The Prime Minister / प्रधानमंत्री",
+      "Union Minister for Labour and Employment / केंद्रीय श्रम एवं रोजगार मंत्री",
+      "An independent person appointed by the Central Government / केंद्र सरकार द्वारा नियुक्त एक स्वतंत्र व्यक्ति",
+      "Chief Labour Commissioner / मुख्य श्रम आयुक्त",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under Section 42 of the Code on Wages, 2019, the Central Advisory Board consists of persons representing employers, employees, independent persons, and state government representatives. One of the independent persons is appointed by the Central Government as Chairperson.",
+    expHi: "मजदूरी संहिता, 2019 की धारा 42 के अनुसार, केंद्रीय सलाहकार बोर्ड में नियोक्ताओं, कर्मचारियों और स्वतंत्र व्यक्तियों के प्रतिनिधि शामिल होते हैं। केंद्र सरकार द्वारा नियुक्त स्वतंत्र व्यक्तियों में से एक व्यक्ति को इस बोर्ड का अध्यक्ष नियुक्त किया जाता है।",
+    keyFact: "At least one-third of the members on the Central Advisory Board must be women."
+  },
+  {
+    num: 59,
+    stemEn: "What minimum proportion of members on the Central Advisory Board under the Code on Wages, 2019 must be women?",
+    stemHi: "मजदूरी संहिता, 2019 के अंतर्गत केंद्रीय सलाहकार बोर्ड में सदस्यों का न्यूनतम कितना अनुपात महिलाओं का होना अनिवार्य है?",
+    options: [
+      "At least 10% / कम से कम 10%",
+      "At least 25% / कम से कम 25%",
+      "At least one-third (33.33%) / कम से कम एक-तिहाई (33.33%)",
+      "At least 50% / कम से कम 50%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Section 42(3) of the Code on Wages, 2019 explicitly stipulates that at least one-third of the total members of the Central Advisory Board and the State Advisory Boards shall be women.",
+    expHi: "मजदूरी संहिता, 2019 की धारा 42(3) के अनुसार, केंद्रीय सलाहकार बोर्ड तथा राज्य सलाहकार बोर्डों के कुल सदस्यों में से कम से कम एक-तिहाई (1/3) सदस्य महिलाएं होना अनिवार्य है।",
+    keyFact: "This ensures adequate representation of female workers in decisions concerning minimum wages and gender pay parity."
+  },
+  {
+    num: 60,
+    stemEn: "Under the Code on Wages, 2019, wages can be reviewed and revised by the appropriate government at intervals not exceeding:",
+    stemHi: "मजदूरी संहिता, 2019 के अनुसार, उपयुक्त सरकार द्वारा न्यूनतम मजदूरी की दरों की समीक्षा और संशोधन अधिकतम कितने अंतराल के भीतर किया जाना चाहिए?",
+    options: [
+      "2 years / 2 वर्ष",
+      "3 years / 3 वर्ष",
+      "5 years / 5 वर्ष",
+      "7 years / 7 वर्ष",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under Section 8(4) of the Code on Wages, 2019, the appropriate government must review or revise the minimum rates of wages at an interval not exceeding 5 years.",
+    expHi: "मजदूरी संहिता, 2019 की धारा 8(4) के तहत, उपयुक्त सरकार को न्यूनतम मजदूरी की दरों की समीक्षा या संशोधन 5 वर्ष से अनधिक अंतराल पर करना अनिवार्य है।",
+    keyFact: "Meanwhile, the dearness allowance component is adjusted twice a year based on the Consumer Price Index (CPI)."
+  },
+  {
+    num: 61,
+    stemEn: "Under the Social Security Code, 2020, who is constituted as the nodal statutory body for administering the Social Security Fund for unorganised workers?",
+    stemHi: "सामाजिक सुरक्षा संहिता, 2020 के अंतर्गत असंगठित कामगारों के लिए सामाजिक सुरक्षा कोष और कल्याणकारी योजनाओं की निगरानी हेतु नोडल वैधानिक निकाय कौन सा है?",
+    options: [
+      "National Social Security Board / राष्ट्रीय सामाजिक सुरक्षा बोर्ड",
+      "Employees' Provident Fund Organisation / कर्मचारी भविष्य निधि संगठन",
+      "Labour Welfare Tribunal / श्रम कल्याण अधिकरण",
+      "Insurance Regulatory and Development Authority / बीमा विनियामक और विकास प्राधिकरण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 0, // A
+    expEn: "Section 6 of the Social Security Code, 2020 provides for the constitution of the National Social Security Board to recommend and monitor welfare schemes (life and disability cover, health, old age protection) for unorganised, gig, and platform workers.",
+    expHi: "सामाजिक सुरक्षा संहिता, 2020 की धारा 6 के तहत 'राष्ट्रीय सामाजिक सुरक्षा बोर्ड' (National Social Security Board) के गठन का प्रावधान है, जो असंगठित, गिग और प्लेटफॉर्म श्रमिकों के कल्याण हेतु योजनाएं तैयार व मॉनिटर करता है।",
+    keyFact: "The Union Minister for Labour and Employment serves as the Chairperson of the National Social Security Board."
+  },
+  {
+    num: 62,
+    stemEn: "What is the maximum percentage of deduction from an employee's total wages permitted in any single wage period under the Code on Wages, 2019?",
+    stemHi: "मजदूरी संहिता, 2019 के तहत किसी एक वेतन अवधि में किसी कर्मचारी के कुल वेतन से अधिकतम कितने प्रतिशत तक कटौती (Deduction) की अनुमति है?",
+    options: [
+      "25%",
+      "50%",
+      "60%",
+      "75%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under Section 18(3) of the Code on Wages, 2019, the total amount of deductions which may be made in any wage period from the wages of an employee shall not exceed 50% of such wages.",
+    expHi: "मजदूरी संहिता, 2019 की धारा 18(3) के अनुसार, किसी भी वेतन अवधि में कर्मचारी के वेतन से कुल कटौतियों की राशि उसके वेतन के 50% से अधिक नहीं हो सकती।",
+    keyFact: "Under the earlier 1936 Act, deductions could go up to 75% if cooperative societies were involved; the 2019 Code standardized the overall limit to 50%."
+  },
+  {
+    num: 63,
+    stemEn: "Under the Code on Wages, 2019, what proportion of an employee's total compensation must ordinarily be accounted for as basic wage and allowances (preventing excessive salary restructuring)?",
+    stemHi: "मजदूरी संहिता, 2019 के तहत कुल पारिश्रमिक पैकेज (CTC) में मूल वेतन और महंगाई भत्ते का न्यूनतम हिस्सा कितना होना अनिवार्य किया गया है ताकि भत्तों के अत्यधिक विभाजन को रोका जा सके?",
+    options: [
+      "At least 30% / कम से कम 30%",
+      "At least 40% / कम से कम 40%",
+      "At least 50% / कम से कम 50%",
+      "At least 60% / कम से कम 60%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under the unified definition of 'wages' in the Code on Wages, 2019, specified exclusions/allowances (such as HRA, conveyance, overtime) cannot exceed 50% of the total remuneration. If exclusions exceed 50%, the excess is automatically treated as wages, effectively mandating that basic wages comprise at least 50% of CTC.",
+    expHi: "मजदूरी संहिता, 2019 में वेतन (Wages) की मानक परिभाषा के तहत यह प्रावधान किया गया है कि भत्ते कुल वेतन पैकेज के 50% से अधिक नहीं हो सकते। यदि वे 50% से अधिक होते हैं, तो अतिरिक्त राशि मूल वेतन में जुड़ेगी।",
+    keyFact: "This ensures higher PF, gratuity, and retirement corpus contributions for employees while standardizing wage calculations."
+  },
+  {
+    num: 64,
+    stemEn: "What is the statutory time limit within which an employer must pay the full terminal dues and wages of a dismissed, retrenched, or resigned employee under the Code on Wages, 2019?",
+    stemHi: "मजदूरी संहिता, 2019 के तहत बर्खास्त, छंटनी किए गए या त्यागपत्र देने वाले कर्मचारी का अंतिम वेतन और देय राशि का निपटान नियोक्ता द्वारा कितने दिनों के भीतर किया जाना अनिवार्य है?",
+    options: [
+      "Within 2 working days / 2 कार्य दिवसों के भीतर",
+      "Within 7 working days / 7 कार्य दिवसों के भीतर",
+      "Within 15 working days / 15 कार्य दिवसों के भीतर",
+      "Within 30 working days / 30 कार्य दिवसों के भीतर",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 0, // A
+    expEn: "Section 17(2) of the Code on Wages, 2019 mandates that where an employee has been removed, dismissed, retrenched, or has resigned from service, the wages payable to them must be paid within two working days of such removal, retrenchment, or resignation.",
+    expHi: "मजदूरी संहिता, 2019 की धारा 17(2) के अनुसार, यदि किसी कर्मचारी को सेवा से हटाया जाता है, बर्खास्त या छंटनी की जाती है, अथवा वह त्यागपत्र देता है, तो उसकी देय मजदूरी का भुगतान अगले 2 कार्य दिवसों (2 working days) के भीतर किया जाना अनिवार्य है।",
+    keyFact: "This strict 2-day timeline prevents long delays in processing full-and-final settlement dues."
+  },
+  {
+    num: 65,
+    stemEn: "Which statutory scheme was launched in 2019 specifically to provide a pension for small traders, shopkeepers, and self-employed persons?",
+    stemHi: "छोटे व्यापारियों, दुकानदारों और स्व-नियोजित व्यक्तियों को वृद्धावस्था पेंशन प्रदान करने के लिए वर्ष 2019 में कौन सी विशिष्ट योजना शुरू की गई थी?",
+    options: [
+      "PM Kisan Maan-Dhan Yojana / पीएम किसान मान-धन योजना",
+      "PM Laghu Vyapari Maan-Dhan Yojana (NPS-Traders) / पीएम लघु व्यापारी मान-धन योजना",
+      "Pradhan Mantri Jan Dhan Yojana / प्रधानमंत्री जन धन योजना",
+      "Stand-Up India Retail Scheme / स्टैंड-अप इंडिया रिटेल स्कीम",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Launched in 2019, the Pradhan Mantri Laghu Vyapari Maan-Dhan Yojana (National Pension Scheme for Traders and Self-Employed Persons) provides a guaranteed minimum pension of ₹3,000 per month after age 60 to retail traders and shopkeepers with annual GST turnover up to ₹1.5 crore.",
+    expHi: "2019 में शुरू की गई 'प्रधानमंत्री लघु व्यापारी मान-धन योजना' (NPS-Traders) के तहत ₹1.5 करोड़ तक के वार्षिक जीएसटी टर्नओवर वाले खुदरा व्यापारियों और दुकानदारों को 60 वर्ष की आयु के बाद ₹3,000 प्रति माह की न्यूनतम पेंशन दी जाती है।",
+    keyFact: "Entry age is 18 to 40 years, with 50% contribution paid by the trader and 50% matched by the Union Government."
+  },
+  {
+    num: 66,
+    stemEn: "What is the maximum annual turnover ceiling to qualify for enrollment under the Pradhan Mantri Laghu Vyapari Maan-Dhan Yojana?",
+    stemHi: "प्रधानमंत्री लघु व्यापारी मान-धन योजना के तहत नामांकन हेतु अधिकतम वार्षिक टर्नओवर सीमा क्या है?",
+    options: [
+      "₹50 Lakh / ₹50 लाख",
+      "₹1 Crore / ₹1 करोड़",
+      "₹1.5 Crore / ₹1.5 करोड़",
+      "₹2.5 Crore / ₹2.5 करोड़",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Small shopkeepers, retail traders, and self-employed persons with an annual turnover not exceeding ₹1.5 crore under GST are eligible to join the scheme.",
+    expHi: "इस योजना के तहत केवल वे खुदरा व्यापारी, दुकानदार और स्व-नियोजित व्यक्ति पात्र हैं जिनका वार्षिक टर्नओवर ₹1.5 करोड़ से अधिक न हो।",
+    keyFact: "Enrollment is facilitated through the nationwide network of Common Service Centres (CSCs)."
+  },
+  {
+    num: 67,
+    stemEn: "Under the OSH Code, 2020, what is the employee threshold for an establishment to provide a mandatory canteen facility?",
+    stemHi: "OSH संहिता, 2020 के अनुसार, किसी प्रतिष्ठान द्वारा कैंटीन (Canteen) सुविधा प्रदान करना अनिवार्य होने हेतु न्यूनतम कितने कर्मचारी होने चाहिए?",
+    options: [
+      "50 or more workers / 50 या अधिक श्रमिक",
+      "100 or more workers / 100 या अधिक श्रमिक",
+      "200 or more workers / 200 या अधिक श्रमिक",
+      "250 or more workers / 250 या अधिक श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Section 24 of the OSH Code, 2020 mandates canteen facilities in establishments employing 100 or more workers (down from 250 workers under the earlier Factories Act, 1948).",
+    expHi: "OSH संहिता, 2020 की धारा 24 के तहत, 100 या अधिक कामगारों को नियोजित करने वाले प्रतिष्ठानों में कैंटीन सुविधा उपलब्ध कराना अनिवार्य है (पूर्ववर्ती कारखाना अधिनियम में यह सीमा 250 थी)।",
+    keyFact: "Reducing the threshold to 100 workers broadens basic nutritional welfare access for workers."
+  },
+  {
+    num: 68,
+    stemEn: "Under the OSH Code, 2020, what is the employee threshold for an establishment to provide a crèche facility?",
+    stemHi: "OSH संहिता, 2020 के तहत क्रेच (शिशुगृह) सुविधा अनिवार्य करने हेतु प्रतिष्ठान में न्यूनतम कितने कर्मचारी होने चाहिए?",
+    options: [
+      "20 workers / 20 श्रमिक",
+      "30 workers / 30 श्रमिक",
+      "50 workers / 50 श्रमिक",
+      "100 workers / 100 श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under Section 24 of the OSH Code, 2020, every establishment employing 50 or more workers must provide and maintain a suitable crèche for the use of children below the age of 6 years.",
+    expHi: "OSH संहिता, 2020 की धारा 24 के अनुसार, 50 या अधिक कामगारों को नियोजित करने वाले प्रत्येक प्रतिष्ठान में 6 वर्ष से कम आयु के बच्चों के लिए शिशुगृह (क्रेच) की सुविधा प्रदान करना अनिवार्य है।",
+    keyFact: "This unified the crèche requirement across factories, plantations, and establishments with the Maternity Benefit Act standard."
+  },
+  {
+    num: 69,
+    stemEn: "In which year was the 'National Policy on Skill Development and Entrepreneurship' formulated post-2014 to align workforce skilling with industrial demand?",
+    stemHi: "औद्योगिक मांग के अनुरूप कार्यबल कौशल को संरेखित करने के लिए वर्ष 2014 के बाद 'राष्ट्रीय कौशल विकास और उद्यमिता नीति' किस वर्ष तैयार की गई थी?",
+    options: [
+      "2014",
+      "2015",
+      "2017",
+      "2019",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The National Policy on Skill Development and Entrepreneurship was approved and launched in 2015 by the Ministry of Skill Development and Entrepreneurship to provide an overarching framework for all skill-related activities in India.",
+    expHi: "राष्ट्रीय कौशल विकास और उद्यमिता नीति को वर्ष 2015 में कौशल विकास एवं उद्यमिता मंत्रालय द्वारा तैयार और अनुमोदित किया गया था, जिसका उद्देश्य मांग-आधारित कौशल विकास को बढ़ावा देना है।",
+    keyFact: "The policy superseded the previous 2009 policy and integrated skill standards with the National Skills Qualifications Framework (NSQF)."
+  },
+  {
+    num: 70,
+    stemEn: "In which year was the 'Pradhan Mantri Kaushal Vikas Yojana' (PMKVY) launched under the Ministry of Skill Development and Entrepreneurship?",
+    stemHi: "कौशल विकास एवं उद्यमिता मंत्रालय के अंतर्गत 'प्रधानमंत्री कौशल विकास योजना' (PMKVY) किस वर्ष शुरू की गई थी?",
+    options: [
+      "2014",
+      "2015",
+      "2016",
+      "2018",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Pradhan Mantri Kaushal Vikas Yojana (PMKVY) was launched on World Youth Skills Day, July 15, 2015, to enable Indian youth to take up industry-relevant skill training for better livelihoods.",
+    expHi: "प्रधानमंत्री कौशल विकास योजना (PMKVY) की शुरुआत 15 जुलाई 2015 को विश्व युवा कौशल दिवस के अवसर पर की गई थी, ताकि युवाओं को उद्योग-प्रासंगिक कौशल प्रशिक्षण प्रदान किया जा सके।",
+    keyFact: "PMKVY is implemented through the National Skill Development Corporation (NSDC)."
+  },
+  {
+    num: 71,
+    stemEn: "What component of PMKVY assesses and provides formal certification to experienced workers who acquired skills informally?",
+    stemHi: "PMKVY का कौन सा घटक उन अनुभवी श्रमिकों का मूल्यांकन और औपचारिक प्रमाणीकरण करता है जिन्होंने अनौपचारिक रूप से कौशल अर्जित किया है?",
+    options: [
+      "Short Term Training (STT) / अल्पकालिक प्रशिक्षण",
+      "Recognition of Prior Learning (RPL) / पूर्व शिक्षण की मान्यता",
+      "Special Projects / विशेष परियोजनाएं",
+      "Kaushal Mela / कौशल मेला",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Recognition of Prior Learning (RPL) is a key component under PMKVY that assesses and formally certifies individuals with prior non-formal learning experience or skills to align them with the National Skills Qualifications Framework (NSQF).",
+    expHi: "PMKVY के तहत 'पूर्व शिक्षण की मान्यता' (Recognition of Prior Learning - RPL) एक प्रमुख घटक है, जो अनौपचारिक रूप से कौशल प्राप्त श्रमिकों का मूल्यांकन कर उन्हें मानकीकृत सरकारी प्रमाण पत्र प्रदान करता है।",
+    keyFact: "RPL candidates receive a government certificate, skill card, and personal accident insurance cover for 3 years."
+  },
+  {
+    num: 72,
+    stemEn: "In which year was the 'Skill India Mission' officially launched alongside the creation of the dedicated Ministry of Skill Development and Entrepreneurship?",
+    stemHi: "समर्पित कौशल विकास और उद्यमिता मंत्रालय के गठन के साथ आधिकारिक तौर पर 'स्किल इंडिया मिशन' (Skill India Mission) किस वर्ष शुरू किया गया था?",
+    options: [
+      "2013",
+      "2014",
+      "2015",
+      "2017",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The Skill India Mission was formally launched on July 15, 2015, by the Prime Minister to create convergence across skill initiatives and train over 40 crore people by 2022.",
+    expHi: "'स्किल इंडिया मिशन' को 15 जुलाई 2015 को प्रधानमंत्री द्वारा शुरू किया गया था, जिसका उद्देश्य पूरे देश में विभिन्न कौशल पहलों को जोड़कर युवाओं को रोजगारपरक बनाना था।",
+    keyFact: "July 15 is observed globally as the United Nations World Youth Skills Day."
+  },
+  {
+    num: 73,
+    stemEn: "What is the standard national helpline number launched for unorganised workers registered on the e-Shram portal?",
+    stemHi: "ई-श्रम पोर्टल पर पंजीकृत असंगठित कामगारों की सहायता और प्रश्नों के समाधान हेतु शुरू किया गया राष्ट्रीय हेल्पलाइन नंबर क्या है?",
+    options: [
+      "1098",
+      "14434",
+      "1912",
+      "1075",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The Ministry of Labour and Employment operationalized the toll-free national helpdesk number '14434' to assist unorganised workers in registration, query redressal, and information regarding the e-Shram portal.",
+    expHi: "श्रम एवं रोजगार मंत्रालय द्वारा ई-श्रम पोर्टल से संबंधित पंजीकरण, समस्याओं और जानकारी के समाधान हेतु राष्ट्रीय टोल-फ्री हेल्पलाइन नंबर '14434' शुरू किया गया।",
+    keyFact: "This multi-lingual helpline provides support in Hindi, English, and major regional languages."
+  },
+  {
+    num: 74,
+    stemEn: "Under the OSH Code, 2020, what is the minimum duration of paid annual leave with wages that an employee earns for every 20 days of work performed?",
+    stemHi: "OSH संहिता, 2020 के तहत किसी कर्मचारी को प्रत्येक 20 कार्य दिवसों के लिए सवेतन वार्षिक अवकाश (Earned Leave) का कितना न्यूनतम अधिकार प्राप्त होता है?",
+    options: [
+      "1 day / 1 दिन",
+      "2 days / 2 दिन",
+      "3 days / 3 दिन",
+      "4 days / 4 दिन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 0, // A
+    expEn: "Under Section 32 of the OSH Code, 2020, an employee who has worked for 180 days or more in a calendar year is entitled to annual leave with wages calculated at the rate of one day for every 20 days of work performed.",
+    expHi: "OSH संहिता, 2020 की धारा 32 के अनुसार, जिस कर्मचारी ने कैलेंडर वर्ष में कम से कम 180 दिन काम किया हो, वह प्रत्येक 20 कार्य दिवसों के बदले 1 दिन के सवेतन वार्षिक अवकाश (Annual Leave with Wages) का हकदार होता है।",
+    keyFact: "The qualifying threshold for earned leave was reduced from 240 days under the old Factories Act to 180 days under the OSH Code."
+  },
+  {
+    num: 75,
+    stemEn: "Under the OSH Code, 2020, an employee is qualified to avail annual leave with wages after completing how many days of work in an establishment in a calendar year?",
+    stemHi: "OSH संहिता, 2020 के तहत कोई कर्मचारी कैलेंडर वर्ष में किसी प्रतिष्ठान में न्यूनतम कितने दिन काम करने के बाद सवेतन वार्षिक अवकाश पाने का पात्र हो जाता है?",
+    options: [
+      "90 days / 90 दिन",
+      "120 days / 120 दिन",
+      "180 days / 180 दिन",
+      "240 days / 240 दिन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The OSH Code, 2020 lowered the continuous qualifying service required to earn annual leave from 240 days (under the Factories Act, 1948) to 180 days in a calendar year, enabling workers to access paid leave earlier.",
+    expHi: "OSH संहिता, 2020 ने सवेतन अवकाश की पात्रता के लिए न्यूनतम कार्य दिवसों की संख्या को पूर्ववर्ती कारखाना अधिनियम के 240 दिनों से घटाकर 180 दिन कर दिया है।",
+    keyFact: "Unavailed leave can be carried forward up to a maximum accumulation limit of 30 days."
+  },
+
+  // --- BATCH 4 (Q76 - Q100) ---
+  {
+    num: 76,
+    stemEn: "Under the Occupational Safety, Health and Working Conditions Code, 2020, what is the minimum employee threshold for an establishment to mandatorily provide an ambulance room?",
+    stemHi: "उपजीविकाजन्य सुरक्षा, स्वास्थ्य और कार्यदशा (OSH) संहिता, 2020 के तहत किसी प्रतिष्ठान द्वारा अनिवार्य रूप से एम्बुलेंस कक्ष (Ambulance Room) प्रदान करने हेतु न्यूनतम कितने कर्मचारियों की सीमा निर्धारित है?",
+    options: [
+      "100 workers / 100 श्रमिक",
+      "250 workers / 250 श्रमिक",
+      "500 workers / 500 श्रमिक",
+      "1000 workers / 1000 श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Section 24 of the OSH Code, 2020 specifies that every factory, mine, or building and other construction work establishment employing 500 or more workers must provide and maintain a readily accessible ambulance room staffed with medical and nursing personnel.",
+    expHi: "OSH संहिता, 2020 की धारा 24 के अनुसार, 500 या अधिक कामगारों को नियोजित करने वाले कारखानों, खदानों और निर्माण कार्य प्रतिष्ठानों में प्राथमिक उपचार और योग्य चिकित्सा कर्मचारियों से सुसज्जित एम्बुलेंस कक्ष उपलब्ध कराना अनिवार्य है।",
+    keyFact: "Under the earlier Factories Act, 1948, the ambulance room requirement applied to factories employing more than 500 workers."
+  },
+  {
+    num: 77,
+    stemEn: "What is the minimum employee threshold in a factory for the mandatory appointment of a certified Safety Officer under the OSH Code, 2020?",
+    stemHi: "OSH संहिता, 2020 के तहत किसी कारखाने में प्रमाणित सुरक्षा अधिकारी (Safety Officer) की अनिवार्य नियुक्ति के लिए न्यूनतम कितने कर्मचारियों की संख्या निर्धारित है?",
+    options: [
+      "100 workers / 100 श्रमिक",
+      "250 workers / 250 श्रमिक",
+      "500 workers / 500 श्रमिक",
+      "1000 workers / 1000 श्रमिक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under Section 22 of the OSH Code, 2020, every factory employing 500 or more workers (or 250 or more workers in factories carrying on hazardous processes) must appoint such number of safety officers as may be prescribed. Under the previous Factories Act, 1948, the general threshold was 1,000 workers.",
+    expHi: "OSH संहिता, 2020 की धारा 22 के अनुसार, 500 या अधिक कामगारों वाले कारखानों में (तथा खतरनाक प्रक्रिया वाले कारखानों में 250 या अधिक कामगारों पर) प्रमाणित सुरक्षा अधिकारी की नियुक्ति अनिवार्य की गई है।",
+    keyFact: "Lowering the general threshold from 1,000 to 500 workers ensures greater workplace safety in medium-sized manufacturing units."
+  },
+  {
+    num: 78,
+    stemEn: "Under the Code on Wages, 2019, what is the maximum limitation period allowed for an employee to file a claim for minimum wages, unpaid wages, or bonus before the authority?",
+    stemHi: "मजदूरी संहिता, 2019 के तहत किसी कर्मचारी द्वारा न्यूनतम मजदूरी, बकाया वेतन या बोनस के लिए सक्षम प्राधिकारी के समक्ष दावा दायर करने की अधिकतम परिसीमा अवधि (Limitation Period) क्या है?",
+    options: [
+      "6 months / 6 महीने",
+      "1 year / 1 वर्ष",
+      "2 years / 2 वर्ष",
+      "3 years / 3 वर्ष",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 3, // D
+    expEn: "Under Section 45(6) of the Code on Wages, 2019, an application for a claim can be filed within a period of 3 years from the date on which the claim arose. Under the earlier Minimum Wages Act, 1948 and Payment of Wages Act, 1936, the limitation periods were much shorter (typically 6 months to 1 year).",
+    expHi: "मजदूरी संहिता, 2019 की धारा 45(6) के अनुसार, किसी कर्मचारी द्वारा वेतन, न्यूनतम मजदूरी या बोनस के दावे हेतु आवेदन दाखिल करने की समय-सीमा 3 वर्ष निर्धारित की गई है।",
+    keyFact: "Extending the limitation period to 3 years substantially strengthens workers' legal rights to recover long-standing wage arrears."
+  },
+  {
+    num: 79,
+    stemEn: "Which post-2014 IT application was introduced by EPFO to provide unified mobile access for checking PF balance, downloading passbooks, and submitting claims?",
+    stemHi: "EPFO द्वारा PF बैलेंस जांचने, पासबुक डाउनलोड करने और दावे प्रस्तुत करने हेतु एकीकृत मोबाइल पहुंच प्रदान करने के लिए कौन सा राष्ट्रीय ऐप एकीकृत किया गया?",
+    options: [
+      "BHIM App / भीम ऐप",
+      "UMANG App / उमंग ऐप",
+      "DigiLocker / डिजिलॉकर",
+      "mKisan / एम-किसान",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The UMANG (Unified Mobile Application for New-age Governance) app, launched in November 2017, integrates EPFO citizen services, enabling subscribers to view passbooks, submit life certificates (Jeevan Pramaan), track claims, and link Aadhaar from mobile devices.",
+    expHi: "नवंबर 2017 में लॉन्च किए गए उमंग (UMANG) ऐप पर कर्मचारी भविष्य निधि संगठन (EPFO) की प्रमुख सेवाएं एकीकृत की गईं, जिससे कामगार सीधे स्मार्टफोन से अपनी पासबुक, पेंशन और दावों की स्थिति देख सकते हैं।",
+    keyFact: "UMANG was developed by the Ministry of Electronics and Information Technology (MeitY) and the National e-Governance Division (NeGD)."
+  },
+  {
+    num: 80,
+    stemEn: "What is the statutory contribution of the employee towards the Employees' State Insurance (ESI) scheme under the reformed rates effective from July 2019?",
+    stemHi: "जुलाई 2019 से प्रभावी संशोधित दरों के तहत कर्मचारी राज्य बीमा (ESI) योजना में कर्मचारी का वैधानिक अंशदान वेतन का कितने प्रतिशत है?",
+    options: [
+      "0.50%",
+      "0.75%",
+      "1.25%",
+      "1.75%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Effective July 1, 2019, the employee's contribution rate under the ESI Act was reduced from 1.75% to 0.75% of their monthly wage, while the employer's contribution was reduced from 4.75% to 3.25% (totaling 4.0%).",
+    expHi: "1 जुलाई 2019 से लागू सुधारों के अनुसार, ESI योजना में कर्मचारी का अंशदान घटाकर वेतन का 0.75% कर दिया गया (जबकि पूर्व में यह 1.75% था)।",
+    keyFact: "Employees whose average daily wages are below the statutory exemption threshold (currently ₹176 per day) are exempt from paying employee contribution."
+  },
+  {
+    num: 81,
+    stemEn: "Under the Social Security Code, 2020, what is the maximum percentage of turnover that platform aggregators can be required to contribute towards the social security fund for gig and platform workers?",
+    stemHi: "सामाजिक सुरक्षा संहिता, 2020 के तहत प्लेटफॉर्म एग्रीगेटर्स को गिग और प्लेटफॉर्म कामगारों के सामाजिक सुरक्षा कोष में अधिकतम अपने वार्षिक टर्नओवर का कितने प्रतिशत तक योगदान करने के लिए निर्देशित किया जा सकता है?",
+    options: [
+      "1%",
+      "2%",
+      "5%",
+      "10%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under Section 114 of the Social Security Code, 2020, aggregator contributions to the social security fund for gig and platform workers are fixed at a rate between 1% and 2% of the annual turnover of the aggregator, subject to a cap of 5% of the aggregate amount paid or payable to gig and platform workers.",
+    expHi: "सामाजिक सुरक्षा संहिता, 2020 की धारा 114 के अनुसार, ऑनलाइन प्लेटफॉर्म एग्रीगेटर्स (जैसे स्विगी, जोमैटो, ओला आदि) को अपने वार्षिक टर्नओवर के 1% से 2% की दर से अंशदान देना अनिवार्य किया गया है, जो गिग वर्कर्स को देय राशि के 5% से अधिक नहीं हो सकता।",
+    keyFact: "India is among the earliest major developing economies to introduce a statutory aggregator-financed social security fund for platform gig workers."
+  },
+  {
+    num: 82,
+    stemEn: "In which year was the 'National Floor Level Minimum Wage' (NFLMW) concept first introduced administratively before being made statutory under the Code on Wages, 2019?",
+    stemHi: "वर्ष 2019 की मजदूरी संहिता में वैधानिक बनने से पहले प्रशासनिक तौर पर 'राष्ट्रीय न्यूनतम मजदूरी स्तर' (NFLMW) की अवधारणा मूल रूप से किस वर्ष प्रस्तुत की गई थी?",
+    options: [
+      "1991",
+      "1996",
+      "2004",
+      "2014",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "The concept of the National Floor Level Minimum Wage was first introduced in 1996 on the recommendation of the National Commission on Rural Labour (NCRL) to reduce inter-state wage disparities. It remained non-statutory until the Code on Wages, 2019 gave it statutory force.",
+    expHi: "राष्ट्रीय न्यूनतम मजदूरी स्तर (NFLMW) की अवधारणा सबसे पहले वर्ष 1996 में राष्ट्रीय ग्रामीण श्रम आयोग की सिफारिश पर प्रशासनिक रूप से गैर-वैधानिक तौर पर शुरू की गई थी। मजदूरी संहिता, 2019 ने इसे पहली बार वैधानिक दर्जा दिया।",
+    keyFact: "In 1996, the non-statutory national floor level minimum wage was initially fixed at ₹35 per day."
+  },
+  {
+    num: 83,
+    stemEn: "Under the Maternity Benefit (Amendment) Act, 2017, how many weeks of paid maternity leave are granted to an adoptive mother who legally adopts a child below the age of three months?",
+    stemHi: "मातृत्व लाभ (संशोधन) अधिनियम, 2017 के तहत तीन महीने से कम आयु के बच्चे को कानूनी रूप से गोद लेने वाली दत्तक मां को कितने सप्ताह का सवेतन मातृत्व अवकाश प्रदान किया जाता है?",
+    options: [
+      "6 weeks / 6 सप्ताह",
+      "12 weeks / 12 सप्ताह",
+      "16 weeks / 16 सप्ताह",
+      "26 weeks / 26 सप्ताह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Section 5(4) inserted by the 2017 amendment provides that a woman who legally adopts a child below the age of three months, or a commissioning mother, is entitled to 12 weeks of paid maternity leave calculated from the date the child is handed over.",
+    expHi: "मातृत्व लाभ (संशोधन) अधिनियम, 2017 के तहत यदि कोई महिला 3 माह से कम आयु के बच्चे को कानूनी रूप से गोद लेती है या वह सेरोगेट (कमीशनिंग) मां है, तो उसे 12 सप्ताह का सवेतन मातृत्व अवकाश पाने का अधिकार है।",
+    keyFact: "This provision marked the first time Indian statutory labour law extended maternity leaves to adoptive and commissioning mothers."
+  },
+  {
+    num: 84,
+    stemEn: "Under the Maternity Benefit (Amendment) Act, 2017, what is the maximum duration of paid maternity leave permitted for a woman employee who already has two or more surviving children?",
+    stemHi: "मातृत्व लाभ (संशोधन) अधिनियम, 2017 के तहत दो या दो से अधिक जीवित बच्चों वाली महिला कर्मचारी के लिए अधिकतम कितने सप्ताह का सवेतन मातृत्व अवकाश अनुमत है?",
+    options: [
+      "6 weeks / 6 सप्ताह",
+      "8 weeks / 8 सप्ताह",
+      "12 weeks / 12 सप्ताह",
+      "16 weeks / 16 सप्ताह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The enhanced 26-week maternity leave applies only up to the first two surviving children. For women having two or more surviving children, the paid leave entitlement remains capped at 12 weeks (of which not more than 6 weeks shall precede the expected delivery date).",
+    expHi: "2017 के संशोधन के तहत 26 सप्ताह का विस्तारित मातृत्व अवकाश केवल प्रथम दो जीवित बच्चों तक ही लागू होता है। दो या दो से अधिक जीवित बच्चों वाली महिलाओं के लिए सवेतन अवकाश की सीमा 12 सप्ताह ही रखी गई है।",
+    keyFact: "The cap of 12 weeks for third and subsequent children aligns with national population policy objectives."
+  },
+  {
+    num: 85,
+    stemEn: "Under the Child Labour (Prohibition and Regulation) Amendment Act, 2016, what is the maximum term of imprisonment prescribed for employers who violate the prohibition on employing children under 14 years?",
+    stemHi: "बाल श्रम (निषेध और विनियमन) संशोधन अधिनियम, 2016 के तहत 14 वर्ष से कम आयु के बच्चों को नियोजित करने वाले नियोक्ताओं के लिए अधिकतम कितने कारावास की सजा का प्रावधान किया गया है?",
+    options: [
+      "6 months / 6 महीने",
+      "1 year / 1 वर्ष",
+      "2 years / 2 वर्ष",
+      "5 years / 5 वर्ष",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under Section 14 of the amended Child Labour Act, employing a child or adolescent in contravention of the Act is punishable with imprisonment for a term between 6 months and 2 years, or a fine between ₹20,000 and ₹50,000, or both.",
+    expHi: "बाल श्रम (निषेध और विनियमन) संशोधन अधिनियम, 2016 के तहत उल्लंघनकर्ता नियोक्ता के लिए सजा को बढ़ाकर न्यूनतम 6 महीने से लेकर अधिकतम 2 वर्ष तक का कारावास, या ₹20,000 से ₹50,000 तक का जुर्माना, अथवा दोनों कर दिया गया है।",
+    keyFact: "The offense of employing child labour was made a cognizable and non-bailable offense under the 2016 amendment."
+  },
+  {
+    num: 86,
+    stemEn: "What is the statutory time limit within which an employer must disburse the annual bonus to eligible employees under the Code on Wages, 2019?",
+    stemHi: "मजदूरी संहिता, 2019 के तहत वित्तीय वर्ष की समाप्ति के बाद नियोक्ता द्वारा पात्र कर्मचारियों को वार्षिक बोनस का भुगतान अधिकतम कितने समय के भीतर किया जाना अनिवार्य है?",
+    options: [
+      "Within 3 months / 3 महीने के भीतर",
+      "Within 6 months / 6 महीने के भीतर",
+      "Within 8 months / 8 महीने के भीतर",
+      "Within 12 months / 12 महीने के भीतर",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under Section 39 of the Code on Wages, 2019 (retaining the norm from the Payment of Bonus Act, 1965), all bonus amounts payable to an employee must be paid by the employer within a period of 8 months from the close of the accounting year.",
+    expHi: "मजदूरी संहिता, 2019 की धारा 39 के अनुसार, वित्तीय/लेखा वर्ष की समाप्ति के 8 महीने (8 months) के भीतर नियोक्ता द्वारा पात्र कर्मचारियों को वार्षिक बोनस की देय राशि का भुगतान किया जाना अनिवार्य है।",
+    keyFact: "The statutory minimum bonus remains at 8.33% of the employee's wage or ₹100, whichever is higher, capped at a maximum of 20%."
+  },
+  {
+    num: 87,
+    stemEn: "Under the Code on Wages, 2019, what is the statutory minimum bonus percentage that every employer is obligated to pay, even if the establishment incurs a loss?",
+    stemHi: "मजदूरी संहिता, 2019 के अनुसार, किसी प्रतिष्ठान द्वारा घाटे (Loss) की स्थिति में भी कर्मचारियों को न्यूनतम कितने प्रतिशत वैधानिक बोनस का भुगतान करना बाध्यकारी है?",
+    options: [
+      "5.0%",
+      "8.33%",
+      "10.0%",
+      "12.0%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under Section 26 of the Code on Wages, 2019, every employee who has worked for not less than 30 days in an accounting year is entitled to a minimum bonus of 8.33% of wages earned or ₹100, whichever is higher, irrespective of whether the employer has an allocable surplus.",
+    expHi: "मजदूरी संहिता, 2019 की धारा 26 के तहत, लेखा वर्ष में कम से कम 30 दिन काम करने वाले प्रत्येक कर्मचारी को 8.33% का न्यूनतम बोनस दिया जाना अनिवार्य है, भले ही नियोक्ता को लाभ हुआ हो या नुकसान।",
+    keyFact: "8.33% corresponds exactly to one month's wage spread over 12 months (1/12th of total annual wages)."
+  },
+  {
+    num: 88,
+    stemEn: "What is the maximum statutory bonus ceiling percentage prescribed under the Code on Wages, 2019 when an establishment registers allocable surplus?",
+    stemHi: "मजदूरी संहिता, 2019 के तहत यदि किसी प्रतिष्ठान के पास आबंटन योग्य अधिशेष (Allocable Surplus) उपलब्ध है, तो अधिकतम कितने प्रतिशत तक बोनस देय हो सकता है?",
+    options: [
+      "10%",
+      "15%",
+      "20%",
+      "25%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under Section 26(3) of the Code on Wages, 2019, where the allocable surplus exceeds the minimum bonus payable, the employer is bound to pay bonus subject to a statutory maximum ceiling of 20% of wages earned during the accounting year.",
+    expHi: "मजदूरी संहिता, 2019 की धारा 26(3) के अनुसार, जब किसी लेखा वर्ष में आबंटन योग्य अधिशेष न्यूनतम बोनस से अधिक होता है, तो देय बोनस की अधिकतम वैधानिक सीमा वेतन के 20% तक सीमित है।",
+    keyFact: "The system of 'set-on and set-off' of allocable surplus continues to govern bonus liability across successive years."
+  },
+  {
+    num: 89,
+    stemEn: "Under the Industrial Relations Code, 2020, what is the maximum period of validity of the recognition granted to a 'Negotiating Union'?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत किसी 'वार्ताकार संघ' (Negotiating Union) को दी गई मान्यता की अधिकतम वैधता अवधि क्या होती है?",
+    options: [
+      "1 year / 1 वर्ष",
+      "2 years / 2 वर्ष",
+      "3 years (extendable up to 5 years) / 3 वर्ष (5 वर्ष तक विस्तार योग्य)",
+      "10 years / 10 वर्ष",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Section 14(10) of the Industrial Relations Code, 2020 stipulates that the recognition granted to a negotiating union or negotiating council shall be valid for a period of 3 years, which can be extended mutually or administratively up to a maximum of 5 years.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 की धारा 14(10) के अनुसार, किसी वार्ताकार संघ (Negotiating Union) या वार्ता परिषद की मान्यता 3 वर्ष की अवधि के लिए वैध होती है, जिसे अधिकतम 5 वर्ष तक बढ़ाया जा सकता है।",
+    keyFact: "Periodic renewal of union recognition prevents perpetual control by outdated or unrepresentative union leaders."
+  },
+  {
+    num: 90,
+    stemEn: "Which of the following old enactments was NOT subsumed under the Occupational Safety, Health and Working Conditions Code, 2020?",
+    stemHi: "निम्नलिखित में से कौन सा पुराना श्रम अधिनियम उपजीविकाजन्य सुरक्षा, स्वास्थ्य और कार्यदशा (OSH) संहिता, 2020 के अंतर्गत समाहित नहीं किया गया था?",
+    options: [
+      "The Factories Act, 1948 / कारखाना अधिनियम, 1948",
+      "The Mines Act, 1952 / खान अधिनियम, 1952",
+      "The Plantation Labour Act, 1951 / बागान श्रम अधिनियम, 1951",
+      "The Trade Unions Act, 1926 / ट्रेड यूनियन अधिनियम, 1926",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 3, // D
+    expEn: "The Trade Unions Act, 1926 was subsumed under the Industrial Relations Code, 2020, and NOT the OSH Code, 2020. The OSH Code subsumed 13 separate enactments relating to safety and health, including the Factories Act 1948, the Mines Act 1952, and the Plantation Labour Act 1951.",
+    expHi: "ट्रेड यूनियन अधिनियम, 1926 को 'औद्योगिक संबंध संहिता, 2020' में शामिल किया गया था, न कि OSH संहिता में। OSH संहिता में कारखाना अधिनियम 1948, खान अधिनियम 1952 और बागान श्रम अधिनियम 1951 सहित 13 कानूनों का विलय किया गया।",
+    keyFact: "The Industrial Relations Code, 2020 consolidated 3 central acts: Trade Unions Act 1926, Industrial Employment (Standing Orders) Act 1946, and Industrial Disputes Act 1947."
+  },
+  {
+    num: 91,
+    stemEn: "Which of the following three central labour acts were consolidated into the Industrial Relations Code, 2020?",
+    stemHi: "निम्नलिखित में से कौन से तीन केंद्रीय श्रम अधिनियम औद्योगिक संबंध संहिता, 2020 में समेकित किए गए?",
+    options: [
+      "Trade Unions Act 1926, Industrial Employment (Standing Orders) Act 1946, and Industrial Disputes Act 1947 / ट्रेड यूनियन अधिनियम 1926, औद्योगिक रोजगार स्थायी आदेश अधिनियम 1946, और औद्योगिक विवाद अधिनियम 1947",
+      "Minimum Wages Act 1948, Payment of Wages Act 1936, and Equal Remuneration Act 1976 / न्यूनतम मजदूरी अधिनियम 1948, मजदूरी संदाय अधिनियम 1936, और समान पारिश्रमिक अधिनियम 1976",
+      "EPF Act 1952, ESI Act 1948, and Maternity Benefit Act 1961 / ईपीएफ अधिनियम 1952, ईएसआई अधिनियम 1948, और मातृत्व लाभ अधिनियम 1961",
+      "Factories Act 1948, Mines Act 1952, and Dock Workers Act 1986 / कारखाना अधिनियम 1948, खान अधिनियम 1952, और डॉक वर्कर्स अधिनियम 1986",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 0, // A
+    expEn: "The Industrial Relations Code, 2020 amalgamated exactly three historical statutes: (1) The Trade Unions Act, 1926; (2) The Industrial Employment (Standing Orders) Act, 1946; and (3) The Industrial Disputes Act, 1947.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 ने तीन केंद्रीय कानूनों का समावेशन किया: (1) ट्रेड यूनियन अधिनियम, 1926, (2) औद्योगिक रोजगार (स्थायी आदेश) अधिनियम, 1946, और (3) औद्योगिक विवाद अधिनियम, 1947।",
+    keyFact: "It replaced multiple adjudicating authorities with a unified two-member Industrial Tribunal."
+  },
+  {
+    num: 92,
+    stemEn: "How many central enactments were consolidated into the Social Security Code, 2020?",
+    stemHi: "सामाजिक सुरक्षा संहिता, 2020 के अंतर्गत कुल कितने केंद्रीय श्रम कानूनों का समेकन किया गया?",
+    options: [
+      "4 laws / 4 कानून",
+      "6 laws / 6 कानून",
+      "9 laws / 9 कानून",
+      "13 laws / 13 कानून",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The Social Security Code, 2020 subsumed exactly 9 central labour statutes relating to social security: EPF Act 1952, ESI Act 1948, Employees' Compensation Act 1923, Maternity Benefit Act 1961, Payment of Gratuity Act 1972, Cine Workers Welfare Fund Act 1981, Building and Other Construction Workers Welfare Cess Act 1996, Unorganised Workers' Social Security Act 2008, and Employment Exchanges (CNV) Act 1959.",
+    expHi: "सामाजिक सुरक्षा संहिता, 2020 ने सामाजिक सुरक्षा से संबंधित 9 केंद्रीय कानूनों को समेकित किया, जिनमें EPF, ESI, मातृत्व लाभ, ग्रेच्युटी संदाय और असंगठित कामगार सामाजिक सुरक्षा अधिनियम शामिल हैं।",
+    keyFact: "Of the 29 consolidated laws: Code on Wages subsumed 4, Industrial Relations subsumed 3, Social Security subsumed 9, and OSH subsumed 13."
+  },
+  {
+    num: 93,
+    stemEn: "How many central enactments were consolidated into the Occupational Safety, Health and Working Conditions Code, 2020?",
+    stemHi: "उपजीविकाजन्य सुरक्षा, स्वास्थ्य और कार्यदशा (OSH) संहिता, 2020 के अंतर्गत कुल कितने केंद्रीय कानूनों का समेकन किया गया?",
+    options: [
+      "4 laws / 4 कानून",
+      "9 laws / 9 कानून",
+      "11 laws / 11 कानून",
+      "13 laws / 13 कानून",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 3, // D
+    expEn: "The OSH Code, 2020 subsumed 13 central labour laws dealing with safety, health, working conditions, contracts, and interstate migrant workers across factories, mines, docks, plantations, transport, and construction.",
+    expHi: "OSH संहिता, 2020 ने विभिन्न क्षेत्रों में सुरक्षा और कार्यदशा से संबंधित कुल 13 केंद्रीय श्रम कानूनों को एक व्यापक कानून में समाहित किया।",
+    keyFact: "The total sum across the 4 codes equals 29 central laws (4 + 3 + 9 + 13 = 29)."
+  },
+  {
+    num: 94,
+    stemEn: "Under the OSH Code, 2020, what is the employee threshold for an establishment to provide a mandatory journey allowance to inter-state migrant workers to visit their home state?",
+    stemHi: "OSH संहिता, 2020 के तहत अंतर-राज्यीय प्रवासी श्रमिकों को उनके गृह राज्य जाने के लिए नियोक्ता द्वारा अनिवार्य यात्रा भत्ता प्रदान करने हेतु कर्मचारी सीमा क्या निर्धारित है?",
+    options: [
+      "Applicable only to establishments with 500+ workers / केवल 500+ श्रमिकों वाले प्रतिष्ठानों पर",
+      "Applicable to all inter-state migrant workers earning below prescribed wage ceiling / निर्धारित वेतन सीमा से कम आय वाले सभी अंतर-राज्यीय प्रवासी श्रमिकों पर",
+      "Applicable only to government PSU workers / केवल सरकारी पीएसयू कर्मचारियों पर",
+      "Applicable only to plantation workers / केवल बागान श्रमिकों पर",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Section 61 of the OSH Code, 2020 provides that every employer of an inter-state migrant worker who earns below the prescribed wage ceiling must pay an annual lump sum journey allowance for traveling to and from their native place.",
+    expHi: "OSH संहिता, 2020 की धारा 61 के तहत, नियोक्ता को निर्धारित मजदूरी सीमा से कम कमाने वाले अंतर-राज्यीय प्रवासी कामगारों को उनके गृह स्थान से आने-जाने के लिए प्रतिवर्ष एकमुश्त यात्रा भत्ता (Journey Allowance) देना अनिवार्य है।",
+    keyFact: "This provision was specifically strengthened post-2020 to address vulnerabilities exposed during the COVID-19 pandemic migration."
+  },
+  {
+    num: 95,
+    stemEn: "Under the Apprentices Act as amended in 2014, an establishment employing how many workers is legally mandated to implement apprenticeship training programs?",
+    stemHi: "2014 में संशोधित शिक्षु (Apprentices) अधिनियम के तहत किसी प्रतिष्ठान में कम से कम कितने कर्मचारी होने पर शिक्षुता प्रशिक्षण कार्यक्रम संचालित करना अनिवार्य है?",
+    options: [
+      "10 or more workers / 10 या अधिक कर्मचारी",
+      "30 or more workers / 30 या अधिक कर्मचारी",
+      "50 or more workers / 50 या अधिक कर्मचारी",
+      "100 or more workers / 100 या अधिक कर्मचारी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under the amended Apprenticeship Rules, establishments having 30 or more workers (regular plus contract) are mandatorily obligated to engage apprentices within the 2.5% to 15% workforce band. Establishments with 4 to 29 workers may engage apprentices optionally.",
+    expHi: "संशोधित शिक्षु नियमों के अनुसार, 30 या अधिक कर्मचारियों वाले प्रतिष्ठानों के लिए कुल कर्मचारियों के 2.5% से 15% के दायरे में शिक्षुओं को प्रशिक्षित करना अनिवार्य है, जबकि 4 से 29 कर्मचारियों वाले प्रतिष्ठानों के लिए यह स्वैच्छिक है।",
+    keyFact: "Establishments with fewer than 4 workers cannot engage apprentices."
+  },
+  {
+    num: 96,
+    stemEn: "Under the Apprenticeship Rules, establishments having between how many workers can optionally engage apprentices?",
+    stemHi: "शिक्षुता नियमों के तहत कितने कर्मचारियों वाले प्रतिष्ठान स्वैच्छिक (Optional) रूप से शिक्षुओं को रख सकते हैं?",
+    options: [
+      "1 to 3 workers / 1 से 3 कर्मचारी",
+      "4 to 29 workers / 4 से 29 कर्मचारी",
+      "30 to 50 workers / 30 से 50 कर्मचारी",
+      "50 to 100 workers / 50 से 100 कर्मचारी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under the post-2014 reformed apprenticeship guidelines, establishments employing between 4 and 29 workers are eligible to engage apprentices on an optional/voluntary basis, receiving government stipend support under NAPS.",
+    expHi: "शिक्षुता नियमों के तहत 4 से 29 कर्मचारियों वाले प्रतिष्ठानों को स्वैच्छिक आधार पर शिक्षु (Apprentices) रखने की छूट दी गई है।",
+    keyFact: "This flexibility encourages micro and small enterprises to participate in skilling without mandatory quotas."
+  },
+  {
+    num: 97,
+    stemEn: "What is the minimum educational qualification specified under the national framework for enrolling in formal ITI craftsman training schemes?",
+    stemHi: "राष्ट्रीय ढांचे के तहत औपचारिक ITI शिल्पकार प्रशिक्षण योजनाओं में नामांकन के लिए न्यूनतम शैक्षणिक योग्यता क्या निर्धारित है?",
+    options: [
+      "Graduation / स्नातक",
+      "Post Graduation / स्नातकोत्तर",
+      "Class 8th or Class 10th pass depending on the trade / ट्रेड के आधार पर कक्षा 8वीं या कक्षा 10वीं उत्तीर्ण",
+      "Polytechnic Diploma / पॉलिटेक्निक डिप्लोमा",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "Under the Craftsmen Training Scheme (CTS) administered by the Directorate General of Training (DGT), minimum entry qualifications for various engineering and non-engineering trades range between Class 8th pass and Class 10th pass.",
+    expHi: "डीजीटी (DGT) के शिल्पकार प्रशिक्षण योजना के तहत विभिन्न ट्रेडों में प्रवेश की न्यूनतम योग्यता ट्रेड के अनुसार कक्षा 8वीं या कक्षा 10वीं उत्तीर्ण निर्धारित है।",
+    keyFact: "Post-2014 ITI reforms introduced dual training systems with industry partners and National Trade Certificates (NTC)."
+  },
+  {
+    num: 98,
+    stemEn: "Which body functions as the apex national regulator for formulating standards and certifying vocational education and training in India, created by merging NCVT and NSDA?",
+    stemHi: "NCVT और NSDA का विलय करके भारत में व्यावसायिक शिक्षा और प्रशिक्षण के मानकों को तैयार करने और प्रमाणित करने वाला शीर्ष राष्ट्रीय नियामक कौन सा बनाया गया?",
+    options: [
+      "UGC / यूजीसी",
+      "AICTE / एआईसीटीई",
+      "NCVET / एनसीवीईटी (National Council for Vocational Education and Training)",
+      "CBSE / सीबीएसई",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 2, // C
+    expEn: "The National Council for Vocational Education and Training (NCVET) was notified in December 2018 by merging the National Council for Vocational Training (NCVT) and National Skill Development Agency (NSDA) to serve as a unified overarching skill regulator.",
+    expHi: "दिसंबर 2018 में केंद्र सरकार ने NCVT और NSDA का विलय कर 'राष्ट्रीय व्यावसायिक शिक्षा और प्रशिक्षण परिषद' (NCVET) के गठन को अधिसूचित किया, जो व्यावसायिक प्रशिक्षण का शीर्ष नियामक है।",
+    keyFact: "NCVET regulates Awarding Bodies, Assessment Agencies, and Skill Information Providers."
+  },
+  {
+    num: 99,
+    stemEn: "Under the Industrial Relations Code, 2020, what is the notice period required for an employer before effecting a lockout or lay-off in an industrial establishment?",
+    stemHi: "औद्योगिक संबंध संहिता, 2020 के तहत किसी नियोक्ता द्वारा औद्योगिक प्रतिष्ठान में तालाबंदी (Lockout) करने से पूर्व कितने दिनों का अग्रिम नोटिस देना अनिवार्य है?",
+    options: [
+      "At least 7 days / कम से कम 7 दिन",
+      "At least 14 days / कम से कम 14 दिन",
+      "At least 30 days / कम से कम 30 दिन",
+      "At least 60 days / कम से कम 60 दिन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 1, // B
+    expEn: "Under Section 62 of the Industrial Relations Code, 2020, parity is maintained between strikes and lockouts. An employer cannot declare a lockout without giving notice within 60 days before locking out and within 14 days of giving such notice. Thus, at least 14 days of advance notice is mandatory.",
+    expHi: "औद्योगिक संबंध संहिता, 2020 की धारा 62 के तहत नियोक्ता के लिए भी हड़ताल के समान नियम हैं; वह 60 दिन की अवधि के भीतर और कम से कम 14 दिन का नोटिस दिए बिना तालाबंदी (Lockout) घोषित नहीं कर सकता।",
+    keyFact: "This creates parity between trade unions and employers regarding sudden industrial actions."
+  },
+  {
+    num: 100,
+    stemEn: "In which year was the 'National Career Service' (NCS) portal integrated with the e-Shram portal to allow registered unorganised workers to access formal job vacancies directly?",
+    stemHi: "पंजीकृत असंगठित कामगारों को औपचारिक नौकरी के अवसरों तक सीधी पहुंच प्रदान करने के लिए ई-श्रम पोर्टल को राष्ट्रीय करियर सेवा (NCS) पोर्टल के साथ किस वर्ष एकीकृत किया गया?",
+    options: [
+      "2017",
+      "2018",
+      "2019",
+      "2020",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    correct: 4, // E
+    expEn: "The integration between the e-Shram portal and the National Career Service (NCS) portal was officially completed and operationalized in early 2022 by the Ministry of Labour and Employment. None of the options (A) 2017, (B) 2018, (C) 2019, or (D) 2020 are correct, making Option (E) the valid key.",
+    expHi: "श्रम एवं रोजगार मंत्रालय द्वारा ई-श्रम पोर्टल और राष्ट्रीय करियर सेवा (NCS) पोर्टल का औपचारिक एकीकरण वर्ष 2022 में किया गया था ताकि असंगठित कामगारों को रोजगार के अवसरों से सीधे जोड़ा जा सके। चूंकि दिए गए विकल्प (A) 2017, (B) 2018, (C) 2019 और (D) 2020 गलत हैं, अतः सही उत्तर विकल्प (E) है।",
+    keyFact: "This cross-platform integration allows unorganised workers to search and apply for verified domestic and international job openings using their 12-digit UAN."
+  }
+];
+
+// STATE MANAGEMENT
+let currentIndex = 0;
+// Each question state: { visited: bool, selected: null|number, correct: bool|null, status: 'notvisited'|'unanswered'|'correct'|'incorrect'|'skipped'|'review' }
+const userStates = Array.from({ length: 100 }, () => ({
+  visited: false,
+  selected: null,
+  isCorrect: null,
+  status: 'notvisited'
+}));
+
+// INITIALIZATION
+window.addEventListener('DOMContentLoaded', () => {
+  buildPaletteGrid();
+  loadQuestion(0);
+  setupPaletteDrawer();
+});
+
+function setupPaletteDrawer() {
+  const overlay = document.getElementById('paletteOverlay');
+  const openBtn = document.getElementById('openPaletteBtn');
+  const closeBtn = document.getElementById('closePaletteBtn');
+
+  openBtn.addEventListener('click', () => {
+    overlay.style.display = 'flex';
+  });
+  closeBtn.addEventListener('click', () => {
+    overlay.style.display = 'none';
+  });
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.style.display = 'none';
+  });
+}
+
+function buildPaletteGrid() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 100; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'palette-btn status-notvisited';
+    btn.id = `palette-btn-${i}`;
+    btn.textContent = i + 1;
+    btn.onclick = () => {
+      loadQuestion(i);
+      document.getElementById('paletteOverlay').style.display = 'none';
+    };
+    grid.appendChild(btn);
+  }
+}
+
+function updatePaletteButton(idx) {
+  const btn = document.getElementById(`palette-btn-${idx}`);
+  if (!btn) return;
+  const s = userStates[idx].status;
+  btn.className = `palette-btn status-${s} ${idx === currentIndex ? 'active' : ''}`;
+}
+
+function calculateScore() {
+  let correctCount = 0;
+  let incorrectCount = 0;
+  let attemptedCount = 0;
+
+  userStates.forEach(st => {
+    if (st.selected !== null) {
+      attemptedCount++;
+      if (st.isCorrect) correctCount++;
+      else incorrectCount++;
+    }
+  });
+
+  const net = (correctCount * 1.0) - (incorrectCount * 0.25);
+  return {
+    netScore: net.toFixed(2),
+    correct: correctCount,
+    incorrect: incorrectCount,
+    attempted: attemptedCount,
+    skipped: 100 - attemptedCount
+  };
+}
+
+function updateLiveScoreDisplay() {
+  const scores = calculateScore();
+  document.getElementById('scoreBadge').textContent = `Net Score: ${scores.netScore}`;
+}
+
+function loadQuestion(idx) {
+  // If moving away from an unattempted visited question that wasn't skipped or reviewed, mark as unanswered
+  if (userStates[currentIndex].visited && userStates[currentIndex].selected === null) {
+    if (userStates[currentIndex].status !== 'skipped' && userStates[currentIndex].status !== 'review') {
+      userStates[currentIndex].status = 'unanswered';
+      updatePaletteButton(currentIndex);
+    }
+  }
+
+  currentIndex = idx;
+  const q = questions[idx];
+  const state = userStates[idx];
+  state.visited = true;
+
+  if (state.selected === null && state.status !== 'skipped' && state.status !== 'review') {
+    state.status = 'unanswered';
+  }
+
+  // Update header labels
+  document.getElementById('qCounterBadge').textContent = `Question ${idx + 1} of 100`;
+  document.getElementById('displayQNum').textContent = `Q${q.num}`;
+
+  // Stems
+  document.getElementById('qStemEn').textContent = q.stemEn;
+  document.getElementById('qStemHi').textContent = q.stemHi;
+
+  // Options
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+
+  const labels = ['(A)', '(B)', '(C)', '(D)', '(E)'];
+  const isLocked = state.selected !== null;
+
+  q.options.forEach((optText, optIdx) => {
+    const card = document.createElement('div');
+    card.className = `option-card ${isLocked ? 'locked' : ''}`;
+
+    if (isLocked) {
+      if (optIdx === q.correct) {
+        card.classList.add('correct-answer');
+      } else if (optIdx === state.selected && !state.isCorrect) {
+        card.classList.add('user-selected-wrong');
+      }
+    } else {
+      card.onclick = () => selectOption(optIdx);
+    }
+
+    card.innerHTML = `
+      <span class="option-key">${labels[optIdx]}</span>
+      <span class="option-text">${optText}</span>
+    `;
+    container.appendChild(card);
+  });
+
+  // Explanation
+  const expCard = document.getElementById('explanationCard');
+  if (isLocked) {
+    document.getElementById('expEn').textContent = q.expEn;
+    document.getElementById('expHi').textContent = q.expHi;
+    document.getElementById('keyFact').textContent = `📌 Key Exam Fact: ${q.keyFact}`;
+    expCard.style.display = 'block';
+  } else {
+    expCard.style.display = 'none';
+  }
+
+  // Prev / Next button states
+  document.getElementById('prevBtn').disabled = (idx === 0);
+  document.getElementById('nextBtn').textContent = (idx === 99) ? 'View Palette ➔' : 'Next Question ➔';
+
+  // Highlight in Palette
+  for (let i = 0; i < 100; i++) updatePaletteButton(i);
+  updateLiveScoreDisplay();
+}
+
+function selectOption(selectedOptIdx) {
+  const state = userStates[currentIndex];
+  if (state.selected !== null) return; // Locked
+
+  const q = questions[currentIndex];
+  const isRight = (selectedOptIdx === q.correct);
+
+  state.selected = selectedOptIdx;
+  state.isCorrect = isRight;
+  state.status = isRight ? 'correct' : 'incorrect';
+
+  updatePaletteButton(currentIndex);
+  loadQuestion(currentIndex);
+}
+
+function skipQuestion() {
+  const state = userStates[currentIndex];
+  if (state.selected === null) {
+    state.status = 'skipped';
+    updatePaletteButton(currentIndex);
+  }
+  navigateQuestion(1);
+}
+
+function markForReview() {
+  const state = userStates[currentIndex];
+  if (state.selected === null) {
+    state.status = 'review';
+    updatePaletteButton(currentIndex);
+  }
+  navigateQuestion(1);
+}
+
+function navigateQuestion(direction) {
+  const nextIdx = currentIndex + direction;
+  if (nextIdx >= 0 && nextIdx < 100) {
+    loadQuestion(nextIdx);
+  } else if (nextIdx >= 100) {
+    document.getElementById('paletteOverlay').style.display = 'flex';
+  }
+}
+
+function openReportModal() {
+  document.getElementById('paletteOverlay').style.display = 'none';
+  const scores = calculateScore();
+  document.getElementById('finalNetScore').textContent = scores.netScore;
+  document.getElementById('statAttempted').textContent = scores.attempted;
+  document.getElementById('statCorrect').textContent = scores.correct;
+  document.getElementById('statIncorrect').textContent = scores.incorrect;
+  document.getElementById('statSkipped').textContent = scores.skipped;
+
+  const acc = scores.attempted > 0 ? ((scores.correct / scores.attempted) * 100).toFixed(1) + '%' : '0.0%';
+  document.getElementById('statAccuracy').textContent = acc;
+
+  document.getElementById('reportOverlay').style.display = 'flex';
+}
+
+function closeReportModal() {
+  document.getElementById('reportOverlay').style.display = 'none';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,2613 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSSSC PET CBT Simulator - सामान्य हिन्दी: संधि (100 Questions)</title>
+<style>
+  :root {
+    --bg-main: #121316;
+    --bg-card: #1e2024;
+    --bg-elevated: #272a30;
+    --text-primary: #f1f3f5;
+    --text-secondary: #adb5bd;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --correct: #16a34a;
+    --correct-bg: rgba(22, 163, 74, 0.16);
+    --incorrect: #dc2626;
+    --incorrect-bg: rgba(220, 38, 38, 0.16);
+    --orange: #ea580c;
+    --slate: #64748b;
+    --purple: #9333ea;
+    --dark-gray: #333740;
+    --border: #343841;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top Bar */
+  .top-bar {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 0.85rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  .brand-block {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.2px;
+  }
+
+  .brand-sub {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .top-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .badge-counter {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #e2e8f0;
+  }
+
+  .badge-score {
+    background: rgba(59, 130, 246, 0.14);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: #93c5fd;
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn:hover:not(:disabled) {
+    background: #343842;
+    border-color: #4b5262;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-palette {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .btn-palette:hover:not(:disabled) {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  .btn-submit-top {
+    background: rgba(22, 163, 74, 0.2);
+    border-color: #16a34a;
+    color: #86efac;
+  }
+
+  .btn-submit-top:hover {
+    background: #16a34a;
+    color: #fff;
+  }
+
+  /* Main Container */
+  .main-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 1.75rem auto;
+    padding: 0 1.25rem 3rem;
+    flex: 1;
+  }
+
+  .question-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  }
+
+  .q-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .q-num-pill {
+    background: var(--accent);
+    color: #fff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .q-status-pill {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+
+  .q-marking-info {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .stem-en {
+    font-size: 1.12rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.45rem;
+  }
+
+  .stem-hi {
+    font-size: 1.18rem;
+    font-weight: 600;
+    color: #fcd34d;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Options */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .option-card {
+    background: var(--bg-elevated);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    transition: all 0.15s ease;
+    text-align: left;
+    width: 100%;
+    color: var(--text-primary);
+    font-size: 1rem;
+  }
+
+  .option-card:hover:not(.locked) {
+    border-color: var(--accent);
+    background: rgba(59, 130, 246, 0.08);
+  }
+
+  .option-card.locked {
+    cursor: default;
+  }
+
+  .opt-letter {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 0.92rem;
+  }
+
+  .option-card.correct-selected {
+    background: var(--correct-bg);
+    border-color: var(--correct);
+  }
+
+  .option-card.correct-selected .opt-letter {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: #fff;
+  }
+
+  .option-card.incorrect-selected {
+    background: var(--incorrect-bg);
+    border-color: var(--incorrect);
+  }
+
+  .option-card.incorrect-selected .opt-letter {
+    background: var(--incorrect);
+    border-color: var(--incorrect);
+    color: #fff;
+  }
+
+  .option-card.correct-outline {
+    border-color: var(--correct);
+    box-shadow: 0 0 0 1px var(--correct);
+  }
+
+  .option-card.correct-outline .opt-letter {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: #fff;
+  }
+
+  /* Explanation Card */
+  .explanation-box {
+    margin-top: 1.5rem;
+    background: #17191d;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: none;
+  }
+
+  .explanation-box.visible {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .exp-verdict {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .exp-block {
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .exp-label {
+    font-weight: 700;
+    color: #93c5fd;
+  }
+
+  .exp-fact {
+    margin-top: 0.85rem;
+    padding: 0.7rem 0.9rem;
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.35);
+    border-radius: 8px;
+    color: #fde68a;
+    font-size: 0.92rem;
+  }
+
+  /* Action Bar */
+  .card-actions {
+    margin-top: 1.6rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .left-actions, .right-actions {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-review.active-review {
+    background: rgba(147, 51, 234, 0.25);
+    border-color: var(--purple);
+    color: #e9d5ff;
+  }
+
+  .btn-next {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .btn-next:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+
+  /* Slide-Over Palette Drawer (Hidden by Default) */
+  .palette-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.68);
+    z-index: 90;
+    display: none;
+    backdrop-filter: blur(2px);
+  }
+
+  .palette-backdrop.open {
+    display: block;
+  }
+
+  .palette-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 440px;
+    height: 100vh;
+    background: var(--bg-card);
+    border-left: 1px solid var(--border);
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.6);
+  }
+
+  .palette-drawer.open {
+    transform: translateX(0);
+  }
+
+  .palette-header {
+    padding: 1.1rem 1.3rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .palette-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .btn-close-palette {
+    background: rgba(220, 38, 38, 0.15);
+    border: 1px solid rgba(220, 38, 38, 0.4);
+    color: #fca5a5;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-close-palette:hover {
+    background: var(--incorrect);
+    color: #fff;
+  }
+
+  .palette-legend {
+    padding: 0.9rem 1.3rem;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 0.85rem;
+    font-size: 0.8rem;
+    background: #181a1e;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 4px;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .palette-grid-wrap {
+    padding: 1.2rem 1.3rem;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.6rem;
+  }
+
+  .p-btn {
+    height: 42px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.1s ease, filter 0.15s ease;
+  }
+
+  .p-btn:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+  }
+
+  .p-btn.current-q {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+
+  /* 6 Palette Colors */
+  .st-not-visited { background-color: var(--dark-gray); color: #cbd5e1; }
+  .st-unanswered  { background-color: var(--orange); color: #fff; }
+  .st-correct     { background-color: var(--correct); color: #fff; }
+  .st-incorrect   { background-color: var(--incorrect); color: #fff; }
+  .st-skipped     { background-color: var(--slate); color: #fff; }
+  .st-review      { background-color: var(--purple); color: #fff; }
+
+  .palette-footer {
+    padding: 1rem 1.3rem;
+    border-top: 1px solid var(--border);
+    background: #181a1e;
+  }
+
+  /* Final Report View */
+  #report-view {
+    display: none;
+  }
+
+  .report-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+
+  .stat-tile {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-top: 0.25rem;
+  }
+
+  .review-matrix-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .question-card { padding: 1.2rem; }
+    .stem-en { font-size: 1rem; }
+    .stem-hi { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<header class="top-bar">
+  <div class="brand-block">
+    <div class="brand-title">UPSSSC PET (Group C) — सामान्य हिन्दी: संधि (Sandhi)</div>
+    <div class="brand-sub">Marking: +1.00 Correct | -0.25 Incorrect | 0.00 Skipped</div>
+  </div>
+  <div class="top-controls">
+    <div class="badge-counter" id="question-counter">Question 1 of 100</div>
+    <div class="badge-score" id="live-score-badge">Net Score: 0.00</div>
+    <button class="btn btn-palette" id="open-palette-top" onclick="openPalette()">📋 Open Palette</button>
+    <button class="btn btn-submit-top" onclick="showFinalReport()">📊 Finish & View Report</button>
+  </div>
+</header>
+
+<!-- Main Single-Column Workspace -->
+<main class="main-container">
+  <!-- Active Simulator View -->
+  <section id="simulator-view">
+    <div class="question-card">
+      <div class="q-header-row">
+        <div style="display:flex; align-items:center; gap:0.65rem;">
+          <span class="q-num-pill" id="q-badge">Q1</span>
+          <span class="q-status-pill" id="q-status-text">Not Answered</span>
+        </div>
+        <div class="q-marking-info">+1.00 / -0.25 Marks</div>
+      </div>
+
+      <div class="stem-en" id="stem-en"></div>
+      <div class="stem-hi" id="stem-hi"></div>
+
+      <div class="options-list" id="options-container"></div>
+
+      <!-- Bilingual Explanation Card -->
+      <div class="explanation-box" id="explanation-box">
+        <div class="exp-verdict" id="exp-verdict"></div>
+        <div class="exp-block"><span class="exp-label">Explanation (English): </span><span id="exp-en"></span></div>
+        <div class="exp-block"><span class="exp-label">व्याख्या (Hindi): </span><span id="exp-hi"></span></div>
+        <div class="exp-fact"><strong>💡 Key Exam Fact: </strong><span id="exp-fact"></span></div>
+      </div>
+
+      <!-- Bottom Controls -->
+      <div class="card-actions">
+        <div class="left-actions">
+          <button class="btn" id="btn-prev" onclick="prevQuestion()">⬅ Previous</button>
+          <button class="btn" id="btn-skip" onclick="skipQuestion()">⚪ Skip Question</button>
+          <button class="btn btn-review" id="btn-review" onclick="toggleReview()">🟣 Mark for Review</button>
+          <button class="btn btn-palette" onclick="openPalette()">📋 Open Palette</button>
+        </div>
+        <div class="right-actions">
+          <button class="btn btn-next" id="btn-next" onclick="nextQuestion()">Next Question ➔</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final Report Dashboard -->
+  <section id="report-view">
+    <div class="report-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <h2 style="font-size:1.45rem;">📊 UPSSSC PET Final Performance Dashboard</h2>
+          <p style="color:var(--text-secondary); font-size:0.9rem;">Section: सामान्य हिन्दी (General Hindi) — Topic: संधि (100 Verified Questions)</p>
+        </div>
+        <div style="display:flex; gap:0.65rem;">
+          <button class="btn" onclick="returnToSimulator()">⬅ Back to Simulator</button>
+          <button class="btn btn-palette" onclick="resetSimulator()">🔄 Restart Test</button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="report-stats-grid"></div>
+    </div>
+
+    <h3 style="margin-bottom:1rem; font-size:1.2rem;">📋 Complete 100-Question Bilingual Review Matrix</h3>
+    <div id="review-matrix-container"></div>
+  </section>
+</main>
+
+<!-- On-Demand Slide-In Question Palette -->
+<div class="palette-backdrop" id="palette-backdrop" onclick="closePalette()"></div>
+<aside class="palette-drawer" id="palette-drawer" aria-label="Question Palette">
+  <div class="palette-header">
+    <div class="palette-title">📋 Question Palette (1 - 100)</div>
+    <button class="btn-close-palette" onclick="closePalette()">✕ Close Palette</button>
+  </div>
+
+  <div class="palette-legend">
+    <div class="legend-item"><span class="legend-dot st-correct"></span>🟢 Correct (<span id="cnt-correct">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot st-incorrect"></span>🔴 Incorrect (<span id="cnt-incorrect">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot st-unanswered"></span>🟠 Unanswered (<span id="cnt-unanswered">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot st-skipped"></span>⚪ Skipped (<span id="cnt-skipped">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot st-review"></span>🟣 Review (<span id="cnt-review">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot st-not-visited"></span>⚫ Not Visited (<span id="cnt-not-visited">100</span>)</div>
+  </div>
+
+  <div class="palette-grid-wrap">
+    <div class="palette-grid" id="palette-grid"></div>
+  </div>
+
+  <div class="palette-footer">
+    <button class="btn btn-submit-top" style="width:100%; justify-content:center;" onclick="closePalette(); showFinalReport();">📊 Submit & Open Final Report</button>
+  </div>
+</aside>
+
+<script>
+const E_OPTION = "None of these / इनमें से कोई नहीं";
+
+const RAW_QUESTIONS = [
+  // BATCH 1 (Q1 - Q25)
+  {
+    q: 1,
+    en: "What is the correct Sandhi-Viched (disjunction) of the word 'विद्यालय' (Vidyalaya)?",
+    hi: "'विद्यालय' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "विद्या + आलय (Vidya + Aalaya) / विद्या + आलय",
+      "विद्य + आलय (Vidya + Aalaya) / विद्य + आलय",
+      "विद्या + लय (Vidya + Laya) / विद्या + लय",
+      "वि + द्यालय (Vi + Dyalaya) / वि + द्यालय",
+      E_OPTION
+    ],
+    ans: 0,
+    expEn: "In 'विद्यालय', the final 'आ' (ā) of 'विद्या' combines with the initial 'आ' (ā) of 'आलय' to form a long vowel 'आ' (ā). This follows the rule of Dirgha Swar Sandhi (आ + आ = आ). Options (B), (C), and (D) contain meaningless or grammatically incorrect root splits.",
+    expHi: "'विद्यालय' का सही संधि-विच्छेद 'विद्या + आलय' है। इसमें दीर्घ स्वर संधि है। नियम के अनुसार, जब ह्रस्व या दीर्घ 'अ/आ' के बाद ह्रस्व या दीर्घ 'अ/आ' आए, तो दोनों मिलकर दीर्घ 'आ' हो जाते हैं (आ + आ = आ)।",
+    fact: "Dirgha Swar Sandhi formula: अकः सवर्णे दीर्घः (अ/आ + अ/आ = आ; इ/ई + इ/ई = ई; उ/ऊ + उ/ऊ = ऊ)."
+  },
+  {
+    q: 2,
+    en: "Which type of Sandhi is present in the word 'महेन्द्र' (Mahendra)?",
+    hi: "'महेन्द्र' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Guna Sandhi / गुण संधि",
+      "Vriddhi Sandhi / वृद्धि संधि",
+      "Yan Sandhi / यण संधि",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'महेन्द्र' is formed by 'महा + इन्द्र' (Maha + Indra). Here, 'आ' (ā) + 'इ' (i) combine to form 'ए' (e), which is the defining rule of Guna Swar Sandhi.",
+    expHi: "'महेन्द्र' का संधि-विच्छेद 'महा + इन्द्र' है। यहाँ 'आ' और 'इ' के मेल से 'ए' विकार उत्पन्न हुआ है (आ + इ = ए), जो गुण स्वर संधि का नियम है।",
+    fact: "Identification trick for Guna Sandhi: Look for a single top matra ('ए' or 'ओ') or the 'अर्' (रेफ) sound in the middle of the combined word."
+  },
+  {
+    q: 3,
+    en: "Identify the correct Sandhi-Viched of the word 'सदैव' (Sadaiva).",
+    hi: "'सदैव' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "सद + एव (Sad + Eva) / सद + एव",
+      "सदा + ऐव (Sada + Aiva) / सदा + ऐव",
+      "सदा + एव (Sada + Eva) / सदा + एव",
+      "सद् + ऐव (Sad + Aiva) / सद् + ऐव",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'सदैव' splits into 'सदा + एव' (Sada + Eva). According to Vriddhi Swar Sandhi, when 'अ' or 'आ' is followed by 'ए' or 'ऐ', both merge to become 'ऐ' (आ + ए = ऐ).",
+    expHi: "'सदैव' का सही संधि-विच्छेद 'सदा + एव' है। यह वृद्धि स्वर संधि का उदाहरण है। नियम: 'अ' या 'आ' के बाद 'ए' या 'ऐ' आने पर दोनों के मेल से 'ऐ' हो जाता है (आ + ए = ऐ)।",
+    fact: "Vriddhi Sandhi is easily spotted by double overhead matras ('ऐ' or 'औ') at the junction point of the word (e.g., सदैव, एकैक, महौषध)."
+  },
+  {
+    q: 4,
+    en: "The word 'इत्यादि' (Ityadi) is an example of which Sandhi?",
+    hi: "'इत्यादि' शब्द किस संधि का उदाहरण है?",
+    opts: [
+      "Yan Sandhi / यण संधि",
+      "Ayadi Sandhi / अयादि संधि",
+      "Guna Sandhi / गुण संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      E_OPTION
+    ],
+    ans: 0,
+    expEn: "'इत्यादि' is formed by 'इति + आदि' (Iti + Aadi). In Yan Swar Sandhi, when 'इ/ई' is followed by any dissimilar vowel (here 'आ'), 'इ' changes into half 'य्' (y), forming 'इत्यादि'.",
+    expHi: "'इत्यादि' (इति + आदि) में यण स्वर संधि है। जब 'इ' या 'ई' के बाद कोई भिन्न स्वर आता है, तो 'इ/ई' का परिवर्तन 'य्' में हो जाता है (इ + आ = या)।",
+    fact: "Whenever a half-consonant (ज्, त्, न्, etc.) immediately precedes 'य', 'व', or 'र', the word almost always belongs to Yan Sandhi."
+  },
+  {
+    q: 5,
+    en: "What is the correct Sandhi-Viched of 'पवन' (Pavan)?",
+    hi: "'पवन' का सही संधि-विच्छेद क्या होगा?",
+    opts: [
+      "प + वन (Pa + Vana) / प + वन",
+      "पो + अन (Po + Ana) / पो + अन",
+      "पौ + अन (Pau + Ana) / पौ + अन",
+      "पू + अन (Pu + Ana) / पू + अन",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'पवन' is formed from 'पो + अन' (Po + Ana). Under Ayadi Swar Sandhi rules, 'ओ' (o) followed by 'अ' (a) transforms into 'अव्' (av), resulting in प् + अव् + अन = पवन. Note that 'पौ + अन' forms 'पावन' (Paavan), not 'पवन'.",
+    expHi: "'पवन' का सही संधि-विच्छेद 'पो + अन' है। इसमें अयादि स्वर संधि है। नियम के अनुसार 'ओ' के बाद भिन्न स्वर 'अ' आने पर 'ओ' का 'अव्' हो जाता है। ('पौ + अन' से 'पावन' बनता है)।",
+    fact: "Contrast carefully for UPSSSC PET: पो + अन = पवन (Pavan), whereas पौ + अन = पावन (Paavan)."
+  },
+  {
+    q: 6,
+    en: "What is the correct Sandhi-Viched of 'उज्ज्वल' (Ujjwal)?",
+    hi: "'उज्ज्वल' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "उज + ज्वल (Uj + Jwal) / उज + ज्वल",
+      "उत् + ज्वल (Ut + Jwal) / उत् + ज्वल",
+      "उज् + ज्वल (Uj + Jwal) / उज् + ज्वल",
+      "उत् + जबल (Ut + Jabal) / उत् + जबल",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'उज्ज्वल' is formed by 'उत् + ज्वल' (Ut + Jwal). According to Vyanjan Sandhi rules, if 'त्' or 'द्' is followed by 'ज' or 'झ', then 'त्/द्' changes into half 'ज्' (त् + ज् = ज्ज्).",
+    expHi: "'उज्ज्वल' का संधि-विच्छेद 'उत् + ज्वल' है। यह व्यंजन संधि का उदाहरण है। नियम: यदि 'त्' या 'द्' के बाद 'ज' या 'झ' आए, तो 'त्/द्' का 'ज्' में परिवर्तन हो जाता है।",
+    fact: "'उज्ज्वल' (with two half 'ज्'s) is also the most frequently asked word in UPSSSC वर्तनी शुद्धि (Spelling Correction)."
+  },
+  {
+    q: 7,
+    en: "Which Sandhi and correct disjunction apply to the word 'दिगम्बर' (Digambar)?",
+    hi: "'दिगम्बर' शब्द का सही संधि-विच्छेद और संधि का नाम बताइए।",
+    opts: [
+      "दिग + अम्बर (Swar Sandhi) / दिग + अम्बर (स्वर संधि)",
+      "दिक् + अम्बर (Vyanjan Sandhi) / दिक् + अम्बर (व्यंजन संधि)",
+      "दिः + अम्बर (Visarga Sandhi) / दिः + अम्बर (विसर्ग संधि)",
+      "दिग् + अम्बर (Dirgha Sandhi) / दिग् + अम्बर (दीर्घ संधि)",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'दिगम्बर' splits into 'दिक् + अम्बर' (Dik + Ambar). By the first rule of Vyanjan Sandhi (जश्त्व संधि), when the first consonant of a varga (क्, च्, ट्, त्, प्) is followed by a vowel, it changes into the third consonant of its own varga (क् becomes ग्).",
+    expHi: "'दिगम्बर' का सही संधि-विच्छेद 'दिक् + अम्बर' है और इसमें व्यंजन संधि है। नियम: वर्ग के पहले वर्ण (क्, च्, ट्, त्, प्) के बाद कोई स्वर आए, तो पहला वर्ण अपने ही वर्ग के तीसरे वर्ण (ग्, ज्, ड्, द्, ब्) में बदल जाता है।",
+    fact: "Other classic examples of the 1st-to-3rd consonant rule: वाक् + ईश = वागीश, अच् + अंत = अजंत, षट् + आनन = षडानन."
+  },
+  {
+    q: 8,
+    en: "What is the correct Sandhi-Viched of 'मनोहर' (Manohar)?",
+    hi: "'मनोहर' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "मनो + हर (Mano + Har) / मनो + हर",
+      "मनः + हर (Manah + Har) / मनः + हर",
+      "मन + ओहर (Mana + Ohar) / मन + ओहर",
+      "मन् + हर (Man + Har) / मन् + हर",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'मनोहर' is formed by 'मनः + हर' (Manah + Har). This is a Visarga Sandhi where a Visarga (ः) preceded by 'अ' and followed by a voiced consonant (ह) converts into 'ओ' (o).",
+    expHi: "'मनोहर' का संधि-विच्छेद 'मनः + हर' है। यह विसर्ग संधि का उदाहरण है। यदि विसर्ग (ः) के पहले 'अ' हो और बाद में किसी वर्ग का तीसरा, चौथा, पाँचवाँ वर्ण या य, र, ल, व, ह हो, तो विसर्ग का 'ओ' हो जाता है।",
+    fact: "Do not confuse words like मनोहर (मनः + हर), तपोबल (तपः + बल), and यशोदा (यशः + दा) with Guna Sandhi despite the 'ओ' matra."
+  },
+  {
+    q: 9,
+    en: "Select the correct Sandhi-Viched of the word 'निश्छल' (Nishchhal).",
+    hi: "'निश्छल' का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "निश + छल (Nish + Chhal) / निश + छल",
+      "निस् + छल (Nis + Chhal) / निस् + छल",
+      "निः + छल (Nih + Chhal) / निः + छल",
+      "नि + छल (Ni + Chhal) / नि + छल",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'निश्छल' splits into 'निः + छल' (Nih + Chhal). In Visarga Sandhi, when a Visarga (ः) is followed by 'च', 'छ', or 'श', the Visarga transforms into the palatal sibilant 'श्' (sh).",
+    expHi: "'निश्छल' का संधि-विच्छेद 'निः + छल' है। विसर्ग संधि के नियम के अनुसार, यदि विसर्ग (ः) के बाद 'च', 'छ' या 'श' हो, तो विसर्ग का 'श्' (तालव्य श) हो जाता है।",
+    fact: "Sibilant transformation in Visarga Sandhi: Before च/छ -> श्; Before ट/ठ -> ष्; Before त/थ -> स्."
+  },
+  {
+    q: 10,
+    en: "What is the correct Sandhi-Viched of 'महर्षि' (Maharshi)?",
+    hi: "'महर्षि' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "मह + ऋषि (Maha + Rishi) / मह + ऋषि",
+      "महान + ऋषि (Mahan + Rishi) / महान + ऋषि",
+      "महा + ऋषि (Maha + Rishi) / महा + ऋषि",
+      "मही + ऋषि (Mahi + Rishi) / मही + ऋषि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'महर्षि' is formed by 'महा + ऋषि' (Maha + Rishi). Under Guna Swar Sandhi, when 'अ' or 'आ' is followed by 'ऋ' (ri), both combine to form 'अर्' (ar).",
+    expHi: "'महर्षि' का सही संधि-विच्छेद 'महा + ऋषि' है। इसमें गुण स्वर संधि है। नियम: 'अ' या 'आ' के बाद 'ऋ' आने पर दोनों के मेल से 'अर्' हो जाता है (आ + ऋ = अर्)।",
+    fact: "Words ending in '-र्षि' like देवर्षि (देव + ऋषि), राजर्षि (राजा + ऋषि), and ब्रह्मर्षि (ब्रह्मा + ऋषि) always follow Guna Swar Sandhi."
+  },
+  {
+    q: 11,
+    en: "Which word is formed by the Sandhi of 'सु + आगत' (Su + Aagat)?",
+    hi: "'सु + आगत' की संधि से कौन-सा शब्द बनेगा?",
+    opts: [
+      "सुआगत (Suaagat) / सुआगत",
+      "स्वागत (Swagat) / स्वागत",
+      "सवागत (Savagat) / सवागत",
+      "सौगात (Saugaat) / सौगात",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'सु + आगत' forms 'स्वागत' (Swagat). According to Yan Swar Sandhi, when 'उ' or 'ऊ' is followed by a dissimilar vowel ('आ'), 'उ' turns into 'व्' (v). Thus, स् + व् + आगत = स्वागत.",
+    expHi: "'सु + आगत' के मेल से 'स्वागत' शब्द बनता है। यह यण स्वर संधि का उदाहरण है, जहाँ ह्रस्व 'उ' के बाद भिन्न स्वर 'आ' आने पर 'उ' का परिवर्तन 'व्' में हो जाता है (उ + आ = वा)।",
+    fact: "Many students mistakenly split 'स्वागत' as 'स्व + आगत' (Dirgha), which is wrong; 'सु' (good/well) is the prefix here, making it Yan Sandhi."
+  },
+  {
+    q: 12,
+    en: "What is the correct Sandhi-Viched of 'नायक' (Nayak)?",
+    hi: "'नायक' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "ने + अक (Ne + Aka) / ने + अक",
+      "ना + अक (Na + Aka) / ना + अक",
+      "नै + अक (Nai + Aka) / नै + अक",
+      "नय + अक (Naya + Aka) / नय + अक",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'नायक' splits into 'नै + अक' (Nai + Aka). In Ayadi Swar Sandhi, when 'ऐ' (ai) is followed by any dissimilar vowel ('अ'), 'ऐ' transforms into 'आय्' (aay). Thus, न् + आय् + अक = नायक.",
+    expHi: "'नायक' का सही संधि-विच्छेद 'नै + अक' है। अयादि स्वर संधि के नियम के अनुसार, 'ऐ' के बाद कोई भिन्न स्वर आने पर 'ऐ' का 'आय्' हो जाता है (नै + अक = नायक)।",
+    fact: "Ayadi Sandhi conversion chart: ए -> अय् (नयन = ने + अन), ऐ -> आय् (नायक = नै + अक), ओ -> अव् (पवन = पो + अन), औ -> आव् (पावक = पौ + अक)."
+  },
+  {
+    q: 13,
+    en: "Identify the type of Sandhi in the word 'जगन्नाथ' (Jagannath).",
+    hi: "'जगन्नाथ' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Swar Sandhi / स्वर संधि",
+      "Vyanjan Sandhi / व्यंजन संधि",
+      "Visarga Sandhi / विसर्ग संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'जगन्नाथ' is formed from 'जगत् + नाथ' (Jagat + Nath), which is an example of Vyanjan Sandhi. When the first consonant of a class ('त्') is followed by a nasal consonant ('न' or 'म'), it converts into the nasal consonant of its own class ('न्').",
+    expHi: "'जगन्नाथ' (जगत् + नाथ) में व्यंजन संधि है। नियम के अनुसार, यदि किसी वर्ग के प्रथम वर्ण (क्, च्, ट्, त्, प्) का मेल किसी अनुनासिक वर्ण (वस्तुतः 'न' या 'म') से हो, तो प्रथम वर्ण अपने ही वर्ग के पंचम वर्ण (ङ्, ञ्, ण्, न्, म्) में बदल जाता है।",
+    fact: "Similar high-frequency UPSSSC examples: उत् + नति = उन्नति, वाक् + मय = वाङ्मय, षट् + मास = षण्मास."
+  },
+  {
+    q: 14,
+    en: "What is the correct Sandhi-Viched of 'कपीश' (Kapish)?",
+    hi: "'कपीश' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "कपि + ईश (Kapi + Isha) / कपि + ईश",
+      "कपी + ईश (Kapii + Isha) / कपी + ईश",
+      "कपि + इश (Kapi + Isha) / कपि + इश",
+      "कप + ईश (Kapa + Isha) / कप + ईश",
+      E_OPTION
+    ],
+    ans: 0,
+    expEn: "'कपीश' splits into 'कपि + ईश' (Kapi + Isha). Here, short 'इ' (i) and long 'ई' (ī) combine to form long 'ई' (ī) under Dirgha Swar Sandhi. Note that 'कपि' (monkey) always takes a short 'इ', and 'ईश' (lord) always takes a long 'ई'.",
+    expHi: "'कपीश' का सही संधि-विच्छेद 'कपि + ईश' है। इसमें दीर्घ स्वर संधि है (इ + ई = ई)। वर्तनी की दृष्टि से 'कपि' में छोटी 'इ' और 'ईश' में बड़ी 'ई' होती है।",
+    fact: "Root vowel memory aid: Words meaning Lord/Master (ईश, ईश्वर, इन्द्र -> short इ in इन्द्र, long ई in ईश/ईश्वर) must be spelled accurately during disjunction."
+  },
+  {
+    q: 15,
+    en: "Which Sandhi is present in the word 'सूर्योदय' (Suryodaya)?",
+    hi: "'सूर्योदय' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Guna Sandhi / गुण संधि",
+      "Vriddhi Sandhi / वृद्धि संधि",
+      "Yan Sandhi / यण संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      E_OPTION
+    ],
+    ans: 0,
+    expEn: "'सूर्योदय' is formed by 'सूर्य + उदय' (Surya + Udaya). Here, 'अ' (a) + 'उ' (u) merge to form 'ओ' (o), which is the standard rule of Guna Swar Sandhi.",
+    expHi: "'सूर्योदय' (सूर्य + उदय) में गुण स्वर संधि है। जब 'अ' या 'आ' के बाद ह्रस्व या दीर्घ 'उ/ऊ' आए, तो दोनों के मेल से 'ओ' बन जाता है (अ + उ = ओ)।",
+    fact: "Other frequently tested 'अ + उ = ओ' examples: परोपकार (पर + उपकार), हितोपदेश (हित + उपदेश), चन्द्रोदय (चन्द्र + उदय)."
+  },
+  {
+    q: 16,
+    en: "Choose the correct Sandhi-Viched of 'भानुदय' (Bhanudaya).",
+    hi: "'भानुदय' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "भानु + उदय (Bhanu + Udaya) / भानु + उदय",
+      "भानू + उदय (Bhanuu + Udaya) / भानू + उदय",
+      "भानु + ऊदय (Bhanu + Uudaya) / भानु + ऊदय",
+      "भान + उदय (Bhana + Udaya) / भान + उदय",
+      E_OPTION
+    ],
+    ans: 0,
+    expEn: "'भानुदय' splits into 'भानु + उदय' (Bhanu + Udaya). Both 'भानु' (Sun) and 'उदय' (rise) have short 'उ' (u). When two short 'उ' vowels combine in Dirgha Swar Sandhi, they form a long 'ऊ' (उ + उ = ऊ).",
+    expHi: "'भानुदय' का सही संधि-विच्छेद 'भानु + उदय' है। इसमें दीर्घ स्वर संधि है (उ + उ = ऊ)। 'भानु' (सूर्य) और 'उदय' दोनों में छोटा 'उ' होता है।",
+    fact: "Similar 'उ/ऊ' Dirgha Sandhi words: लघु + उत्तम = लघूत्तम, वधू + उत्सव = वधूत्सव (Note: 'वधू' always has a long 'ऊ')."
+  },
+  {
+    q: 17,
+    en: "What is the correct Sandhi-Viched of 'प्रत्येक' (Pratyek)?",
+    hi: "'प्रत्येक' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "प्रत + एक (Prat + Eka) / प्रत + एक",
+      "प्रति + एक (Prati + Eka) / प्रति + एक",
+      "प्रती + एक (Pratii + Eka) / प्रती + एक",
+      "प्रति + ऐक (Prati + Aika) / प्रति + ऐक",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'प्रत्येक' is formed by 'प्रति + एक' (Prati + Eka). In Yan Swar Sandhi, 'इ' (i) followed by the dissimilar vowel 'ए' (e) converts 'इ' into 'य्' (y), and the matra of 'ए' attaches to 'य्' to make 'ये' (प्रत्येक).",
+    expHi: "'प्रत्येक' का सही संधि-विच्छेद 'प्रति + एक' है। यह यण स्वर संधि का उदाहरण है। यहाँ 'इ' के बाद भिन्न स्वर 'ए' आने से 'इ' का 'य्' में परिवर्तन हुआ है (इ + ए = ये)।",
+    fact: "Even though 'प्रत्येक' has a single overhead matra ('ए'), do NOT mark Guna Sandhi; the half-consonant 'त्' before 'य' confirms Yan Sandhi."
+  },
+  {
+    q: 18,
+    en: "The word 'वनौषधि' (Vanaushadhi) is an example of which Sandhi?",
+    hi: "'वनौषधि' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Guna Sandhi / गुण संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Vriddhi Sandhi / वृद्धि संधि",
+      "Ayadi Sandhi / अयादि संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'वनौषधि' splits into 'वन + औषधि' (Vana + Aushadhi). According to Vriddhi Swar Sandhi, when 'अ' or 'आ' is followed by 'ओ' or 'औ', both merge to form 'औ' (अ + औ = औ).",
+    expHi: "'वनौषधि' (वन + औषधि) में वृद्धि स्वर संधि है। नियम के अनुसार, 'अ' या 'आ' के बाद 'ओ' या 'औ' आने पर दोनों मिलकर 'औ' हो जाते हैं (अ + औ = औ)।",
+    fact: "Other important Vriddhi Sandhi words with 'औ': परम + औषध = परमौषध, महा + ओजस्वी = महौजस्वी, जल + ओघ = जलौघ."
+  },
+  {
+    q: 19,
+    en: "What is the correct Sandhi-Viched of 'दुष्कर्म' (Dushkarma)?",
+    hi: "'दुष्कर्म' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "दुष + कर्म (Dush + Karma) / दुष + कर्म",
+      "दुस् + कर्म (Dus + Karma) / दुस् + कर्म",
+      "दुः + कर्म (Duh + Karma) / दुः + कर्म",
+      "दूः + कर्म (Duuh + Karma) / दूः + कर्म",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'दुष्कर्म' splits into 'दुः + कर्म' (Duh + Karma). In Visarga Sandhi, if the Visarga (ः) is preceded by 'इ' or 'उ' and followed by 'क', 'ख', 'ट', 'ठ', 'प', or 'फ', the Visarga changes into retroflex 'ष्' (sh).",
+    expHi: "'दुष्कर्म' का सही संधि-विच्छेद 'दुः + कर्म' है। विसर्ग संधि के नियम के अनुसार, यदि विसर्ग के पहले 'इ' या 'उ' हो और बाद में क, ख, ट, ठ, प, फ में से कोई वर्ण हो, तो विसर्ग का 'ष्' हो जाता है।",
+    fact: "Words like निष्कपट (निः + कपट), निष्फल (निः + फल), and दुष्कर (दुः + कर) all follow this exact Visarga Sandhi rule."
+  },
+  {
+    q: 20,
+    en: "What is the correct Sandhi-Viched of 'सच्चिदानन्द' (Sachchidananda)?",
+    hi: "'सच्चिदानन्द' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "सच्चित + आनन्द (Sachchit + Aananda) / सच्चित + आनन्द",
+      "सत् + चित् + आनन्द (Sat + Chit + Aananda) / सत् + चित् + आनन्द",
+      "सच् + चिद् + आनन्द (Sach + Chid + Aananda) / सच् + चिद् + आनन्द",
+      "सत + चित + आनन्द (Sata + Chita + Aananda) / सत + चित + आनन्द",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'सच्चिदानन्द' has two consonantal junctions: 'सत् + चित् + आनन्द'. First, 'त्' before 'च' becomes 'च्' (सत् + चित् = सच्चित्). Second, 'त्' before vowel 'आ' becomes the third letter of its class 'द्' (चित् + आनन्द = चिदानन्द).",
+    expHi: "'सच्चिदानन्द' का संधि-विच्छेद 'सत् + चित् + आनन्द' है। इसमें दो बार व्यंजन संधि के नियम लगे हैं: 'सत् + चित्' में 'त्' का 'च्' होना (सच्चित्) और 'चित् + आनन्द' में 'त्' का 'द्' होना (चिदानन्द)।",
+    fact: "'सच्चिदानन्द' is a classic UPSSSC favorite because it tests two distinct Vyanjan Sandhi rules within a single compound word."
+  },
+  {
+    q: 21,
+    en: "Identify the correct Sandhi-Viched of 'पित्राज्ञा' (Pitragya).",
+    hi: "'पित्राज्ञा' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "पित्र + आज्ञा (Pitra + Aagya) / पित्र + आज्ञा",
+      "पितृ + आज्ञा (Pitri + Aagya) / पितृ + आज्ञा",
+      "पिता + आज्ञा (Pita + Aagya) / पिता + आज्ञा",
+      "पितर + आज्ञा (Pitar + Aagya) / पितर + आज्ञा",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'पित्राज्ञा' is formed by 'पितृ + आज्ञा' (Pitri + Aagya). According to Yan Swar Sandhi, when 'ऋ' (ri) is followed by a dissimilar vowel ('आ'), 'ऋ' transforms into 'र्' (r). Combined with 'त्' and 'आ', त् + र् + आ = त्रा (पित्राज्ञा).",
+    expHi: "'पित्राज्ञा' का सही संधि-विच्छेद 'पितृ + आज्ञा' है। यण स्वर संधि के नियम के अनुसार, 'ऋ' के बाद कोई भिन्न स्वर ('आ') आने पर 'ऋ' का 'र्' हो जाता है (त् + ऋ + आ = त्रा)।",
+    fact: "Whenever you see 'त्र' in the middle of a word derived from mother/father/brother roots (मात्राज्ञा = मातृ + आज्ञा, पित्रनुमति = पितृ + अनुमति), it is Yan Sandhi."
+  },
+  {
+    q: 22,
+    en: "What is the correct Sandhi-Viched of 'नीरोग' (Nirog)?",
+    hi: "'नीरोग' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "नी + रोग (Nii + Roga) / नी + रोग",
+      "नि + रोग (Ni + Roga) / नि + रोग",
+      "निः + रोग (Nih + Roga) / निः + रोग",
+      "निर् + रोग (Nir + Roga) / निर् + रोग",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'नीरोग' splits into 'निः + रोग' (Nih + Roga). In Visarga Sandhi, when a Visarga (ः) is followed by 'र' (r), the Visarga disappears and the preceding short vowel ('इ' or 'उ') becomes long ('ई' or 'ऊ').",
+    expHi: "'नीरोग' का सही संधि-विच्छेद 'निः + रोग' है। विसर्ग संधि के नियम के अनुसार, यदि विसर्ग (ः) के आगे 'र' हो, तो विसर्ग का लोप हो जाता है और उसके पहले का ह्रस्व स्वर ('इ' या 'उ') दीर्घ ('ई' या 'ऊ') हो जाता है।",
+    fact: "This rule explains why the grammatically correct spelling in Hindi is 'नीरोग', 'नीरव' (निः + रव), and 'नीरस' (निः + रस) with a long 'ई', not 'निरोग'."
+  },
+  {
+    q: 23,
+    en: "Which word is formed by the Sandhi of 'सत् + चरित्र' (Sat + Charitra)?",
+    hi: "'सत् + चरित्र' की संधि से कौन-सा शब्द बनेगा?",
+    opts: [
+      "सतचरित्र (Satacharitra) / सतचरित्र",
+      "सच्चरित्र (Sachcharitra) / सच्चरित्र",
+      "सचरित्र (Sacharitra) / सचरित्र",
+      "सद्चरित्र (Sadcharitra) / सद्चरित्र",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'सत् + चरित्र' combines to form 'सच्चरित्र' (Sachcharitra). According to Vyanjan Sandhi (श्चुत्व संधि), when 'त्' or 'द्' is followed by 'च' or 'छ', 'त्/द्' converts into half 'च्' (ch).",
+    expHi: "'सत् + चरित्र' की संधि से 'सच्चरित्र' बनता है। व्यंजन संधि के नियमानुसार, यदि 'त्' या 'द्' के बाद 'च' या 'छ' आए, तो 'त्' या 'द्' का परिवर्तन 'च्' में हो जाता है।",
+    fact: "Other examples of this rule: उत् + चारण = उच्चारण, शरत् + चन्द्र = शरच्चन्द्र."
+  },
+  {
+    q: 24,
+    en: "What is the correct Sandhi-Viched of 'गंगोदक' (Gangodak)?",
+    hi: "'गंगोदक' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "गंगो + दक (Gango + Daka) / गंगो + दक",
+      "गंगा + उदक (Ganga + Udaka) / गंगा + उदक",
+      "गंग + उदक (Ganga + Udaka) / गंग + उदक",
+      "गंगा + ओदक (Ganga + Odaka) / गंगा + ओदक",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'गंगोदक' is formed by 'गंगा + उदक' (Ganga + Udaka), where 'उदक' means water. Here, 'आ' (ā) + 'उ' (u) combine to form 'ओ' (o), which is Guna Swar Sandhi.",
+    expHi: "'गंगोदक' का सही संधि-विच्छेद 'गंगा + उदक' है (उदक का अर्थ 'जल' होता है)। यहाँ 'आ' और 'उ' के मेल से 'ओ' बना है (आ + उ = ओ), अतः इसमें गुण स्वर संधि है।",
+    fact: "Vocabulary tip for Sandhi: Always remember 'उदक' (water), 'उर्मि/ऊर्मि' (wave - takes long ऊ), and 'ऊर्जा' (energy - takes long ऊ)."
+  },
+  {
+    q: 25,
+    en: "Which type of Sandhi is found in the word 'पावक' (Pavak)?",
+    hi: "'पावक' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Yan Sandhi / यण संधि",
+      "Ayadi Sandhi / अयादि संधि",
+      "Vriddhi Sandhi / वृद्धि संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'पावक' is formed from 'पौ + अक' (Pau + Aka). In Ayadi Swar Sandhi, when 'औ' (au) is followed by a dissimilar vowel ('अ'), 'औ' transforms into 'आव्' (aav), yielding प् + आव् + अक = पावक.",
+    expHi: "'पावक' (पौ + अक) में अयादि स्वर संधि है। नियम के अनुसार, यदि 'औ' के बाद कोई भिन्न स्वर ('अ') आता है, तो 'औ' का परिवर्तन 'आव्' में हो जाता है।",
+    fact: "3-letter simple words without matras on the middle letter containing 'य' or 'व' in the middle (नयन, शयन, पवन, पावन, पावक, गायक, नाविक) are almost exclusively Ayadi Sandhi."
+  },
+
+  // BATCH 2 (Q26 - Q50)
+  {
+    q: 26,
+    en: "What is the correct Sandhi-Viched of the word 'महोत्सव' (Mahotsav)?",
+    hi: "'महोत्सव' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "मह + उत्सव (Maha + Utsav) / मह + उत्सव",
+      "महा + उत्सव (Maha + Utsav) / महा + उत्सव",
+      "महो + उत्सव (Maho + Utsav) / महो + उत्सव",
+      "महा + ऊत्सव (Maha + Uutsav) / महा + ऊत्सव",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'महोत्सव' is formed by 'महा + उत्सव' (Maha + Utsav). In Guna Swar Sandhi, when 'आ' (ā) is followed by short 'उ' (u), both merge to form 'ओ' (o). Note that 'उत्सव' always starts with a short 'उ'.",
+    expHi: "'महोत्सव' का सही संधि-विच्छेद 'महा + उत्सव' है। इसमें गुण स्वर संधि है। नियम के अनुसार 'आ' और 'उ' के मेल से 'ओ' स्वर बनता है (आ + उ = ओ)।",
+    fact: "In Hindi spelling, 'उत्सव', 'उदय', and 'उपकार' always begin with a short 'उ' (ह्रस्व उ), whereas 'ऊर्जा', 'ऊष्मा', and 'ऊर्मि' always begin with a long 'ऊ' (दीर्घ ऊ)."
+  },
+  {
+    q: 27,
+    en: "Which type of Sandhi is present in the word 'अन्वय' (Anvaya)?",
+    hi: "'अन्वय' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Guna Sandhi / गुण संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Yan Sandhi / यण संधि",
+      "Ayadi Sandhi / अयादि संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'अन्वय' splits into 'अनु + अय' (Anu + Aya). Under Yan Swar Sandhi, when 'उ' (u) is followed by a dissimilar vowel ('अ'), 'उ' transforms into half 'व्' (v), turning 'न' into half 'न्' (अन्वय).",
+    expHi: "'अन्वय' (अनु + अय) में यण स्वर संधि है। जब ह्रस्व 'उ' के बाद कोई भिन्न स्वर ('अ') आता है, तो 'उ' का परिवर्तन 'व्' में हो जाता है (उ + अ = व)।",
+    fact: "Similar high-yield UPSSSC words with 'अनु' prefix in Yan Sandhi: अनु + एषण = अन्वेषण, अनु + इत = अन्वित, अनु + इति = अन्विति."
+  },
+  {
+    q: 28,
+    en: "Choose the correct Sandhi-Viched of 'तल्लीन' (Tallin).",
+    hi: "'तल्लीन' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "तल् + लीन (Tal + Lin) / तल् + लीन",
+      "तत् + लीन (Tat + Lin) / तत् + लीन",
+      "तत + लीन (Tata + Lin) / तत + लीन",
+      "तः + लीन (Tah + Lin) / तः + लीन",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'तल्लीन' is formed by 'तत् + लीन' (Tat + Lin). According to Vyanjan Sandhi rules, when 'त्' or 'द्' is followed by 'ल' (l), 'त्/द्' completely assimilates into half 'ल्' (त् + ल = ल्ल).",
+    expHi: "'तल्लीन' का सही संधि-विच्छेद 'तत् + लीन' है। यह व्यंजन संधि का उदाहरण है। नियम: यदि 'त्' या 'द्' के बाद 'ल' आए, तो 'त्/द्' का परिवर्तन 'ल्' में हो जाता है।",
+    fact: "Other frequently asked examples of the 'त् + ल = ल्ल' rule: उत् + लास = उल्लास, उत् + लेख = उल्लेख, उत् + लंघन = उल्लंघन."
+  },
+  {
+    q: 29,
+    en: "What is the correct Sandhi-Viched of 'यद्यपि' (Yadyapi)?",
+    hi: "'यद्यपि' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "यद्य + अपि (Yadya + Api) / यद्य + अपि",
+      "यदि + अपि (Yadi + Api) / यदि + अपि",
+      "यद + अपि (Yada + Api) / यद + अपि",
+      "यदी + अपि (Yadii + Api) / यदी + अपि",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'यद्यपि' splits into 'यदि + अपि' (Yadi + Api). By Yan Swar Sandhi, short 'इ' (i) followed by 'अ' (a) converts into 'य्' (y). The combined conjunct consonant द् + य् + अ is written as 'द्य' (यद्यपि).",
+    expHi: "'यद्यपि' का सही संधि-विच्छेद 'यदि + अपि' है। इसमें यण स्वर संधि है (इ + अ = य)। 'द्' और 'य' के संयुक्त रूप से 'द्य' बनता है।",
+    fact: "Remember that the joint letter 'द्य' is made of 'द् + य'. Whenever you see 'द्य' in words like यद्यपि (यदि + अपि) or नद्यर्पण (नदी + अर्पण), check for Yan Sandhi."
+  },
+  {
+    q: 30,
+    en: "Identify the correct Sandhi-Viched of 'वागीश' (Vagish).",
+    hi: "'वागीश' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "वाग + ईश (Vaga + Isha) / वाग + ईश",
+      "वाक् + ईश (Vak + Isha) / वाक् + ईश",
+      "वाग् + ईश (Vag + Isha) / वाग् + ईश",
+      "वाक + इश (Vaka + Isha) / वाक + इश",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'वागीश' is formed by 'वाक् + ईश' (Vak + Isha). In Vyanjan Sandhi, the voiceless unaspirated velar stop 'क्' (1st letter of K-varga) changes to its voiced counterpart 'ग्' (3rd letter) when followed by the vowel 'ई'.",
+    expHi: "'वागीश' का सही संधि-विच्छेद 'वाक् + ईश' है। व्यंजन संधि के नियम के अनुसार, वर्ग के पहले वर्ण ('क्') के बाद स्वर ('ई') आने पर 'क्' अपने ही वर्ग के तीसरे वर्ण ('ग्') में बदल जाता है।",
+    fact: "Pay close attention to the halant (्) in Vyanjan Sandhi options: 'वाक् + ईश' (with halant on क् and long ई in ईश) is right, while 'वाक + ईश' is wrong."
+  },
+  {
+    q: 31,
+    en: "What is the correct Sandhi-Viched of 'नयन' (Nayan)?",
+    hi: "'नयन' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "न + यन (Na + Yana) / न + यन",
+      "ने + अन (Ne + Ana) / ने + अन",
+      "नै + अन (Nai + Ana) / नै + अन",
+      "नय + न (Naya + Na) / नय + न",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'नयन' is formed from 'ने + अन' (Ne + Ana). According to Ayadi Swar Sandhi, when 'ए' (e) is followed by a dissimilar vowel ('अ'), 'ए' becomes 'अय्' (ay). Thus, न् + अय् + अन = नयन.",
+    expHi: "'नयन' का सही संधि-विच्छेद 'ने + अन' है। इसमें अयादि स्वर संधि है। नियम के अनुसार 'ए' के बाद 'अ' आने पर 'ए' का 'अय्' हो जाता है (न् + अय् + अन = नयन)।",
+    fact: "If there is no 'आ' matra after the first letter (नयन, शयन, चयन), use single matra 'ए' (ने + अन, शे + अन, चे + अन). If there is an 'आ' matra (नायक, गायक), use double matra 'ऐ' (नै + अक, गै + अक)."
+  },
+  {
+    q: 32,
+    en: "Which Sandhi is present in the word 'निर्धन' (Nirdhan)?",
+    hi: "'निर्धन' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Yan Sandhi / यण संधि",
+      "Vyanjan Sandhi / व्यंजन संधि",
+      "Visarga Sandhi / विसर्ग संधि",
+      "Guna Sandhi / गुण संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'निर्धन' splits into 'निः + धन' (Nih + Dhan). Under Visarga Sandhi rules, if a Visarga (ः) is preceded by any vowel other than 'अ/आ' (here 'इ') and followed by a voiced consonant (ध), the Visarga turns into half 'र्' (r).",
+    expHi: "'निर्धन' (निः + धन) में विसर्ग संधि है। यदि विसर्ग के पहले 'अ/आ' को छोड़कर कोई अन्य स्वर हो और बाद में कोई सघोष वर्ण (तीसरा, चौथा, पाँचवाँ वर्ण या य, र, ल, व, ह) हो, तो विसर्ग का 'र्' हो जाता है।",
+    fact: "In UPSSSC exams, if a question asks for the Sandhi-Viched of निर्धन, निर्जन, दुर्जन, or आशीर्वाद, always choose the Visarga root (निः + धन, दुः + जन, आशीः + वाद)."
+  },
+  {
+    q: 33,
+    en: "Select the correct Sandhi-Viched of 'संकल्प' (Sankalp).",
+    hi: "'संकल्प' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "स + कल्प (Sa + Kalpa) / स + कल्प",
+      "सन् + कल्प (San + Kalpa) / सन् + कल्प",
+      "सम् + कल्प (Sam + Kalpa) / सम् + कल्प",
+      "सं + कल्प (Sam + Kalpa) / सं + कल्प",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'संकल्प' splits into 'सम् + कल्प' (Sam + Kalpa). According to Vyanjan Sandhi, when 'म्' (m) is followed by any consonant from 'क' to 'म' (sparsa vyanjan), 'म्' changes into an Anusvara (ं) or the nasal of the following consonant's class.",
+    expHi: "'संकल्प' का सही संधि-विच्छेद 'सम् + कल्प' है। यह व्यंजन संधि का नियम है: यदि 'म्' के बाद किसी भी स्पर्श व्यंजन वर्ण का आगमन हो, तो 'म्' के स्थान पर अनुस्वार (ं) या उसी वर्ग का पंचम वर्ण हो जाता है।",
+    fact: "Any word starting with 'सं-' (संसार, संतोष, संविधान, संगम, संकल्प) splits into 'सम् +' (with a halant on म्) under Vyanjan Sandhi."
+  },
+  {
+    q: 34,
+    en: "What is the correct Sandhi-Viched of 'मतैक्य' (Mataikya)?",
+    hi: "'मतैक्य' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "मत + एक्य (Mata + Ekya) / मत + एक्य",
+      "मत + ऐक्य (Mata + Aikya) / मत + ऐक्य",
+      "मता + ऐक्य (Mataa + Aikya) / मता + ऐक्य",
+      "मति + ऐक्य (Mati + Aikya) / मति + ऐक्य",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'मतैक्य' is formed by 'मत + ऐक्य' (Mata + Aikya). In Vriddhi Swar Sandhi, 'अ' (a) + 'ऐ' (ai) combine to form 'ऐ' (ai). Note that the noun meaning 'unity' is 'ऐक्य' (with 'ऐ'), whereas 'एक' (one) starts with 'ए'.",
+    expHi: "'मतैक्य' का सही संधि-विच्छेद 'मत + ऐक्य' है। इसमें वृद्धि स्वर संधि है (अ + ऐ = ऐ)। ध्यान रहे कि 'एकता' के अर्थ में मूल शब्द 'ऐक्य' होता है, 'एक्य' नहीं।",
+    fact: "Spelling trap in Vriddhi Sandhi: 'एक + एक = एकैक' uses 'एक' (ए), but 'मत + ऐक्य = मतैक्य' and 'विश्व + ऐक्य = विश्वैक्य' use 'ऐक्य' (ऐ)."
+  },
+  {
+    q: 35,
+    en: "Which word is formed by the Sandhi of 'उत् + श्वास' (Ut + Shwas)?",
+    hi: "'उत् + श्वास' की संधि से कौन-सा शब्द बनेगा?",
+    opts: [
+      "उत्श्वास (Utshwas) / उत्श्वास",
+      "उच्छ्वास (Uchchhwas) / उच्छ्वास",
+      "उछवास (Uchhavas) / उछवास",
+      "उचश्वास (Uchashwas) / उचश्वास",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'उत् + श्वास' forms 'उच्छ्वास' (Uchchhwas). Under Vyanjan Sandhi rules, when 'त्' or 'द्' is followed by 'श' (sh), 'त्/द्' turns into half 'च्' (ch) and 'श' turns into 'छ' (chh). Since 'श' here is half ('श्'), 'छ' also remains half ('च्छ्').",
+    expHi: "'उत् + श्वास' की संधि से 'उच्छ्वास' शब्द बनता है। व्यंजन संधि के नियम के अनुसार, यदि 'त्' या 'द्' के बाद 'श' हो, तो 'त्/द्' का 'च्' और 'श' का 'छ' हो जाता है। यहाँ 'श्' आधा होने के कारण 'छ्' भी हलन्त (आधा) रहेगा।",
+    fact: "Other top UPSSSC words using the 'त् + श = च्छ' rule: उत् + शिष्ट = उच्छिष्ट, सत् + शास्त्र = सच्छास्त्र."
+  },
+  {
+    q: 36,
+    en: "What is the correct Sandhi-Viched of 'यशोदा' (Yashoda)?",
+    hi: "'यशोदा' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "यशो + दा (Yasho + Da) / यशो + दा",
+      "यश + उदा (Yasha + Uda) / यश + उदा",
+      "यशः + दा (Yashah + Da) / यशः + दा",
+      "यश् + ओदा (Yash + Oda) / यश् + ओदा",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'यशोदा' splits into 'यशः + दा' (Yashah + Da). According to Visarga Sandhi, when a Visarga (ः) is preceded by 'अ' and followed by a voiced consonant ('द' is the 3rd letter of T-varga), the Visarga changes to 'ओ' (o).",
+    expHi: "'यशोदा' का सही संधि-विच्छेद 'यशः + दा' है। यह विसर्ग संधि का उदाहरण है। विसर्ग से पूर्व 'अ' तथा बाद में त-वर्ग का तीसरा (सघोष) वर्ण 'द' होने के कारण विसर्ग का 'ओ' हो गया है।",
+    fact: "Similar Visarga-to-'ओ' words frequently tested: पयः + द = पयोधर/पयोद, सरः + ज = सरोज, मनः + रथ = मनोरथ, वयः + वृद्ध = वयोवृद्ध."
+  },
+  {
+    q: 37,
+    en: "Identify the type of Sandhi in the word 'देवालय' (Devalaya).",
+    hi: "'देवालय' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Guna Sandhi / गुण संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Vriddhi Sandhi / वृद्धि संधि",
+      "Yan Sandhi / यण संधि",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'देवालय' is formed by 'देव + आलय' (Deva + Aalaya). Here, short 'अ' (a) at the end of 'देव' and long 'आ' (ā) at the start of 'आलय' combine to form long 'आ' (ā), which is Dirgha Swar Sandhi.",
+    expHi: "'देवालय' (देव + आलय) में दीर्घ स्वर संधि है। यहाँ 'देव' के 'अ' और 'आलय' के 'आ' के मेल से दीर्घ 'आ' बना है (अ + आ = आ)।",
+    fact: "Other common 'अ + आ = आ' Dirgha Sandhi examples: हिम + आलय = हिमालय, सत्य + आग्रह = सत्याग्रह, रत्न + आकर = रत्नाकर."
+  },
+  {
+    q: 38,
+    en: "What is the correct Sandhi-Viched of 'उद्धार' (Uddhar)?",
+    hi: "'उद्धार' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "उद + धार (Uda + Dhar) / उद + धार",
+      "उत् + हार (Ut + Har) / उत् + हार",
+      "उद् + धार (Ud + Dhar) / उद् + धार",
+      "उत् + धार (Ut + Dhar) / उत् + धार",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'उद्धार' splits into 'उत् + हार' (Ut + Har). In Vyanjan Sandhi, when 'त्' or 'द्' is followed by 'ह' (h), 'त्/द्' changes into 'द्' (d) and 'ह' changes into 'ध' (dh). Combined, द् + ध = द्ध (उद्धार).",
+    expHi: "'उद्धार' का सही संधि-विच्छेद 'उत् + हार' है। व्यंजन संधि के नियम के अनुसार, यदि 'त्' या 'द्' के बाद 'ह' आए, तो 'त्/द्' के स्थान पर 'द्' और 'ह' के स्थान पर 'ध' हो जाता है (त् + ह = द्ध)।",
+    fact: "Memorize this trio of 'त् + ह = द्ध' words for UPSSSC exams: उत् + हार = उद्धार, उत् + हरण = उद्धरण, तद्/तत् + हित = तद्धित."
+  },
+  {
+    q: 39,
+    en: "Choose the correct Sandhi-Viched of 'परोपकार' (Paropkar).",
+    hi: "'परोपकार' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "परो + पकार (Paro + Pakar) / परो + पकार",
+      "पर + उपकार (Para + Upkar) / पर + उपकार",
+      "परा + उपकार (Paraa + Upkar) / परा + उपकार",
+      "परः + उपकार (Parah + Upkar) / परः + उपकार",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'परोपकार' splits into 'पर + उपकार' (Para + Upkar). According to Guna Swar Sandhi, 'अ' (a) + 'उ' (u) combine to form 'ओ' (o).",
+    expHi: "'परोपकार' का सही संधि-विच्छेद 'पर + उपकार' है। इसमें गुण स्वर संधि है, जहाँ 'अ' और 'उ' के मेल से 'ओ' का निर्माण होता है (अ + उ = ओ)।",
+    fact: "Contrast 'परोपकार' (पर + उपकार -> Guna Sandhi) with 'प्रत्युपकार' (प्रति + उपकार -> Yan Sandhi). Both are top UPSSSC favorites."
+  },
+  {
+    q: 40,
+    en: "What is the correct Sandhi-Viched of 'गायक' (Gayak)?",
+    hi: "'गायक' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "गा + अक (Ga + Aka) / गा + अक",
+      "गे + अक (Ge + Aka) / गे + अक",
+      "गै + अक (Gai + Aka) / गै + अक",
+      "गय + अक (Gaya + Aka) / गय + अक",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'गायक' is formed by 'गै + अक' (Gai + Aka). Under Ayadi Swar Sandhi rules, 'ऐ' (ai) followed by a dissimilar vowel ('अ') transforms into 'आय्' (aay). Thus, ग् + आय् + अक = गायक.",
+    expHi: "'गायक' का सही संधि-विच्छेद 'गै + अक' है। अयादि स्वर संधि के नियमानुसार 'ऐ' के बाद भिन्न स्वर 'अ' आने पर 'ऐ' का 'आय्' बन जाता है।",
+    fact: "If the word is 'गायिका' (Gayika), the disjunction simply changes the suffix vowel to short 'इ': गै + इका = गायिका (नाविक = नौ + इक)."
+  },
+  {
+    q: 41,
+    en: "Which Sandhi is present in the word 'नमस्ते' (Namaste)?",
+    hi: "'नमस्ते' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Vyanjan Sandhi / व्यंजन संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Guna Sandhi / गुण संधि",
+      "Visarga Sandhi / विसर्ग संधि",
+      E_OPTION
+    ],
+    ans: 3,
+    expEn: "'नमस्ते' splits into 'नमः + ते' (Namah + Te). In Visarga Sandhi, when a Visarga (ः) is followed by 'त' or 'थ', the Visarga changes into the dental sibilant half 'स्' (s).",
+    expHi: "'नमस्ते' (नमः + ते) में विसर्ग संधि है। नियम के अनुसार, यदि विसर्ग (ः) के आगे 'त' या 'थ' हो, तो विसर्ग का परिवर्तन दन्त्य 'स्' (आधा स) में हो जाता है।",
+    fact: "Other examples of Visarga becoming 'स्': मनः + ताप = मनस्ताप, निः + संतान = निस्संतान, दुः + साहस = दुस्साहस."
+  },
+  {
+    q: 42,
+    en: "What is the correct Sandhi-Viched of 'रवीन्द्र' (Ravindra)?",
+    hi: "'रवीन्द्र' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "रवी + इन्द्र (Ravii + Indra) / रवी + इन्द्र",
+      "रवि + ईन्द्र (Ravi + Iindra) / रवि + ईन्द्र",
+      "रवि + इन्द्र (Ravi + Indra) / रवि + इन्द्र",
+      "रव + इन्द्र (Rava + Indra) / रव + इन्द्र",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'रवीन्द्र' splits into 'रवि + इन्द्र' (Ravi + Indra). Both 'रवि' (Sun) and 'इन्द्र' (Lord/King of Gods) contain a short 'इ' (i). Under Dirgha Swar Sandhi, इ + इ = ई, making the combined word 'रवीन्द्र' with a long 'ई'.",
+    expHi: "'रवीन्द्र' का सही संधि-विच्छेद 'रवि + इन्द्र' है। इसमें दीर्घ स्वर संधि है (इ + इ = ई)। 'रवि' और 'इन्द्र' दोनों मूल शब्दों में छोटी 'इ' होती है, जो संधि होने पर बड़ी 'ई' बन जाती है।",
+    fact: "In common Hindi names, people often write 'रविन्द्र' or 'मुनिन्द्र' with a short 'इ', which is grammatically incorrect; the correct Sandhi spellings are 'रवीन्द्र' and 'मुनीन्द्र'."
+  },
+  {
+    q: 43,
+    en: "Choose the correct Sandhi-Viched of 'अभ्युदय' (Abhyudaya).",
+    hi: "'अभ्युदय' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "अभी + उदय (Abhii + Udaya) / अभी + उदय",
+      "अभि + उदय (Abhi + Udaya) / अभि + उदय",
+      "अभ + उदय (Abha + Udaya) / अभ + उदय",
+      "अभ्यु + दय (Abhyu + Daya) / अभ्यु + दय",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'अभ्युदय' is formed from 'अभि + उदय' (Abhi + Udaya). According to Yan Swar Sandhi, when 'इ' (i) is followed by a dissimilar vowel ('उ'), 'इ' becomes 'य्' (y), and the vowel 'उ' attaches to it to form 'यु' (अभ्युदय).",
+    expHi: "'अभ्युदय' का सही संधि-विच्छेद 'अभि + उदय' है। इसमें यण स्वर संधि है। यहाँ 'इ' के बाद भिन्न स्वर 'उ' आने पर 'इ' का 'य्' हो गया है और उसमें 'उ' की मात्रा जुड़कर 'यु' बना है (इ + उ = यु)।",
+    fact: "Prefixes 'अभि', 'प्रति', 'अति', 'अधि', and 'परि' always take a short 'इ' (ह्रस्व इ) when splitting Yan or Dirgha Sandhi words."
+  },
+  {
+    q: 44,
+    en: "What is the correct Sandhi-Viched of 'षडानन' (Shadanan)?",
+    hi: "'षडानन' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "षड + आनन (Shada + Aanan) / षड + आनन",
+      "षट् + आनन (Shat + Aanan) / षट् + आनन",
+      "षड् + आनन (Shad + Aanan) / षड् + आनन",
+      "ष + डानन (Sha + Danan) / ष + डानन",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'षडानन' splits into 'षट् + आनन' (Shat + Aanan). By the 1st-to-3rd consonant rule of Vyanjan Sandhi, the first letter of T-varga ('ट्') changes into the third letter of its own class ('ड्') when followed by the vowel 'आ'.",
+    expHi: "'षडानन' का सही संधि-विच्छेद 'षट् + आनन' है। व्यंजन संधि के प्रथम नियम के अनुसार, ट-वर्ग के प्रथम वर्ण 'ट्' के बाद स्वर 'आ' आने से 'ट्' अपने ही वर्ग के तीसरे वर्ण 'ड्' में परिवर्तित हो जाता है।",
+    fact: "Compare carefully: 'षट् + आनन = षडानन' (1st to 3rd letter rule because of vowel 'आ'), whereas 'षट् + मास = षण्मास' (1st to 5th nasal letter rule because of nasal 'म')."
+  },
+  {
+    q: 45,
+    en: "Identify the type of Sandhi in the word 'तथैव' (Tathaiva).",
+    hi: "'तथैव' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Guna Sandhi / गुण संधि",
+      "Vriddhi Sandhi / वृद्धि संधि",
+      "Yan Sandhi / यण संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'तथैव' is formed by 'तथा + एव' (Tatha + Eva). Under Vriddhi Swar Sandhi, when 'आ' (ā) is followed by 'ए' (e), both combine to form the diphthong 'ऐ' (ai).",
+    expHi: "'तथैव' (तथा + एव) में वृद्धि स्वर संधि है। नियम के अनुसार, 'आ' के बाद 'ए' आने पर दोनों के मेल से 'ऐ' हो जाता है (आ + ए = ऐ)।",
+    fact: "'तथैव' (तथा + एव) and 'सदैव' (सदा + एव) are the two most repeated Vriddhi Sandhi questions across UP state exams."
+  },
+  {
+    q: 46,
+    en: "What is the correct Sandhi-Viched of 'धनुष्टंकार' (Dhanushtankar)?",
+    hi: "'धनुष्टंकार' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "धनुष + टंकार (Dhanush + Tankar) / धनुष + टंकार",
+      "धनुः + टंकार (Dhanuh + Tankar) / धनुः + टंकार",
+      "धनुस् + टंकार (Dhanus + Tankar) / धनुस् + टंकार",
+      "धनु + टंकार (Dhanu + Tankar) / धनु + टंकार",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'धनुष्टंकार' splits into 'धनुः + टंकार' (Dhanuh + Tankar). According to Visarga Sandhi, when a Visarga (ः) is followed by 'ट' or 'ठ', the Visarga transforms into the retroflex sibilant half 'ष्' (sh).",
+    expHi: "'धनुष्टंकार' का सही संधि-विच्छेद 'धनुः + टंकार' है। विसर्ग संधि के नियम के अनुसार, यदि विसर्ग (ः) के बाद 'ट' या 'ठ' हो, तो विसर्ग का मूर्धन्य 'ष्' (आधा ष) हो जाता है।",
+    fact: "Another exam-favorite word on this exact pattern is 'निः + ठुर = निष्ठुर'."
+  },
+  {
+    q: 47,
+    en: "Which word is formed by the Sandhi of 'महा + ईश' (Maha + Isha)?",
+    hi: "'महा + ईश' की संधि से कौन-सा शब्द बनेगा?",
+    opts: [
+      "महीश (Mahish) / महीश",
+      "महेश (Mahesh) / महेश",
+      "महैश (Mahaish) / महैश",
+      "महाईश (Mahaisha) / महाईश",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'महा + ईश' forms 'महेश' (Mahesh). Under Guna Swar Sandhi, 'आ' (ā) + 'ई' (ī) merge to form 'ए' (e). Note that 'महीश' (Option A) is formed by 'मही + ईश' (Dirgha Sandhi, where 'मही' means Earth).",
+    expHi: "'महा + ईश' के मेल से 'महेश' शब्द बनता है। इसमें गुण स्वर संधि है (आ + ई = ए)। ध्यान दें कि 'महीश' का संधि-विच्छेद 'मही (पृथ्वी) + ईश' (दीर्घ संधि) होता है।",
+    fact: "Classic UPSSSC distractor pair: महा + ईश = महेश (Guna Sandhi) vs. मही + ईश = महीश (Dirgha Sandhi)."
+  },
+  {
+    q: 48,
+    en: "What is the correct Sandhi-Viched of 'अभिषेक' (Abhishek)?",
+    hi: "'अभिषेक' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "अभि + षेक (Abhi + Sheka) / अभि + षेक",
+      "अभि + सेक (Abhi + Seka) / अभि + सेक",
+      "अभी + सेक (Abhii + Seka) / अभी + सेक",
+      "अभः + सेक (Abhah + Seka) / अभः + सेक",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'अभिषेक' splits into 'अभि + सेक' (Abhi + Seka). According to Vyanjan Sandhi (षत्व विधान), if 'स्' (s) is preceded by any vowel other than 'अ/आ' (here 'इ'), 'स्' transforms into retroflex 'ष्' (sh).",
+    expHi: "'अभिषेक' का सही संधि-विच्छेद 'अभि + सेक' है। व्यंजन संधि के नियम के अनुसार, यदि 'स' से पहले 'अ' या 'आ' से भिन्न कोई स्वर ('इ' या 'उ') हो, तो दन्त्य 'स' का मूर्धन्य 'ष' हो जाता है।",
+    fact: "Other critical examples of 'स' becoming 'ष' in Vyanjan Sandhi: वि + सम = विषम, नि + सेध = निषेध, सु + सुप्ति = सुषुप्ति."
+  },
+  {
+    q: 49,
+    en: "Choose the correct Sandhi-Viched of 'वधूत्सव' (Vadhutsav).",
+    hi: "'वधूत्सव' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "वधु + उत्सव (Vadhu + Utsav) / वधु + उत्सव",
+      "वधू + उत्सव (Vadhuu + Utsav) / वधू + उत्सव",
+      "वधू + ऊत्सव (Vadhuu + Uutsav) / वधू + ऊत्सव",
+      "वध + उत्सव (Vadha + Utsav) / वध + उत्सव",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'वधूत्सव' splits into 'वधू + उत्सव' (Vadhuu + Utsav). In Hindi, 'वधू' (bride) is always spelled with a long 'ऊ' (ū), and 'उत्सव' (festival) with a short 'उ' (u). By Dirgha Swar Sandhi, ऊ + उ = ऊ.",
+    expHi: "'वधूत्सव' का सही संधि-विच्छेद 'वधू + उत्सव' है। इसमें दीर्घ स्वर संधि है (ऊ + उ = ऊ)। वर्तनी के नियम के अनुसार 'वधू' में हमेशा बड़ा 'ऊ' और 'उत्सव' में छोटा 'उ' होता है।",
+    fact: "Always use long 'ऊ' for feminine nouns 'वधू' (वधू + उत्सव = वधूत्सव, वधू + ऊर्जा = वधूर्जा) and 'चमू' (army -> चमू + उत्साह = चमूत्साह)."
+  },
+  {
+    q: 50,
+    en: "What is the correct Sandhi-Viched of 'नाविक' (Navik)?",
+    hi: "'नाविक' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "ना + विक (Na + Vika) / ना + विक",
+      "नो + इक (No + Ika) / नो + इक",
+      "नौ + इक (Nau + Ika) / नौ + इक",
+      "नाव + इक (Nava + Ika) / नाव + इक",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'नाविक' splits into 'नौ + इक' (Nau + Ika). According to Ayadi Swar Sandhi, when 'औ' (au) is followed by the dissimilar vowel 'इ' (i), 'औ' turns into 'आव्' (aav), and the vowel 'इ' attaches to 'व्' to form 'वि' (न् + आव् + इक = नाविक).",
+    expHi: "'नाविक' का सही संधि-विच्छेद 'नौ + इक' है। इसमें अयादि स्वर संधि है। नियम के अनुसार 'औ' के बाद भिन्न स्वर 'इ' आने पर 'औ' का 'आव्' हो जाता है और 'इ' की मात्रा जुड़कर 'नाविक' बनता है (औ + इ = आवि)।",
+    fact: "Similar vowel-shifted Ayadi Sandhi words: भौ + उक = भावुक (औ + उ = आवु), गो + ईश = गवीश (ओ + ई = अवी)."
+  },
+
+  // BATCH 3 (Q51 - Q75)
+  {
+    q: 51,
+    en: "What is the correct Sandhi-Viched of the word 'सत्याग्रह' (Satyagraha)?",
+    hi: "'सत्याग्रह' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "सत्या + ग्रह (Satyaa + Graha) / सत्या + ग्रह",
+      "सत्य + आग्रह (Satya + Aagraha) / सत्य + आग्रह",
+      "सत + आग्रह (Sata + Aagraha) / सत + आग्रह",
+      "सत्य + ग्रह (Satya + Graha) / सत्य + ग्रह",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'सत्याग्रह' is formed by 'सत्य + आग्रह' (Satya + Aagraha). In Dirgha Swar Sandhi, the short vowel 'अ' (a) at the end of 'सत्य' combines with the long vowel 'आ' (ā) at the start of 'आग्रह' to form a long 'आ' (अ + आ = आ).",
+    expHi: "'सत्याग्रह' का सही संधि-विच्छेद 'सत्य + आग्रह' है। इसमें दीर्घ स्वर संधि है। नियम के अनुसार, 'अ' और 'आ' के मेल से दीर्घ 'आ' बनता है (अ + आ = आ)।",
+    fact: "Do not confuse the root word 'आग्रह' (insistence/request) with 'ग्रह' (planet); hence 'सत्य + आग्रह' is the only semantically and grammatically valid split."
+  },
+  {
+    q: 52,
+    en: "Which type of Sandhi is present in the word 'गिरिन्द्र/गिरीन्द्र' (Girindra)?",
+    hi: "'गिरीन्द्र' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Guna Sandhi / गुण संधि",
+      "Yan Sandhi / यण संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Vriddhi Sandhi / वृद्धि संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'गिरीन्द्र' splits into 'गिरि + इन्द्र' (Giri + Indra). Both words contain a short 'इ' (i), which merge under Dirgha Swar Sandhi to form a long 'ई' (इ + इ = ई).",
+    expHi: "'गिरीन्द्र' (गिरि + इन्द्र) में दीर्घ स्वर संधि है। ह्रस्व 'इ' और ह्रस्व 'इ' के मेल से दीर्घ 'ई' का निर्माण हुआ है (इ + इ = ई)।",
+    fact: "Note the difference: 'गिरि + इन्द्र = गिरीन्द्र' (both have short इ), whereas 'गिरि + ईश = गिरीश' (गिरि has short इ, ईश has long ई). Both are Dirgha Sandhi."
+  },
+  {
+    q: 53,
+    en: "Identify the correct Sandhi-Viched of 'लघूर्मि' (Laghurmi).",
+    hi: "'लघूर्मि' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "लघु + उर्मि (Laghu + Urmi) / लघु + उर्मि",
+      "लघू + ऊर्मि (Laghuu + Uurmi) / लघू + ऊर्मि",
+      "लघु + ऊर्मि (Laghu + Uurmi) / लघु + ऊर्मि",
+      "लघ + ऊर्मि (Lagha + Uurmi) / लघ + ऊर्मि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'लघूर्मि' splits into 'लघु + ऊर्मि' (Laghu + Uurmi). 'लघु' (small) ends in a short 'उ' (u), while 'ऊर्मि' (wave) always starts with a long 'ऊ' (ū). Under Dirgha Swar Sandhi, उ + ऊ = ऊ.",
+    expHi: "'लघूर्मि' का सही संधि-विच्छेद 'लघु + ऊर्मि' है। इसमें दीर्घ स्वर संधि है (उ + ऊ = ऊ)। 'लघु' में छोटा 'उ' तथा 'ऊर्मि' (लहर) में हमेशा बड़ा 'ऊ' होता है।",
+    fact: "'ऊर्मि' (wave) is tested in both Dirgha and Guna Sandhi: सिन्धु + ऊर्मि = सिन्धूर्मि (Dirgha), जल + ऊर्मि = जलोर्मि (Guna), महा + ऊर्मि = महोर्मि (Guna)."
+  },
+  {
+    q: 54,
+    en: "What is the correct Sandhi-Viched of 'सुरेन्द्र' (Surendra)?",
+    hi: "'सुरेन्द्र' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "सुरे + इन्द्र (Sure + Indra) / सुरे + इन्द्र",
+      "सुर + इन्द्र (Sura + Indra) / सुर + इन्द्र",
+      "सुरा + इन्द्र (Suraa + Indra) / सुरा + इन्द्र",
+      "सुर + ईन्द्र (Sura + Iindra) / सुर + ईन्द्र",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'सुरेन्द्र' is formed by 'सुर + इन्द्र' (Sura + Indra). According to Guna Swar Sandhi, when 'अ' (a) is followed by 'इ' (i), they combine to form 'ए' (अ + इ = ए). 'सुर' means gods, and 'इन्द्र' means king.",
+    expHi: "'सुरेन्द्र' का सही संधि-विच्छेद 'सुर + इन्द्र' है। गुण स्वर संधि के नियम के अनुसार, 'अ' और 'इ' के मेल से 'ए' बनता है (अ + इ = ए)।",
+    fact: "Compare 'सुर + इन्द्र = सुरेन्द्र' (अ + इ = ए) with 'सुर + ईश = सुरेश' (अ + ई = ए). Both belong to Guna Swar Sandhi."
+  },
+  {
+    q: 55,
+    en: "Which type of Sandhi is found in the word 'जलोर्मि' (Jalormi)?",
+    hi: "'जलोर्मि' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Vriddhi Sandhi / वृद्धि संधि",
+      "Guna Sandhi / गुण संधि",
+      "Yan Sandhi / यण संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'जलोर्मि' splits into 'जल + ऊर्मि' (Jala + Uurmi). Under Guna Swar Sandhi, when 'अ' (a) is followed by long 'ऊ' (ū), both merge to form 'ओ' (अ + ऊ = ओ).",
+    expHi: "'जलोर्मि' (जल + ऊर्मि) में गुण स्वर संधि है। जब 'अ' या 'आ' के बाद ह्रस्व या दीर्घ 'उ/ऊ' आए, तो दोनों के मेल से 'ओ' हो जाता है (अ + ऊ = ओ)।",
+    fact: "Similar 'अ/आ + ऊ = ओ' Guna Sandhi words asked in UPSSSC exams: समुद्र + ऊर्मि = समुद्रोर्मि, गंगा + ऊर्मि = गंगोर्मि, नव + ऊढ़ा = नवोढ़ा."
+  },
+  {
+    q: 56,
+    en: "What is the correct Sandhi-Viched of 'देवर्षि' (Devarshi)?",
+    hi: "'देवर्षि' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "देवा + ऋषि (Devaa + Rishi) / देवा + ऋषि",
+      "देव + ऋषि (Deva + Rishi) / देव + ऋषि",
+      "देवर + षि (Devara + Shi) / देवर + षि",
+      "देवः + ऋषि (Devah + Rishi) / देवः + ऋषि",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'देवर्षि' is formed by 'देव + ऋषि' (Deva + Rishi). In Guna Swar Sandhi, 'अ' (a) followed by 'ऋ' (ri) transforms into 'अर्' (ar).",
+    expHi: "'देवर्षि' का सही संधि-विच्छेद 'देव + ऋषि' है। इसमें गुण स्वर संधि है। नियम के अनुसार, 'अ' के बाद 'ऋ' आने पर दोनों मिलकर 'अर्' हो जाते हैं (अ + ऋ = अर्)।",
+    fact: "Distinguish carefully: 'देव + ऋषि = देवर्षि' uses 'देव' (अ), whereas 'महा + ऋषि = महर्षि' uses 'महा' (आ)."
+  },
+  {
+    q: 57,
+    en: "Choose the correct Sandhi-Viched of 'एकैक' (Ekaik).",
+    hi: "'एकैक' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "एक + ऐक (Eka + Aika) / एक + ऐक",
+      "एक + एक (Eka + Eka) / एक + एक",
+      "एका + एक (Ekaa + Eka) / एका + एक",
+      "ऐक + एक (Aika + Eka) / ऐक + एक",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'एकैक' splits into 'एक + एक' (Eka + Eka). According to Vriddhi Swar Sandhi, when 'अ' (a) is followed by 'ए' (e), both combine to become 'ऐ' (अ + ए = ऐ).",
+    expHi: "'एकैक' का सही संधि-विच्छेद 'एक + एक' है। यह वृद्धि स्वर संधि का उदाहरण है, जहाँ 'अ' और 'ए' के मेल से 'ऐ' बनता है (अ + ए = ऐ)।",
+    fact: "Other important 'अ + ए = ऐ' Vriddhi Sandhi examples: लोक + एषणा = लोकैषणा, पुत्र + एषणा = पुत्रैषणा, हित + एषी = हितैषी."
+  },
+  {
+    q: 58,
+    en: "Which word is formed by the Sandhi of 'महा + ओज' (Maha + Oja)?",
+    hi: "'महा + ओज' की संधि से कौन-सा शब्द बनेगा?",
+    opts: [
+      "महोज (Mahoja) / महोज",
+      "महौज (Mahauja) / महौज",
+      "महाओज (Mahaoja) / महाओज",
+      "महोऔज (Mahoauja) / महोऔज",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'महा + ओज' combines to form 'महौज' (Mahauja). Under Vriddhi Swar Sandhi rules, when 'आ' (ā) is followed by 'ओ' (o), both merge into the diphthong 'औ' (आ + ओ = औ).",
+    expHi: "'महा + ओज' की संधि से 'महौज' शब्द बनता है। वृद्धि स्वर संधि के नियम के अनुसार, 'आ' के बाद 'ओ' आने पर दोनों का 'औ' हो जाता है (आ + ओ = औ)।",
+    fact: "In Vriddhi Sandhi, 'ओज' (luster/vigor) and 'ओघ' (stream/flood) start with single-matra 'ओ', while 'औषध' (medicine) and 'औदार्य' (generosity) start with double-matra 'औ'."
+  },
+  {
+    q: 59,
+    en: "Identify the correct Sandhi-Viched of 'अत्यधिक' (Atyadhik).",
+    hi: "'अत्यधिक' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "अत्य + अधिक (Atya + Adhik) / अत्य + अधिक",
+      "अति + अधिक (Ati + Adhik) / अति + अधिक",
+      "अती + अधिक (Atii + Adhik) / अती + अधिक",
+      "अत् + अधिक (At + Adhik) / अत् + अधिक",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'अत्यधिक' is formed by 'अति + अधिक' (Ati + Adhik). In Yan Swar Sandhi, short 'इ' (i) followed by the dissimilar vowel 'अ' (a) changes into 'य्' (y), leaving 'त्' as a half consonant (अत्यधिक).",
+    expHi: "'अत्यधिक' का सही संधि-विच्छेद 'अति + अधिक' है। इसमें यण स्वर संधि है। नियम: 'इ' के बाद भिन्न स्वर 'अ' आने पर 'इ' का परिवर्तन 'य्' में हो जाता है (इ + अ = य)।",
+    fact: "Contrast 'अति + अधिक = अत्यधिक' (इ + अ = य) with 'अति + आचार = अत्याचार' (इ + आ = या) and 'अति + उत्तम = अत्युत्तम' (इ + उ = यु)."
+  },
+  {
+    q: 60,
+    en: "What is the correct Sandhi-Viched of 'मन्वन्तर' (Manvantar)?",
+    hi: "'मन्वन्तर' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "मन् + वन्तर (Man + Vantar) / मन् + वन्तर",
+      "मनु + अन्तर (Manu + Antar) / मनु + अन्तर",
+      "मनः + अन्तर (Manah + Antar) / मनः + अन्तर",
+      "मनो + अन्तर (Mano + Antar) / मनो + अन्तर",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'मन्वन्तर' splits into 'मनु + अन्तर' (Manu + Antar). Under Yan Swar Sandhi, when 'उ' (u) is followed by a dissimilar vowel ('अ'), 'उ' transforms into 'व्' (v). Thus, म् + न् + व् + अन्तर = मन्वन्तर.",
+    expHi: "'मन्वन्तर' का सही संधि-विच्छेद 'मनु + अन्तर' है। यह यण स्वर संधि का उदाहरण है, जहाँ 'उ' के बाद भिन्न स्वर 'अ' आने से 'उ' का 'व्' हो गया है (उ + अ = व)।",
+    fact: "'मन्वन्तर' is a high-frequency word in UPSSSC exams (tested in both Sandhi and One-Word Substitution: the period of a Manu's rule)."
+  },
+  {
+    q: 61,
+    en: "Which type of Sandhi is present in the word 'शयन' (Shayan)?",
+    hi: "'शयन' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Ayadi Sandhi / अयादि संधि",
+      "Yan Sandhi / यण संधि",
+      "Guna Sandhi / गुण संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      E_OPTION
+    ],
+    ans: 0,
+    expEn: "'शयन' is formed by 'शे + अन' (She + Ana). According to Ayadi Swar Sandhi, when 'ए' (e) is followed by a dissimilar vowel ('अ'), 'ए' converts into 'अय्' (ay). Thus, श् + अय् + अन = शयन.",
+    expHi: "'शयन' (शे + अन) में अयादि स्वर संधि है। नियम के अनुसार, 'ए' के बाद कोई भिन्न स्वर ('अ') आने पर 'ए' का परिवर्तन 'अय्' में हो जाता है।",
+    fact: "Remember the trio of 'ए + अ = अय' words in Ayadi Sandhi: ने + अन = नयन, शे + अन = शयन, चे + अन = चयन."
+  },
+  {
+    q: 62,
+    en: "What is the correct Sandhi-Viched of 'पावन' (Paavan)?",
+    hi: "'पावन' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "पो + अन (Po + Ana) / पो + अन",
+      "पौ + अन (Pau + Ana) / पौ + अन",
+      "पा + वन (Pa + Vana) / पा + वन",
+      "पव + अन (Pava + Ana) / पव + अन",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'पावन' splits into 'पौ + अन' (Pau + Ana). In Ayadi Swar Sandhi, when 'औ' (au) is followed by 'अ' (a), 'औ' turns into 'आव्' (aav). Thus, प् + आव् + अन = पावन.",
+    expHi: "'पावन' का सही संधि-विच्छेद 'पौ + अन' है। इसमें अयादि स्वर संधि है, जहाँ 'औ' के बाद 'अ' आने पर 'औ' का 'आव्' हो जाता है (औ + अ = आव)।",
+    fact: "Do not confuse: 'पो + अन = पवन' (wind -> अव्) vs. 'पौ + अन = पावन' (pure/holy -> आव्)."
+  },
+  {
+    q: 63,
+    en: "Identify the correct Sandhi-Viched of 'अजन्त' (Ajant).",
+    hi: "'अजन्त' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "अज + अन्त (Aja + Anta) / अज + अन्त",
+      "अच् + अन्त (Ach + Anta) / अच् + अन्त",
+      "अज् + अन्त (Aj + Anta) / अज् + अन्त",
+      "अः + जन्त (Ah + Janta) / अः + जन्त",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'अजन्त' is formed by 'अच् + अन्त' (Ach + Anta). By the first rule of Vyanjan Sandhi, the first consonant of Ch-varga ('च्') changes into the third consonant of its own class ('ज्') when followed by the vowel 'अ'.",
+    expHi: "'अजन्त' का सही संधि-विच्छेद 'अच् + अन्त' है। इसमें व्यंजन संधि है। नियम के अनुसार च-वर्ग के प्रथम वर्ण 'च्' के बाद स्वर 'अ' आने पर 'च्' अपने ही वर्ग के तीसरे वर्ण 'ज्' में बदल जाता है।",
+    fact: "In Sanskrit/Hindi grammar, 'अच्' means vowels, so 'अजन्त' (अच् + अन्त) literally means words ending in a vowel."
+  },
+  {
+    q: 64,
+    en: "What is the correct Sandhi-Viched of 'उन्नति' (Unnati)?",
+    hi: "'उन्नति' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "उन + नति (Una + Nati) / उन + नति",
+      "उत् + नति (Ut + Nati) / उत् + नति",
+      "उन् + नति (Un + Nati) / उन् + नति",
+      "उद + नति (Uda + Nati) / उद + नति",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'उन्नति' splits into 'उत् + नति' (Ut + Nati). According to Vyanjan Sandhi rules, when the first consonant of a class ('त्') is followed by a nasal consonant ('न'), 'त्' changes into the fifth (nasal) consonant of its own class ('न्').",
+    expHi: "'उन्नति' का सही संधि-विच्छेद 'उत् + नति' है। व्यंजन संधि के नियम के अनुसार, यदि किसी वर्ग के पहले वर्ण ('त्') का मेल 'न' या 'म' से हो, तो पहला वर्ण अपने ही वर्ग के पंचम वर्ण ('न्') में परिवर्तित हो जाता है।",
+    fact: "Other high-yield examples of 'त् + न/म = न्न/न्म': उत् + नयन = उन्नयन, तत् + मय = तन्मय, चित् + मय = चिन्मय."
+  },
+  {
+    q: 65,
+    en: "Choose the correct Sandhi-Viched of 'संसार' (Sansar).",
+    hi: "'संसार' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "सं + सार (Sam + Sara) / सं + सार",
+      "सम् + सार (Sam + Sara) / सम् + सार",
+      "सन् + सार (San + Sara) / सन् + सार",
+      "सः + सार (Sah + Sara) / सः + सार",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'संसार' is formed by 'सम् + सार' (Sam + Sara). In Vyanjan Sandhi, when 'म्' (m) is followed by a sibilant ('श', 'ष', 'स', 'ह') or semivowel ('य', 'र', 'ल', 'व'), 'म्' always converts into an Anusvara (ं).",
+    expHi: "'संसार' का सही संधि-विच्छेद 'सम् + सार' है। व्यंजन संधि के नियमानुसार, यदि 'म्' के बाद य, र, ल, व या श, ष, स, ह में से कोई वर्ण आए, तो 'म्' सदैव अनुस्वार (ं) में बदल जाता है।",
+    fact: "Similar 'सम् + ...' words with sibilants/semivowels: सम् + योग = संयोग, सम् + रक्षण = संरक्षण, सम् + लाभ = संलाभ, सम् + हार = संहार."
+  },
+  {
+    q: 66,
+    en: "Which word is formed by the Sandhi of 'आ + छादन' (Aa + Chhadan)?",
+    hi: "'आ + छादन' की संधि से कौन-सा शब्द बनेगा?",
+    opts: [
+      "आछादन (Aachhadan) / आछादन",
+      "आच्छादन (Aachchhadan) / आच्छादन",
+      "अछादन (Achhadan) / अछादन",
+      "आश्छादन (Aashchhadan) / आश्छादन",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'आ + छादन' combines to form 'आच्छादन' (Aachchhadan). Under Vyanjan Sandhi (तुगागम संधि), when any vowel is followed by the consonant 'छ' (chh), a half 'च्' (ch) is inserted before 'छ'.",
+    expHi: "'आ + छादन' की संधि से 'आच्छादन' बनता है। व्यंजन संधि के नियम के अनुसार, किसी भी ह्रस्व स्वर या 'आ' का मेल 'छ' से होने पर 'छ' से पहले 'च्' जोड़ दिया जाता है।",
+    fact: "Even though the first word ends in a vowel ('आ', 'इ', 'उ'), this is strictly Vyanjan Sandhi because the second part starts with consonant 'छ': स्व + छन्द = स्वच्छन्द, परि + छेद = परिच्छेद, अनु + छेद = अनुच्छेद."
+  },
+  {
+    q: 67,
+    en: "What is the correct Sandhi-Viched of 'तपोवन' (Tapovan)?",
+    hi: "'तपोवन' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "तपो + वन (Tapo + Vana) / तपो + वन",
+      "तपः + वन (Tapah + Vana) / तपः + वन",
+      "तप + वन (Tapa + Vana) / तप + वन",
+      "तप् + ओवन (Tap + Ovana) / तप् + ओवन",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'तपोवन' splits into 'तपः + वन' (Tapah + Vana). In Visarga Sandhi, when a Visarga (ः) is preceded by 'अ' and followed by 'व' (a voiced semivowel), the Visarga changes into 'ओ' (o).",
+    expHi: "'तपोवन' का सही संधि-विच्छेद 'तपः + वन' है। विसर्ग संधि के नियम के अनुसार, यदि विसर्ग से पहले 'अ' हो और बाद में य, र, ल, व, ह या किसी वर्ग का 3, 4, 5वाँ वर्ण हो, तो विसर्ग का 'ओ' हो जाता है।",
+    fact: "Also remember 'तपः + बल = तपोबल' and 'तपः + भूमि = तपोभूमि', which follow the exact same Visarga Sandhi pattern."
+  },
+  {
+    q: 68,
+    en: "Identify the type of Sandhi in the word 'दुर्जन' (Durjan).",
+    hi: "'दुर्जन' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Vyanjan Sandhi / व्यंजन संधि",
+      "Yan Sandhi / यण संधि",
+      "Visarga Sandhi / विसर्ग संधि",
+      "Guna Sandhi / गुण संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'दुर्जन' is formed by 'दुः + जन' (Duh + Jana). According to Visarga Sandhi, a Visarga (ः) preceded by 'उ' and followed by the voiced consonant 'ज' converts into a half 'र्' (r).",
+    expHi: "'दुर्जन' (दुः + जन) में विसर्ग संधि है। नियम के अनुसार, विसर्ग से पहले 'अ/आ' से भिन्न स्वर ('उ') और बाद में सघोष वर्ण ('ज') होने पर विसर्ग का 'र्' हो जाता है।",
+    fact: "Similar 'दुः + ...' Visarga Sandhi words: दुः + गम = दुर्गम, दुः + दशा = दुर्दशा, दुः + बल = दुर्बल, दुः + उपयोग = दुरुपयोग."
+  },
+  {
+    q: 69,
+    en: "What is the correct Sandhi-Viched of 'निराशा' (Nirasha)?",
+    hi: "'निराशा' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "निर + आशा (Nira + Aasha) / निर + आशा",
+      "निः + आशा (Nih + Aasha) / निः + आशा",
+      "निर् + आशा (Nir + Aasha) / निर् + आशा",
+      "नी + आशा (Nii + Aasha) / नी + आशा",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'निराशा' splits into 'निः + आशा' (Nih + Aasha). In Visarga Sandhi, the Visarga (ः) preceded by 'इ' and followed by the vowel 'आ' transforms into 'र्' (r), and 'आ' joins 'र्' to form 'रा' (निराशा).",
+    expHi: "'निराशा' का सही संधि-विच्छेद 'निः + आशा' है। विसर्ग संधि के नियम के अनुसार, 'इ' के बाद विसर्ग हो और उसके आगे स्वर 'आ' आए, तो विसर्ग का 'र्' बन जाता है और 'आ' की मात्रा जुड़कर 'रा' हो जाता है।",
+    fact: "Other vowel-joining Visarga-to-'र' words: निः + आहार = निराहार, निः + अर्थक = निरर्थक, निः + उत्तर = निरुत्तर, निः + उपाय = निरुपाय."
+  },
+  {
+    q: 70,
+    en: "Choose the correct Sandhi-Viched of 'निस्तेज' (Nistej).",
+    hi: "'निस्तेज' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "निस + तेज (Nisa + Teja) / निस + तेज",
+      "निः + तेज (Nih + Teja) / निः + तेज",
+      "निस् + तेज (Nis + Teja) / निस् + तेज",
+      "नि + तेज (Ni + Teja) / नि + तेज",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'निस्तेज' is formed by 'निः + तेज' (Nih + Teja). In Visarga Sandhi, when a Visarga (ः) is followed by 'त' or 'थ', the Visarga changes into half dental 'स्' (s).",
+    expHi: "'निस्तेज' का सही संधि-विच्छेद 'निः + तेज' है। विसर्ग संधि के नियमानुसार, विसर्ग के बाद 'त' आने से विसर्ग का परिवर्तन दन्त्य 'स्' में हो गया है।",
+    fact: "Also note: निः + तार = निस्तार, निः + संदेह = निस्संदेह (or निःसंदेह), दुः + तर = दुस्तर."
+  },
+  {
+    q: 71,
+    en: "What is the correct Sandhi-Viched of 'रामायण' (Ramayan)?",
+    hi: "'रामायण' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "राम + आयण (Rama + Aayana) / राम + आयण",
+      "राम + अयन (Rama + Ayana) / राम + अयन",
+      "रामा + अयन (Ramaa + Ayana) / रामा + अयन",
+      "राम + यान (Rama + Yana) / राम + यान",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'रामायण' splits into 'राम + अयन' (Rama + Ayana). It involves two rules: first, 'अ + अ = आ' (Dirgha Swar Sandhi); second, due to the presence of 'र' in 'राम', the dental 'न' in 'अयन' converts into retroflex 'ण' (णत्व विधान - Vyanjan Sandhi).",
+    expHi: "'रामायण' का सही संधि-विच्छेद 'राम + अयन' है। यहाँ 'अ + अ = आ' (दीर्घ स्वर संधि) के साथ-साथ 'र' के प्रभाव से 'अयन' के 'न' का 'ण' में परिवर्तन (व्यंजन संधि का णत्व नियम) भी हुआ है।",
+    fact: "If UPSSSC asks for the Sandhi-Viched of 'रामायण', it is always 'राम + अयन' (with 'न', not 'ण'). For the primary Sandhi type in objective tests, Dirgha Swar Sandhi is preferred if both are listed, though it also demonstrates Vyanjan Sandhi (णत्व विधान)."
+  },
+  {
+    q: 72,
+    en: "Identify the correct Sandhi-Viched of 'उच्चारण' (Uchcharan).",
+    hi: "'उच्चारण' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "उच्च + चारण (Uchcha + Charan) / उच्च + चारण",
+      "उत् + चारण (Ut + Charan) / उत् + चारण",
+      "उच् + चारण (Uch + Charan) / उच् + चारण",
+      "उः + चारण (Uh + Charan) / उः + चारण",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'उच्चारण' is formed by 'उत् + चारण' (Ut + Charan). By Vyanjan Sandhi rules, when 'त्' or 'द्' is followed by 'च' or 'छ', 'त्/द्' changes into half 'च्' (त् + च = च्च).",
+    expHi: "'उच्चारण' का सही संधि-विच्छेद 'उत् + चारण' है। इसमें व्यंजन संधि है। नियम: 'त्' के बाद 'च' आने पर 'त्' का परिवर्तन 'च्' में हो जाता है।",
+    fact: "Never pick 'उच् + चारण'; the standard Sanskrit/Hindi prefix is 'उत्' (or 'उद्'), never 'उच्'."
+  },
+  {
+    q: 73,
+    en: "Which type of Sandhi is present in the word 'मात्राज्ञा' (Matragya)?",
+    hi: "'मात्राज्ञा' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Guna Sandhi / गुण संधि",
+      "Yan Sandhi / यण संधि",
+      "Ayadi Sandhi / अयादि संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'मात्राज्ञा' splits into 'मातृ + आज्ञा' (Matri + Aagya). According to Yan Swar Sandhi, when 'ऋ' (ri) is followed by a dissimilar vowel ('आ'), 'ऋ' becomes 'र्' (r), combining with 'त्' and 'आ' to form 'त्रा' (मात्राज्ञा).",
+    expHi: "'मात्राज्ञा' (मातृ + आज्ञा) में यण स्वर संधि है। नियम के अनुसार, 'ऋ' के बाद भिन्न स्वर 'आ' आने पर 'ऋ' का 'र्' हो जाता है (त् + ऋ + आ = त्रा)।",
+    fact: "Do not fall for the 'आ' matra in 'त्रा' and mark Dirgha Sandhi ('मात्रा + आज्ञा' is wrong because 'मात्रा' means quantity/vowel sign, whereas 'मातृ' means mother)."
+  },
+  {
+    q: 74,
+    en: "What is the correct Sandhi-Viched of 'दिग्गज' (Diggaj)?",
+    hi: "'दिग्गज' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "दिग + गज (Diga + Gaja) / दिग + गज",
+      "दिक् + गज (Dik + Gaja) / दिक् + गज",
+      "दिग् + गज (Dig + Gaja) / दिग् + गज",
+      "दिः + गज (Dih + Gaja) / दिः + गज",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'दिग्गज' splits into 'दिक् + गज' (Dik + Gaja). Under Vyanjan Sandhi, when the first consonant of a class ('क्') is followed by the third or fourth consonant of any class (here 'ग'), 'क्' converts into the third consonant of its own class ('ग्').",
+    expHi: "'दिग्गज' का सही संधि-विच्छेद 'दिक् + गज' है। यह व्यंजन संधि का उदाहरण है। नियम: क्, च्, ट्, त्, प् के बाद किसी वर्ग का तीसरा या चौथा वर्ण ('ग') आने पर 'क्' अपने ही वर्ग के तीसरे वर्ण ('ग्') में बदल जाता है।",
+    fact: "Other 'दिक् + ...' words asked in UPSSSC: दिक् + अम्बर = दिगम्बर, दिक् + अन्त = दिगन्त, दिक् + विजय = दिग्विजय."
+  },
+  {
+    q: 75,
+    en: "Choose the correct Sandhi-Viched of 'आशीर्वाद' (Aashirvad).",
+    hi: "'आशीर्वाद' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "आशीर + वाद (Aashira + Vada) / आशीर + वाद",
+      "आशीः + वाद (Aashih + Vada) / आशीः + वाद",
+      "आशिः + वाद (Aashih + Vada) / आशिः + वाद",
+      "आर्शी + वाद (Aarshii + Vada) / आर्शी + वाद",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'आशीर्वाद' splits into 'आशीः + वाद' (Aashih + Vada). In Visarga Sandhi, the Visarga (ः) preceded by long 'ई' and followed by the voiced consonant 'व' changes into half 'र्' (रेफ), which is placed on top of the following syllable 'वा'.",
+    expHi: "'आशीर्वाद' का सही संधि-विच्छेद 'आशीः + वाद' है। इसमें विसर्ग संधि है। विसर्ग से पहले 'ई' और बाद में 'व' होने से विसर्ग का 'र्' (रेफ) हो जाता है, जो अगले वर्ण 'वा' के ऊपर लगता है।",
+    fact: "Both the spelling ('आशीर्वाद', where रेफ is on 'वा', NOT on 'शी') and the Sandhi ('आशीः + वाद' with long 'ई') are top-tier UPSSSC PET exam questions."
+  },
+
+  // BATCH 4 (Q76 - Q100)
+  {
+    q: 76,
+    en: "What is the correct Sandhi-Viched of the word 'परमार्थ' (Paramarth)?",
+    hi: "'परमार्थ' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "परमा + अर्थ (Parama + Artha) / परमा + अर्थ",
+      "परम + अर्थ (Parama + Artha) / परम + अर्थ",
+      "पर + मार्थ (Para + Martha) / पर + मार्थ",
+      "परम + आर्थ (Parama + Aartha) / परम + आर्थ",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'परमार्थ' splits into 'परम + अर्थ' (Parama + Artha). In Dirgha Swar Sandhi, the short vowel 'अ' (a) at the end of 'परम' combines with the short vowel 'अ' (a) at the start of 'अर्थ' to form a long vowel 'आ' (अ + अ = आ).",
+    expHi: "'परमार्थ' का सही संधि-विच्छेद 'परम + अर्थ' है। इसमें दीर्घ स्वर संधि है। नियम के अनुसार दो ह्रस्व 'अ' स्वर मिलकर दीर्घ 'आ' बन जाते हैं (अ + अ = आ)।",
+    fact: "Similar 'अ + अ = आ' Dirgha Sandhi words frequently asked: स्व + अर्थ = स्वार्थ, वेद + अन्त = वेदान्त, शरण + अर्थी = शरणार्थी."
+  },
+  {
+    q: 77,
+    en: "Which type of Sandhi is present in the word 'सतीश' (Satish)?",
+    hi: "'सतीश' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Guna Sandhi / गुण संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Yan Sandhi / यण संधि",
+      "Vriddhi Sandhi / वृद्धि संधि",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'सतीश' is formed by 'सती + ईश' (Satii + Isha). Here, long 'ई' (ī) + long 'ई' (ī) merge to form long 'ई' (ī), which is Dirgha Swar Sandhi.",
+    expHi: "'सतीश' (सती + ईश) में दीर्घ स्वर संधि है। यहाँ दीर्घ 'ई' और दीर्घ 'ई' के मेल से दीर्घ 'ई' का निर्माण हुआ है (ई + ई = ई)।",
+    fact: "Feminine root words like 'सती', 'मही' (Earth), 'नदी', 'रजनी' (Night), and 'लक्ष्मी' always end with a long 'ई' (दीर्घ ई) in Sandhi-Viched."
+  },
+  {
+    q: 78,
+    en: "Identify the correct Sandhi-Viched of 'भूर्ध्व' (Bhurdhva).",
+    hi: "'भूर्ध्व' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "भू + उर्ध्व (Bhuu + Urdhva) / भू + उर्ध्व",
+      "भु + ऊर्ध्व (Bhu + Uurdhva) / भु + ऊर्ध्व",
+      "भू + ऊर्ध्व (Bhuu + Uurdhva) / भू + ऊर्ध्व",
+      "भूर् + ध्व (Bhur + Dhva) / भूर् + ध्व",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'भूर्ध्व' splits into 'भू + ऊर्ध्व' (Bhuu + Uurdhva). Both 'भू' (Earth) and 'ऊर्ध्व' (upward/elevated) have a long 'ऊ' (ū). Under Dirgha Swar Sandhi, ऊ + ऊ = ऊ.",
+    expHi: "'भूर्ध्व' का सही संधि-विच्छेद 'भू + ऊर्ध्व' है। इसमें दीर्घ स्वर संधि है (ऊ + ऊ = ऊ)। 'भू' और 'ऊर्ध्व' दोनों ही मूल शब्दों में बड़ा 'ऊ' होता है।",
+    fact: "Memorize the 'भू +' family in Dirgha Sandhi: भू + ऊर्ध्व = भूर्ध्व, भू + ऊर्जा = भूर्जा, भू + उत्सर्ग = भूत्सर्ग (Note: उत्सर्ग has a short उ)."
+  },
+  {
+    q: 79,
+    en: "What is the correct Sandhi-Viched of 'राकेश' (Rakesh)?",
+    hi: "'राकेश' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "राक + ईश (Raka + Isha) / राक + ईश",
+      "राका + ईश (Rakaa + Isha) / राका + ईश",
+      "राके + श (Rake + Sha) / राके + श",
+      "राका + इश (Rakaa + Isha) / राका + इश",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'राकेश' splits into 'राका + ईश' (Rakaa + Isha), where 'राका' means full moon night and 'ईश' means lord (hence Rakesh = Moon). Under Guna Swar Sandhi, 'आ' (ā) + 'ई' (ī) = 'ए' (e).",
+    expHi: "'राकेश' का सही संधि-विच्छेद 'राका + ईश' है। यहाँ 'राका' (चाँदनी रात/पूर्णिमा) के 'आ' और 'ईश' के 'ई' के मेल से 'ए' बना है (आ + ई = ए), अतः इसमें गुण स्वर संधि है।",
+    fact: "Similar high-yield Guna Sandhi words where the first noun ends in 'आ': रमा + ईश = रमेश, उमा + ईश = उमेश, कमला + ईश = कमलेश, गुणाका (निद्रा) + ईश = गुड़ाकेश (अर्जुन/शिव)."
+  },
+  {
+    q: 80,
+    en: "Which Sandhi is present in the word 'नवोढ़ा' (Navodha)?",
+    hi: "'नवोढ़ा' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Vriddhi Sandhi / वृद्धि संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Guna Sandhi / गुण संधि",
+      "Visarga Sandhi / विसर्ग संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'नवोढ़ा' (newly married bride) is formed by 'नव + ऊढ़ा' (Nava + Uudha). According to Guna Swar Sandhi, when 'अ' (a) is followed by long 'ऊ' (ū), both merge to form 'ओ' (अ + ऊ = ओ).",
+    expHi: "'नवोढ़ा' (नव + ऊढ़ा) में गुण स्वर संधि है। नियम के अनुसार, 'अ' और 'ऊ' के मेल से 'ओ' स्वर का निर्माण होता है (अ + ऊ = ओ)।",
+    fact: "'ऊढ़ा' (married woman) always starts with a long 'ऊ' (दीर्घ ऊ) and is a favorite vocabulary + Sandhi test item in UPSSSC exams."
+  },
+  {
+    q: 81,
+    en: "Choose the correct Sandhi-Viched of 'महौषध' (Mahaushadh).",
+    hi: "'महौषध' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "महा + औषध (Maha + Aushadh) / महा + औषध",
+      "महा + ओषध (Maha + Oshadh) / महा + ओषध",
+      "मह + औषध (Maha + Aushadh) / मह + औषध",
+      "महौ + षध (Mahau + Shadh) / महौ + षध",
+      E_OPTION
+    ],
+    ans: 0,
+    expEn: "'महौषध' splits into 'महा + औषध' (Maha + Aushadh). In Vriddhi Swar Sandhi, when 'आ' (ā) is followed by 'औ' (au), both combine to form 'औ' (आ + औ = औ). Note: When written without a final 'इ' matra, 'औषध' takes double matra 'औ'.",
+    expHi: "'महौषध' का सही संधि-विच्छेद 'महा + औषध' है। इसमें वृद्धि स्वर संधि है (आ + औ = औ)।",
+    fact: "Standard NCERT/UPSSSC distinction: 'महा + औषध = महौषध' (uses औषध), whereas 'महा + ओजस्वी = महौजस्वी' (uses ओजस्वी)."
+  },
+  {
+    q: 82,
+    en: "What is the correct Sandhi-Viched of 'प्रत्युपकार' (Pratyupkar)?",
+    hi: "'प्रत्युपकार' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "प्रत + उपकार (Prata + Upkar) / प्रत + उपकार",
+      "प्रति + उपकार (Prati + Upkar) / प्रति + उपकार",
+      "प्रती + उपकार (Pratii + Upkar) / प्रती + उपकार",
+      "प्रत्यु + पकार (Pratyu + Pakar) / प्रत्यु + पकार",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'प्रत्युपकार' splits into 'प्रति + उपकार' (Prati + Upkar). Under Yan Swar Sandhi, when 'इ' (i) is followed by the dissimilar vowel 'उ' (u), 'इ' transforms into 'य्' (y), and 'उ' joins it to form 'यु' (प्रत्युपकार).",
+    expHi: "'प्रत्युपकार' का सही संधि-विच्छेद 'प्रति + उपकार' है। इसमें यण स्वर संधि है। यहाँ 'इ' के बाद भिन्न स्वर 'उ' आने पर 'इ' का 'य्' और 'उ' की मात्रा जुड़कर 'यु' हो गया है (इ + उ = यु)।",
+    fact: "Other 'इ/ई + उ/ऊ = यु/यू' Yan Sandhi words: उपरि + उक्त = उपर्युक्त, अति + उत्तम = अत्युत्तम, नि + ऊन = न्यून."
+  },
+  {
+    q: 83,
+    en: "Which word is formed by the Sandhi of 'नि + ऊन' (Ni + Uun)?",
+    hi: "'नि + ऊन' की संधि से कौन-सा शब्द बनेगा?",
+    opts: [
+      "निऊन (Niuun) / निऊन",
+      "नून (Nuun) / नून",
+      "न्यून (Nyun) / न्यून",
+      "नयून (Nayuun) / नयून",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'नि + ऊन' combines to form 'न्यून' (Nyun). By Yan Swar Sandhi rules, short 'इ' (i) in 'नि' changes into 'य्' (y) before the dissimilar vowel 'ऊ' (ū), leaving half 'न्' and attaching long 'ऊ' to 'य्' (न् + य् + ऊन = न्यून).",
+    expHi: "'नि + ऊन' के मेल से 'न्यून' शब्द बनता है। यह यण स्वर संधि का उदाहरण है, जहाँ 'इ' के बाद दीर्घ 'ऊ' आने से 'इ' का 'य्' और उसमें 'ऊ' की मात्रा लगकर 'यू' बन गया है (इ + ऊ = यू)।",
+    fact: "Pay attention to the long 'ऊ' in 'ऊन' (meaning 'less'): 'नि + ऊन = न्यून', just like 'वि + ऊह = व्यूह'."
+  },
+  {
+    q: 84,
+    en: "Identify the correct Sandhi-Viched of 'अन्वेषण' (Anveshan).",
+    hi: "'अन्वेषण' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "अन्व + एषण (Anva + Eshan) / अन्व + एषण",
+      "अनु + एषण (Anu + Eshan) / अनु + एषण",
+      "अनु + ऐषण (Anu + Aishan) / अनु + ऐषण",
+      "अन् + वेषण (An + Veshan) / अन् + वेषण",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'अन्वेषण' splits into 'अनु + एषण' (Anu + Eshan). According to Yan Swar Sandhi, when 'उ' (u) is followed by the dissimilar vowel 'ए' (e), 'उ' converts into half 'व्' (v), and the matra of 'ए' attaches to form 'वे' (अन्वेषण).",
+    expHi: "'अन्वेषण' का सही संधि-विच्छेद 'अनु + एषण' है। इसमें यण स्वर संधि है। नियम के अनुसार ह्रस्व 'उ' के बाद भिन्न स्वर 'ए' आने पर 'उ' का 'व्' हो जाता है और 'ए' की मात्रा जुड़कर 'वे' बनता है (उ + ए = वे)।",
+    fact: "Note that 'एषण' / 'एषणा' (search/desire) is always spelled with single-matra 'ए' (never 'ऐ')."
+  },
+  {
+    q: 85,
+    en: "What is the correct Sandhi-Viched of 'गवीश' (Gavish)?",
+    hi: "'गवीश' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "गव + ईश (Gava + Isha) / गव + ईश",
+      "गो + ईश (Go + Isha) / गो + ईश",
+      "गौ + ईश (Gau + Isha) / गौ + ईश",
+      "गा + ईश (Ga + Isha) / गा + ईश",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'गवीश' is formed by 'गो + ईश' (Go + Isha). Under Ayadi Swar Sandhi rules, when 'ओ' (o) is followed by a dissimilar vowel ('ई'), 'ओ' transforms into 'अव्' (av). Thus, ग् + अव् + ईश = गवीश.",
+    expHi: "'गवीश' का सही संधि-विच्छेद 'गो + ईश' है। अयादि स्वर संधि के नियम के अनुसार, 'ओ' के बाद भिन्न स्वर 'ई' आने पर 'ओ' का 'अव्' हो जाता है (ओ + ई = अवी)।",
+    fact: "Similarly, 'गो + एषणा = गवेषणा' (literally searching for cows -> research/investigation) is an Ayadi Swar Sandhi word, NOT Guna Sandhi."
+  },
+  {
+    q: 86,
+    en: "Which type of Sandhi is found in the word 'भावुक' (Bhavuk)?",
+    hi: "'भावुक' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Yan Sandhi / यण संधि",
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Ayadi Sandhi / अयादि संधि",
+      "Vyanjan Sandhi / व्यंजन संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'भावुक' splits into 'भौ + उक' (Bhau + Uka). In Ayadi Swar Sandhi, when 'औ' (au) is followed by 'उ' (u), 'औ' turns into 'आव्' (aav), and 'उ' joins 'व्' to make 'वु' (भ् + आव् + उक = भावुक).",
+    expHi: "'भावुक' (भौ + उक) में अयादि स्वर संधि है। नियम के अनुसार, 'औ' के बाद भिन्न स्वर 'उ' आने पर 'औ' का परिवर्तन 'आव्' में हो जाता है (औ + उ = आवु)।",
+    fact: "Contrast 'भो + अन = भवन' (ओ + अ = अव) with 'भौ + उक = भावुक' (औ + उ = आवु). Both belong to Ayadi Sandhi."
+  },
+  {
+    q: 87,
+    en: "Choose the correct Sandhi-Viched of 'सद्धर्म' (Saddharma).",
+    hi: "'सद्धर्म' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "सद + धर्म (Sada + Dharma) / सद + धर्म",
+      "सत् + धर्म (Sat + Dharma) / सत् + धर्म",
+      "सद् + अधर्म (Sad + Adharma) / सद् + अधर्म",
+      "सः + धर्म (Sah + Dharma) / सः + धर्म",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'सद्धर्म' splits into 'सत् + धर्म' (Sat + Dharma). By the first rule of Vyanjan Sandhi, when the first consonant of a class ('त्') is followed by the fourth consonant of a class ('ध'), 'त्' changes into the third consonant of its own class ('द्').",
+    expHi: "'सद्धर्म' का सही संधि-विच्छेद 'सत् + धर्म' है। व्यंजन संधि के प्रथम नियम के अनुसार, वर्ग के पहले वर्ण ('त्') के बाद किसी वर्ग का तीसरा या चौथा वर्ण ('ध') आने पर 'त्' अपने ही वर्ग के तीसरे वर्ण ('द्') में बदल जाता है।",
+    fact: "Other 'सत् +' examples under the same 1st-to-3rd consonant rule: सत् + आचार = सदाचार, सत् + भावना = सद्भावना, सत् + गति = सद्गति."
+  },
+  {
+    q: 88,
+    en: "What is the correct Sandhi-Viched of 'वाङ्मय' (Vangmaya)?",
+    hi: "'वाङ्मय' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "वाग + मय (Vaga + Maya) / वाग + मय",
+      "वाक् + मय (Vak + Maya) / वाक् + मय",
+      "वाङ् + मय (Vang + Maya) / वाङ् + मय",
+      "वान् + मय (Van + Maya) / वान् + मय",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'वाङ्मय' (literature) is formed by 'वाक् + मय' (Vak + Maya). In Vyanjan Sandhi, when the first letter of K-varga ('क्') is followed by the nasal consonant 'म', 'क्' changes into the fifth (nasal) letter of K-varga, which is 'ङ्' (ṅ).",
+    expHi: "'वाङ्मय' का सही संधि-विच्छेद 'वाक् + मय' है। व्यंजन संधि के नियम के अनुसार, क-वर्ग के प्रथम वर्ण 'क्' का मेल 'म' से होने पर 'क्' अपने ही वर्ग के पंचम (अनुनासिक) वर्ण 'ङ्' में परिवर्तित हो जाता है।",
+    fact: "Look closely at the dot placement in Devanagari: 'ङ्' has the dot on the side (क-वर्ग पंचम वर्ण), not underneath like 'ड़'."
+  },
+  {
+    q: 89,
+    en: "Identify the correct Sandhi-Viched of 'षण्मास' (Shanmas).",
+    hi: "'षण्मास' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "षड + मास (Shada + Masa) / षड + मास",
+      "षट् + मास (Shat + Masa) / षट् + मास",
+      "षण् + मास (Shan + Masa) / षण् + मास",
+      "षः + मास (Shah + Masa) / षः + मास",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'षण्मास' splits into 'षट् + मास' (Shat + Masa). In Vyanjan Sandhi, when the first letter of T-varga ('ट्') is followed by the nasal 'म', 'ट्' converts into the fifth (nasal) letter of T-varga, which is half 'ण्' (ṇ).",
+    expHi: "'षण्मास' का सही संधि-विच्छेद 'षट् + मास' है। व्यंजन संधि के पंचम वर्ण नियम के अनुसार, 'ट्' के बाद 'म' आने पर 'ट्' अपने वर्ग के पाँचवें वर्ण 'ण्' में बदल जाता है।",
+    fact: "Similarly, 'षट् + मुख = षण्मुख' and 'जगत् + माता = जगन्माता' follow this exact 1st-to-5th nasal assimilation rule."
+  },
+  {
+    q: 90,
+    en: "What is the correct Sandhi-Viched of 'तद्धित' (Taddhit)?",
+    hi: "'तद्धित' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "तद् + धित (Tad + Dhita) / तद् + धित",
+      "तत् + हित (Tat + Hita) / तत् + हित",
+      "तध + हित (Tadha + Hita) / तध + हित",
+      "तः + हित (Tah + Hita) / तः + हित",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'तद्धित' splits into 'तत् + हित' (Tat + Hita). According to Vyanjan Sandhi rules, when 'त्' is followed by 'ह', 'त्' turns into 'द्' and 'ह' turns into 'ध', combining to form 'द्ध' (तद्धित).",
+    expHi: "'तद्धित' का सही संधि-विच्छेद 'तत् + हित' है। व्यंजन संधि के नियम के अनुसार, 'त्' के बाद 'ह' आने पर 'त्' का 'द्' और 'ह' का 'ध' हो जाता है (त् + ह = द्ध)।",
+    fact: "Another frequent example of this rule in UPSSSC papers: उत् + हत = उद्धत (उत् + हार = उद्धार)."
+  },
+  {
+    q: 91,
+    en: "Which word is formed by the Sandhi of 'परि + छेद' (Pari + Chhed)?",
+    hi: "'परि + छेद' की संधि से कौन-सा शब्द बनेगा?",
+    opts: [
+      "परिछेद (Parichhed) / परिछेद",
+      "परिच्छेद (Parichchhed) / परिच्छेद",
+      "परीछेद (Parichhed) / परीछेद",
+      "परच्छेद (Parachchhed) / परच्छेद",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'परि + छेद' combines to form 'परिच्छेद' (Parichchhed). Under Vyanjan Sandhi, when a short vowel ('इ' in 'परि') is followed by 'छ' (chh), a half 'च्' (ch) is automatically inserted between them.",
+    expHi: "'परि + छेद' की संधि से 'परिच्छेद' बनता है। व्यंजन संधि के छ-संबंधी नियम के अनुसार, किसी ह्रस्व स्वर के बाद 'छ' आने पर 'छ' से पहले आधा 'च्' जुड़ जाता है।",
+    fact: "Remember all four members of this Vyanjan Sandhi group: अनु + छेद = अनुच्छेद, वि + छेद = विच्छेद, परि + छेद = परिच्छेद, तरु + छाया = तरुच्छाया."
+  },
+  {
+    q: 92,
+    en: "What is the correct Sandhi-Viched of 'विषम' (Visham)?",
+    hi: "'विषम' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "वि + षम (Vi + Shama) / वि + षम",
+      "वि + सम (Vi + Sama) / वि + सम",
+      "वी + सम (Vii + Sama) / वी + सम",
+      "विः + सम (Vih + Sama) / विः + सम",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'विषम' splits into 'वि + सम' (Vi + Sama). According to Vyanjan Sandhi (षत्व नियम), when dental 'स' (s) is preceded by any vowel other than 'अ' or 'आ' (here 'इ'), 'स' transforms into retroflex 'ष' (sh).",
+    expHi: "'विषम' का सही संधि-विच्छेद 'वि + सम' है। व्यंजन संधि के नियम के अनुसार, 'स' से पूर्व 'अ/आ' से भिन्न स्वर ('इ') होने पर दन्त्य 'स' का मूर्धन्य 'ष' में परिवर्तन हो जाता है।",
+    fact: "If a Visarga is present, 'विः' is never used here; 'वि' is a standard Sanskrit/Hindi prefix (उपसर्ग) joining with 'सम' (equal) to mean 'विषम' (unequal/odd)."
+  },
+  {
+    q: 93,
+    en: "Identify the type of Sandhi in the word 'उल्लेख' (Ullekh).",
+    hi: "'उल्लेख' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Swar Sandhi / स्वर संधि",
+      "Vyanjan Sandhi / व्यंजन संधि",
+      "Visarga Sandhi / विसर्ग संधि",
+      "Yan Sandhi / यण संधि",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'उल्लेख' is formed by 'उत् + लेख' (Ut + Lekh), which is an example of Vyanjan Sandhi. When 'त्' or 'द्' is followed by 'ल', it assimilates into half 'ल्' (त् + ल = ल्ल).",
+    expHi: "'उल्लेख' (उत् + लेख) में व्यंजन संधि है। नियम के अनुसार 'त्' या 'द्' के बाद 'ल' आने पर 'त्/द्' का परिवर्तन 'ल्' में हो जाता है।",
+    fact: "Quick double-consonant Vyanjan Sandhi identifier: च्च (उच्चारण), ज्ज (उज्ज्वल/सज्जन), ट्ट (बृहट्टिका), ड्ड (उड्डयन), ल्ल (उल्लेख/तल्लीन) always split into 'त्/द् + ...'."
+  },
+  {
+    q: 94,
+    en: "What is the correct Sandhi-Viched of 'सज्जन' (Sajjan)?",
+    hi: "'सज्जन' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "सज + जन (Saja + Jana) / सज + जन",
+      "सत् + जन (Sat + Jana) / सत् + जन",
+      "सज् + जन (Saj + Jana) / सज् + जन",
+      "सः + जन (Sah + Jana) / सः + जन",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'सज्जन' splits into 'सत् + जन' (Sat + Jana). Under Vyanjan Sandhi rules, when 'त्' or 'द्' is followed by 'ज' or 'झ', 'त्/द्' converts into half 'ज्' (त् + ज = ज्ज).",
+    expHi: "'सज्जन' का सही संधि-विच्छेद 'सत् + जन' है। इसमें व्यंजन संधि है। नियम: 'त्' के बाद 'ज' आने पर 'त्' का परिवर्तन 'ज्' में हो जाता है।",
+    fact: "Compare 'सत् + जन = सज्जन' (Vyanjan Sandhi) with 'दुः + जन = दुर्जन' (Visarga Sandhi)."
+  },
+  {
+    q: 95,
+    en: "Choose the correct Sandhi-Viched of 'पयोद' (Payod).",
+    hi: "'पयोद' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "पयो + द (Payo + Da) / पयो + द",
+      "पयः + द (Payah + Da) / पयः + द",
+      "पय + उद (Paya + Uda) / पय + उद",
+      "पया + द (Payaa + Da) / पया + द",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'पयोद' (cloud - giver of water) splits into 'पयः + द' (Payah + Da). In Visarga Sandhi, the Visarga (ः) preceded by 'अ' and followed by the voiced consonant 'द' turns into 'ओ' (o).",
+    expHi: "'पयोद' का सही संधि-विच्छेद 'पयः + द' है। यह विसर्ग संधि का उदाहरण है। विसर्ग से पहले 'अ' और बाद में सघोष वर्ण 'द' होने से विसर्ग का 'ओ' हो गया है।",
+    fact: "Vocabulary bonus for UPSSSC: 'पयः + ज = पयोज' (Lotus - born in water), 'पयः + द = पयोद' (Cloud - giver of water), 'पयः + धि = पयोधि' (Ocean - holder of water). All three are Visarga Sandhi."
+  },
+  {
+    q: 96,
+    en: "What is the correct Sandhi-Viched of 'दुरुपयोग' (Durupyog)?",
+    hi: "'दुरुपयोग' का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "दुरु + पयोग (Duru + Payog) / दुरु + पयोग",
+      "दुः + उपयोग (Duh + Upyog) / दुः + उपयोग",
+      "दुर + उपयोग (Dura + Upyog) / दुर + उपयोग",
+      "दु + उपयोग (Du + Upyog) / दु + उपयोग",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'दुरुपयोग' splits into 'दुः + उपयोग' (Duh + Upyog). According to Visarga Sandhi, when a Visarga (ः) preceded by 'उ' is followed by the vowel 'उ', the Visarga changes into 'र्' (r), and 'उ' joins 'र्' to form 'रु' with a short 'उ' (दुरुपयोग).",
+    expHi: "'दुरुपयोग' का सही संधि-विच्छेद 'दुः + उपयोग' है। इसमें विसर्ग संधि है। विसर्ग से पूर्व 'उ' और बाद में स्वर 'उ' आने से विसर्ग का 'र्' हो जाता है और उसमें छोटा 'उ' जुड़कर 'रु' बनता है।",
+    fact: "Never spell it 'दुरूपयोग' (with long रू); since 'उपयोग' starts with short 'उ', 'र् + उ' forms short 'रु' ('दुरुपयोग')."
+  },
+  {
+    q: 97,
+    en: "Identify the correct Sandhi-Viched of 'निष्कपट' (Nishkapat).",
+    hi: "'निष्कपट' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "निष + कपट (Nisha + Kapat) / निष + कपट",
+      "निः + कपट (Nih + Kapat) / निः + कपट",
+      "निस् + कपट (Nis + Kapat) / निस् + कपट",
+      "नि + कपट (Ni + Kapat) / नि + कपट",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'निष्कपट' splits into 'निः + कपट' (Nih + Kapat). In Visarga Sandhi, when a Visarga (ः) is preceded by 'इ' or 'उ' and followed by 'क', 'ख', 'ट', 'ठ', 'प', or 'फ', the Visarga transforms into half retroflex 'ष्' (sh).",
+    expHi: "'निष्कपट' का सही संधि-विच्छेद 'निः + कपट' है। विसर्ग संधि के नियम के अनुसार, यदि विसर्ग से पहले 'इ' या 'उ' हो और बाद में क, ख, ट, ठ, प, फ में से कोई वर्ण आए, तो विसर्ग का 'ष्' हो जाता है।",
+    fact: "Other frequently asked words under this rule: निः + फल = निष्फल, निः + काम = निष्काम, निः + प्राण = निष्प्राण, दुः + प्रकृति = दुष्प्रकृति."
+  },
+  {
+    q: 98,
+    en: "Which type of Sandhi is present in the word 'नीरस' (Niras)?",
+    hi: "'नीरस' शब्द में कौन-सी संधि है?",
+    opts: [
+      "Dirgha Sandhi / दीर्घ संधि",
+      "Yan Sandhi / यण संधि",
+      "Visarga Sandhi / विसर्ग संधि",
+      "Vyanjan Sandhi / व्यंजन संधि",
+      E_OPTION
+    ],
+    ans: 2,
+    expEn: "'नीरस' is formed by 'निः + रस' (Nih + Rasa). Under Visarga Sandhi rules, when a Visarga (ः) is followed by 'र' (r), the Visarga is dropped and the preceding short vowel ('इ') is lengthened to 'ई' (नीरस).",
+    expHi: "'नीरस' (निः + रस) में विसर्ग संधि है। नियम के अनुसार, यदि विसर्ग (ः) के बाद 'र' आए, तो विसर्ग का लोप हो जाता है और उससे पहले का ह्रस्व स्वर ('इ') दीर्घ ('ई') हो जाता है।",
+    fact: "Remember the 4 'नी-' words of Visarga Sandhi for UPSSSC: निः + रोग = नीरोग, निः + रस = नीरस, निः + रव = नीरव, निः + रज = नीरज."
+  },
+  {
+    q: 99,
+    en: "What is the correct Sandhi-Viched of 'अतःएव / अतएव' (Ataeva)?",
+    hi: "'अतएव' शब्द का सही संधि-विच्छेद क्या है?",
+    opts: [
+      "अता + एव (Ataa + Eva) / अता + एव",
+      "अतः + एव (Atah + Eva) / अतः + एव",
+      "अत + एव (Ata + Eva) / अत + एव",
+      "अत् + एव (At + Eva) / अत् + एव",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'अतएव' splits into 'अतः + एव' (Atah + Eva). According to Visarga Sandhi rules, when a Visarga (ः) is preceded by 'अ' and followed by any vowel other than 'अ' (here 'ए'), the Visarga is elided (dropped) without any further sound change.",
+    expHi: "'अतएव' का सही संधि-विच्छेद 'अतः + एव' है। यह विसर्ग संधि (विसर्ग लोप नियम) का उदाहरण है: यदि विसर्ग से पहले 'अ' हो और बाद में 'अ' से भिन्न कोई स्वर ('ए') आए, तो विसर्ग का लोप हो जाता है।",
+    fact: "Because the Visarga disappears in 'अतः + एव = अतएव', many candidates confuse it with Swar Sandhi; it is strictly Visarga Sandhi."
+  },
+  {
+    q: 100,
+    en: "Choose the correct Sandhi-Viched of 'पुरस्कार' (Puraskar).",
+    hi: "'पुरस्कार' शब्द का सही संधि-विच्छेद चुनिए।",
+    opts: [
+      "पुरस + कार (Purasa + Kara) / पुरस + कार",
+      "पुरः + कार (Purah + Kara) / पुरः + कार",
+      "पुरा + कार (Puraa + Kara) / पुरा + कार",
+      "पुः + कार (Puh + Kara) / पुः + कार",
+      E_OPTION
+    ],
+    ans: 1,
+    expEn: "'पुरस्कार' splits into 'पुरः + कार' (Purah + Kara). In Visarga Sandhi, as a special rule for words like 'नमः', 'पुरः', 'भाः', and 'तिरः', when the Visarga (ः) is followed by 'क' or 'प', the Visarga converts into dental half 'स्' (s).",
+    expHi: "'पुरस्कार' का सही संधि-विच्छेद 'पुरः + कार' है। विसर्ग संधि के विशेष नियम के अनुसार, 'नमः', 'पुरः', 'तिरः' एवं 'भाः' के बाद 'क' आने पर विसर्ग का दन्त्य 'स्' (आधा स) हो जाता है।",
+    fact: "Memorize these four special Visarga-to-'स्' words before 'कार': नमः + कार = नमस्कार, पुरः + कार = पुरस्कार, तिरः + कार = तिरस्कार, भाः + कर = भास्कर."
+  }
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+
+// State Management for 100 Questions
+let currentIndex = 0;
+let userState = RAW_QUESTIONS.map((_, i) => ({
+  visited: i === 0,
+  selected: null,      // 0..4 or null
+  skipped: false,      // true if explicitly skipped
+  markedReview: false  // true if marked for review
+}));
+
+// Compute 6-status category for a question index
+function getQuestionStatus(idx) {
+  const st = userState[idx];
+  if (st.markedReview) return "st-review";
+  if (st.selected !== null) {
+    return st.selected === RAW_QUESTIONS[idx].ans ? "st-correct" : "st-incorrect";
+  }
+  if (st.skipped) return "st-skipped";
+  if (st.visited) return "st-unanswered";
+  return "st-not-visited";
+}
+
+function getStatusLabel(idx) {
+  const st = userState[idx];
+  if (st.markedReview && st.selected !== null) {
+    return st.selected === RAW_QUESTIONS[idx].ans
+      ? "🟣 Marked for Review (Answered & Correct)"
+      : "🟣 Marked for Review (Answered & Incorrect)";
+  }
+  if (st.markedReview) return "🟣 Marked for Review";
+  if (st.selected !== null) {
+    return st.selected === RAW_QUESTIONS[idx].ans
+      ? "🟢 Answered & Correct (+1.00)"
+      : "🔴 Answered & Incorrect (-0.25)";
+  }
+  if (st.skipped) return "⚪ Skipped (0.00)";
+  if (st.visited) return "🟠 Visited / Unanswered";
+  return "⚫ Not Visited";
+}
+
+function calculateScores() {
+  let correct = 0;
+  let incorrect = 0;
+  let skipped = 0;
+  let unanswered = 0;
+  let review = 0;
+  let notVisited = 0;
+
+  userState.forEach((st, idx) => {
+    if (st.selected !== null) {
+      if (st.selected === RAW_QUESTIONS[idx].ans) correct++;
+      else incorrect++;
+    } else if (st.skipped) {
+      skipped++;
+    } else if (st.visited) {
+      unanswered++;
+    } else {
+      notVisited++;
+    }
+    if (st.markedReview) review++;
+  });
+
+  const netScore = (correct * 1.0) - (incorrect * 0.25);
+  return {
+    correct,
+    incorrect,
+    skipped,
+    unanswered,
+    review,
+    notVisited,
+    netScore: netScore.toFixed(2)
+  };
+}
+
+function renderQuestion() {
+  const item = RAW_QUESTIONS[currentIndex];
+  const st = userState[currentIndex];
+  st.visited = true;
+
+  // Header & Counter
+  document.getElementById("question-counter").textContent = `Question ${currentIndex + 1} of ${RAW_QUESTIONS.length}`;
+  document.getElementById("q-badge").textContent = `Q${item.q}`;
+  document.getElementById("q-status-text").textContent = getStatusLabel(currentIndex);
+
+  // Stems
+  document.getElementById("stem-en").textContent = item.en;
+  document.getElementById("stem-hi").textContent = item.hi;
+
+  // Options
+  const optsContainer = document.getElementById("options-container");
+  optsContainer.innerHTML = "";
+  const isLocked = st.selected !== null;
+
+  item.opts.forEach((optText, optIdx) => {
+    const btn = document.createElement("button");
+    btn.className = "option-card" + (isLocked ? " locked" : "");
+
+    if (isLocked) {
+      if (st.selected === optIdx) {
+        btn.classList.add(optIdx === item.ans ? "correct-selected" : "incorrect-selected");
+      } else if (optIdx === item.ans) {
+        btn.classList.add("correct-outline");
+      }
+    }
+
+    btn.innerHTML = `
+      <span class="opt-letter">${LETTERS[optIdx]}</span>
+      <span>${optText}</span>
+    `;
+
+    if (!isLocked) {
+      btn.onclick = () => selectOption(optIdx);
+    }
+    optsContainer.appendChild(btn);
+  });
+
+  // Explanation Box
+  const expBox = document.getElementById("explanation-box");
+  if (isLocked) {
+    expBox.classList.add("visible");
+    const verdictEl = document.getElementById("exp-verdict");
+    const isCorrect = st.selected === item.ans;
+    verdictEl.style.color = isCorrect ? "#4ade80" : "#f87171";
+    verdictEl.textContent = isCorrect
+      ? `✅ Correct Answer! You selected (${LETTERS[st.selected]}) [+1.00 Mark]`
+      : `❌ Incorrect! You selected (${LETTERS[st.selected]}) [-0.25 Mark] — Correct Option: (${LETTERS[item.ans]})`;
+
+    document.getElementById("exp-en").textContent = item.expEn;
+    document.getElementById("exp-hi").textContent = item.expHi;
+    document.getElementById("exp-fact").textContent = item.fact;
+  } else {
+    expBox.classList.remove("visible");
+  }
+
+  // Controls State
+  document.getElementById("btn-prev").disabled = currentIndex === 0;
+  document.getElementById("btn-skip").disabled = isLocked;
+
+  const reviewBtn = document.getElementById("btn-review");
+  if (st.markedReview) {
+    reviewBtn.classList.add("active-review");
+    reviewBtn.textContent = "🟣 Marked for Review";
+  } else {
+    reviewBtn.classList.remove("active-review");
+    reviewBtn.textContent = "🟣 Mark for Review";
+  }
+
+  const nextBtn = document.getElementById("btn-next");
+  nextBtn.textContent = currentIndex === RAW_QUESTIONS.length - 1 ? "Finish & View Report ➔" : "Next Question ➔";
+
+  updateTopScoreAndPalette();
+}
+
+function selectOption(optIdx) {
+  const st = userState[currentIndex];
+  if (st.selected !== null) return; // Strict one-tap lock
+  st.selected = optIdx;
+  st.skipped = false;
+  renderQuestion();
+}
+
+function skipQuestion() {
+  const st = userState[currentIndex];
+  if (st.selected !== null) return;
+  st.skipped = true;
+  renderQuestion();
+}
+
+function toggleReview() {
+  const st = userState[currentIndex];
+  st.markedReview = !st.markedReview;
+  renderQuestion();
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function nextQuestion() {
+  if (currentIndex < RAW_QUESTIONS.length - 1) {
+    currentIndex++;
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    showFinalReport();
+  }
+}
+
+function jumpToQuestion(idx) {
+  currentIndex = idx;
+  closePalette();
+  document.getElementById("report-view").style.display = "none";
+  document.getElementById("simulator-view").style.display = "block";
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function updateTopScoreAndPalette() {
+  const stats = calculateScores();
+  document.getElementById("live-score-badge").textContent = `Net Score: ${stats.netScore}`;
+
+  // Update Palette Legend Counters
+  let cCorrect = 0, cIncorrect = 0, cUnanswered = 0, cSkipped = 0, cReview = 0, cNotVisited = 0;
+  const grid = document.getElementById("palette-grid");
+  grid.innerHTML = "";
+
+  RAW_QUESTIONS.forEach((item, idx) => {
+    const statusClass = getQuestionStatus(idx);
+    if (statusClass === "st-correct") cCorrect++;
+    else if (statusClass === "st-incorrect") cIncorrect++;
+    else if (statusClass === "st-unanswered") cUnanswered++;
+    else if (statusClass === "st-skipped") cSkipped++;
+    else if (statusClass === "st-review") cReview++;
+    else cNotVisited++;
+
+    const btn = document.createElement("button");
+    btn.className = `p-btn ${statusClass}` + (idx === currentIndex ? " current-q" : "");
+    btn.textContent = item.q;
+    btn.onclick = () => jumpToQuestion(idx);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById("cnt-correct").textContent = cCorrect;
+  document.getElementById("cnt-incorrect").textContent = cIncorrect;
+  document.getElementById("cnt-unanswered").textContent = cUnanswered;
+  document.getElementById("cnt-skipped").textContent = cSkipped;
+  document.getElementById("cnt-review").textContent = cReview;
+  document.getElementById("cnt-not-visited").textContent = cNotVisited;
+}
+
+function openPalette() {
+  updateTopScoreAndPalette();
+  document.getElementById("palette-backdrop").classList.add("open");
+  document.getElementById("palette-drawer").classList.add("open");
+}
+
+function closePalette() {
+  document.getElementById("palette-backdrop").classList.remove("open");
+  document.getElementById("palette-drawer").classList.remove("open");
+}
+
+function showFinalReport() {
+  const stats = calculateScores();
+  const attempted = stats.correct + stats.incorrect;
+  const accuracy = attempted > 0 ? ((stats.correct / attempted) * 100).toFixed(2) : "0.00";
+
+  document.getElementById("simulator-view").style.display = "none";
+  document.getElementById("report-view").style.display = "block";
+
+  const statsGrid = document.getElementById("report-stats-grid");
+  statsGrid.innerHTML = `
+    <div class="stat-tile">
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Final Net Score</div>
+      <div class="stat-val" style="color:#60a5fa;">${stats.netScore} / 100.00</div>
+    </div>
+    <div class="stat-tile">
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Accuracy Rate</div>
+      <div class="stat-val" style="color:#facc15;">${accuracy}%</div>
+    </div>
+    <div class="stat-tile">
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Total Attempted</div>
+      <div class="stat-val">${attempted} / 100</div>
+    </div>
+    <div class="stat-tile">
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Correct (+1.00)</div>
+      <div class="stat-val" style="color:#4ade80;">${stats.correct}</div>
+    </div>
+    <div class="stat-tile">
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Incorrect (-0.25)</div>
+      <div class="stat-val" style="color:#f87171;">${stats.incorrect}</div>
+    </div>
+    <div class="stat-tile">
+      <div style="color:var(--text-secondary); font-size:0.85rem;">Skipped / Unanswered</div>
+      <div class="stat-val" style="color:#94a3b8;">${100 - attempted}</div>
+    </div>
+  `;
+
+  const matrixContainer = document.getElementById("review-matrix-container");
+  matrixContainer.innerHTML = "";
+
+  RAW_QUESTIONS.forEach((item, idx) => {
+    const st = userState[idx];
+    const userPick = st.selected !== null ? `(${LETTERS[st.selected]}) ${item.opts[st.selected]}` : "Not Attempted / Skipped";
+    const isCorrect = st.selected === item.ans;
+    const badgeColor = st.selected === null ? "#94a3b8" : (isCorrect ? "#4ade80" : "#f87171");
+
+    const div = document.createElement("div");
+    div.className = "review-matrix-item";
+    div.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; flex-wrap:wrap; gap:0.5rem;">
+        <span style="font-weight:700; color:#93c5fd;">Question ${item.q}</span>
+        <span style="font-weight:700; color:${badgeColor}; font-size:0.9rem;">${getStatusLabel(idx)}</span>
+      </div>
+      <div style="font-weight:600; margin-bottom:0.2rem;">${item.en}</div>
+      <div style="font-weight:600; color:#fcd34d; margin-bottom:0.75rem;">${item.hi}</div>
+      <div style="font-size:0.92rem; margin-bottom:0.3rem;"><strong>Your Answer:</strong> <span style="color:${badgeColor};">${userPick}</span></div>
+      <div style="font-size:0.92rem; margin-bottom:0.75rem; color:#4ade80;"><strong>Correct Option:</strong> (${LETTERS[item.ans]}) ${item.opts[item.ans]}</div>
+      <div style="font-size:0.9rem; color:#e2e8f0; margin-bottom:0.35rem;"><strong>Explanation (EN):</strong> ${item.expEn}</div>
+      <div style="font-size:0.9rem; color:#e2e8f0; margin-bottom:0.45rem;"><strong>व्याख्या (HI):</strong> ${item.expHi}</div>
+      <div style="font-size:0.88rem; color:#fde68a;"><strong>💡 Key Exam Fact:</strong> ${item.fact}</div>
+    `;
+    matrixContainer.appendChild(div);
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function returnToSimulator() {
+  document.getElementById("report-view").style.display = "none";
+  document.getElementById("simulator-view").style.display = "block";
+  renderQuestion();
+}
+
+function resetSimulator() {
+  if (!confirm("Are you sure you want to reset all 100 responses and restart the test?")) return;
+  currentIndex = 0;
+  userState = RAW_QUESTIONS.map((_, i) => ({
+    visited: i === 0,
+    selected: null,
+    skipped: false,
+    markedReview: false
+  }));
+  returnToSimulator();
+}
+
+// Initialize Simulator
+renderQuestion();
+</script>
+</body>
+</html>

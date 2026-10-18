@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSSSC PET CBT Simulator – Planning Commission & Five-Year Plans (100 Qs)</title>
+<style>
+  :root {
+    --bg-main: #121316;
+    --bg-card: #1e2024;
+    --bg-elevated: #272a30;
+    --border-color: #343842;
+    --text-primary: #f1f3f5;
+    --text-secondary: #adb5bd;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --correct: #16a34a;
+    --correct-bg: rgba(22, 163, 74, 0.16);
+    --incorrect: #dc2626;
+    --incorrect-bg: rgba(220, 38, 38, 0.16);
+    --unanswered: #ea580c;
+    --skipped: #64748b;
+    --review: #9333ea;
+    --not-visited: #374151;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top Bar */
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  .brand-block {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .subject-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .topic-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+
+  .top-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .score-badge {
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+
+  .btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.05rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #fff;
+  }
+
+  .btn-palette {
+    background-color: var(--accent);
+  }
+  .btn-palette:hover {
+    background-color: var(--accent-hover);
+  }
+
+  .btn-finish {
+    background-color: #059669;
+  }
+  .btn-finish:hover {
+    background-color: #047857;
+  }
+
+  /* Main Container */
+  .main-container {
+    width: 100%;
+    max-width: 920px;
+    margin: 1.75rem auto;
+    padding: 0 1.25rem;
+    flex: 1;
+  }
+
+  .question-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.75rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .q-number-tag {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #60a5fa;
+  }
+
+  .q-status-pill {
+    font-size: 0.78rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: var(--bg-elevated);
+    color: var(--text-secondary);
+  }
+
+  .q-stem-en {
+    font-size: 1.12rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.55rem;
+  }
+
+  .q-stem-hi {
+    font-size: 1.05rem;
+    color: #d1d5db;
+    margin-bottom: 1.4rem;
+  }
+
+  /* Options */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .option-item {
+    background-color: var(--bg-elevated);
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.9rem 1.15rem;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    transition: all 0.15s ease;
+    text-align: left;
+    color: var(--text-primary);
+    font-size: 0.98rem;
+    width: 100%;
+  }
+
+  .option-item:hover:not(.locked) {
+    border-color: var(--accent);
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  .option-item.locked {
+    cursor: default;
+  }
+
+  .option-item.correct-choice {
+    background-color: var(--correct-bg);
+    border-color: var(--correct);
+  }
+
+  .option-item.wrong-choice {
+    background-color: var(--incorrect-bg);
+    border-color: var(--incorrect);
+  }
+
+  .option-item.correct-outline {
+    border: 2px solid var(--correct);
+    background-color: rgba(22, 163, 74, 0.12);
+  }
+
+  .opt-letter {
+    min-width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.08);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .option-item.correct-choice .opt-letter,
+  .option-item.correct-outline .opt-letter {
+    background-color: var(--correct);
+    color: #fff;
+  }
+
+  .option-item.wrong-choice .opt-letter {
+    background-color: var(--incorrect);
+    color: #fff;
+  }
+
+  /* Action Bar */
+  .action-bar {
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .left-actions, .right-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-secondary {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+  .btn-secondary:hover {
+    background-color: #32363e;
+  }
+
+  .btn-review {
+    background-color: var(--review);
+  }
+  .btn-review:hover {
+    background-color: #7e22ce;
+  }
+
+  .btn-skip {
+    background-color: var(--skipped);
+  }
+  .btn-skip:hover {
+    background-color: #475569;
+  }
+
+  .btn-next {
+    background-color: var(--accent);
+  }
+  .btn-next:hover {
+    background-color: var(--accent-hover);
+  }
+
+  /* Explanation Box */
+  .explanation-card {
+    margin-top: 1.5rem;
+    background-color: #16181c;
+    border: 1px solid #2e333d;
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.35rem;
+    display: none;
+  }
+
+  .explanation-card.visible {
+    display: block;
+    animation: fadeIn 0.25s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .exp-header {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .exp-block {
+    margin-bottom: 0.85rem;
+    font-size: 0.95rem;
+  }
+
+  .exp-label {
+    font-weight: 700;
+    color: #93c5fd;
+  }
+
+  .fact-box {
+    margin-top: 0.9rem;
+    background-color: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.35);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.92rem;
+    color: #fde047;
+  }
+
+  /* Slide-Over Palette Modal */
+  .palette-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    z-index: 200;
+    display: none;
+    justify-content: flex-end;
+  }
+
+  .palette-backdrop.open {
+    display: flex;
+  }
+
+  .palette-drawer {
+    width: 100%;
+    max-width: 460px;
+    background-color: var(--bg-card);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border-color);
+    box-shadow: -8px 0 28px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.22s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  .palette-header {
+    padding: 1.15rem 1.35rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .palette-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .btn-close-palette {
+    background-color: #ef4444;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+  }
+  .btn-close-palette:hover {
+    background-color: #dc2626;
+  }
+
+  .palette-legend {
+    padding: 0.9rem 1.35rem;
+    background-color: #181a1e;
+    border-bottom: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.55rem;
+    font-size: 0.8rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .palette-grid {
+    padding: 1.25rem;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.65rem;
+    flex: 1;
+  }
+
+  .p-btn {
+    height: 42px;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+  }
+
+  .p-btn:hover {
+    transform: scale(1.06);
+  }
+
+  .p-btn.current-q {
+    outline: 2.5px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  .st-not-visited { background-color: var(--not-visited); }
+  .st-correct { background-color: var(--correct); }
+  .st-incorrect { background-color: var(--incorrect); }
+  .st-unanswered { background-color: var(--unanswered); }
+  .st-skipped { background-color: var(--skipped); }
+  .st-review { background-color: var(--review); }
+
+  /* Report Dashboard */
+  #reportView {
+    display: none;
+  }
+
+  .report-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .stat-box {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.1rem;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-lbl {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+
+  .review-matrix-item {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .top-bar {
+      padding: 0.75rem 1rem;
+    }
+    .question-card {
+      padding: 1.2rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<header class="top-bar">
+  <div class="brand-block">
+    <div class="subject-title">UPSSSC PET: Indian Economy (भारतीय अर्थव्यवस्था)</div>
+    <div class="topic-subtitle">Planning Commission & Five-Year Plans (योजना आयोग तथा पंचवर्षीय योजनाएँ)</div>
+  </div>
+  <div class="top-controls">
+    <div class="badge" id="qCounterBadge">Question 1 of 100</div>
+    <div class="badge score-badge" id="liveScoreBadge">Net Score: 0.00</div>
+    <button class="btn btn-palette" id="openPaletteTopBtn" onclick="openPalette()">📋 Open Palette</button>
+    <button class="btn btn-finish" onclick="showReportDashboard()">📊 Finish & Report</button>
+  </div>
+</header>
+
+<!-- Main Single-Column Question View -->
+<main class="main-container" id="simulatorView">
+  <div class="question-card">
+    <div class="q-meta">
+      <span class="q-number-tag" id="qNumLabel">QUESTION 1</span>
+      <span class="q-status-pill" id="qStatusPill">Not Attempted</span>
+    </div>
+
+    <div class="q-stem-en" id="qStemEn"></div>
+    <div class="q-stem-hi" id="qStemHi"></div>
+
+    <div class="options-list" id="optionsContainer"></div>
+
+    <!-- Explanation Section -->
+    <div class="explanation-card" id="explanationCard">
+      <div class="exp-header" id="expVerdictHeader"></div>
+      <div class="exp-block">
+        <span class="exp-label">Correct Option: </span>
+        <span id="expCorrectOpt"></span>
+      </div>
+      <div class="exp-block">
+        <span class="exp-label">Explanation (English): </span>
+        <span id="expEnText"></span>
+      </div>
+      <div class="exp-block">
+        <span class="exp-label">व्याख्या (Hindi): </span>
+        <span id="expHiText"></span>
+      </div>
+      <div class="fact-box">
+        <strong>🎯 Key Exam Fact: </strong>
+        <span id="expFactText"></span>
+      </div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="action-bar">
+      <div class="left-actions">
+        <button class="btn btn-secondary" onclick="prevQuestion()" id="prevBtn">⬅ Prev</button>
+        <button class="btn btn-skip" onclick="skipQuestion()" id="skipBtn">Skip Question</button>
+        <button class="btn btn-review" onclick="markForReview()" id="reviewBtn">🟣 Mark for Review</button>
+        <button class="btn btn-palette" onclick="openPalette()">📋 Open Palette</button>
+      </div>
+      <div class="right-actions">
+        <button class="btn btn-next" onclick="nextQuestion()" id="nextBtn">Next Question ➔</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Final Report Dashboard -->
+<section class="main-container" id="reportView">
+  <div class="report-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <h2 style="font-size:1.5rem;">📊 Final CBT Performance Report</h2>
+        <p style="color:var(--text-secondary); font-size:0.92rem;">UPSSSC PET Marking Scheme: Correct (+1.00) | Incorrect (-0.25) | Skipped (0.00)</p>
+      </div>
+      <button class="btn btn-palette" onclick="returnToSimulator()">⬅ Return to Simulator</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-val" id="repNetScore" style="color:#38bdf8;">0.00</div>
+        <div class="stat-lbl">Net Score (Out of 100)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="repAccuracy" style="color:#a855f7;">0.0%</div>
+        <div class="stat-lbl">Accuracy Rate</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="repCorrect" style="color:var(--correct);">0</div>
+        <div class="stat-lbl">Correct (+1.00)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="repIncorrect" style="color:var(--incorrect);">0</div>
+        <div class="stat-lbl">Incorrect (-0.25)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="repSkipped" style="color:var(--skipped);">0</div>
+        <div class="stat-lbl">Skipped / Unanswered</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="repReviewed" style="color:var(--review);">0</div>
+        <div class="stat-lbl">Marked for Review</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-bottom:1rem; font-size:1.25rem;">📚 Complete 100-Question Bilingual Review Matrix</h3>
+  <div id="reviewMatrixContainer"></div>
+</section>
+
+<!-- Hidden On-Demand Slide-Over Question Palette -->
+<div class="palette-backdrop" id="paletteBackdrop" onclick="handleBackdropClick(event)">
+  <aside class="palette-drawer">
+    <div class="palette-header">
+      <div class="palette-title">📋 Question Palette (1–100)</div>
+      <button class="btn btn-close-palette" onclick="closePalette()">✕ Close Palette</button>
+    </div>
+    <div class="palette-legend">
+      <div class="legend-item"><span class="legend-dot st-correct"></span> Answered & Correct (<span id="legCorrect">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-incorrect"></span> Answered & Incorrect (<span id="legIncorrect">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-unanswered"></span> Unanswered (<span id="legUnanswered">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-skipped"></span> Skipped (<span id="legSkipped">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-review"></span> Marked for Review (<span id="legReview">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-not-visited"></span> Not Visited Yet (<span id="legNotVisited">100</span>)</div>
+    </div>
+    <div class="palette-grid" id="paletteGrid"></div>
+  </aside>
+</div>
+
+<script>
+const questionsData = [
+  {
+    q: 1,
+    en: "When was the Planning Commission of India established?",
+    hi: "भारत में योजना आयोग की स्थापना कब की गई थी?",
+    options: [
+      "15 March 1950 / 15 मार्च 1950",
+      "26 January 1950 / 26 जनवरी 1950",
+      "1 April 1951 / 1 अप्रैल 1951",
+      "6 August 1952 / 6 अगस्त 1952",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Planning Commission of India was established on 15 March 1950 by an executive resolution of the Government of India based on the recommendation of the Advisory Planning Board (1946) chaired by K.C. Neogy. 1 April 1951 marks the launch of the First Five-Year Plan, while 6 August 1952 is the date of establishment of the National Development Council (NDC).",
+    expHi: "भारत में योजना आयोग की स्थापना के.सी. नियोगी की अध्यक्षता वाले सलाहकार योजना बोर्ड (1946) की सिफारिश पर भारत सरकार के एक कार्यकारी प्रस्ताव (मंत्रिमंडल के प्रस्ताव) द्वारा 15 मार्च 1950 को की गई थी। 1 अप्रैल 1951 को प्रथम पंचवर्षीय योजना शुरू हुई थी, जबकि 6 अगस्त 1952 को राष्ट्रीय विकास परिषद (NDC) का गठन हुआ था।",
+    fact: "The Planning Commission was a non-constitutional and non-statutory (extra-constitutional) advisory body."
+  },
+  {
+    q: 2,
+    en: "What was the constitutional status of the Planning Commission of India?",
+    hi: "भारतीय योजना आयोग की संवैधानिक स्थिति क्या थी?",
+    options: [
+      "A Constitutional Body / एक संवैधानिक निकाय",
+      "A Statutory Body / एक वैधानिक (सांविधिक) निकाय",
+      "An Extra-constitutional and Advisory Body / एक गैर-संवैधानिक एवं परामर्शदात्री निकाय",
+      "A Judicial Body / एक न्यायिक निकाय",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "The Planning Commission was neither mentioned in the Constitution of India (hence non-constitutional) nor created by an Act of Parliament (hence non-statutory). It was created by a Cabinet resolution, making it an extra-constitutional and advisory body.",
+    expHi: "योजना आयोग का उल्लेख भारतीय संविधान में नहीं था (अतः यह गैर-संवैधानिक था) और न ही इसे संसद के किसी अधिनियम द्वारा बनाया गया था (अतः यह गैर-वैधानिक था)। इसका गठन केंद्रीय मंत्रिमंडल के एक प्रस्ताव द्वारा किया गया था, इसलिए यह एक संविधानेतर (गैर-संवैधानिक) और परामर्शदात्री निकाय था।",
+    fact: "NITI Aayog, which replaced the Planning Commission on 1 January 2015, is also an extra-constitutional and non-statutory body."
+  },
+  {
+    q: 3,
+    en: "Who served as the first Chairman of the Planning Commission of India?",
+    hi: "भारत के योजना आयोग के प्रथम अध्यक्ष कौन थे?",
+    options: [
+      "Gulzarilal Nanda / गुलजारीलाल नंदा",
+      "Jawaharlal Nehru / जवाहरलाल नेहरू",
+      "Dr. Rajendra Prasad / डॉ. राजेंद्र प्रसाद",
+      "Sardar Vallabhbhai Patel / सरदार वल्लभभाई पटेल",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Prime Minister of India served as the ex-officio Chairman of the Planning Commission. Hence, the first Prime Minister, Pandit Jawaharlal Nehru, was its first Chairman. Gulzarilal Nanda was the first Deputy Chairman of the Planning Commission.",
+    expHi: "भारत का प्रधानमंत्री योजना आयोग का पदेन (ex-officio) अध्यक्ष होता था। अतः भारत के प्रथम प्रधानमंत्री पंडित जवाहरलाल नेहरू इसके प्रथम अध्यक्ष थे। गुलजारीलाल नंदा योजना आयोग के प्रथम उपाध्यक्ष थे।",
+    fact: "First Chairman of Planning Commission: Pt. Jawaharlal Nehru; Last Chairman: Narendra Modi."
+  },
+  {
+    q: 4,
+    en: "Who was the first Deputy Chairman of the Planning Commission of India?",
+    hi: "भारत के योजना आयोग के प्रथम उपाध्यक्ष कौन थे?",
+    options: [
+      "V.T. Krishnamachari / वी.टी. कृष्णमाचारी",
+      "C.D. Deshmukh / सी.डी. देशमुख",
+      "Gulzarilal Nanda / गुलजारीलाल नंदा",
+      "P.C. Mahalanobis / पी.सी. महालनोबिस",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Gulzarilal Nanda served as the first Deputy Chairman of the Planning Commission from 1950 to 1953. The Deputy Chairman acted as the de-facto executive head of the Commission and held the rank equivalent to a Cabinet Minister.",
+    expHi: "गुलजारीलाल नंदा ने 1950 से 1953 तक योजना आयोग के प्रथम उपाध्यक्ष के रूप में कार्य किया। योजना आयोग का उपाध्यक्ष आयोग के वास्तविक कार्यकारी प्रमुख के रूप में कार्य करता था और उसे कैबिनेट मंत्री के समकक्ष दर्जा प्राप्त होता था।",
+    fact: "First Deputy Chairman of Planning Commission: Gulzarilal Nanda; Last Deputy Chairman: Montek Singh Ahluwalia."
+  },
+  {
+    q: 5,
+    en: "Who authored the book 'Planned Economy for India' in 1934, which laid the earliest blueprint for economic planning in India?",
+    hi: "1934 में 'प्लान्ड इकोनॉमी फॉर इंडिया' (Planned Economy for India) नामक पुस्तक किसने लिखी थी, जिसने भारत में आर्थिक नियोजन की पहली रूपरेखा प्रस्तुत की?",
+    options: [
+      "Dadabhai Naoroji / दादाभाई नौरोजी",
+      "M. Visvesvaraya / एम. विश्वेश्वरैया",
+      "M.N. Roy / एम.एन. रॉय",
+      "Shriman Narayan Agarwal / श्रीमन्नारायण अग्रवाल",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Sir M. Visvesvaraya, an eminent engineer and statesman, published the book 'Planned Economy for India' in 1934, advocating a 10-year plan to double India's national income by shifting labor from agriculture to industry.",
+    expHi: "प्रख्यात अभियंता और राजनेता सर एम. विश्वेश्वरैया ने 1934 में 'प्लान्ड इकोनॉमी फॉर इंडिया' पुस्तक प्रकाशित की थी। इसमें उन्होंने श्रम को कृषि से उद्योगों की ओर स्थानांतरित करके भारत की राष्ट्रीय आय को दोगुना करने के लिए 10-वर्षीय योजना का प्रस्ताव रखा था।",
+    fact: "Sir M. Visvesvaraya's birthday (15 September) is celebrated as Engineers' Day in India."
+  },
+  {
+    q: 6,
+    en: "In 1938, the National Planning Committee (NPC) was set up under the chairmanship of Jawaharlal Nehru. Who was the President of the Indian National Congress at that time (Haripura Session)?",
+    hi: "1938 में जवाहरलाल नेहरू की अध्यक्षता में 'राष्ट्रीय नियोजन समिति' (National Planning Committee) का गठन किया गया था। उस समय भारतीय राष्ट्रीय कांग्रेस (हरिपुरा अधिवेशन) के अध्यक्ष कौन थे?",
+    options: [
+      "Mahatma Gandhi / महात्मा गांधी",
+      "Subhas Chandra Bose / सुभाष चंद्र बोस",
+      "Pattabhi Sitaramayya / पट्टाभि सीतारमैया",
+      "Maulana Abul Kalam Azad / मौलाना अबुल कलाम आज़ाद",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "During the Haripura Session of the Indian National Congress in 1938, Congress President Subhas Chandra Bose initiated the setting up of the National Planning Committee (NPC) and appointed Jawaharlal Nehru as its Chairman.",
+    expHi: "1938 के भारतीय राष्ट्रीय कांग्रेस के हरिपुरा अधिवेशन के दौरान, तत्कालीन कांग्रेस अध्यक्ष सुभाष चंद्र बोस की पहल पर 'राष्ट्रीय नियोजन समिति' (NPC) का गठन किया गया था और पंडित जवाहरलाल नेहरू को इसका अध्यक्ष नियुक्त किया गया था।",
+    fact: "NPC Formed: 1938 | Initiated by: Subhas Chandra Bose | Chairman: Jawaharlal Nehru."
+  },
+  {
+    q: 7,
+    en: "What was the official name of the 'Bombay Plan' formulated by eight leading Indian industrialists in 1944?",
+    hi: "1944 में भारत के आठ प्रमुख उद्योगपतियों द्वारा तैयार किए गए 'बॉम्बे प्लान' (Bombay Plan) का आधिकारिक नाम क्या था?",
+    options: [
+      "People's Plan / पीपुल्स प्लान (जन योजना)",
+      "A Plan of Economic Development for India / अ प्लान ऑफ इकोनॉमिक डेवलपमेंट फॉर इंडिया",
+      "Sarvodaya Plan / सर्वोदय योजना",
+      "Gandhian Plan / गांधीवादी योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "In 1944, eight leading industrialists including J.R.D. Tata, G.D. Birla, Ardeshir Dalal, Purshottamdas Thakurdas, Lala Shri Ram, Kasturbhai Lalbhai, A.D. Shroff, and John Mathai proposed a 15-year investment plan titled 'A Plan of Economic Development for India', popularly known as the Bombay Plan.",
+    expHi: "1944 में जे.आर.डी. टाटा, जी.डी. बिरला, अर्देशिर दलाल और जॉन मथाई सहित आठ प्रमुख उद्योगपतियों ने 'अ प्लान ऑफ इकोनॉमिक डेवलपमेंट फॉर इंडिया' (A Plan of Economic Development for India) शीर्षक से एक 15-वर्षीय आर्थिक योजना प्रस्तुत की, जिसे लोकप्रिय रूप से 'बॉम्बे प्लान' कहा जाता है।",
+    fact: "Ardeshir Dalal served as the director/author of the Bombay Plan."
+  },
+  {
+    q: 8,
+    en: "Who formulated the 'Gandhian Plan' in 1944, emphasizing decentralized economic structure and self-contained villages?",
+    hi: "1944 में विकेंद्रीकृत आर्थिक संरचना और आत्मनिर्भर गांवों पर जोर देते हुए 'गांधीवादी योजना' (Gandhian Plan) का सूत्रपात किसने किया था?",
+    options: [
+      "Shriman Narayan Agarwal / श्रीमन्नारायण अग्रवाल",
+      "Jayaprakash Narayan / जयप्रकाश नारायण",
+      "M.N. Roy / एम.एन. रॉय",
+      "Vinoba Bhave / विनोबा भावे",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Shriman Narayan Agarwal, Principal of Wardha Commercial College, formulated the 'Gandhian Plan' in 1944. It focused on promoting agriculture, cottage, and village-level industries in line with Mahatma Gandhi's economic philosophy.",
+    expHi: "वर्धा वाणिज्य महाविद्यालय के प्राचार्य श्रीमन्नारायण अग्रवाल ने 1944 में 'गांधीवादी योजना' प्रस्तुत की थी। इसमें महात्मा गांधी के आर्थिक दर्शन के अनुरूप कृषि तथा कुटीर एवं ग्रामोद्योगों के विकास पर विशेष बल दिया गया था।",
+    fact: "Gandhian Plan (1944) -> Shriman Narayan Agarwal; People's Plan (1945) -> M.N. Roy; Sarvodaya Plan (1950) -> Jayaprakash Narayan."
+  },
+  {
+    q: 9,
+    en: "Who drafted the 'People's Plan' (Jan Yojana) in 1945 on behalf of the Post-War Reconstruction Committee of the Indian Federation of Labour?",
+    hi: "1945 में इंडियन फेडरेशन ऑफ लेबर की युद्धोत्तर पुनर्निर्माण समिति की ओर से 'पीपुल्स प्लान' (जन योजना) का प्रारूप किसने तैयार किया था?",
+    options: [
+      "Subhas Chandra Bose / सुभाष चंद्र बोस",
+      "M.N. Roy / एम.एन. रॉय",
+      "Jayaprakash Narayan / जयप्रकाश नारायण",
+      "P.C. Mahalanobis / पी.सी. महालनोबिस",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "M.N. Roy formulated the 'People's Plan' in 1945. It was a 10-year plan based on Marxist socialism that prioritized providing the basic necessities of life to citizens and emphasized both agriculture and industry under state ownership.",
+    expHi: "एम.एन. रॉय (मानवेंद्र नाथ रॉय) ने 1945 में 'पीपुल्स प्लान' (जन योजना) तैयार किया था। यह मार्क्सवादी समाजवाद पर आधारित एक 10-वर्षीय योजना थी, जिसमें लोगों की मूलभूत आवश्यकताओं की पूर्ति तथा कृषि एवं उद्योग दोनों को प्राथमिकता दी गई थी।",
+    fact: "M.N. Roy was also the pioneer who first proposed the idea of a Constituent Assembly for India in 1934."
+  },
+  {
+    q: 10,
+    en: "Who published the 'Sarvodaya Plan' in January 1950, inspired by the Gandhian ideal and Vinoba Bhave's Sarvodaya concept?",
+    hi: "गांधीवादी आदर्शों और विनोबा भावे की सर्वोदय अवधारणा से प्रेरित होकर जनवरी 1950 में 'सर्वोदय योजना' किसने प्रकाशित की थी?",
+    options: [
+      "Shriman Narayan Agarwal / श्रीमन्नारायण अग्रवाल",
+      "J.B. Kripalani / जे.बी. कृपलानी",
+      "Jayaprakash Narayan / जयप्रकाश नारायण",
+      "Morarji Desai / मोरारजी देसाई",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Jayaprakash Narayan published the 'Sarvodaya Plan' in January 1950. Inspired by Mahatma Gandhi's constructive work and Vinoba Bhave's Sarvodaya philosophy, it stressed agriculture, small and cotton industries, land reforms, and freedom from foreign technology.",
+    expHi: "जयप्रकाश नारायण ने जनवरी 1950 में 'सर्वोदय योजना' प्रस्तुत की थी। गांधीजी की रचनात्मक विचारधारा और विनोबा भावे के सर्वोदय दर्शन से प्रेरित इस योजना में कृषि, लघु एवं कुटीर उद्योग, भूमि सुधार और विदेशी प्रौद्योगिकी पर निर्भरता कम करने पर जोर दिया गया था।",
+    fact: "Jayaprakash Narayan is popularly known as 'Loknayak' (लोकनायक)."
+  },
+  {
+    q: 11,
+    en: "Under which List of the Seventh Schedule of the Indian Constitution does 'Economic and Social Planning' fall?",
+    hi: "भारतीय संविधान की सातवीं अनुसूची की किस सूची के अंतर्गत 'आर्थिक और सामाजिक नियोजन' (Economic and Social Planning) आता है?",
+    options: [
+      "Union List / संघ सूची",
+      "State List / राज्य सूची",
+      "Concurrent List / समवर्ती सूची",
+      "Residuary Powers / अवशिष्ट शक्तियाँ",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "'Economic and Social Planning' is listed as Entry 20 in List III (Concurrent List) of the Seventh Schedule of the Constitution of India, allowing both the Centre and the States to legislate and coordinate on planning matters.",
+    expHi: "भारतीय संविधान की सातवीं अनुसूची की तीसरी सूची अर्थात 'समवर्ती सूची' (Concurrent List) की प्रविष्टि संख्या 20 में 'आर्थिक और सामाजिक नियोजन' का उल्लेख है। इस पर केंद्र और राज्य दोनों सरकारें नीति एवं कानून बना सकती हैं।",
+    fact: "The concept of Five-Year Plans in India was borrowed from the erstwhile USSR (Soviet Union)."
+  },
+  {
+    q: 12,
+    en: "From which country did India adopt the concept of Five-Year Plans?",
+    hi: "भारत ने पंचवर्षीय योजनाओं (Five-Year Plans) की अवधारणा किस देश से ग्रहण की थी?",
+    options: [
+      "United States of America / संयुक्त राज्य अमेरिका",
+      "Soviet Union (USSR) / सोवियत संघ (USSR)",
+      "United Kingdom / यूनाइटेड किंगडम (ब्रिटेन)",
+      "France / फ्रांस",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The concept of economic planning through Five-Year Plans was pioneered by Joseph Stalin in the Soviet Union (USSR) in 1928. Impressed by Soviet industrial progress, India adopted the model of Five-Year Plans within a mixed economy framework.",
+    expHi: "पंचवर्षीय योजनाओं के माध्यम से राष्ट्रीय आर्थिक नियोजन की शुरुआत सर्वप्रथम 1928 में जोसेफ स्टालिन द्वारा सोवियत संघ (USSR) में की गई थी। भारत ने मिश्रित अर्थव्यवस्था के ढांचे के भीतर सोवियत संघ से ही पंचवर्षीय योजनाओं की अवधारणा को अपनाया।",
+    fact: "Joseph Stalin implemented the world's first Five-Year Plan in the Soviet Union in 1928."
+  },
+  {
+    q: 13,
+    en: "When was the National Development Council (NDC) established to ensure the participation of States in the formulation of Five-Year Plans?",
+    hi: "पंचवर्षीय योजनाओं के निर्माण में राज्यों की भागीदारी सुनिश्चित करने के लिए 'राष्ट्रीय विकास परिषद' (NDC) की स्थापना कब की गई थी?",
+    options: [
+      "15 March 1950 / 15 मार्च 1950",
+      "1 April 1951 / 1 अप्रैल 1951",
+      "6 August 1952 / 6 अगस्त 1952",
+      "2 October 1952 / 2 अक्टूबर 1952",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "The National Development Council (NDC) or Rashtriya Vikas Parishad was set up on 6 August 1952 as an apex body for decision-making and deliberations on development matters, giving final approval to the Five-Year Plans drafted by the Planning Commission.",
+    expHi: "राष्ट्रीय विकास परिषद (NDC) की स्थापना 6 अगस्त 1952 को प्रथम पंचवर्षीय योजना के प्रारूप की सिफारिश पर की गई थी। इसका मुख्य कार्य योजना आयोग द्वारा तैयार की गई पंचवर्षीय योजनाओं को अंतिम अनुमोदन (स्वीकृति) प्रदान करना और नियोजन में राज्यों की भागीदारी सुनिश्चित करना था।",
+    fact: "K. Santhanam described the National Development Council (NDC) as the 'Super Cabinet'."
+  },
+  {
+    q: 14,
+    en: "Who among the following was NOT a member of the National Development Council (NDC)?",
+    hi: "निम्नलिखित में से कौन राष्ट्रीय विकास परिषद (NDC) में शामिल नहीं होता था?",
+    options: [
+      "The Prime Minister of India / भारत के प्रधानमंत्री",
+      "All Union Cabinet Ministers / सभी केंद्रीय कैबिनेट मंत्री",
+      "Chief Ministers of all States / सभी राज्यों के मुख्यमंत्री",
+      "Governors of all States / सभी राज्यों के राज्यपाल",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "The NDC comprised the Prime Minister (as ex-officio Chairman), all Union Cabinet Ministers, Chief Ministers of all States, Chief Ministers/Administrators of all Union Territories, and Members of the Planning Commission. Governors of States were NOT members of the NDC.",
+    expHi: "राष्ट्रीय विकास परिषद (NDC) में भारत के प्रधानमंत्री (पदेन अध्यक्ष), सभी केंद्रीय कैबिनेट मंत्री, सभी राज्यों के मुख्यमंत्री, केंद्र शासित प्रदेशों के मुख्यमंत्री/प्रशासक और योजना आयोग के सभी सदस्य शामिल होते थे। राज्यों के राज्यपाल इसके सदस्य नहीं होते थे।",
+    fact: "The Secretary of the Planning Commission also acted as the Secretary of the National Development Council."
+  },
+  {
+    q: 15,
+    en: "What was the time period of India's First Five-Year Plan?",
+    hi: "भारत की प्रथम पंचवर्षीय योजना की समयावधि क्या थी?",
+    options: [
+      "1950 – 1955",
+      "1951 – 1956",
+      "1952 – 1957",
+      "1956 – 1961",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "India's First Five-Year Plan ran from 1 April 1951 to 31 March 1956. It was presented to the Parliament by Prime Minister Jawaharlal Nehru.",
+    expHi: "भारत की प्रथम पंचवर्षीय योजना की अवधि 1 अप्रैल 1951 से 31 मार्च 1956 तक थी। इसे तत्कालीन प्रधानमंत्री जवाहरलाल नेहरू द्वारा संसद में प्रस्तुत किया गया था।",
+    fact: "Young economist K.N. Raj played a major role in drafting the First Five-Year Plan, famously advising that India should 'hasten slowly' for the first two decades."
+  },
+  {
+    q: 16,
+    en: "On which economic growth model was the First Five-Year Plan (1951–56) based?",
+    hi: "प्रथम पंचवर्षीय योजना (1951–56) किस आर्थिक विकास मॉडल पर आधारित थी?",
+    options: [
+      "P.C. Mahalanobis Model / पी.सी. महालनोबिस मॉडल",
+      "Harrod-Domar Model / हैरोड-डोमर मॉडल",
+      "Gadgil Formula / गाडगिल फॉर्मूला",
+      "John W. Miller Model / जॉन डब्ल्यू. मिलर मॉडल",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The First Five-Year Plan was based on the Harrod-Domar Model (developed independently by Roy F. Harrod and Evsey Domar), which emphasized the role of savings and capital accumulation in driving economic growth.",
+    expHi: "प्रथम पंचवर्षीय योजना (1951–56) 'हैरोड-डोमर मॉडल' (Harrod-Domar Model) पर आधारित थी। इस मॉडल में आर्थिक विकास की दर को बढ़ाने के लिए बचत और पूंजी निर्माण (निवेश) की भूमिका पर बल दिया गया था।",
+    fact: "First Plan -> Harrod-Domar Model; Second Plan -> P.C. Mahalanobis Model."
+  },
+  {
+    q: 17,
+    en: "Which sector was given the highest priority during the First Five-Year Plan (1951–56)?",
+    hi: "प्रथम पंचवर्षीय योजना (1951–56) के दौरान किस क्षेत्र को सर्वोच्च प्राथमिकता दी गई थी?",
+    options: [
+      "Heavy and Basic Industries / भारी एवं आधारभूत उद्योग",
+      "Agriculture, Irrigation and Power Projects / कृषि, सिंचाई एवं विद्युत परियोजनाएँ",
+      "Service Sector and IT / सेवा क्षेत्र एवं सूचना प्रौद्योगिकी",
+      "Transport and Communication / परिवहन एवं संचार",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Due to severe food shortages following Partition and high inflation, the First Five-Year Plan gave top priority to Agriculture, including irrigation and power projects, to achieve food self-sufficiency.",
+    expHi: "विभाजन के बाद उत्पन्न गंभीर खाद्यान्न संकट और मुद्रास्फीति से निपटने के लिए प्रथम पंचवर्षीय योजना में 'कृषि, सिंचाई और विद्युत परियोजनाओं' को सर्वोच्च प्राथमिकता दी गई थी ताकि देश खाद्यान्न के मामले में आत्मनिर्भर बन सके।",
+    fact: "The target growth rate of the First Five-Year Plan was 2.1%, whereas the achieved growth rate was 3.6%."
+  },
+  {
+    q: 18,
+    en: "Which of the following multipurpose river valley projects were initiated/promoted during the First Five-Year Plan?",
+    hi: "निम्नलिखित में से कौन-सी बहुउद्देशीय नदी घाटी परियोजनाएँ प्रथम पंचवर्षीय योजना के दौरान प्रमुखता से चलायी गईं?",
+    options: [
+      "Bhakra Nangal Project / भाखड़ा नांगल परियोजना",
+      "Damodar Valley Project / दामोदर घाटी परियोजना",
+      "Hirakud Dam Project / हीराकुंड बांध परियोजना",
+      "All of the above / उपर्युक्त सभी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "Large-scale multipurpose river valley projects such as the Bhakra Nangal Dam (Sutlej), Hirakud Dam (Mahanadi), and Damodar Valley Corporation projects were major highlights of the First Five-Year Plan. Jawaharlal Nehru famously termed these dams the 'Temples of Modern India'.",
+    expHi: "प्रथम पंचवर्षीय योजना के दौरान भाखड़ा नांगल परियोजना (सतलज नदी), दामोदर घाटी परियोजना और हीराकुंड बांध परियोजना (महानदी) जैसी विशाल बहुउद्देशीय नदी घाटी परियोजनाओं का विकास किया गया। जवाहरलाल नेहरू ने इन बांधों को 'आधुनिक भारत के मंदिर' की संज्ञा दी थी।",
+    fact: "Five Indian Institutes of Technology (IITs) were also started as major technical institutions, and the University Grants Commission (UGC) was set up during the First Plan period (1953, statutory in 1956)."
+  },
+  {
+    q: 19,
+    en: "In which year was the 'Community Development Programme' (CDP) launched during the First Five-Year Plan?",
+    hi: "प्रथम पंचवर्षीय योजना के दौरान 'सामुदायिक विकास कार्यक्रम' (Community Development Programme) किस वर्ष शुरू किया गया था?",
+    options: [
+      "26 January 1951 / 26 जनवरी 1951",
+      "2 October 1952 / 2 अक्टूबर 1952",
+      "15 August 1953 / 15 अगस्त 1953",
+      "14 November 1955 / 14 नवंबर 1955",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Community Development Programme (CDP) was launched on 2 October 1952 (on the birth anniversary of Mahatma Gandhi) during the First Five-Year Plan for the overall development of rural areas with active people's participation.",
+    expHi: "ग्रामीण क्षेत्रों के सर्वांगीण विकास और उसमें जन-भागीदारी सुनिश्चित करने के उद्देश्य से प्रथम पंचवर्षीय योजना के दौरान 2 अक्टूबर 1952 (महात्मा गांधी की जयंती) को 'सामुदायिक विकास कार्यक्रम' (CDP) की शुरुआत की गई थी।",
+    fact: "The National Extension Service (NES) was launched shortly after on 2 October 1953; later, the Balwant Rai Mehta Committee (1957) was appointed to review the working of CDP and NES."
+  },
+  {
+    q: 20,
+    en: "The Second Five-Year Plan (1956–61) was based on the economic model formulated by whom?",
+    hi: "द्वितीय पंचवर्षीय योजना (1956–61) किसके द्वारा तैयार किए गए आर्थिक मॉडल पर आधारित थी?",
+    options: [
+      "D.R. Gadgil / डी.आर. गाडगिल",
+      "P.C. Mahalanobis / पी.सी. महालनोबिस",
+      "C.N. Vakil and P.R. Brahmananda / सी.एन. वकील और पी.आर. ब्रह्मानंद",
+      "Sukhamoy Chakravarty / सुखमय चक्रवर्ती",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Second Five-Year Plan (1956–61) was based on the 'Nehru-Mahalanobis Model', formulated by renowned Indian statistician Prasanta Chandra Mahalanobis in 1953. It emphasized rapid industrialization with a focus on heavy and basic capital goods industries.",
+    expHi: "द्वितीय पंचवर्षीय योजना (1956–61) प्रख्यात भारतीय सांख्यिकीविद् प्रशांत चंद्र महालनोबिस द्वारा प्रतिपादित 'पी.सी. महालनोबिस मॉडल' (चार-क्षेत्रीय मॉडल) पर आधारित थी। इस योजना का मुख्य उद्देश्य तीव्र औद्योगीकरण तथा भारी एवं आधारभूत उद्योगों का विकास करना था।",
+    fact: "P.C. Mahalanobis founded the Indian Statistical Institute (ISI) in Kolkata (1931), and his birthday (29 June) is celebrated as National Statistics Day."
+  },
+  {
+    q: 21,
+    en: "Which Industrial Policy Resolution is called the 'Economic Constitution of India' and formed the basis of the Second Five-Year Plan?",
+    hi: "किस औद्योगिक नीति प्रस्ताव को 'भारत का आर्थिक संविधान' कहा जाता है, जो द्वितीय पंचवर्षीय योजना का आधार बना?",
+    options: [
+      "Industrial Policy Resolution, 1948 / औद्योगिक नीति प्रस्ताव, 1948",
+      "Industrial Policy Resolution, 1956 / औद्योगिक नीति प्रस्ताव, 1956",
+      "Industrial Policy Statement, 1977 / औद्योगिक नीति वक्तव्य, 1977",
+      "New Industrial Policy, 1991 / नई औद्योगिक नीति, 1991",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Industrial Policy Resolution (IPR) of 30 April 1956 aligned with the Second Five-Year Plan and the goal of establishing a 'Socialistic Pattern of Society' (adopted at the 1955 Avadi session of INC). It classified industries into three schedules (Schedule A: 17 state-exclusive industries, Schedule B: 12 mixed industries, Schedule C: private sector) and is known as the 'Economic Constitution of India'.",
+    expHi: "30 अप्रैल 1956 के औद्योगिक नीति प्रस्ताव (IPR 1956) को 'भारत का आर्थिक संविधान' कहा जाता है। इसने समाजवादी समाज की स्थापना के लक्ष्य के साथ द्वितीय पंचवर्षीय योजना को आधार प्रदान किया और उद्योगों को तीन श्रेणियों (अनुसूची A में 17 सार्वजनिक उद्योग, अनुसूची B में 12 उद्योग और अनुसूची C में निजी उद्योग) में विभाजित किया।",
+    fact: "The First Industrial Policy of independent India was announced on 6 April 1948 by Dr. Shyama Prasad Mukherjee."
+  },
+  {
+    q: 22,
+    en: "Which of the following pairings of Steel Plants established during the Second Five-Year Plan (1956–61) and their collaborating foreign countries is INCORRECT?",
+    hi: "द्वितीय पंचवर्षीय योजना (1956–61) के दौरान स्थापित लौह-इस्पात संयंत्रों और उनके सहयोगी देशों के संबंध में निम्नलिखित में से कौन-सा युग्म गलत (असुमेलित) है?",
+    options: [
+      "Bhilai Steel Plant (Chhattisgarh) – Soviet Union (USSR) / भिलाई इस्पात संयंत्र (छत्तीसगढ़) – सोवियत संघ",
+      "Durgapur Steel Plant (West Bengal) – United Kingdom (Britain) / दुर्गापुर इस्पात संयंत्र (पश्चिम बंगाल) – ब्रिटेन",
+      "Rourkela Steel Plant (Odisha) – West Germany / राउरकेला इस्पात संयंत्र (ओडिशा) – पश्चिमी जर्मनी",
+      "Bokaro Steel Plant (Jharkhand) – United States of America / बोकारो इस्पात संयंत्र (झारखंड) – संयुक्त राज्य अमेरिका",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "During the Second Five-Year Plan, three major integrated steel plants were set up: Bhilai (with USSR assistance), Durgapur (with UK assistance), and Rourkela (with West Germany assistance). Bokaro Steel Plant was set up later during the Third/Fourth Five-Year Plan with the assistance of the Soviet Union (USSR), NOT the USA.",
+    expHi: "द्वितीय पंचवर्षीय योजना के दौरान तीन प्रमुख इस्पात संयंत्र स्थापित किए गए थे: भिलाई (सोवियत संघ के सहयोग से), दुर्गापुर (ब्रिटेन के सहयोग से) और राउरकेला (पश्चिमी जर्मनी के सहयोग से)। बोकारो इस्पात संयंत्र की स्थापना तृतीय पंचवर्षीय योजना के दौरान (1964 में) सोवियत संघ (USSR) के सहयोग से की गई थी, न कि अमेरिका के सहयोग से।",
+    fact: "Memory Trick for 2nd Plan Steel Plants: Bhiru (Bhilai - Russia), Dubri (Durgapur - Britain), Raj (Rourkela - Germany)."
+  },
+  {
+    q: 23,
+    en: "What was the primary objective of the Third Five-Year Plan (1961–66)?",
+    hi: "तृतीय पंचवर्षीय योजना (1961–66) का मुख्य उद्देश्य क्या था?",
+    options: [
+      "Only Heavy Industrialization / केवल भारी औद्योगीकरण",
+      "Making the Indian economy self-reliant and self-generating / भारतीय अर्थव्यवस्था को आत्मनिर्भर एवं स्वतः स्फूर्त बनाना",
+      "Removal of Poverty (Garibi Hatao) / गरीबी उन्मूलन (गरीबी हटाओ)",
+      "Inclusive Growth and Sustainability / समावेशी विकास और धारणीयता",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Third Five-Year Plan (1961–66), also known as the 'Gadgil Yojana' (and influenced by Sukhamoy Chakravarty and John Sandy's input-output models), aimed to make India a 'self-reliant and self-generating economy' (आत्मनिर्भर एवं स्वतः स्फूर्त अर्थव्यवस्था), giving priority to both agriculture and basic industries.",
+    expHi: "तृतीय पंचवर्षीय योजना (1961–66) का मुख्य उद्देश्य भारतीय अर्थव्यवस्था को 'आत्मनिर्भर एवं स्वतः स्फूर्त' (Self-reliant and Self-generating) बनाना था। इस योजना में कृषि और उद्योग दोनों को समान महत्व दिया गया क्योंकि यह महसूस किया गया कि कृषि उत्पादन के बिना औद्योगिक विकास बाधित हो सकता है।",
+    fact: "The Third Five-Year Plan set a target growth rate of 5.6% but achieved only 2.8% (making it the most unsuccessful plan up to that time)."
+  },
+  {
+    q: 24,
+    en: "Which of the following three major crises caused the failure of the Third Five-Year Plan (1961–66)?",
+    hi: "निम्नलिखित में से किन तीन प्रमुख संकटों के कारण तृतीय पंचवर्षीय योजना (1961–66) असफल रही?",
+    options: [
+      "Sino-Indian War of 1962 / 1962 का भारत-चीन युद्ध",
+      "Indo-Pak War of 1965 / 1965 का भारत-पाक युद्ध",
+      "Severe Drought of 1965–66 / 1965–66 का भीषण सूखा (अकाल)",
+      "All of the above / उपर्युक्त सभी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "The Third Five-Year Plan failed miserably to meet its target of 5.6% growth due to three consecutive shocks: the Indo-China War (1962), the Indo-Pakistan War (1965), and an unprecedented severe drought in 1965–66, which diverted resources to defense and caused acute food scarcity and inflation.",
+    expHi: "तृतीय पंचवर्षीय योजना अपने 5.6% के विकास लक्ष्य को प्राप्त करने में बुरी तरह विफल रही (केवल 2.8% वृद्धि प्राप्त हुई)। इसके तीन मुख्य कारण थे: 1962 का भारत-चीन युद्ध, 1965 का भारत-पाक युद्ध और 1965–66 का भीषण सूखा, जिसके कारण संसाधनों को रक्षा क्षेत्र में मोड़ना पड़ा और गंभीर खाद्यान्न संकट पैदा हो गया।",
+    fact: "Both the Food Corporation of India (FCI) and the Agricultural Prices Commission (APC, now CACP) were established in January 1965 during the Third Plan."
+  },
+  {
+    q: 25,
+    en: "What was the duration of the first 'Plan Holiday' (योजना अवकाश) in the history of Indian economic planning?",
+    hi: "भारतीय आर्थिक नियोजन के इतिहास में प्रथम 'योजना अवकाश' (Plan Holiday) की अवधि क्या थी?",
+    options: [
+      "1965 to 1968 / 1965 से 1968",
+      "1966 to 1969 / 1966 से 1969",
+      "1978 to 1980 / 1978 से 1980",
+      "1990 to 1992 / 1990 से 1992",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Following the failure of the Third Five-Year Plan and severe economic disruption, the government postponed the Fourth Plan and declared three Annual Plans from 1 April 1966 to 31 March 1969. This three-year period (1966–1969) is termed the 'Plan Holiday' (योजना अवकाश).",
+    expHi: "तृतीय पंचवर्षीय योजना की विफलता और आर्थिक संकट के कारण चौथी योजना को स्थगित कर दिया गया और 1 अप्रैल 1966 से 31 मार्च 1969 तक तीन 'वार्षिक योजनाएँ' (Annual Plans) चलाई गईं। 1966 से 1969 की इस तीन वर्षीय अवधि को भारतीय नियोजन के इतिहास में 'योजना अवकाश' (Plan Holiday) कहा जाता है।",
+    fact: "The Green Revolution (हरित क्रांति) was officially launched in India during this Plan Holiday period (Kharif season of 1966–67)."
+  },
+  {
+    q: 26,
+    en: "In which year was the Indian Rupee devalued for the second time (by 36.5%) to boost exports and deal with the Balance of Payments crisis at the start of the Plan Holiday?",
+    hi: "योजना अवकाश के प्रारंभ में निर्यात को बढ़ावा देने और भुगतान संतुलन संकट से निपटने के लिए भारतीय रुपये का दूसरी बार अवमूल्यन (36.5% तक) किस वर्ष किया गया था?",
+    options: [
+      "September 1949 / सितंबर 1949",
+      "June 1966 / जून 1966",
+      "July 1991 / जुलाई 1991",
+      "March 1974 / मार्च 1974",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Indian Rupee was devalued three times in independent India: first in September 1949, second on 6 June 1966 (by 36.5% during the Plan Holiday following the 1965 war and drought), and third in July 1991 (in two stages).",
+    expHi: "स्वतंत्र भारत में भारतीय रुपये का तीन बार अवमूल्यन किया गया है: पहली बार सितंबर 1949 में, दूसरी बार 6 जून 1966 को (योजना अवकाश के दौरान 36.5% का अवमूल्यन), और तीसरी बार जुलाई 1991 में (दो चरणों में)।",
+    fact: "During the 1966 devaluation, Sachin Chaudhuri was the Finance Minister and Indira Gandhi was the Prime Minister."
+  },
+  {
+    q: 27,
+    en: "During which planning period was the 'Green Revolution' (हरित क्रांति) using High Yielding Variety (HYV) seeds formally initiated in India?",
+    hi: "उच्च उपज देने वाली किस्मों (HYV) के बीजों का उपयोग करते हुए भारत में 'हरित क्रांति' की औपचारिक शुरुआत किस नियोजन अवधि के दौरान हुई थी?",
+    options: [
+      "Second Five-Year Plan (1956–61) / द्वितीय पंचवर्षीय योजना (1956–61)",
+      "Third Five-Year Plan (1961–66) / तृतीय पंचवर्षीय योजना (1961–66)",
+      "Annual Plans / Plan Holiday (1966–69) / वार्षिक योजनाएँ / योजना अवकाश (1966–69)",
+      "Fifth Five-Year Plan (1974–78) / पाँचवीं पंचवर्षीय योजना (1974–78)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Although the pilot Intensive Agriculture District Programme (IADP) began in 1960–61, the full-fledged 'New Agricultural Strategy' or Green Revolution using HYV seeds (especially in wheat and rice) was launched during the Annual Plans (Plan Holiday, specifically Kharif 1966–67).",
+    expHi: "यद्यपि गहन कृषि जिला कार्यक्रम (IADP) 1960–61 में शुरू हुआ था, किंतु उन्नत किस्म के बीजों (HYV seeds) पर आधारित 'नई कृषि रणनीति' अर्थात 'हरित क्रांति' की विधिवत शुरुआत योजना अवकाश (वार्षिक योजनाओं, विशेषकर खरीफ 1966–67) के दौरान हुई थी।",
+    fact: "Father of Green Revolution in India: Dr. M.S. Swaminathan; Father of Green Revolution in the World: Dr. Norman Borlaug."
+  },
+  {
+    q: 28,
+    en: "When was the 'Lead Bank Scheme' (अग्रणी बैंक योजना) introduced by the Reserve Bank of India to promote district-level credit planning?",
+    hi: "जिला स्तर पर ऋण नियोजन को बढ़ावा देने के लिए भारतीय रिजर्व बैंक (RBI) द्वारा 'अग्रणी बैंक योजना' (Lead Bank Scheme) कब शुरू की गई थी?",
+    options: [
+      "December 1969 / दिसंबर 1969",
+      "July 1955 / जुलाई 1955",
+      "October 1975 / अक्टूबर 1975",
+      "July 1982 / जुलाई 1982",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Based on the recommendations of the Gadgil Study Group and the F.K.F. Nariman Committee, the RBI introduced the Lead Bank Scheme in December 1969 (at the end of the Plan Holiday / beginning of the 4th Plan) under which individual banks were assigned specific districts to spearhead credit development.",
+    expHi: "डी.आर. गाडगिल अध्ययन समूह और एफ.के.एफ. नरीमन समिति की सिफारिशों के आधार पर, भारतीय रिजर्व बैंक (RBI) ने दिसंबर 1969 में 'अग्रणी बैंक योजना' (Lead Bank Scheme) शुरू की, जिसके तहत प्रत्येक जिले में साख (ऋण) व्यवस्था के समन्वय हेतु एक बैंक को 'लीड बैंक' नामित किया गया।",
+    fact: "The 'Service Area Approach' of the Lead Bank Scheme was formulated on the recommendation of the F.K.F. Nariman Committee."
+  },
+  {
+    q: 29,
+    en: "What was the time period and core objective of the Fourth Five-Year Plan?",
+    hi: "चतुर्थ पंचवर्षीय योजना की समयावधि और मुख्य उद्देश्य क्या था?",
+    options: [
+      "1966–1971; Rapid Industrialization / 1966–1971; तीव्र औद्योगीकरण",
+      "1969–1974; Growth with Stability and Progressive Achievement of Self-Reliance / 1969–1974; स्थिरता के साथ विकास तथा आत्मनिर्भरता की प्रगतिशील प्राप्ति",
+      "1974–1979; Removal of Poverty / 1974–1979; गरीबी उन्मूलन",
+      "1969–1974; Inclusive Growth / 1969–1974; समावेशी विकास",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Fourth Five-Year Plan ran from 1969 to 1974. Drafted under the guidance of D.R. Gadgil (and based on the Open Consistency Model of Alan Manne and Ashok Rudra), its twin objectives were 'Growth with Stability' (स्थिरता के साथ विकास) and 'Progressive Achievement of Self-Reliance' (आत्मनिर्भरता की अधिकाधिक प्राप्ति).",
+    expHi: "चतुर्थ पंचवर्षीय योजना की अवधि 1969 से 1974 तक थी। डी.आर. गाडगिल द्वारा तैयार इस योजना के दो मुख्य उद्देश्य थे: 'स्थिरता के साथ आर्थिक विकास' (Growth with Stability) और 'आत्मनिर्भरता की प्रगतिशील प्राप्ति' (Progressive Achievement of Self-Reliance)।",
+    fact: "Target growth rate of the 4th Plan was 5.7%, while actual growth achieved was 3.3%."
+  },
+  {
+    q: 30,
+    en: "The 'Gadgil Formula', approved in 1969 during the Fourth Five-Year Plan, was used for what purpose?",
+    hi: "चतुर्थ पंचवर्षीय योजना के दौरान 1969 में स्वीकृत 'गाडगिल फॉर्मूला' (Gadgil Formula) का उपयोग किस उद्देश्य के लिए किया गया था?",
+    options: [
+      "Calculating the Poverty Line in rural areas / ग्रामीण क्षेत्रों में गरीबी रेखा की गणना करने के लिए",
+      "Determining the allocation of Central assistance for State Plans / राज्यों की योजनाओं के लिए केंद्रीय सहायता के आवंटन का निर्धारण करने के लिए",
+      "Fixing the Minimum Support Price (MSP) of foodgrains / खाद्यान्नों का न्यूनतम समर्थन मूल्य (MSP) तय करने के लिए",
+      "Measuring industrial output in the public sector / सार्वजनिक क्षेत्र में औद्योगिक उत्पादन मापने के लिए",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Named after the then Deputy Chairman of the Planning Commission, Dr. Dhananjay Ramchandra Gadgil, the Gadgil Formula (1969) was evolved to determine the distribution of Central plan assistance among States based on population (60%), per capita income, tax effort, and special problems.",
+    expHi: "योजना आयोग के तत्कालीन उपाध्यक्ष डॉ. धनंजय रामचंद्र गाडगिल के नाम पर 1969 में 'गाडगिल फॉर्मूला' लागू किया गया था। इसका उपयोग राज्य योजनाओं के लिए केंद्र सरकार द्वारा दी जाने वाली वित्तीय सहायता के बंटवारे (आवंटन) का निर्धारण करने के लिए किया जाता था।",
+    fact: "It was during the Fourth Five-Year Plan (1969) that the concept of 'Special Category States' (विशेष श्रेणी के राज्य—प्रारंभ में जम्मू-कश्मीर, असम और नागालैंड) was introduced."
+  },
+  {
+    q: 31,
+    en: "During which Five-Year Plan were 14 major commercial banks nationalized on 19 July 1969?",
+    hi: "19 जुलाई 1969 को 14 प्रमुख वाणिज्यिक बैंकों का राष्ट्रीयकरण किस पंचवर्षीय योजना के दौरान किया गया था?",
+    options: [
+      "Third Five-Year Plan / तृतीय पंचवर्षीय योजना",
+      "Fourth Five-Year Plan / चतुर्थ पंचवर्षीय योजना",
+      "Fifth Five-Year Plan / पाँचवीं पंचवर्षीय योजना",
+      "Sixth Five-Year Plan / छठी पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "On 19 July 1969 (during the Fourth Five-Year Plan, 1969–74), Prime Minister Indira Gandhi nationalized 14 major commercial banks that had deposits of ₹50 crore or more. Later, 6 more banks (with deposits of ₹200 crore or more) were nationalized on 15 April 1980 during the Sixth Five-Year Plan.",
+    expHi: "चतुर्थ पंचवर्षीय योजना (1969–74) के दौरान 19 जुलाई 1969 को तत्कालीन प्रधानमंत्री इंदिरा गांधी ने ₹50 करोड़ या उससे अधिक जमा राशि वाले 14 बड़े वाणिज्यिक बैंकों का राष्ट्रीयकरण किया था। (बाद में 15 अप्रैल 1980 को छठी योजना के दौरान 6 अन्य बैंकों का राष्ट्रीयकरण हुआ)।",
+    fact: "1st Phase of Bank Nationalization: 19 July 1969 (14 Banks, Fourth Plan); 2nd Phase: 15 April 1980 (6 Banks, Sixth Plan)."
+  },
+  {
+    q: 32,
+    en: "In which Five-Year Plan was the 'White Revolution' (Operation Flood) launched to make India self-sufficient in milk production?",
+    hi: "भारत को दुग्ध उत्पादन में आत्मनिर्भर बनाने के लिए 'श्वेत क्रांति' (ऑपरेशन फ्लड) किस पंचवर्षीय योजना में शुरू की गई थी?",
+    options: [
+      "Second Five-Year Plan / द्वितीय पंचवर्षीय योजना",
+      "Third Five-Year Plan / तृतीय पंचवर्षीय योजना",
+      "Fourth Five-Year Plan / चतुर्थ पंचवर्षीय योजना",
+      "Fifth Five-Year Plan / पाँचवीं पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Operation Flood (White Revolution) was launched on 13 January 1970 by the National Dairy Development Board (NDDB) during the Fourth Five-Year Plan (1969–74) under the leadership of Dr. Verghese Kurien.",
+    expHi: "भारत में दुग्ध उत्पादन में तीव्र वृद्धि के लिए 'ऑपरेशन फ्लड' (श्वेत क्रांति) की शुरुआत चतुर्थ पंचवर्षीय योजना (1969–74) के दौरान 13 जनवरी 1970 को राष्ट्रीय डेयरी विकास बोर्ड (NDDB) द्वारा डॉ. वर्गीज कुरियन के नेतृत्व में की गई थी।",
+    fact: "Dr. Verghese Kurien is known as the 'Father of White Revolution in India', and his birthday (26 November) is celebrated as National Milk Day."
+  },
+  {
+    q: 33,
+    en: "Which of the following historic events occurred during the Fourth Five-Year Plan (1969–74)?",
+    hi: "निम्नलिखित में से कौन-सी ऐतिहासिक घटना चतुर्थ पंचवर्षीय योजना (1969–74) के दौरान घटित हुई थी?",
+    options: [
+      "Establishment of NABARD (1982) / नाबार्ड की स्थापना (1982)",
+      "Establishment of Regional Rural Banks (1975) / क्षेत्रीय ग्रामीण बैंकों की स्थापना (1975)",
+      "Launch of Mid-Day Meal Scheme (1995) / मध्याह्न भोजन योजना का प्रारंभ (1995)",
+      "Establishment of ISRO (1969), Indo-Pak War (1971), MRTP Act (1969), and Drought Prone Area Programme (1973–74) / इसरो की स्थापना (1969), भारत-पाक युद्ध (1971), MRTP अधिनियम (1969) और सूखा संभावित क्षेत्र कार्यक्रम (1973–74)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "The Fourth Plan ran from 1 April 1969 to 31 March 1974. During this period, ISRO was formed (15 Aug 1969), the MRTP Act was enacted (1969), the 1971 Indo-Pak war and liberation of Bangladesh occurred, the Drought Prone Area Programme (DPAP, 1973–74) was launched, and target-oriented family planning programs were prioritized.",
+    expHi: "चतुर्थ पंचवर्षीय योजना (1 अप्रैल 1969 से 31 मार्च 1974) के दौरान इसरो की स्थापना (15 अगस्त 1969), एकाधिकार तथा अवरोधक व्यापारिक व्यवहार अधिनियम (MRTP Act, 1969) का लागू होना, 1971 का भारत-पाक युद्ध, सूखा संभावित क्षेत्र कार्यक्रम (DPAP, 1973–74) और परिवार नियोजन कार्यक्रमों का प्रभावी क्रियान्वयन प्रमुख घटनाएं थीं।",
+    fact: "India became the world's first country to launch an official National Family Planning Programme in 1952 (First Plan), while target-oriented family planning gained major focus in the Fourth Plan."
+  },
+  {
+    q: 34,
+    en: "Who prepared the final draft of the Fifth Five-Year Plan (1974–79)?",
+    hi: "पाँचवीं पंचवर्षीय योजना (1974–79) का अंतिम प्रारूप किसने तैयार किया था?",
+    options: [
+      "C. Subramaniam / सी. सुब्रमण्यम",
+      "D.P. Dhar (Durga Prasad Dhar) / डी.पी. धर (दुर्गा प्रसाद धर)",
+      "Sukhamoy Chakravarty / सुखमय चक्रवर्ती",
+      "Pranab Mukherjee / प्रणब मुखर्जी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Although C. Subramaniam prepared the initial approach paper in 1972 emphasizing direct attack on poverty, the final draft of the Fifth Five-Year Plan (1974–79) was prepared and launched by D.P. Dhar (Durga Prasad Dhar) amidst the severe inflation caused by the 1973 international oil crisis.",
+    expHi: "यद्यपि 1972 में सी. सुब्रमण्यम ने इसका प्रारंभिक दृष्टिकोण पत्र तैयार किया था, किंतु पाँचवीं पंचवर्षीय योजना (1974–79) का अंतिम प्रारूप 'डी.पी. धर' (दुर्गा प्रसाद धर) द्वारा तैयार और प्रस्तुत किया गया था।",
+    fact: "The Twin Objectives of the Fifth Five-Year Plan were 'Removal of Poverty (Garibi Hatao)' and 'Attainment of Self-Reliance'."
+  },
+  {
+    q: 35,
+    en: "What were the two main objectives of the Fifth Five-Year Plan (1974–1978)?",
+    hi: "पाँचवीं पंचवर्षीय योजना (1974–1978) के दो मुख्य उद्देश्य क्या थे?",
+    options: [
+      "Heavy Industrialization and Transport / भारी औद्योगीकरण और परिवहन",
+      "Eradication of Poverty (Garibi Hatao) and Attainment of Self-Reliance / गरीबी उन्मूलन (गरीबी हटाओ) और आत्मनिर्भरता की प्राप्ति",
+      "Liberalization and Privatization / उदारीकरण और निजीकरण",
+      "Faster, Sustainable and More Inclusive Growth / तीव्र, धारणीय और अधिक समावेशी विकास",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Fifth Five-Year Plan (1974–78) placed top priority on the 'Eradication of Poverty' (गरीबी उन्मूलन) and 'Attainment of Self-Reliance' (आत्मनिर्भरता की प्राप्ति) with the aim of achieving zero net foreign aid.",
+    expHi: "पाँचवीं पंचवर्षीय योजना का मुख्य उद्देश्य 'गरीबी उन्मूलन' (Eradication of Poverty) और 'आत्मनिर्भरता की प्राप्ति' (Attainment of Self-Reliance) था। यह पहली योजना थी जिसमें गरीबी निवारण को योजना के मुख्य उद्देश्य के रूप में स्वीकार किया गया।",
+    fact: "While Prime Minister Indira Gandhi gave the political slogan 'Garibi Hatao' during the 1971 general election campaign (during the 4th Plan period), it was formally incorporated as the core objective in the Fifth Five-Year Plan (1974–78)."
+  },
+  {
+    q: 36,
+    en: "Which Five-Year Plan was terminated one year before its scheduled completion of five years (lasting only four years from 1974 to 1978)?",
+    hi: "कौन-सी पंचवर्षीय योजना अपने निर्धारित पाँच वर्ष के कार्यकाल से एक वर्ष पूर्व (केवल चार वर्ष, 1974 से 1978 तक चलकर) ही समाप्त कर दी गई थी?",
+    options: [
+      "Third Five-Year Plan / तृतीय पंचवर्षीय योजना",
+      "Fourth Five-Year Plan / चतुर्थ पंचवर्षीय योजना",
+      "Fifth Five-Year Plan / पाँचवीं पंचवर्षीय योजना",
+      "Seventh Five-Year Plan / सातवीं पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "The Fifth Five-Year Plan was originally scheduled for 1974–1979. However, the newly elected Janata Party government led by Prime Minister Morarji Desai terminated the Fifth Plan one year early in March 1978 (making it the only 4-year plan: 1974–78) and introduced the Rolling Plan for 1978–83.",
+    expHi: "पाँचवीं पंचवर्षीय योजना की मूल अवधि 1974 से 1979 तय की गई थी, लेकिन 1977 में केंद्र में सत्ता परिवर्तन के बाद मोरारजी देसाई के नेतृत्व वाली जनता पार्टी सरकार ने इसे निर्धारित समय से एक वर्ष पूर्व ही मार्च 1978 में समाप्त घोषित कर दिया। इस प्रकार यह केवल 4 वर्ष (1974–78) चलने वाली एकमात्र पंचवर्षीय योजना थी।",
+    fact: "Target growth rate of the Fifth Plan: 4.4% | Actual achieved growth rate: 4.8%."
+  },
+  {
+    q: 37,
+    en: "In which year was the 'Minimum Needs Programme' (MNP) introduced during the Fifth Five-Year Plan to improve the living standards of the poor?",
+    hi: "गरीबों के जीवन स्तर में सुधार लाने के लिए पाँचवीं पंचवर्षीय योजना के दौरान 'न्यूनतम आवश्यकता कार्यक्रम' (Minimum Needs Programme - MNP) किस वर्ष शुरू किया गया था?",
+    options: [
+      "1971",
+      "1974",
+      "1978",
+      "1982",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Prepared by D.P. Dhar, the Minimum Needs Programme (MNP) was introduced in the first year of the Fifth Five-Year Plan (1974) to provide certain basic minimum needs such as elementary education, rural health, rural water supply, rural roads, electrification, and nutrition.",
+    expHi: "पाँचवीं पंचवर्षीय योजना के प्रथम वर्ष (1974) में ही लोगों की मूलभूत आवश्यकताओं (जैसे- प्राथमिक शिक्षा, ग्रामीण स्वास्थ्य, ग्रामीण पेयजल, सड़क, विद्युतीकरण और पोषण) को पूरा करने के लिए 'न्यूनतम आवश्यकता कार्यक्रम' (MNP) शुरू किया गया था।",
+    fact: "The 'Twenty Point Programme' (बीस सूत्री कार्यक्रम) was also launched by Prime Minister Indira Gandhi in 1975 during the Fifth Five-Year Plan."
+  },
+  {
+    q: 38,
+    en: "On which date were the first Regional Rural Banks (RRBs) established during the Fifth Five-Year Plan?",
+    hi: "पाँचवीं पंचवर्षीय योजना के दौरान प्रथम 'क्षेत्रीय ग्रामीण बैंकों' (Regional Rural Banks - RRBs) की स्थापना किस तिथि को की गई थी?",
+    options: [
+      "19 July 1969 / 19 जुलाई 1969",
+      "2 October 1975 / 2 अक्टूबर 1975",
+      "12 July 1982 / 12 जुलाई 1982",
+      "1 April 1974 / 1 अप्रैल 1974",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "On the recommendation of the M. Narasimham Working Group, 5 Regional Rural Banks (RRBs) were established on 2 October 1975 during the Fifth Five-Year Plan. The first RRB was 'Prathama Grameen Bank' headquartered in Moradabad, Uttar Pradesh (sponsored by Syndicate Bank).",
+    expHi: "एम. नरसिम्हम समिति की सिफारिश पर पाँचवीं पंचवर्षीय योजना के दौरान 2 अक्टूबर 1975 को देश में 5 क्षेत्रीय ग्रामीण बैंकों (RRBs) की स्थापना की गई। देश का पहला क्षेत्रीय ग्रामीण बैंक 'प्रथमा ग्रामीण बैंक' (मुरादाबाद, उत्तर प्रदेश) था।",
+    fact: "Capital shareholding in an RRB is divided among the Central Government (50%), the Concerned State Government (15%), and the Sponsor Bank (35%). Notice that Sikkim and Goa have no RRBs."
+  },
+  {
+    q: 39,
+    en: "Which was the first state in India to launch the 'Antyodaya Yojana' in 1977–78 (aimed at uplifting the poorest of the poor families in every village)?",
+    hi: "1977–78 में 'अंत्योदय योजना' (प्रत्येक गाँव के सबसे गरीब परिवारों के आर्थिक उत्थान हेतु) शुरू करने वाला भारत का पहला राज्य कौन-सा था?",
+    options: [
+      "Uttar Pradesh / उत्तर प्रदेश",
+      "Gujarat / गुजरात",
+      "Rajasthan / राजस्थान",
+      "Bihar / बिहार",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "On 2 October 1977, Rajasthan (under Chief Minister Bhairon Singh Shekhawat) became the first state in India to launch the 'Antyodaya Yojana' to select and economically uplift the poorest families in each village.",
+    expHi: "पाँचवीं योजना के अंतिम चरण (2 अक्टूबर 1977) में 'अंत्योदय योजना' शुरू करने वाला भारत का पहला राज्य राजस्थान था। इसका उद्देश्य गाँव के सबसे निर्धन परिवारों का चयन कर उन्हें आर्थिक रूप से आत्मनिर्भर बनाना था।",
+    fact: "Also in 1977–78, the 'Food for Work Programme' (काम के बदले अनाज कार्यक्रम) and the 'Desert Development Programme' (मरुभूमि विकास कार्यक्रम) were started."
+  },
+  {
+    q: 40,
+    en: "Who propounded the concept of the 'Rolling Plan' (अनवरत योजना) at the global level, and who implemented it in India during 1978–80?",
+    hi: "विश्व स्तर पर 'रोलिंग प्लान' (अनवरत योजना) का प्रतिपादन किसने किया था और भारत में 1978–80 के दौरान इसे लागू करने का श्रेय किसे दिया जाता है?",
+    options: [
+      "Ragnar Frisch (Propounded); P.C. Mahalanobis (Implemented in India) / रेगनर फ्रिश (प्रतिपादन); पी.सी. महालनोबिस (भारत में लागू)",
+      "Gunnar Myrdal (Propounded); D.T. Lakdawala (Implemented in India) / गुन्नार मिर्डल (प्रतिपादन); डी.टी. लकड़वाला (भारत में लागू)",
+      "John Maynard Keynes (Propounded); Manmohan Singh (Implemented in India) / जॉन मेनार्ड कीन्स (प्रतिपादन); मनमोहन सिंह (भारत में लागू)",
+      "Evsey Domar (Propounded); D.R. Gadgil (Implemented in India) / एव्से डोमर (प्रतिपादन); डी.आर. गाडगिल (भारत में लागू)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Swedish economist Gunnar Myrdal propounded the concept of the 'Rolling Plan' for developing countries in his famous book 'Asian Drama' (1968). In India, the Janata Party government (PM Morarji Desai) implemented the Rolling Plan from 1978 to 1980 under the guidance of Planning Commission Deputy Chairman Prof. D.T. Lakdawala.",
+    expHi: "विकासशील देशों के लिए 'रोलिंग प्लान' (अनवरत योजना) का प्रतिपादन स्वीडिश अर्थशास्त्री गुन्नार मिर्डल ने अपनी प्रसिद्ध पुस्तक 'एशियन ड्रामा' (Asian Drama) में किया था। भारत में जनता पार्टी सरकार के दौरान (1978–80) योजना आयोग के तत्कालीन उपाध्यक्ष प्रो. डी.टी. लकड़वाला को इसे लागू करने का श्रेय दिया जाता है।",
+    fact: "When Indira Gandhi returned to power in 1980, she rejected the Janata government's Rolling Plan (1978–83) and launched the new Sixth Five-Year Plan (1980–85). The period 1978–80 was later adjusted as annual plans."
+  },
+  {
+    q: 41,
+    en: "Which scheme was launched in 1979 during the Rolling Plan period to provide self-employment engineering and technical skills to rural youth?",
+    hi: "अनवरत योजना (Rolling Plan) की अवधि के दौरान ग्रामीण युवाओं को स्वरोजगार हेतु तकनीकी कौशल प्रदान करने के लिए 1979 में कौन-सी योजना शुरू की गई थी?",
+    options: [
+      "MGNREGA / मनरेगा",
+      "TRYSEM (Training of Rural Youth for Self-Employment) / ट्राइसेम (ग्रामीण युवा स्वरोजगार प्रशिक्षण कार्यक्रम)",
+      "PMKVY / प्रधानमंत्री कौशल विकास योजना",
+      "JRY (Jawahar Rozgar Yojana) / जवाहर रोजगार योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "TRYSEM (Training of Rural Youth for Self-Employment) was launched on 15 August 1979 to provide technical and entrepreneurial skills to rural youth aged 18–35 years from families below the poverty line. Later in April 1999, TRYSEM was merged into Swarnajayanti Gram Swarozgar Yojana (SGSY).",
+    expHi: "गरीबी रेखा से नीचे रहने वाले ग्रामीण परिवारों के 18 से 35 वर्ष की आयु के युवाओं को स्वरोजगार हेतु तकनीकी कौशल प्रदान करने के लिए 15 अगस्त 1979 को 'ट्राइसेम' (TRYSEM - Training of Rural Youth for Self-Employment) योजना शुरू की गई थी।",
+    fact: "In April 1999, six schemes (IRDP, TRYSEM, DWCRA, SITRA, GKY, and MWS) were merged into a single program called Swarnajayanti Gram Swarozgar Yojana (SGSY)."
+  },
+  {
+    q: 42,
+    en: "What was the time period of the Sixth Five-Year Plan, and on which model was it based?",
+    hi: "छठी पंचवर्षीय योजना की समयावधि क्या थी और यह किस मॉडल पर आधारित थी?",
+    options: [
+      "1978–1983; Harrod-Domar Model / 1978–1983; हैरोड-डोमर मॉडल",
+      "1980–1985; Input-Output Model (आगत-निर्गत मॉडल) / 1980–1985; आगत-निर्गत मॉडल",
+      "1985–1990; John W. Miller Model / 1985–1990; जॉन डब्ल्यू. मिलर मॉडल",
+      "1980–1985; Mahalanobis Four-Sector Model / 1980–1985; महालनोबिस चार-क्षेत्रीय मॉडल",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Sixth Five-Year Plan ran from 1980 to 1985 with a perspective of 15 years. It was based on the Input-Output Model (आगत-निर्गत मॉडल) and focused on direct attack on poverty, modernization of technology, and employment generation.",
+    expHi: "छठी पंचवर्षीय योजना की समयावधि 1980 से 1985 तक थी। यह योजना 'आगत-निर्गत मॉडल' (Input-Output Model) पर आधारित थी तथा इसका मुख्य उद्देश्य गरीबी उन्मूलन, आधुनिक प्रौद्योगिकी का विकास और रोजगार सृजन करना था।",
+    fact: "Target growth rate of the Sixth Plan was 5.2%, while actual achieved growth rate was 5.7%."
+  },
+  {
+    q: 43,
+    en: "During the Sixth Five-Year Plan, the Planning Commission Task Force headed by Dr. Y.K. Alagh (1979) defined the Poverty Line based on how many daily calories per person in Rural and Urban areas respectively?",
+    hi: "छठी पंचवर्षीय योजना के संदर्भ में डॉ. वाई.के. अलघ कार्यदल (1979) द्वारा ग्रामीण और शहरी क्षेत्रों में प्रति व्यक्ति प्रतिदिन क्रमशः कितनी कैलोरी उपभोग के आधार पर गरीबी रेखा का निर्धारण किया गया था?",
+    options: [
+      "2100 calories (Rural) and 2400 calories (Urban) / 2100 कैलोरी (ग्रामीण) तथा 2400 कैलोरी (शहरी)",
+      "2400 calories (Rural) and 2100 calories (Urban) / 2400 कैलोरी (ग्रामीण) तथा 2100 कैलोरी (शहरी)",
+      "2500 calories (Rural) and 2000 calories (Urban) / 2500 कैलोरी (ग्रामीण) तथा 2000 कैलोरी (शहरी)",
+      "2200 calories for both Rural and Urban / ग्रामीण और शहरी दोनों के लिए 2200 कैलोरी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Task Force on Projections of Minimum Needs and Effective Consumption Demand headed by Dr. Y.K. Alagh (1979, adopted in the Sixth Plan) defined the poverty line based on nutritional requirements: 2400 calories per person per day for rural areas (due to higher physical labor) and 2100 calories per person per day for urban areas.",
+    expHi: "डॉ. वाई.के. अलघ समिति (1979) की सिफारिशों के आधार पर योजना आयोग ने छठी पंचवर्षीय योजना में पोषण (कैलोरी उपभोग) के आधार पर गरीबी का मापन किया। इसके अनुसार ग्रामीण क्षेत्रों में प्रति व्यक्ति प्रतिदिन 2400 कैलोरी और शहरी क्षेत्रों में प्रति व्यक्ति प्रतिदिन 2100 कैलोरी से कम उपभोग करने वाले व्यक्ति को गरीबी रेखा से नीचे (BPL) माना गया।",
+    fact: "Major Poverty Estimation Committees in India (Chronological): Dandekar & Rath (1971) -> Y.K. Alagh (1979) -> D.T. Lakdawala (1989/1993) -> Suresh Tendulkar (2005/2009) -> C. Rangarajan (2012/2014)."
+  },
+  {
+    q: 44,
+    en: "On 12 July 1982, during the Sixth Five-Year Plan, NABARD (National Bank for Agriculture and Rural Development) was established on the recommendation of which committee?",
+    hi: "छठी पंचवर्षीय योजना के दौरान 12 जुलाई 1982 को किस समिति की सिफारिश पर 'नाबार्ड' (NABARD - राष्ट्रीय कृषि और ग्रामीण विकास बैंक) की स्थापना की गई थी?",
+    options: [
+      "Narasimham Committee / नरसिम्हम समिति",
+      "B. Sivaraman Committee (CRAFICARD) / बी. शिवरामन समिति (क्रेफिकार्ड)",
+      "Rangarajan Committee / रंगराजन समिति",
+      "Kelkar Committee / केलकर समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "NABARD was established on 12 July 1982 by an Act of Parliament (Act 61 of 1981) during the Sixth Five-Year Plan on the recommendation of the B. Sivaraman Committee (officially the Committee to Review Arrangements for Institutional Credit for Agriculture and Rural Development - CRAFICARD).",
+    expHi: "छठी पंचवर्षीय योजना के दौरान 12 जुलाई 1982 को 'बी. शिवरामन समिति' (CRAFICARD) की सिफारिश पर राष्ट्रीय कृषि और ग्रामीण विकास बैंक (NABARD - नाबार्ड) की स्थापना की गई थी। इसका मुख्यालय मुंबई में है।",
+    fact: "Along with NABARD, the Export-Import Bank of India (EXIM Bank) was also established in 1982 (1 January 1982) during the Sixth Five-Year Plan."
+  },
+  {
+    q: 45,
+    en: "Which of the following rural development and employment programmes were implemented across the country on 2 October 1980 during the Sixth Five-Year Plan?",
+    hi: "छठी पंचवर्षीय योजना के दौरान 2 अक्टूबर 1980 को पूरे देश में निम्नलिखित में से कौन-से ग्रामीण विकास एवं रोजगार कार्यक्रम लागू किए गए थे?",
+    options: [
+      "IRDP (Integrated Rural Development Programme) and NREP (National Rural Employment Programme) / समन्वित ग्रामीण विकास कार्यक्रम (IRDP) और राष्ट्रीय ग्रामीण रोजगार कार्यक्रम (NREP)",
+      "Jawahar Rozgar Yojana (JRY) and Nehru Rozgar Yojana (NRY) / जवाहर रोजगार योजना (JRY) और नेहरू रोजगार योजना (NRY)",
+      "Prime Minister's Rozgar Yojana (PMRY) / प्रधानमंत्री रोजगार योजना (PMRY)",
+      "MGNREGA and Bharat Nirman / मनरेगा और भारत निर्माण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Although IRDP was initially introduced in selected blocks in 1978–79, it was extended to all blocks across India on 2 October 1980 during the Sixth Plan. On the same day, the Food for Work Programme was restructured into the National Rural Employment Programme (NREP). Additionally, RLEGP (1983) and DWCRA (1982) were launched in the Sixth Plan.",
+    expHi: "यद्यपि समन्वित ग्रामीण विकास कार्यक्रम (IRDP) 1978–79 में चुनिंदा विकास खंडों में शुरू हुआ था, किंतु छठी योजना के दौरान 2 अक्टूबर 1980 को इसे पूरे देश के सभी विकास खंडों में लागू कर दिया गया। इसी के साथ 1980 में 'राष्ट्रीय ग्रामीण रोजगार कार्यक्रम' (NREP), 1982 में 'ड्वकरा' (DWCRA) और 1983 में 'ग्रामीण भूमिहीन रोजगार गारंटी कार्यक्रम' (RLEGP) भी छठी योजना में शुरू किए गए।",
+    fact: "DWCRA stands for 'Development of Women and Children in Rural Areas' (launched in September 1982)."
+  },
+  {
+    q: 46,
+    en: "What was the time period of the Seventh Five-Year Plan, and which three pillars formed its core theme?",
+    hi: "सातवीं पंचवर्षीय योजना की समयावधि क्या थी और इसके मुख्य उद्देश्य के तीन स्तंभ कौन-से थे?",
+    options: [
+      "1980–1985; Agriculture, Irrigation and Power / 1980–1985; कृषि, सिंचाई और बिजली",
+      "1985–1990; Food, Work and Productivity (भोजन, काम और उत्पादकता) / 1985–1990; भोजन, काम और उत्पादकता",
+      "1992–1997; Human Resource Development / 1992–1997; मानव संसाधन विकास",
+      "1985–1990; Globalization, Privatization and Liberalization / 1985–1990; वैश्वीकरण, निजीकरण और उदारीकरण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Seventh Five-Year Plan ran from 1985 to 1990 (when Pranab Mukherjee and later Manmohan Singh served as Deputy Chairmen under PM Rajiv Gandhi). Its core theme was accelerating growth in 'Foodgrains production, Employment opportunities (Work), and Productivity' (भोजन, काम और उत्पादकता).",
+    expHi: "सातवीं पंचवर्षीय योजना की समयावधि 1985 से 1990 तक थी। इस योजना का मुख्य उद्देश्य आर्थिक समृद्धि, आधुनिकीकरण, आत्मनिर्भरता और सामाजिक न्याय के साथ-साथ 'भोजन, काम और उत्पादकता' (Food, Work and Productivity) के क्षेत्रों में तीव्र विकास करना था।",
+    fact: "For the first time in Indian planning history, the Private Sector was given priority over the Public Sector during the Seventh Five-Year Plan."
+  },
+  {
+    q: 47,
+    en: "On whose economic model was the Seventh Five-Year Plan (1985–90) based, and what is Professor Raj Krishna's 'Hindu Rate of Growth' related to?",
+    hi: "सातवीं पंचवर्षीय योजना (1985–90) किसके आर्थिक मॉडल पर आधारित थी, तथा प्रोफेसर राज कृष्ण द्वारा प्रयुक्त 'हिंदू वृद्धि दर' (Hindu Rate of Growth) किससे संबंधित है?",
+    options: [
+      "P.C. Mahalanobis Model; Population Growth Rate / पी.सी. महालनोबिस मॉडल; जनसंख्या वृद्धि दर",
+      "Pranab Mukherjee Model (and Vakil-Brahmananda Wage Goods strategy); National Income / GDP Growth Rate / प्रणब मुखर्जी मॉडल (तथा वकील-ब्रह्मानंद मजदूरी वस्तु मॉडल); राष्ट्रीय आय / जीडीपी वृद्धि दर",
+      "John W. Miller Model; Agricultural Growth Rate / जॉन डब्ल्यू. मिलर मॉडल; कृषि वृद्धि दर",
+      "Harrod-Domar Model; Per Capita Income / हैरोड-डोमर मॉडल; प्रति व्यक्ति आय",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Seventh Five-Year Plan was formulated on the Pranab Mukherjee Model alongside the 'Wage Goods Model' (मजदूरी वस्तु मॉडल) developed by C.N. Vakil and P.R. Brahmananda. It was the first plan to decisively break the 'Hindu Rate of Growth' (a term coined by Prof. Raj Krishna to describe India's sluggish ~3.5% average annual GDP/National Income growth rate during the first three decades of planning), achieving a 6.0% growth rate against a target of 5.0%.",
+    expHi: "सातवीं पंचवर्षीय योजना प्रणब मुखर्जी मॉडल तथा सी.एन. वकील और पी.आर. ब्रह्मानंद के 'मजदूरी वस्तु मॉडल' (Wage Goods Model) पर आधारित थी। इस योजना में 5.0% के लक्ष्य के मुकाबले 6.0% की विकास दर हासिल की गई, जिससे भारतीय अर्थव्यवस्था ने प्रो. राज कृष्ण द्वारा वर्णित 'हिंदू वृद्धि दर' (राष्ट्रीय आय/GDP की ~3.5% की धीमी वृद्धि दर) के गतिरोध को सफलतापूर्वक तोड़ा।",
+    fact: "UPSSSC frequently asks: 'Hindu Rate of Growth is related to?' -> Answer: National Income / GDP (राष्ट्रीय आय / सकल घरेलू उत्पाद)."
+  },
+  {
+    q: 48,
+    en: "Which of the following institutions or schemes was NOT established during the Seventh Five-Year Plan (1985–90)?",
+    hi: "निम्नलिखित में से किस संस्था या योजना की स्थापना सातवीं पंचवर्षीय योजना (1985–90) के दौरान नहीं हुई थी?",
+    options: [
+      "Establishment of SEBI (as a non-statutory body on 12 April 1988) / सेबी (SEBI) की स्थापना (12 अप्रैल 1988 को गैर-सांविधिक निकाय के रूप में)",
+      "Establishment of CAPART (Council for Advancement of People's Action and Rural Technology in Sept 1986) / कपार्ट (CAPART) की स्थापना (सितंबर 1986)",
+      "Launch of Jawahar Rozgar Yojana (JRY in April 1989) and Indira Awaas Yojana (IAY in 1985–86) / जवाहर रोजगार योजना (अप्रैल 1989) और इंदिरा आवास योजना (1985–86) का प्रारंभ",
+      "Establishment of Life Insurance Corporation of India (LIC in September 1956) / भारतीय जीवन बीमा निगम (LIC) की स्थापना (सितंबर 1956)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "The Life Insurance Corporation of India (LIC) was established on 1 September 1956 during the Second Five-Year Plan. All other options occurred during the Seventh Five-Year Plan (1985–90): Indira Awaas Yojana (1985–86), CAPART (1986), Speed Post (1986), TRIFED (1987), SEBI (established in 1988, given statutory status in Jan 1992), Jawahar Rozgar Yojana (by merging NREP and RLEGP in April 1989), and Nehru Rozgar Yojana (Oct 1989).",
+    expHi: "भारतीय जीवन बीमा निगम (LIC) की स्थापना 1 सितंबर 1956 को द्वितीय पंचवर्षीय योजना के दौरान हुई थी। अन्य सभी विकल्प सातवीं पंचवर्षीय योजना (1985–90) की प्रमुख उपलब्धियाँ हैं: इंदिरा आवास योजना (1985–86), स्पीड पोस्ट एवं कपार्ट (1986), ट्राइफेड (1987), सेबी की स्थापना (12 अप्रैल 1988), तथा NREP और RLEGP का विलय कर 'जवाहर रोजगार योजना' (अप्रैल 1989) और शहरी क्षेत्रों के लिए 'नेहरू रोजगार योजना' (अक्टूबर 1989) का प्रारंभ।",
+    fact: "Jawahar Rozgar Yojana (JRY) was launched on 1 April 1989 by merging two Sixth Plan schemes: NREP and RLEGP."
+  },
+  {
+    q: 49,
+    en: "Why could the Eighth Five-Year Plan not be launched on schedule in 1990, leading to two Annual Plans during 1990–91 and 1991–92?",
+    hi: "आठवीं पंचवर्षीय योजना 1990 में अपने निर्धारित समय पर क्यों शुरू नहीं हो सकी, जिसके परिणामस्वरूप 1990–91 और 1991–92 के दौरान दो वार्षिक योजनाएँ चलाई गईं?",
+    options: [
+      "Due to the Kargil War with Pakistan / पाकिस्तान के साथ कारगिल युद्ध के कारण",
+      "Due to fast-changing political instability at the Centre and a severe Balance of Payments (BoP) crisis / केंद्र में तेजी से बदलती राजनीतिक अस्थिरता और गंभीर भुगतान संतुलन (BoP) संकट के कारण",
+      "Due to the dissolution of the National Development Council / राष्ट्रीय विकास परिषद के भंग होने के कारण",
+      "Due to a nationwide agricultural strike / देशव्यापी कृषि हड़ताल के कारण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Eighth Five-Year Plan was originally scheduled to start on 1 April 1990, but due to rapid political instability at the Centre (governments of V.P. Singh and Chandra Shekhar) and a severe Balance of Payments (foreign exchange reserves) crisis triggered by the Gulf War and fiscal deficits, the plan was postponed by two years, and two Annual Plans (1990–91 and 1991–92) were implemented.",
+    expHi: "आठवीं पंचवर्षीय योजना 1 अप्रैल 1990 से शुरू होनी थी, परंतु केंद्र में राजनीतिक अस्थिरता (बार-बार सरकारें बदलने) और खाड़ी युद्ध से उत्पन्न गंभीर भुगतान संतुलन (विदेशी मुद्रा भंडार) संकट के कारण इसे दो वर्ष के लिए टाल दिया गया। इस दौरान 1990–91 और 1991–92 में दो एक-वर्षीय योजनाएँ चलाई गईं।",
+    fact: "SIDBI (Small Industries Development Bank of India) was established on 2 April 1990 during this Annual Plan period, with its headquarters in Lucknow, Uttar Pradesh."
+  },
+  {
+    q: 50,
+    en: "During the Annual Plan of 1991–92, India introduced the historic 'New Economic Policy' (LPG Reforms) on 24 July 1991. Who were the Prime Minister and Finance Minister of India at that time?",
+    hi: "1991–92 की वार्षिक योजना के दौरान भारत ने 24 जुलाई 1991 को ऐतिहासिक 'नई आर्थिक नीति' (LPG सुधार) लागू की। उस समय भारत के प्रधानमंत्री और वित्त मंत्री कौन थे?",
+    options: [
+      "Rajiv Gandhi (PM) and V.P. Singh (FM) / राजीव गांधी (प्रधानमंत्री) और वी.पी. सिंह (वित्त मंत्री)",
+      "P.V. Narasimha Rao (PM) and Dr. Manmohan Singh (FM) / पी.वी. नरसिम्हा राव (प्रधानमंत्री) और डॉ. मनमोहन सिंह (वित्त मंत्री)",
+      "Atal Bihari Vajpayee (PM) and Yashwant Sinha (FM) / अटल बिहारी वाजपेयी (प्रधानमंत्री) और यशवंत सिन्हा (वित्त मंत्री)",
+      "Chandra Shekhar (PM) and Pranab Mukherjee (FM) / चंद्रशेखर (प्रधानमंत्री) और प्रणब मुखर्जी (वित्त मंत्री)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "On 24 July 1991, under the leadership of Prime Minister P.V. Narasimha Rao and Finance Minister Dr. Manmohan Singh, India announced the New Industrial and Economic Policy based on Liberalization, Privatization, and Globalization (LPG), also known as the 'Rao-Manmohan Model'.",
+    expHi: "24 जुलाई 1991 को तत्कालीन प्रधानमंत्री पी.वी. नरसिम्हा राव और वित्त मंत्री डॉ. मनमोहन सिंह के नेतृत्व में भारत सरकार ने उदारीकरण (Liberalization), निजीकरण (Privatization) और वैश्वीकरण (Globalization) अर्थात 'LPG सुधार' पर आधारित नई आर्थिक नीति की घोषणा की, जिसे 'राव-मनमोहन मॉडल' भी कहा जाता है।",
+    fact: "Dr. Manmohan Singh is regarded as the 'Pioneer of Economic Liberalization in India'."
+  },
+  {
+    q: 51,
+    en: "What was the time period of the Eighth Five-Year Plan, and on which economic model was it based?",
+    hi: "आठवीं पंचवर्षीय योजना की समयावधि क्या थी और यह किस आर्थिक मॉडल पर आधारित थी?",
+    options: [
+      "1990–1995; P.C. Mahalanobis Model / 1990–1995; पी.सी. महालनोबिस मॉडल",
+      "1992–1997; John W. Miller Model / 1992–1997; जॉन डब्ल्यू. मिलर मॉडल",
+      "1992–1997; Harrod-Domar Model / 1992–1997; हैरोड-डोमर मॉडल",
+      "1997–2002; D.P. Dhar Model / 1997–2002; डी.पी. धर मॉडल",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Eighth Five-Year Plan ran from 1 April 1992 to 31 March 1997 (after two Annual Plans in 1990–92). Prepared under the guidance of Deputy Chairman Pranab Mukherjee, it was based on the 'John W. Miller Model' and marked the transition from imperative centralized planning to indicative planning following the 1991 LPG reforms.",
+    expHi: "आठवीं पंचवर्षीय योजना की समयावधि 1 अप्रैल 1992 से 31 मार्च 1997 तक थी। योजना आयोग के तत्कालीन उपाध्यक्ष प्रणब मुखर्जी के मार्गदर्शन में तैयार यह योजना 'जॉन डब्ल्यू. मिलर मॉडल' (John W. Miller Model) पर आधारित थी।",
+    fact: "The Eighth Plan achieved a high growth rate of 6.8% against its target of 5.6%."
+  },
+  {
+    q: 52,
+    en: "What was recognized as the core priority (focal point) of the Eighth Five-Year Plan (1992–97)?",
+    hi: "आठवीं पंचवर्षीय योजना (1992–97) में किस क्षेत्र को सर्वोच्च प्राथमिकता (मुख्य केंद्र बिंदु) माना गया था?",
+    options: [
+      "Heavy Industries / भारी उद्योग",
+      "Human Resource Development (मानव संसाधन विकास) / मानव संसाधन विकास",
+      "Green Revolution / हरित क्रांति",
+      "Banking Nationalization / बैंकों का राष्ट्रीयकरण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Eighth Five-Year Plan placed 'Human Resource Development' (मानव संसाधन का विकास)—encompassing employment generation, universalization of elementary education, public health, and population control—at the very center of all developmental efforts.",
+    expHi: "आठवीं पंचवर्षीय योजना (1992–97) का मुख्य उद्देश्य 'मानव संसाधन का विकास' (Human Resource Development) करना था, जिसके अंतर्गत रोजगार सृजन, जनसंख्या नियंत्रण, प्राथमिक शिक्षा के सार्वभौमीकरण और जन-स्वास्थ्य को सर्वोच्च प्राथमिकता दी गई।",
+    fact: "The National Pulse Polio Immunization Programme was launched in India in 1995–96 during the Eighth Plan."
+  },
+  {
+    q: 53,
+    en: "Which flagship self-employment scheme for educated unemployed youth was launched on 2 October 1993 during the Eighth Five-Year Plan (1992–97)?",
+    hi: "आठवीं पंचवर्षीय योजना (1992–97) के दौरान शिक्षित बेरोजगार युवाओं को स्वरोजगार प्रदान करने के लिए 2 अक्टूबर 1993 को कौन-सी प्रमुख योजना शुरू की गई थी?",
+    options: [
+      "Jawahar Rozgar Yojana (JRY) / जवाहर रोजगार योजना",
+      "Prime Minister's Rozgar Yojana (PMRY - 2 October 1993) / प्रधानमंत्री रोजगार योजना (PMRY - 2 अक्टूबर 1993)",
+      "Employment Assurance Scheme (EAS) / रोजगार आश्वासन योजना",
+      "Swarnajayanti Gram Swarozgar Yojana (SGSY) / स्वर्णजयंती ग्राम स्वरोजगार योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Prime Minister's Rozgar Yojana (PMRY) was launched on 2 October 1993 (Gandhi Jayanti) during the Eighth Five-Year Plan to provide subsidized financial assistance for self-employment to educated unemployed youth. Other major Eighth Plan milestones include the 73rd/74th Constitutional Amendments (1992/93), WTO founding membership (1 Jan 1995), and Mid-Day Meal Scheme (15 Aug 1995).",
+    expHi: "UPSSSC परीक्षाओं में आठवीं पंचवर्षीय योजना (1992–97) से संबंधित सर्वाधिक पूछा जाने वाला प्रश्न 'प्रधानमंत्री रोजगार योजना' (PMRY - 2 अक्टूबर 1993 को शिक्षित बेरोजगार युवाओं को स्वरोजगार प्रदान करने हेतु प्रारंभ) है। इसके अतिरिक्त 73वां व 74वां संविधान संशोधन (1992/93), भारत का WTO का सदस्य बनना (1 जनवरी 1995) और मिड-डे मील योजना (15 अगस्त 1995) भी इसी योजना काल की प्रमुख घटनाएँ हैं।",
+    fact: "Prime Minister's Rozgar Yojana (PMRY) was launched on 2 October 1993 during the Eighth Five-Year Plan to provide self-employment to educated unemployed youth."
+  },
+  {
+    q: 54,
+    en: "What was the time period and main theme of the Ninth Five-Year Plan?",
+    hi: "नौवीं पंचवर्षीय योजना की समयावधि और मुख्य विषय (थीम) क्या था?",
+    options: [
+      "1995–2000; Growth with Stability / 1995–2000; स्थिरता के साथ विकास",
+      "1997–2002; Growth with Social Justice and Equality (न्यायपूर्ण वितरण एवं समानता के साथ विकास) / 1997–2002; न्यायपूर्ण वितरण एवं समानता के साथ विकास",
+      "2002–2007; Faster and More Inclusive Growth / 2002–2007; तीव्र एवं अधिक समावेशी विकास",
+      "1997–2002; Removal of Poverty / 1997–2002; गरीबी उन्मूलन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Launched in the 50th year of Indian Independence, the Ninth Five-Year Plan ran from 1 April 1997 to 31 March 2002. Its central theme was 'Growth with Social Justice and Equality' (न्यायपूर्ण वितरण एवं समानता के साथ विकास).",
+    expHi: "भारत की स्वतंत्रता के 50वें वर्ष में शुरू हुई नौवीं पंचवर्षीय योजना की समयावधि 1 अप्रैल 1997 से 31 मार्च 2002 तक थी। इस योजना का मुख्य उद्देश्य 'न्यायपूर्ण वितरण एवं समानता के साथ विकास' (Growth with Social Justice and Equality) था।",
+    fact: "The Ninth Plan targeted a GDP growth rate of 6.5%, but achieved only 5.4% due to the East Asian Financial Crisis (1997), post-Pokhran-II economic sanctions (1998), and the Kargil War (1999)."
+  },
+  {
+    q: 55,
+    en: "Which of the following flagship schemes was launched during the Ninth Five-Year Plan (1997–2002)?",
+    hi: "निम्नलिखित में से कौन-सी प्रमुख योजना नौवीं पंचवर्षीय योजना (1997–2002) के दौरान शुरू की गई थी?",
+    options: [
+      "Swarnajayanti Gram Swarozgar Yojana (SGSY – April 1999) / स्वर्णजयंती ग्राम स्वरोजगार योजना (अप्रैल 1999)",
+      "Pradhan Mantri Gram Sadak Yojana (PMGSY – 25 December 2000) / प्रधानमंत्री ग्राम सड़क योजना (25 दिसंबर 2000)",
+      "Antyodaya Anna Yojana (AAY – 25 December 2000) and Sarva Shiksha Abhiyan (SSA – 2000–01) / अंत्योदय अन्न योजना (25 दिसंबर 2000) तथा सर्व शिक्षा अभियान (2000–01)",
+      "All of the above / उपर्युक्त सभी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "During the Ninth Five-Year Plan (1997–2002), several landmark welfare and infrastructure schemes were launched under PM Atal Bihari Vajpayee, including Kisan Credit Card (KCC - Aug 1998), Swarnajayanti Gram Swarozgar Yojana (SGSY - 1 April 1999), Pradhan Mantri Gram Sadak Yojana (PMGSY - 25 Dec 2000), Antyodaya Anna Yojana (AAY - 25 Dec 2000), and Sarva Shiksha Abhiyan (SSA - 2000–01).",
+    expHi: "नौवीं पंचवर्षीय योजना (1997–2002) के दौरान किसान क्रेडिट कार्ड (KCC - 1998), स्वर्णजयंती ग्राम स्वरोजगार योजना (SGSY - अप्रैल 1999), प्रधानमंत्री ग्राम सड़क योजना (PMGSY - 25 दिसंबर 2000), अंत्योदय अन्न योजना (AAY - 25 दिसंबर 2000) और सर्व शिक्षा अभियान (SSA - 2000–01) जैसी महत्वपूर्ण योजनाएँ शुरू की गईं।",
+    fact: "The Kisan Credit Card (KCC) scheme was introduced in August 1998 on the recommendation of the R.V. Gupta Committee."
+  },
+  {
+    q: 56,
+    en: "What was the time period of the Tenth Five-Year Plan, and what target did it set regarding poverty reduction and employment?",
+    hi: "दसवीं पंचवर्षीय योजना की समयावधि क्या थी, और इसमें गरीबी उन्मूलन व रोजगार के संबंध में क्या प्रमुख लक्ष्य रखा गया था?",
+    options: [
+      "2000–2005; Doubling per capita income in 5 years / 2000–2005; 5 वर्षों में प्रति व्यक्ति आय दोगुनी करना",
+      "2002–2007; Reduction of poverty ratio by 5 percentage points by 2007 and doubling per capita income in the next 10 years / 2002–2007; 2007 तक गरीबी अनुपात में 5 प्रतिशत अंकों की कमी करना और अगले 10 वर्षों में प्रति व्यक्ति आय को दोगुना करना",
+      "2002–2007; Zero unemployment by 2005 / 2002–2007; 2005 तक शून्य बेरोजगारी",
+      "2007–2012; Inclusive Growth / 2007–2012; समावेशी विकास",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Tenth Five-Year Plan ran from 1 April 2002 to 31 March 2007. For the first time, it introduced 'Monitorable Targets' (निगरानी योग्य लक्ष्य) for key indicators of human development, including doubling per capita income in the next 10 years, reducing the poverty ratio by 5 percentage points by 2007, creating 50 million (5 crore) new work opportunities, and increasing literacy to 75%.",
+    expHi: "दसवीं पंचवर्षीय योजना की समयावधि 1 अप्रैल 2002 से 31 मार्च 2007 तक थी। इस योजना में पहली बार राज्य-वार और मानव विकास के 'निगरानी योग्य लक्ष्य' (Monitorable Targets) निर्धारित किए गए, जिनमें अगले 10 वर्षों में प्रति व्यक्ति आय को दोगुना करना, 2007 तक गरीबी अनुपात में 5% की कमी लाना और 5 करोड़ नए रोजगार अवसर सृजित करना शामिल था।",
+    fact: "Target growth rate of the Tenth Plan was 8.0%, while actual achieved growth rate was 7.6% (7.7%)."
+  },
+  {
+    q: 57,
+    en: "During which Five-Year Plan was the National Rural Employment Guarantee Act (NREGA, now MGNREGA) enacted and implemented?",
+    hi: "राष्ट्रीय ग्रामीण रोजगार गारंटी अधिनियम (NREGA, वर्तमान में MGNREGA) किस पंचवर्षीय योजना के दौरान पारित और लागू किया गया था?",
+    options: [
+      "Eighth Five-Year Plan / आठवीं पंचवर्षीय योजना",
+      "Ninth Five-Year Plan / नौवीं पंचवर्षीय योजना",
+      "Tenth Five-Year Plan / दसवीं पंचवर्षीय योजना",
+      "Eleventh Five-Year Plan / ग्यारहवीं पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "NREGA was enacted by Parliament in August 2005 (Act 42 of 2005) and came into force on 2 February 2006 from Bandlapalli village in Anantapur district of Andhra Pradesh (covering 200 backward districts in Phase-I) during the Tenth Five-Year Plan (2002–07). On 2 October 2009 (during the 11th Plan), it was renamed MGNREGA.",
+    expHi: "राष्ट्रीय ग्रामीण रोजगार गारंटी अधिनियम (NREGA) संसद द्वारा 2005 में पारित किया गया और दसवीं पंचवर्षीय योजना (2002–07) के दौरान 2 फरवरी 2006 को आंध्र प्रदेश के अनंतपुर जिले के बंदलापल्ली गाँव से (प्रथम चरण के 200 जिलों में) लागू हुआ। 1 अप्रैल 2008 से इसे पूरे भारत में लागू किया गया और 2 अक्टूबर 2009 को इसका नाम बदलकर 'मनरेगा' (MGNREGA) कर दिया गया।",
+    fact: "Alongside NREGA, the National Rural Health Mission (NRHM - 12 April 2005) and Bharat Nirman (2005) were also launched during the Tenth Five-Year Plan."
+  },
+  {
+    q: 58,
+    en: "What was the time period and central theme of the Eleventh Five-Year Plan?",
+    hi: "ग्यारहवीं पंचवर्षीय योजना की समयावधि और मुख्य विषय (थीम) क्या था?",
+    options: [
+      "2002–2007; Growth with Social Justice / 2002–2007; सामाजिक न्याय के साथ विकास",
+      "2007–2012; Towards Faster and More Inclusive Growth (तीव्रतर और अधिक समावेशी विकास की ओर) / 2007–2012; तीव्रतर और अधिक समावेशी विकास की ओर",
+      "2012–2017; Faster, Sustainable and More Inclusive Growth / 2012–2017; तीव्र, धारणीय और अधिक समावेशी विकास",
+      "2007–2012; Self-Reliant India / 2007–2012; आत्मनिर्भर भारत",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Eleventh Five-Year Plan ran from 1 April 2007 to 31 March 2012 under Prime Minister Dr. Manmohan Singh and Deputy Chairman Montek Singh Ahluwalia. Its central theme was 'Towards Faster and More Inclusive Growth' (तीव्रतर और अधिक समावेशी विकास की ओर), and its blueprint was prepared with notable inputs from Prof. C. Rangarajan.",
+    expHi: "ग्यारहवीं पंचवर्षीय योजना की समयावधि 1 अप्रैल 2007 से 31 मार्च 2012 तक थी। इस योजना का मुख्य विषय (थीम) 'तीव्रतर और अधिक समावेशी विकास की ओर' (Towards Faster and More Inclusive Growth) था। इसकी रूपरेखा तैयार करने में डॉ. सी. रंगराजन और मोंटेक सिंह अहलूवालिया की प्रमुख भूमिका थी।",
+    fact: "Look carefully at the difference between the 11th and 12th Plans: 11th Plan = 'Faster and More Inclusive Growth'; 12th Plan = 'Faster, Sustainable, and More Inclusive Growth' (the word 'Sustainable/धारणीय' was added in the 12th Plan)."
+  },
+  {
+    q: 59,
+    en: "Which Five-Year Plan achieved the highest average annual GDP growth rate (approximately 7.9% to 8.0%) in the entire history of Indian planning?",
+    hi: "भारतीय नियोजन के संपूर्ण इतिहास में किस पंचवर्षीय योजना ने सर्वाधिक औसत वार्षिक जीडीपी वृद्धि दर (लगभग 7.9% से 8.0%) हासिल की?",
+    options: [
+      "Eighth Five-Year Plan / आठवीं पंचवर्षीय योजना",
+      "Ninth Five-Year Plan / नौवीं पंचवर्षीय योजना",
+      "Tenth Five-Year Plan / दसवीं पंचवर्षीय योजना",
+      "Eleventh Five-Year Plan / ग्यारहवीं पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "Against a target of 9.0% (later revised to 8.1%), the Eleventh Five-Year Plan (2007–12) achieved an average annual GDP growth rate of nearly 8.0% (7.9%), which is the highest realized growth rate among all twelve Five-Year Plans in India.",
+    expHi: "ग्यारहवीं पंचवर्षीय योजना (2007–12) में 9.0% के वृद्धि लक्ष्य के सापेक्ष लगभग 7.9% (8.0%) की औसत वार्षिक जीडीपी वृद्धि दर प्राप्त की गई, जो भारत की सभी बारह पंचवर्षीय योजनाओं में प्राप्त की गई 'सर्वाधिक विकास दर' है।",
+    fact: "The Right of Children to Free and Compulsory Education Act (RTE Act, 2009 - enforced on 1 April 2010) and the Rashtriya Swasthya Bima Yojana (RSBY - 2008) were major highlights of the Eleventh Plan."
+  },
+  {
+    q: 60,
+    en: "What was the time period and main theme of India's Twelfth (and last) Five-Year Plan?",
+    hi: "भारत की बारहवीं (और अंतिम) पंचवर्षीय योजना की समयावधि और मुख्य विषय (थीम) क्या था?",
+    options: [
+      "2010–2015; Faster and Inclusive Growth / 2010–2015; तीव्र और समावेशी विकास",
+      "2012–2017; Faster, Sustainable and More Inclusive Growth (तीव्र, धारणीय और अधिक समावेशी विकास) / 2012–2017; तीव्र, धारणीय और अधिक समावेशी विकास",
+      "2012–2017; Sabka Saath, Sabka Vikas / 2012–2017; सबका साथ, सबका विकास",
+      "2014–2019; Digital and Skill India / 2014–2019; डिजिटल और स्किल इंडिया",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Twelfth Five-Year Plan (1 April 2012 to 31 March 2017) was India's last Five-Year Plan. Approved by the National Development Council in December 2012, its theme was 'Faster, Sustainable, and More Inclusive Growth' (तीव्र, धारणीय/सतत और अधिक समावेशी विकास).",
+    expHi: "बारहवीं पंचवर्षीय योजना (1 अप्रैल 2012 से 31 मार्च 2017) भारत की अंतिम पंचवर्षीय योजना थी। इसका मुख्य उद्देश्य (थीम) 'तीव्र, धारणीय (सतत) और अधिक समावेशी विकास' (Faster, Sustainable and More Inclusive Growth) था।",
+    fact: "The initial GDP growth target of the 12th Plan was 8.2%, which was later revised to 8.0% by the NDC in December 2012, with a target of 4.0% growth in the agriculture sector and 10% reduction in poverty."
+  },
+  {
+    q: 61,
+    en: "How many monitorable targets across 6 major areas were fixed in the Twelfth Five-Year Plan (2012–17), including reducing Total Fertility Rate (TFR) to 2.1?",
+    hi: "बारहवीं पंचवर्षीय योजना (2012–17) में कुल प्रजनन दर (TFR) को 2.1 तक लाने सहित 6 प्रमुख क्षेत्रों में कुल कितने निगरानी योग्य लक्ष्य (Monitorable Targets) निर्धारित किए गए थे?",
+    options: [
+      "15 Targets / 15 लक्ष्य",
+      "20 Targets / 20 लक्ष्य",
+      "25 Targets / 25 लक्ष्य",
+      "30 Targets / 30 लक्ष्य",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "The Twelfth Five-Year Plan laid down 25 core monitorable targets grouped under 6 major heads: Economic Growth (e.g., 8% GDP, 4% Agriculture, 10% Manufacturing), Poverty and Employment (50 million non-farm jobs), Education, Health (IMR to 25, MMR to 100, TFR to 2.1), Infrastructure (electricity to all villages), and Environment & Sustainability (adding 1 million hectares of green cover every year).",
+    expHi: "बारहवीं पंचवर्षीय योजना में 6 प्रमुख श्रेणियों (आर्थिक विकास, गरीबी और रोजगार, शिक्षा, स्वास्थ्य, अवसंरचना तथा पर्यावरण एवं धारणीयता) के अंतर्गत कुल 25 मुख्य निगरानी योग्य लक्ष्य (25 Core Monitorable Targets) निर्धारित किए गए थे। इसमें कुल प्रजनन दर (TFR) को घटाकर 2.1 पर लाने और गैर-कृषि क्षेत्र में 5 करोड़ नए रोजगार अवसर सृजित करने का लक्ष्य शामिल था।",
+    fact: "12th Plan Monitorable Targets: Real GDP growth = 8.0%, Agriculture growth = 4.0%, Manufacturing growth = 10.0%, IMR = 25 per 1000 live births, TFR = 2.1."
+  },
+  {
+    q: 62,
+    en: "Who served as the LAST Deputy Chairman of the Planning Commission of India before it was dissolved in August 2014?",
+    hi: "अगस्त 2014 में योजना आयोग के समाप्त होने से पूर्व इसके अंतिम उपाध्यक्ष कौन थे?",
+    options: [
+      "K.C. Pant / के.सी. पंत",
+      "Pranab Mukherjee / प्रणब मुखर्जी",
+      "Montek Singh Ahluwalia / मोंटेक सिंह अहलूवालिया",
+      "Arvind Panagariya / अरविंद पनगढ़िया",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Montek Singh Ahluwalia served as the Deputy Chairman of the Planning Commission from July 2004 to May 2014 (across the 10th, 11th, and 12th Plans), making him the last Deputy Chairman of the Planning Commission. Arvind Panagariya was the first Vice-Chairman of NITI Aayog.",
+    expHi: "मोंटेक सिंह अहलूवालिया ने जुलाई 2004 से मई 2014 तक योजना आयोग के उपाध्यक्ष के रूप में कार्य किया और वे योजना आयोग के 'अंतिम उपाध्यक्ष' थे। अरविंद पनगढ़िया नीति आयोग के प्रथम उपाध्यक्ष थे।",
+    fact: "Prime Minister Narendra Modi announced the abolition of the Planning Commission from the ramparts of the Red Fort on 15 August 2014."
+  },
+  {
+    q: 63,
+    en: "On which date was NITI Aayog established by replacing the 65-year-old Planning Commission, and what is the full form of NITI?",
+    hi: "65 वर्ष पुराने योजना आयोग के स्थान पर 'नीति आयोग' (NITI Aayog) की स्थापना किस तिथि को की गई थी, और NITI का पूर्ण रूप क्या है?",
+    options: [
+      "15 August 2014; National Institute for Technical India / 15 अगस्त 2014; नेशनल इंस्टीट्यूट फॉर टेक्निकल इंडिया",
+      "1 January 2015; National Institution for Transforming India / 1 जनवरी 2015; नेशनल इंस्टीट्यूशन फॉर ट्रांसफॉर्मिंग इंडिया",
+      "26 January 2015; National Initiative for Transforming India / 26 जनवरी 2015; नेशनल इनिशिएटिव फॉर ट्रांसफॉर्मिंग इंडिया",
+      "1 April 2015; New Institution for Transforming India / 1 अप्रैल 2015; न्यू इंस्टीट्यूशन फॉर ट्रांसफॉर्मिंग इंडिया",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "NITI Aayog (National Institution for Transforming India / राष्ट्रीय भारत परिवर्तन संस्थान) was established on 1 January 2015 via a Union Cabinet resolution to serve as the premier policy 'Think Tank' of the Government of India.",
+    expHi: "योजना आयोग के स्थान पर केंद्रीय मंत्रिमंडल के एक प्रस्ताव द्वारा 1 जनवरी 2015 को 'नीति आयोग' (NITI Aayog - National Institution for Transforming India / राष्ट्रीय भारत परिवर्तन संस्थान) की स्थापना की गई। यह भारत सरकार के नीतिगत 'थिंक टैंक' (Think Tank) के रूप में कार्य करता है।",
+    fact: "Look closely at the letter 'I' in NITI: It stands for Institution (not Institute or Initiative) -> National Institution for Transforming India."
+  },
+  {
+    q: 64,
+    en: "What is the fundamental difference between the Planning Commission and NITI Aayog regarding financial powers and planning approach?",
+    hi: "वित्तीय शक्तियों और नियोजन के दृष्टिकोण के संबंध में योजना आयोग और नीति आयोग के बीच मूलभूत अंतर क्या है?",
+    options: [
+      "Planning Commission followed a 'Top-Down' approach and had the power to allocate funds to Ministries and States; NITI Aayog follows a 'Bottom-Up' approach based on Cooperative Federalism and has NO power to allocate funds / योजना आयोग 'टॉप-डाउन' दृष्टिकोण अपनाता था और उसे धन आवंटित करने की शक्ति प्राप्त थी; जबकि नीति आयोग 'सहकारी संघवाद' पर आधारित 'बॉटम-अप' दृष्टिकोण अपनाता है और इसके पास धन आवंटित करने की शक्ति नहीं है",
+      "NITI Aayog is a Constitutional body while Planning Commission was an Advisory body / नीति आयोग एक संवैधानिक निकाय है जबकि योजना आयोग एक सलाहकार निकाय था",
+      "Chief Ministers were members of the Planning Commission directly, whereas they have no role in NITI Aayog / मुख्यमंत्री सीधे योजना आयोग के सदस्य थे, जबकि नीति आयोग में उनकी कोई भूमिका नहीं है",
+      "NITI Aayog prepares Five-Year Plans while Planning Commission prepared 15-Year Vision Documents / नीति आयोग पंचवर्षीय योजनाएँ बनाता है जबकि योजना आयोग 15-वर्षीय विज़न दस्तावेज़ बनाता था",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Planning Commission operated on a centralized 'Top-Down' (ऊपर से नीचे) model and enjoyed financial powers to allocate plan funds to central ministries and state governments. In contrast, NITI Aayog is purely a policy think tank working on a 'Bottom-Up' (नीचे से ऊपर) approach fostering 'Cooperative and Competitive Federalism' (सहकारी एवं प्रतिस्पर्धी संघवाद); the power to allocate funds now rests solely with the Ministry of Finance and the Finance Commission.",
+    expHi: "योजना आयोग केंद्रीकृत 'टॉप-डाउन' (ऊपर से नीचे) मॉडल पर काम करता था और उसके पास राज्यों व मंत्रालयों को वित्तीय संसाधन (धन) आवंटित करने का अधिकार था। इसके विपरीत, नीति आयोग 'सहकारी संघवाद' (Cooperative Federalism) के सिद्धांत पर आधारित 'बॉटम-अप' (नीचे से ऊपर) दृष्टिकोण अपनाता है तथा इसके पास धन आवंटित करने की कोई वित्तीय शक्ति नहीं है (यह शक्ति अब वित्त मंत्रालय में निहित है)।",
+    fact: "After the end of the 12th Five-Year Plan in March 2017, NITI Aayog replaced Five-Year Plans with a 15-Year Vision Document, a 7-Year Strategy, and a 3-Year Action Agenda."
+  },
+  {
+    q: 65,
+    en: "Who were appointed as the FIRST Vice-Chairman and FIRST Chief Executive Officer (CEO) of NITI Aayog in January 2015?",
+    hi: "जनवरी 2015 में नीति आयोग के प्रथम उपाध्यक्ष (Vice-Chairman) और प्रथम मुख्य कार्यकारी अधिकारी (CEO) के रूप में किसे नियुक्त किया गया था?",
+    options: [
+      "Rajiv Kumar (Vice-Chairman) and Amitabh Kant (CEO) / राजीव कुमार (उपाध्यक्ष) और अमिताभ कांत (CEO)",
+      "Arvind Panagariya (Vice-Chairman) and Sindhushree Khullar (CEO) / अरविंद पनगढ़िया (उपाध्यक्ष) और सिंधुश्री खुल्लर (CEO)",
+      "Suman Bery (Vice-Chairman) and B.V.R. Subrahmanyam (CEO) / सुमन बेरी (उपाध्यक्ष) और बी.वी.आर. सुब्रह्मण्यम (CEO)",
+      "Montek Singh Ahluwalia (Vice-Chairman) and Amitabh Kant (CEO) / मोंटेक सिंह अहलूवालिया (उपाध्यक्ष) और अमिताभ कांत (CEO)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "When NITI Aayog was constituted in January 2015 under the Chairmanship of Prime Minister Narendra Modi, eminent economist Arvind Panagariya was appointed as its first Vice-Chairman, and IAS officer Sindhushree Khullar was appointed as its first CEO.",
+    expHi: "जनवरी 2015 में नीति आयोग के गठन के समय प्रसिद्ध अर्थशास्त्री प्रो. अरविंद पनगढ़िया को इसका 'प्रथम उपाध्यक्ष' और सिंधुश्री खुल्लर को 'प्रथम मुख्य कार्यकारी अधिकारी' (CEO) नियुक्त किया गया था।",
+    fact: "Both the Vice-Chairman and the CEO of NITI Aayog are appointed by the Prime Minister of India. The Vice-Chairman holds the rank of a Cabinet Minister, while the CEO holds the rank of a Secretary to the Government of India."
+  },
+  {
+    q: 66,
+    en: "Who is the Ex-Officio Chairman of NITI Aayog, and who comprises its Governing Council (शासी परिषद)?",
+    hi: "नीति आयोग का पदेन अध्यक्ष कौन होता है, और इसकी 'शासी परिषद' (Governing Council) में कौन शामिल होते हैं?",
+    options: [
+      "Finance Minister (Chairman); RBI Governor and Bank Chairmen / वित्त मंत्री (अध्यक्ष); आरबीआई गवर्नर और बैंक अध्यक्ष",
+      "Prime Minister (Chairman); Chief Ministers of all States, Chief Ministers of UTs with Legislatures, and Lt. Governors of other UTs / प्रधानमंत्री (अध्यक्ष); सभी राज्यों के मुख्यमंत्री, विधानसभा वाले केंद्र शासित प्रदेशों के मुख्यमंत्री और अन्य केंद्र शासित प्रदेशों के उपराज्यपाल",
+      "President of India (Chairman); All Governors and Chief Ministers / भारत के राष्ट्रपति (अध्यक्ष); सभी राज्यपाल और मुख्यमंत्री",
+      "Vice-Chairman of NITI Aayog; Only Union Cabinet Ministers / नीति आयोग के उपाध्यक्ष; केवल केंद्रीय कैबिनेट मंत्री",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Prime Minister of India is the Ex-Officio Chairman of NITI Aayog. Its Governing Council—which replaced the earlier National Development Council (NDC) in practice—comprises the Chief Ministers of all States, Chief Ministers of Union Territories with legislatures (Delhi, Puducherry, J&K), and Lieutenant Governors/Administrators of other Union Territories. Additionally, up to 4 Union Ministers serve as Ex-Officio members.",
+    expHi: "भारत का प्रधानमंत्री नीति आयोग का पदेन अध्यक्ष होता है। नीति आयोग की 'शासी परिषद' (Governing Council) में सभी राज्यों के मुख्यमंत्री, विधानसभा वाले केंद्र शासित प्रदेशों (दिल्ली, पुदुचेरी आदि) के मुख्यमंत्री और अन्य केंद्र शासित प्रदेशों के उपराज्यपाल/प्रशासक शामिल होते हैं।",
+    fact: "NITI Aayog has two main hubs: 'Team India Hub' (which interfaces between States and the Centre) and 'Knowledge and Innovation Hub' (which builds NITI's think-tank capabilities)."
+  },
+  {
+    q: 67,
+    en: "Which former Prime Minister of India also served as the Deputy Chairman of the Planning Commission (during 1985–87) as well as the Governor of the Reserve Bank of India (1982–85)?",
+    hi: "भारत के किस पूर्व प्रधानमंत्री ने योजना आयोग के उपाध्यक्ष (1985–87 के दौरान) के साथ-साथ भारतीय रिजर्व बैंक (RBI) के गवर्नर (1982–85) के रूप में भी कार्य किया है?",
+    options: [
+      "P.V. Narasimha Rao / पी.वी. नरसिम्हा राव",
+      "Inder Kumar Gujral / इंद्र कुमार गुजराल",
+      "Dr. Manmohan Singh / डॉ. मनमोहन सिंह",
+      "H.D. Deve Gowda / एच.डी. देवेगौड़ा",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Dr. Manmohan Singh held the unique distinction of serving as RBI Governor (1982–1985), Deputy Chairman of the Planning Commission (1985–1987 during the 7th Plan), Union Finance Minister (1991–1996), and Prime Minister of India (2004–2014, thus also Chairman of the Planning Commission).",
+    expHi: "डॉ. मनमोहन सिंह एकमात्र ऐसे व्यक्ति रहे हैं जिन्होंने भारतीय रिजर्व बैंक के गवर्नर (1982–85), योजना आयोग के उपाध्यक्ष (1985–87, सातवीं योजना के दौरान), केंद्रीय वित्त मंत्री (1991–96) और भारत के प्रधानमंत्री एवं योजना आयोग के पदेन अध्यक्ष (2004–14) के रूप में कार्य किया है।",
+    fact: "Pranab Mukherjee also served as the Deputy Chairman of the Planning Commission (1991–1996, during the 8th Plan) before later becoming the 13th President of India."
+  },
+  {
+    q: 68,
+    en: "What are the two main features of a 'Mixed Economy' (मिश्रित अर्थव्यवस्था), which India formally adopted through its Industrial Policies (1948 & 1956) and Five-Year Plans?",
+    hi: "'मिश्रित अर्थव्यवस्था' (Mixed Economy) की दो मुख्य विशेषताएँ क्या हैं, जिसे भारत ने अपनी औद्योगिक नीतियों (1948 और 1956) तथा पंचवर्षीय योजनाओं के माध्यम से औपचारिक रूप से अपनाया?",
+    options: [
+      "Co-existence of Agriculture and Heavy Industry / कृषि और भारी उद्योग का सह-अस्तित्व",
+      "Co-existence of the Public Sector (State) and the Private Sector / सार्वजनिक क्षेत्र (सरकारी) और निजी क्षेत्र का सह-अस्तित्व",
+      "Co-existence of Domestic Trade and Foreign Trade / घरेलू व्यापार और विदेशी व्यापार का सह-अस्तित्व",
+      "Co-existence of Rural and Urban Economy / ग्रामीण और शहरी अर्थव्यवस्था का सह-अस्तित्व",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "A 'Mixed Economy' is an economic system characterized by the co-existence of both the Public Sector (state-owned enterprises) and the Private Sector in economic activities. This is one of the most frequently repeated questions in UPSSSC PET exams.",
+    expHi: "'मिश्रित अर्थव्यवस्था' (Mixed Economy) से आशय ऐसी आर्थिक प्रणाली से है जिसमें 'सार्वजनिक क्षेत्र (सरकारी क्षेत्र) और निजी क्षेत्र का सह-अस्तित्व' (Co-existence of Public and Private Sectors) होता है। भारत ने प्रथम औद्योगिक नीति (1948) और पंचवर्षीय योजनाओं के माध्यम से मिश्रित अर्थव्यवस्था को अपनाया। यह प्रश्न UPSSSC PET परीक्षा में बार-बार पूछा गया है।",
+    fact: "British economist John Maynard Keynes (J.M. Keynes) is considered the theoretical pioneer of the Mixed Economy concept."
+  },
+  {
+    q: 69,
+    en: "What is the difference between 'Imperative Planning' (आदेशात्मक नियोजन) and 'Indicative Planning' (निर्देशात्मक/सांकेतिक नियोजन), and from which Five-Year Plan did India adopt Indicative Planning?",
+    hi: "'आदेशात्मक नियोजन' (Imperative Planning) और 'निर्देशात्मक/सांकेतिक नियोजन' (Indicative Planning) में क्या अंतर है, तथा भारत ने किस पंचवर्षीय योजना से निर्देशात्मक नियोजन को अपनाया?",
+    options: [
+      "Imperative planning is directed by the state; Indicative planning sets broad targets and guides the private sector through market incentives—adopted in India from the Eighth Five-Year Plan (1992–97) / आदेशात्मक नियोजन पूर्णतः राज्य द्वारा नियंत्रित होता है; जबकि निर्देशात्मक नियोजन में सरकार व्यापक लक्ष्य तय कर बाजार व निजी क्षेत्र को दिशा दिखाती है—भारत ने इसे आठवीं पंचवर्षीय योजना (1992–97) से अपनाया",
+      "Indicative planning was adopted in the First Five-Year Plan (1951–56) / निर्देशात्मक नियोजन प्रथम पंचवर्षीय योजना (1951–56) में अपनाया गया था",
+      "Imperative planning was adopted after 1991 LPG reforms / आदेशात्मक नियोजन 1991 के LPG सुधारों के बाद अपनाया गया था",
+      "Both mean complete abolition of the private sector / दोनों का अर्थ निजी क्षेत्र की पूर्ण समाप्ति है",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Under Imperative Planning (practiced in socialist economies like the erstwhile USSR), the state centrally controls all resources and production targets. Under Indicative Planning (pioneered in France through the Monnet Plan), the government acts as a facilitator, setting broad macroeconomic targets and encouraging the private sector through fiscal/monetary incentives. Following the 1991 economic reforms, India formally adopted 'Indicative Planning' starting from the Eighth Five-Year Plan (1992–97).",
+    expHi: "आदेशात्मक नियोजन (Imperative Planning) में संसाधनों पर राज्य का कड़ा नियंत्रण होता है, जबकि 'निर्देशात्मक या सांकेतिक नियोजन' (Indicative Planning - सर्वप्रथम फ्रांस में लागू) में सरकार केवल व्यापक आर्थिक लक्ष्य निर्धारित करती है और बाजार तंत्र व निजी क्षेत्र को प्रोत्साहन देकर विकास को दिशा देती है। भारत ने 1991 के आर्थिक सुधारों के पश्चात 'आठवीं पंचवर्षीय योजना' (1992–97) से निर्देशात्मक नियोजन को अपनाया।",
+    fact: "Indicative Planning in India -> Started from the Eighth Five-Year Plan (1992–97)."
+  },
+  {
+    q: 70,
+    en: "In the history of Indian Five-Year Plans, what was the total number of 'Annual Plans' (वार्षिक योजनाएँ) implemented during the three gap periods between 1951 and 2017?",
+    hi: "भारतीय पंचवर्षीय योजनाओं के इतिहास में 1951 से 2017 के बीच तीन अंतराल अवधियों के दौरान कुल कितनी 'वार्षिक योजनाएँ' (Annual Plans) लागू की गईं?",
+    options: [
+      "3 Annual Plans / 3 वार्षिक योजनाएँ",
+      "5 Annual Plans / 5 वार्षिक योजनाएँ",
+      "7 Annual Plans / 7 वार्षिक योजनाएँ",
+      "6 Annual Plans / 6 वार्षिक योजनाएँ",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Between 1951 and 2017, apart from the 12 Five-Year Plans, there were three breaks totaling 7 years of Annual Plans: (1) 1966–1969: 3 Annual Plans during the First Plan Holiday after the 3rd Plan; (2) 1978–1980: 2 Annual Plans during the Rolling Plan period after the 5th Plan; (3) 1990–1992: 2 Annual Plans due to political instability & BoP crisis after the 7th Plan. Total = 3 + 2 + 2 = 7 Annual Plans.",
+    expHi: "1951 से 2017 के मध्य 12 पंचवर्षीय योजनाओं के अतिरिक्त तीन बार अंतराल आया, जिसमें कुल 7 वार्षिक योजनाएँ (Annual Plans) चलाई गईं: (1) 1966–69: 3 वार्षिक योजनाएँ (प्रथम योजना अवकाश), (2) 1978–80: 2 वार्षिक योजनाएँ (अनवरत योजना काल), (3) 1990–92: 2 वार्षिक योजनाएँ (आर्थिक संकट एवं राजनीतिक अस्थिरता के कारण)। अतः कुल वार्षिक योजनाओं की संख्या = 3 + 2 + 2 = 7 है।",
+    fact: "Remember the three gap periods in Five-Year Plans: 1966–69 (3 yrs), 1978–80 (2 yrs), and 1990–92 (2 yrs)."
+  },
+  {
+    q: 71,
+    en: "Which of the following pairs of Five-Year Plans and their Target vs. Achieved GDP Growth Rates is CORRECTLY matched?",
+    hi: "पंचवर्षीय योजनाओं और उनकी लक्षित बनाम प्राप्त जीडीपी (GDP) वृद्धि दरों के निम्नलिखित युग्मों में से कौन-सा सही सुमेलित है?",
+    options: [
+      "First Plan (1951–56): Target 2.1% | Achieved 3.6% (Successful) / प्रथम योजना: लक्ष्य 2.1% | प्राप्ति 3.6% (सफल)",
+      "Third Plan (1961–66): Target 5.6% | Achieved 2.8% (Failed) / तृतीय योजना: लक्ष्य 5.6% | प्राप्ति 2.8% (असफल)",
+      "Eighth Plan (1992–97): Target 5.6% | Achieved 6.8% (Successful) / आठवीं योजना: लक्ष्य 5.6% | प्राप्ति 6.8% (सफल)",
+      "All of the above are correctly matched / उपर्युक्त सभी सही सुमेलित हैं",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "All three pairs are factually accurate according to official Planning Commission / Economic Survey records: 1st Plan (Target = 2.1%, Achieved = 3.6%), 3rd Plan (Target = 5.6%, Achieved = 2.8% - lowest growth rate among all plans), and 8th Plan (Target = 5.6%, Achieved = 6.8%). The plans that exceeded their targets were the 1st, 5th, 6th, 7th, and 8th Five-Year Plans.",
+    expHi: "दिए गए तीनों युग्म पूर्णतः सही हैं। प्रथम, पाँचवीं, छठी, सातवीं और आठवीं पंचवर्षीय योजनाओं ने अपने निर्धारित विकास लक्ष्य से अधिक वृद्धि दर हासिल की थी, जबकि तृतीय पंचवर्षीय योजना में सबसे कम (2.8%) वृद्धि दर दर्ज की गई थी।",
+    fact: "Lowest growth rate in any Five-Year Plan: Third Plan (2.8%); Highest growth rate in any Five-Year Plan: Eleventh Plan (7.9%–8.0%)."
+  },
+  {
+    q: 72,
+    en: "When was the 'Twenty Point Programme' (बीस सूत्री कार्यक्रम - TPP) first launched in India to eradicate poverty and improve the quality of life of the poor?",
+    hi: "गरीबी उन्मूलन और गरीबों के जीवन स्तर में सुधार के उद्देश्य से भारत में 'बीस सूत्री कार्यक्रम' (Twenty Point Programme - TPP) सर्वप्रथम कब शुरू किया गया था?",
+    options: [
+      "1969 (Fourth Plan) / 1969 (चतुर्थ योजना)",
+      "July 1975 (Fifth Plan) / जुलाई 1975 (पाँचवीं योजना)",
+      "1982 (Sixth Plan) / 1982 (छठी योजना)",
+      "1991 (Annual Plan) / 1991 (वार्षिक योजना)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Twenty Point Programme (TPP) was initially launched by Prime Minister Indira Gandhi in July 1975 during the Fifth Five-Year Plan. It was subsequently restructured and revised three times: in 1982, 1986, and finally in 2006 (enforced from 1 April 2007).",
+    expHi: "'बीस सूत्री कार्यक्रम' (Twenty Point Programme) की शुरुआत सर्वप्रथम पाँचवीं पंचवर्षीय योजना के दौरान जुलाई 1975 में तत्कालीन प्रधानमंत्री इंदिरा गांधी द्वारा की गई थी। बाद में इसे 1982, 1986 और 2006 में पुनर्गठित किया गया।",
+    fact: "First launched: 1975 (Fifth Plan) | Restructured in: 1982, 1986, and 2006."
+  },
+  {
+    q: 73,
+    en: "During which Five-Year Plan was the 'Blue Revolution' (नीली क्रांति - related to Fish Production) formally promoted as a major national initiative in India?",
+    hi: "भारत में 'नीली क्रांति' (Blue Revolution - मत्स्य उत्पादन से संबंधित) को किस पंचवर्षीय योजना के दौरान एक प्रमुख राष्ट्रीय पहल के रूप में औपचारिक रूप से बढ़ावा दिया गया था?",
+    options: [
+      "First Five-Year Plan (1951–56) / प्रथम पंचवर्षीय योजना (1951–56)",
+      "Third Five-Year Plan (1961–66) / तृतीय पंचवर्षीय योजना (1961–66)",
+      "Seventh Five-Year Plan (1985–90) / सातवीं पंचवर्षीय योजना (1985–90)",
+      "Eleventh Five-Year Plan (2007–12) / ग्यारहवीं पंचवर्षीय योजना (2007–12)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "The Blue Revolution (Neeli Kranti), aimed at rapid growth in aquaculture and fisheries production, was formally launched in India during the Seventh Five-Year Plan (1985–1990) when the government sponsored the Fish Farmers Development Agency (FFDA).",
+    expHi: "भारत में मत्स्य पालन और जलीय कृषि के तीव्र विकास से संबंधित 'नीली क्रांति' (Blue Revolution) की औपचारिक शुरुआत सातवीं पंचवर्षीय योजना (1985–1990) के दौरान हुई थी। हीरालाल चौधरी और डॉ. अरुण कृष्णन को भारत में नीली क्रांति का जनक माना जाता है।",
+    fact: "Green Revolution -> Plan Holiday (1966–67); White Revolution -> Fourth Plan (1970); Blue Revolution -> Seventh Plan (1985–90)."
+  },
+  {
+    q: 74,
+    en: "Which Committee submitted its report on poverty estimation to the Planning Commission in 1993, recommending state-specific poverty lines updated using CPI-AL (for rural) and CPI-IW (for urban)?",
+    hi: "किस समिति ने 1993 में योजना आयोग को गरीबी आकलन पर अपनी रिपोर्ट सौंपी, जिसमें ग्रामीण क्षेत्रों के लिए CPI-AL और शहरी क्षेत्रों के लिए CPI-IW सूचकांक का उपयोग करके राज्य-विशिष्ट गरीबी रेखा निर्धारित करने की सिफारिश की गई थी?",
+    options: [
+      "Y.K. Alagh Committee / वाई.के. अलघ समिति",
+      "D.T. Lakdawala Committee / डी.टी. लकड़वाला समिति",
+      "Suresh Tendulkar Committee / सुरेश तेंदुलकर समिति",
+      "C. Rangarajan Committee / सी. रंगराजन समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Constituted in 1989 by the Planning Commission, the Expert Group headed by Prof. D.T. Lakdawala submitted its report in 1993 (during the 8th Plan). While retaining the calorie norms of the Alagh Committee (2400/2100 kcal), it recommended disaggregated state-specific poverty lines updated using the Consumer Price Index for Agricultural Labourers (CPI-AL) in rural areas and Consumer Price Index for Industrial Workers (CPI-IW) in urban areas.",
+    expHi: "योजना आयोग द्वारा 1989 में गठित प्रो. डी.टी. लकड़वाला समिति ने 1993 में अपनी रिपोर्ट प्रस्तुत की। इस समिति ने प्रत्येक राज्य के लिए अलग-अलग गरीबी रेखा निर्धारित करने की सिफारिश की तथा मूल्य अद्यतन के लिए ग्रामीण क्षेत्रों में कृषि श्रमिकों के उपभोक्ता मूल्य सूचकांक (CPI-AL) और शहरी क्षेत्रों में औद्योगिक श्रमिकों के उपभोक्ता मूल्य सूचकांक (CPI-IW) को आधार बनाया।",
+    fact: "Later, the Suresh Tendulkar Committee (appointed in 2005, report in 2009) moved away from pure calorie norms to a broader consumption basket (including health and education expenditure) based on Mixed Reference Period (MRP)."
+  },
+  {
+    q: 75,
+    en: "Which of the following statements regarding the Suresh Tendulkar Committee (2009) and C. Rangarajan Committee (2014) appointed by the Planning Commission for poverty estimation is CORRECT?",
+    hi: "गरीबी के आकलन हेतु योजना आयोग द्वारा गठित सुरेश तेंदुलकर समिति (2009) और सी. रंगराजन समिति (2014) के संबंध में निम्नलिखित में से कौन-सा कथन सही है?",
+    options: [
+      "According to the Tendulkar Committee methodology, the all-India poverty ratio in 2011–12 was estimated at 21.9% / तेंदुलकर समिति की कार्यप्रणाली के अनुसार वर्ष 2011–12 में अखिल भारतीय गरीबी का अनुपात 21.9% आकलित किया गया था",
+      "According to the C. Rangarajan Committee (2014), the all-India poverty ratio in 2011–12 was estimated at 29.5% / सी. रंगराजन समिति (2014) के अनुसार वर्ष 2011–12 में अखिल भारतीय गरीबी का अनुपात 29.5% आकलित किया गया था",
+      "The Rangarajan Committee fixed the monthly per capita consumption expenditure threshold (2011–12) at ₹972 for rural areas (₹32/day) and ₹1407 for urban areas (₹47/day) / रंगराजन समिति ने (2011–12 के लिए) ग्रामीण क्षेत्रों में ₹972 प्रति माह (₹32/दिन) और शहरी क्षेत्रों में ₹1407 प्रति माह (₹47/दिन) प्रति व्यक्ति उपभोग व्यय की सीमा निर्धारित की थी",
+      "All of the above statements are correct / उपर्युक्त सभी कथन सही हैं",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "All three statements are strictly verified high-yield facts: (1) Using the Suresh Tendulkar methodology (₹816/month for rural; ₹1000/month for urban in 2011–12), the Planning Commission estimated India's poverty at 21.9% in 2011–12. (2) In 2012, the Planning Commission appointed the C. Rangarajan Committee, which submitted its report in June 2014. It set the poverty line at ₹972/month (₹32/day) for rural and ₹1407/month (₹47/day) for urban areas, estimating India's poverty ratio in 2011–12 at 29.5%.",
+    expHi: "दिए गए सभी कथन पूर्णतः सत्य और परीक्षा की दृष्टि से अत्यंत महत्वपूर्ण हैं: (1) सुरेश तेंदुलकर समिति की विधि (2011–12 के लिए ग्रामीण क्षेत्र में ₹816/माह और शहरी क्षेत्र में ₹1000/माह) के अनुसार 2011–12 में भारत में गरीबी का प्रतिशत 21.9% था। (2) सी. रंगराजन समिति (2012 में गठित, 2014 में रिपोर्ट) ने ग्रामीण क्षेत्र में ₹972/माह (₹32 प्रतिदिन) और शहरी क्षेत्र में ₹1407/माह (₹47 प्रतिदिन) की सीमा तय की, जिसके अनुसार 2011–12 में भारत में गरीबों का अनुपात 29.5% आकलित किया गया।",
+    fact: "NITI Aayog now measures multidimensional poverty in India through the National Multidimensional Poverty Index (MPI) based on the Alkire-Foster methodology across 3 dimensions (Health, Education, Standard of Living) and 12 indicators."
+  },
+  {
+    q: 76,
+    en: "During which Five-Year Plan was the 'Heavy Engineering Corporation' (HEC) established in Ranchi (1958)?",
+    hi: "राँची में 'भारी इंजीनियरिंग निगम' (Heavy Engineering Corporation - HEC, 1958) की स्थापना किस पंचवर्षीय योजना के दौरान की गई थी?",
+    options: [
+      "First Five-Year Plan / प्रथम पंचवर्षीय योजना",
+      "Second Five-Year Plan / द्वितीय पंचवर्षीय योजना",
+      "Third Five-Year Plan / तृतीय पंचवर्षीय योजना",
+      "Fourth Five-Year Plan / चतुर्थ पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Heavy Engineering Corporation Ltd. (HEC) was established in Ranchi in 1958 during the Second Five-Year Plan (1956–61) with the collaboration of Russia (USSR) and Czechoslovakia to supply capital equipment for steel, mining, and heavy industries.",
+    expHi: "द्वितीय पंचवर्षीय योजना (1956–61) के दौरान भारी और आधारभूत उद्योगों के विकास के क्रम में वर्ष 1958 में राँची (वर्तमान झारखंड) में रूस और चेकोस्लोवाकिया के सहयोग से 'भारी इंजीनियरिंग निगम' (HEC) की स्थापना की गई थी।",
+    fact: "Chittaranjan Locomotive Works (CLW, 1950/First Plan expansion) and Integral Coach Factory (ICF Perambur, 1955) boosted railway manufacturing in the First Plan, while HEC Ranchi (1958) and HMT expansion were highlights of the Second Plan."
+  },
+  {
+    q: 77,
+    en: "When was the 'Khadi and Village Industries Commission' (KVIC) established to promote rural and cottage industries during the Five-Year Plans?",
+    hi: "पंचवर्षीय योजनाओं के दौरान ग्रामीण एवं कुटीर उद्योगों को बढ़ावा देने के लिए 'खादी और ग्रामोद्योग आयोग' (KVIC) की स्थापना कब की गई थी?",
+    options: [
+      "During the First Five-Year Plan / प्रथम पंचवर्षीय योजना के दौरान",
+      "During the Second Five-Year Plan (under the KVIC Act, 1956; operational in April 1957) / द्वितीय पंचवर्षीय योजना के दौरान (अधिनियम 1956, कार्यप्रारंभ अप्रैल 1957)",
+      "During the Fourth Five-Year Plan / चतुर्थ पंचवर्षीय योजना के दौरान",
+      "During the Sixth Five-Year Plan / छठी पंचवर्षीय योजना के दौरान",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Khadi and Village Industries Commission (KVIC) is a statutory body established in April 1957 (during the Second Five-Year Plan) under the Khadi and Village Industries Commission Act of 1956, based on the recommendations of the Village and Small-Scale Industries Committee (Karve Committee, 1955).",
+    expHi: "खादी और ग्रामोद्योग आयोग (KVIC) एक वैधानिक (सांविधिक) निकाय है, जिसकी स्थापना संसद के अधिनियम 1956 के तहत अप्रैल 1957 में (द्वितीय पंचवर्षीय योजना के दौरान) ग्राम एवं लघु उद्योग समिति (कार्वे समिति, 1955) की सिफारिशों के क्रम में की गई थी।",
+    fact: "The Karve Committee (D.G. Karve, 1955) is famously associated with the promotion of Village and Small-Scale Industries during the Second Five-Year Plan."
+  },
+  {
+    q: 78,
+    en: "Which major institution was set up in July 1964 during the Third Five-Year Plan as the apex institution for industrial finance, along with the Unit Trust of India (UTI)?",
+    hi: "तृतीय पंचवर्षीय योजना के दौरान जुलाई 1964 में भारतीय यूनिट ट्रस्ट (UTI) के साथ औद्योगिक वित्त की शीर्ष संस्था के रूप में किस प्रमुख बैंक की स्थापना की गई थी?",
+    options: [
+      "NABARD / नाबार्ड",
+      "IDBI (Industrial Development Bank of India) / भारतीय औद्योगिक विकास बैंक (IDBI)",
+      "SIDBI / सिडबी",
+      "EXIM Bank / एक्जिम बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Both the Industrial Development Bank of India (IDBI - 1 July 1964) and the Unit Trust of India (UTI - February/July 1964) were established in 1964 during the Third Five-Year Plan (1961–66) to mobilize savings and provide long-term finance to the industrial sector.",
+    expHi: "तृतीय पंचवर्षीय योजना (1961–66) के दौरान वर्ष 1964 में औद्योगिक क्षेत्र को दीर्घकालीन वित्तीय सहायता प्रदान करने के लिए 'भारतीय औद्योगिक विकास बैंक' (IDBI - 1 जुलाई 1964) और छोटे निवेशकों की बचत को प्रोत्साहित करने के लिए 'भारतीय यूनिट ट्रस्ट' (UTI - 1964) की स्थापना की गई थी।",
+    fact: "IFCI (1948), ICICI (1955 - First Plan), IDBI & UTI (1964 - Third Plan), NABARD & EXIM Bank (1982 - Sixth Plan), SIDBI (1990 - Annual Plan)."
+  },
+  {
+    q: 79,
+    en: "In which year were the 'Food Corporation of India' (FCI) and the 'Agricultural Prices Commission' (APC, now CACP) established during the Third Five-Year Plan?",
+    hi: "तृतीय पंचवर्षीय योजना के दौरान 'भारतीय खाद्य निगम' (FCI) और 'कृषि मूल्य आयोग' (APC, वर्तमान में CACP) की स्थापना किस वर्ष की गई थी?",
+    options: [
+      "1961",
+      "1963",
+      "January 1965 / जनवरी 1965",
+      "1968",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "In January 1965 (during the Third Five-Year Plan), the Government of India established the Food Corporation of India (FCI, on 14 Jan 1965 under the Food Corporations Act, 1964) for foodgrain procurement/distribution, and the Agricultural Prices Commission (APC, on 1 Jan 1965, chaired by Prof. M.L. Dantwala; renamed CACP in 1985) to recommend Minimum Support Prices (MSP).",
+    expHi: "तृतीय पंचवर्षीय योजना के दौरान जनवरी 1965 में खाद्यान्न की खरीद, भंडारण एवं वितरण हेतु 'भारतीय खाद्य निगम' (FCI - 14 जनवरी 1965) तथा फसलों के न्यूनतम समर्थन मूल्य (MSP) की सिफारिश करने हेतु 'कृषि मूल्य आयोग' (APC - 1 जनवरी 1965, जिसे 1985 में बदलकर 'कृषि लागत और मूल्य आयोग' - CACP कर दिया गया) की स्थापना की गई थी।",
+    fact: "While CACP recommends the MSP, final approval on MSP is given by the Cabinet Committee on Economic Affairs (CCEA) chaired by the Prime Minister."
+  },
+  {
+    q: 80,
+    en: "Which programme was launched in 1973–74 (Fourth Five-Year Plan) to minimize the adverse effects of drought on crop production, livestock, and productivity of land?",
+    hi: "फसल उत्पादन, पशुधन और भूमि की उत्पादकता पर सूखे के प्रतिकूल प्रभावों को कम करने के लिए 1973–74 (चतुर्थ पंचवर्षीय योजना) में कौन-सा कार्यक्रम शुरू किया गया था?",
+    options: [
+      "Command Area Development Programme (CADP) / कमान क्षेत्र विकास कार्यक्रम",
+      "Drought Prone Area Programme (DPAP) / सूखा संभावित क्षेत्र कार्यक्रम (DPAP)",
+      "Desert Development Programme (DDP) / मरुभूमि विकास कार्यक्रम (DDP)",
+      "Integrated Wastelands Development Programme / समेकित बंजर भूमि विकास कार्यक्रम",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Drought Prone Area Programme (DPAP) is the earliest area development programme launched by the Central Government in 1973–74 (Fourth Plan) to tackle the special problems faced by fragile areas constantly affected by severe drought conditions. The Command Area Development Programme (CADP) was launched shortly after in 1974–75, and the Desert Development Programme (DDP) in 1977–78.",
+    expHi: "सूखे से बार-बार प्रभावित होने वाले क्षेत्रों की समस्याओं के समाधान और पारिस्थितिक संतुलन बहाल करने के लिए चतुर्थ पंचवर्षीय योजना के अंतिम वर्ष 1973–74 में 'सूखा संभावित क्षेत्र कार्यक्रम' (DPAP) शुरू किया गया था। इसके बाद 1974–75 में 'कमान क्षेत्र विकास कार्यक्रम' (CADP) और 1977–78 में 'मरुभूमि विकास कार्यक्रम' (DDP) शुरू हुआ।",
+    fact: "Later, based on the Hanumantha Rao Committee (1994) recommendations, DPAP, DDP, and IWDP were integrated into a single watershed management programme (IWMP)."
+  },
+  {
+    q: 81,
+    en: "During the Fifth Five-Year Plan, on 2 October 1975, the 'Integrated Child Development Services' (ICDS) scheme was launched to provide nutrition and health services to children below what age and pregnant/lactating mothers?",
+    hi: "पाँचवीं पंचवर्षीय योजना के दौरान 2 अक्टूबर 1975 को कितनी आयु से कम के बच्चों तथा गर्भवती/स्तनपान कराने वाली माताओं को पोषण व स्वास्थ्य सेवाएँ प्रदान करने के लिए 'समेकित बाल विकास सेवा' (ICDS) योजना शुरू की गई थी?",
+    options: [
+      "Children below 3 years / 3 वर्ष से कम आयु के बच्चे",
+      "Children below 6 years / 6 वर्ष से कम आयु के बच्चे",
+      "Children below 10 years / 10 वर्ष से कम आयु के बच्चे",
+      "Children below 14 years / 14 वर्ष से कम आयु के बच्चे",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Launched on 2 October 1975 (Fifth Five-Year Plan), the Integrated Child Development Services (ICDS) scheme provides a package of six services (supplementary nutrition, immunization, health check-ups, referral services, pre-school non-formal education, and nutrition/health education) to children under 6 years of age and pregnant/lactating mothers through Anganwadi centres.",
+    expHi: "पाँचवीं पंचवर्षीय योजना के दौरान 2 अक्टूबर 1975 को 'समेकित बाल विकास सेवा' (ICDS) योजना शुरू की गई थी। इसका उद्देश्य आंगनवाड़ी केंद्रों के माध्यम से 0 से 6 वर्ष से कम आयु के बच्चों तथा गर्भवती एवं धात्री (स्तनपान कराने वाली) महिलाओं के पोषण और स्वास्थ्य स्तर में सुधार करना है।",
+    fact: "Three major milestones share the date 2 October 1975 (5th Plan): Establishment of RRBs, Launch of ICDS, and the 20-Point Programme's rural implementation drive."
+  },
+  {
+    q: 82,
+    en: "During which Five-Year Plan was the Second Phase of Bank Nationalization carried out on 15 April 1980, in which 6 commercial banks were nationalized?",
+    hi: "किस पंचवर्षीय योजना के दौरान 15 अप्रैल 1980 को बैंकों के राष्ट्रीयकरण का दूसरा चरण संपन्न हुआ, जिसमें 6 वाणिज्यिक बैंकों का राष्ट्रीयकरण किया गया?",
+    options: [
+      "Fourth Five-Year Plan / चतुर्थ पंचवर्षीय योजना",
+      "Fifth Five-Year Plan / पाँचवीं पंचवर्षीय योजना",
+      "Sixth Five-Year Plan / छठी पंचवर्षीय योजना",
+      "Seventh Five-Year Plan / सातवीं पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "On 15 April 1980—at the very start of the Sixth Five-Year Plan (1980–85)—the Government of India nationalized 6 more private commercial banks whose demand and time liabilities (deposits) exceeded ₹200 crore.",
+    expHi: "छठी पंचवर्षीय योजना (1980–85) के प्रारंभ में 15 अप्रैल 1980 को भारत सरकार ने ₹200 करोड़ से अधिक जमा पूंजी वाले 6 अन्य वाणिज्यिक बैंकों का राष्ट्रीयकरण किया था।",
+    fact: "In the first phase (19 July 1969, 4th Plan), the deposit threshold was ₹50 crore (14 banks); in the second phase (15 April 1980, 6th Plan), the deposit threshold was ₹200 crore (6 banks)."
+  },
+  {
+    q: 83,
+    en: "Which rural employment guarantee programme was launched on 15 August 1983 (during the Sixth Five-Year Plan) specifically to provide at least 100 days of guaranteed wage employment to at least one member of every rural landless household?",
+    hi: "प्रत्येक ग्रामीण भूमिहीन परिवार के कम से कम एक सदस्य को वर्ष में 100 दिनों के गारंटीकृत मजदूरी रोजगार प्रदान करने के लिए 15 अगस्त 1983 (छठी पंचवर्षीय योजना के दौरान) को विशेष रूप से कौन-सा कार्यक्रम शुरू किया गया था?",
+    options: [
+      "NREP (National Rural Employment Programme) / राष्ट्रीय ग्रामीण रोजगार कार्यक्रम",
+      "RLEGP (Rural Landless Employment Guarantee Programme) / ग्रामीण भूमिहीन रोजगार गारंटी कार्यक्रम (RLEGP)",
+      "EAS (Employment Assurance Scheme) / रोजगार आश्वासन योजना",
+      "JGSY (Jawahar Gram Samridhi Yojana) / जवाहर ग्राम समृद्धि योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "RLEGP (Rural Landless Employment Guarantee Programme) was launched on 15 August 1983 during the Sixth Five-Year Plan to generate gainful employment, create durable assets in rural areas, and guarantee up to 100 days of employment to at least one member of every landless household. Later, on 1 April 1989 (7th Plan), NREP and RLEGP were merged to form Jawahar Rozgar Yojana (JRY).",
+    expHi: "छठी पंचवर्षीय योजना के दौरान 15 अगस्त 1983 को 'ग्रामीण भूमिहीन रोजगार गारंटी कार्यक्रम' (RLEGP) शुरू किया गया था, जिसका मुख्य उद्देश्य ग्रामीण भूमिहीन परिवारों के कम से कम एक सदस्य को वर्ष में 100 दिन का रोजगार उपलब्ध कराना था। बाद में 1 अप्रैल 1989 (सातवीं योजना) को NREP और RLEGP को मिलाकर 'जवाहर रोजगार योजना' (JRY) बना दिया गया।",
+    fact: "NREP (Oct 1980) + RLEGP (Aug 1983) = Jawahar Rozgar Yojana (JRY, April 1989)."
+  },
+  {
+    q: 84,
+    en: "Who played the key scientific advisory role in setting up the 'Six Technology Missions' (related to telecommunications, drinking water, literacy, oilseeds, etc.) during the Seventh Five-Year Plan (1985–90)?",
+    hi: "सातवीं पंचवर्षीय योजना (1985–90) के दौरान दूरसंचार, पेयजल, साक्षरता और तिलहन आदि से संबंधित 'छह प्रौद्योगिकी मिशनों' (Six Technology Missions) की स्थापना में किसने प्रमुख वैज्ञानिक सलाहकार की भूमिका निभाई थी?",
+    options: [
+      "Dr. Verghese Kurien / डॉ. वर्गीज कुरियन",
+      "Sam Pitroda / सैम पित्रोदा",
+      "Dr. A.P.J. Abdul Kalam / डॉ. ए.पी.जे. अब्दुल कलाम",
+      "Dr. M.S. Swaminathan / डॉ. एम.एस. स्वामीनाथन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "During the Seventh Five-Year Plan (1985–90), Prime Minister Rajiv Gandhi launched National Technology Missions (covering Drinking Water, Immunization, Literacy, Oilseeds, Telecommunications, and Dairy Development) coordinated by Sam Pitroda, which also sparked the Yellow Revolution (Oilseeds Technology Mission, 1986) and the Telecom/IT Revolution in India.",
+    expHi: "सातवीं पंचवर्षीय योजना (1985–90) के दौरान तत्कालीन प्रधानमंत्री राजीव गांधी की पहल और सैम पित्रोदा के समन्वय में पेयजल, टीकाकरण, साक्षरता, तिलहन (पीली क्रांति - 1986), दूरसंचार और डेयरी विकास से जुड़े 'राष्ट्रीय प्रौद्योगिकी मिशन' (National Technology Missions) शुरू किए गए थे।",
+    fact: "Sam Pitroda is widely known as the father of India's communication/yellow revolution (alongside Rajiv Gandhi for Oilseeds Technology Mission in 1986)."
+  },
+  {
+    q: 85,
+    en: "On 15 August 1995 (during the Eighth Five-Year Plan), which two landmark social welfare programmes were launched nationwide by the Government of India?",
+    hi: "15 अगस्त 1995 को (आठवीं पंचवर्षीय योजना के दौरान) भारत सरकार द्वारा देश भर में कौन-से दो ऐतिहासिक सामाजिक कल्याण कार्यक्रम शुरू किए गए थे?",
+    options: [
+      "Mid-Day Meal Scheme (NP-NSPE) and National Social Assistance Programme (NSAP) / मध्याह्न भोजन योजना (Mid-Day Meal) और राष्ट्रीय सामाजिक सहायता कार्यक्रम (NSAP)",
+      "Sarva Shiksha Abhiyan and PM Gram Sadak Yojana / सर्व शिक्षा अभियान और प्रधानमंत्री ग्राम सड़क योजना",
+      "Swarnajayanti Gram Swarozgar Yojana and Antyodaya Anna Yojana / स्वर्णजयंती ग्राम स्वरोजगार योजना और अंत्योदय अन्न योजना",
+      "National Rural Health Mission and Janani Suraksha Yojana / राष्ट्रीय ग्रामीण स्वास्थ्य मिशन और जननी सुरक्षा योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "On 15 August 1995 (during the Eighth Five-Year Plan, 1992–97), two major national initiatives were launched: (1) The National Programme of Nutritional Support to Primary Education (popularly known as the Mid-Day Meal Scheme, now PM-POSHAN), and (2) The National Social Assistance Programme (NSAP), aimed at fulfilling Article 41 of the DPSP by providing social pensions to the elderly, widows, and persons with disabilities from BPL households.",
+    expHi: "आठवीं पंचवर्षीय योजना (1992–97) के दौरान 15 अगस्त 1995 को दो अत्यंत महत्वपूर्ण योजनाएँ शुरू की गईं: (1) प्राथमिक शिक्षा के लिए राष्ट्रीय पोषण सहायता कार्यक्रम अर्थात 'मध्याह्न भोजन योजना' (Mid-Day Meal Scheme - वर्तमान नाम PM-POSHAN), और (2) संविधान के अनुच्छेद 41 के लक्ष्यों की पूर्ति हेतु वृद्धों, विधवाओं व दिव्यांगों के लिए 'राष्ट्रीय सामाजिक सहायता कार्यक्रम' (NSAP)।",
+    fact: "In September 2021, the Mid-Day Meal Scheme (started on 15 Aug 1995) was renamed as PM-POSHAN (Pradhan Mantri Poshan Shakti Nirman)."
+  },
+  {
+    q: 86,
+    en: "Which of the following pairs of major Agricultural Revolutions and their associated products/periods in Indian planning is INCORRECTLY matched?",
+    hi: "भारतीय नियोजन में प्रमुख कृषि क्रांतियों और उनसे संबंधित उत्पादों के निम्नलिखित युग्मों में से कौन-सा गलत (असुमेलित) है?",
+    options: [
+      "Yellow Revolution (पीली क्रांति) – Oilseeds Production (Launched via Technology Mission on Oilseeds in 1986, 7th Plan) / पीली क्रांति – तिलहन उत्पादन (1986, सातवीं योजना)",
+      "Golden Revolution (स्वर्ण क्रांति) – Horticulture, Fruits and Honey Production (1991–2003, 8th & 9th Plans; Father: Nirpakh Tutej) / स्वर्ण क्रांति – बागवानी, फल एवं शहद उत्पादन (जनक: निरपख तुतेज)",
+      "Silver Revolution (रजत क्रांति) – Egg and Poultry Production (Promoted by Indira Gandhi) / रजत क्रांति – अंडा एवं कुक्कुट उत्पादन",
+      "Grey Revolution (भूरी/धूसर क्रांति) – Jute Production / भूरी (धूसर) क्रांति – जूट उत्पादन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "Grey Revolution (धूसर/स्लेटी क्रांति) is associated with Fertilizer Production (उर्वरक उत्पादन), NOT Jute production. Jute production is associated with the Golden Fibre Revolution (स्वर्ण रेशा क्रांति), while Cotton is associated with the Silver Fibre Revolution (रजत रेशा क्रांति).",
+    expHi: "'धूसर क्रांति' (Grey Revolution) का संबंध 'उर्वरक (Fertilizer) उत्पादन' से है, न कि जूट उत्पादन से। जूट उत्पादन का संबंध 'स्वर्ण रेशा क्रांति' (Golden Fibre Revolution) से है और कपास उत्पादन का संबंध 'रजत रेशा क्रांति' (Silver Fibre Revolution) से है।",
+    fact: "Golden Revolution -> Fruits/Horticulture/Honey; Golden Fibre Revolution -> Jute; Silver Revolution -> Eggs; Silver Fibre Revolution -> Cotton."
+  },
+  {
+    q: 87,
+    en: "During the Ninth Five-Year Plan, on 1 April 1999, six existing rural self-employment programmes (IRDP, TRYSEM, DWCRA, SITRA, GKY, and MWS) were merged into which single holistic programme?",
+    hi: "नौवीं पंचवर्षीय योजना के दौरान 1 अप्रैल 1999 को पूर्ववर्ती छह ग्रामीण स्वरोजगार योजनाओं (IRDP, TRYSEM, DWCRA, SITRA, GKY और MWS) का विलय करके कौन-सी एकल समन्वित योजना शुरू की गई थी?",
+    options: [
+      "Jawahar Gram Samridhi Yojana (JGSY) / जवाहर ग्राम समृद्धि योजना",
+      "Swarnajayanti Gram Swarozgar Yojana (SGSY) / स्वर्णजयंती ग्राम स्वरोजगार योजना (SGSY)",
+      "Sampoorna Grameen Rozgar Yojana (SGRY) / संपूर्ण ग्रामीण रोजगार योजना",
+      "Pradhan Mantri Gramodaya Yojana (PMGY) / प्रधानमंत्री ग्रामोदय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "On the recommendation of the Prof. Hashim Committee, six rural self-employment programmes—IRDP, TRYSEM, DWCRA, SITRA, GKY (Ganga Kalyan Yojana), and MWS (Million Wells Scheme)—were merged on 1 April 1999 (Ninth Plan) to launch the 'Swarnajayanti Gram Swarozgar Yojana' (SGSY) focusing on Self-Help Groups (SHGs). Later in 2011 (11th Plan), SGSY was restructured into the National Rural Livelihoods Mission (NRLM / Aajeevika).",
+    expHi: "प्रो. हाशिम समिति की सिफारिश पर नौवीं पंचवर्षीय योजना के दौरान 1 अप्रैल 1999 को ग्रामीण क्षेत्रों में चल रही 6 स्वरोजगार योजनाओं (IRDP, TRYSEM, DWCRA, SITRA, GKY और MWS) को मिलाकर 'स्वर्णजयंती ग्राम स्वरोजगार योजना' (SGSY) की शुरुआत की गई। बाद में जून 2011 (11वीं योजना) में SGSY का पुनर्गठन कर इसे 'राष्ट्रीय ग्रामीण आजीविका मिशन' (NRLM - आजीविका) बना दिया गया।",
+    fact: "For urban poverty alleviation, Swarna Jayanti Shahari Rozgar Yojana (SJSRY) was launched on 1 December 1997 (Ninth Plan), merging NRY, UBSP, and PMIUPEP."
+  },
+  {
+    q: 88,
+    en: "In which Five-Year Plan was the 'Bharat Nirman' programme launched (2005) to build rural infrastructure across 6 key components?",
+    hi: "ग्रामीण अवसंरचना के 6 प्रमुख घटकों के विकास के लिए 'भारत निर्माण' (Bharat Nirman) कार्यक्रम किस पंचवर्षीय योजना के दौरान (वर्ष 2005 में) शुरू किया गया था?",
+    options: [
+      "Eighth Five-Year Plan / आठवीं पंचवर्षीय योजना",
+      "Ninth Five-Year Plan / नौवीं पंचवर्षीय योजना",
+      "Tenth Five-Year Plan / दसवीं पंचवर्षीय योजना",
+      "Twelfth Five-Year Plan / बारहवीं पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "'Bharat Nirman' was launched by the Government of India in December 2005 (during the Tenth Five-Year Plan, 2002–07) as a time-bound business plan for rural infrastructure focusing on 6 components: Irrigation (सिंचाई), Rural Roads (सड़क), Rural Housing (आवास), Rural Water Supply (पेयजल), Rural Electrification (विद्युतीकरण), and Rural Telecommunication Connectivity (दूरसंचार).",
+    expHi: "दसवीं पंचवर्षीय योजना (2002–07) के दौरान वर्ष 2005 में ग्रामीण बुनियादी ढांचे को मजबूत करने के लिए 'भारत निर्माण' योजना शुरू की गई थी। इसके 6 प्रमुख घटक थे: सिंचाई, ग्रामीण सड़क, ग्रामीण आवास, ग्रामीण पेयजल, ग्रामीण विद्युतीकरण और ग्रामीण टेलीफोन कनेक्टिविटी।",
+    fact: "Memorize the 6 components of Bharat Nirman (2005): Water, Roads, Irrigation, Telecom, Electricity, Housing (Mnemonic: WRITE-H). Note that Education and Health are NOT part of Bharat Nirman (they were covered by SSA and NRHM)."
+  },
+  {
+    q: 89,
+    en: "Which flagship health programme was launched on 12 April 2005 during the Tenth Five-Year Plan to provide accessible, affordable, and quality healthcare to the rural population, including the ASHA worker framework?",
+    hi: "आशा (ASHA) कार्यकर्ताओं की व्यवस्था सहित ग्रामीण आबादी को सुलभ, सस्ती और गुणवत्तापूर्ण स्वास्थ्य सेवा प्रदान करने के लिए दसवीं पंचवर्षीय योजना के दौरान 12 अप्रैल 2005 को कौन-सा प्रमुख स्वास्थ्य मिशन शुरू किया गया था?",
+    options: [
+      "Ayushman Bharat (PM-JAY) / आयुष्मान भारत",
+      "National Rural Health Mission (NRHM) / राष्ट्रीय ग्रामीण स्वास्थ्य मिशन (NRHM)",
+      "Mission Indradhanush / मिशन इंद्रधनुष",
+      "Rashtriya Swasthya Bima Yojana (RSBY) / राष्ट्रीय स्वास्थ्य बीमा योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The National Rural Health Mission (NRHM) was launched on 12 April 2005 during the Tenth Five-Year Plan (2002–07). Under NRHM, Accredited Social Health Activists (ASHA) and Janani Suraksha Yojana (JSY) were introduced to reduce Infant Mortality Rate (IMR) and Maternal Mortality Ratio (MMR). Later in 2013 (12th Plan), NRHM and NUHM were subsumed under the National Health Mission (NHM).",
+    expHi: "दसवीं पंचवर्षीय योजना के दौरान 12 अप्रैल 2005 को 'राष्ट्रीय ग्रामीण स्वास्थ्य मिशन' (NRHM) की शुरुआत की गई थी। इसी के अंतर्गत मातृ एवं शिशु मृत्यु दर को कम करने के लिए 'जननी सुरक्षा योजना' (JSY) और 'आशा' (ASHA - Accredited Social Health Activist) कार्यकर्ताओं की नियुक्ति की गई।",
+    fact: "Full form of ASHA: Accredited Social Health Activist (मान्यता प्राप्त सामाजिक स्वास्थ्य कार्यकर्ता)."
+  },
+  {
+    q: 90,
+    en: "During which Five-Year Plan was the 'National Food Security Mission' (NFSM) launched in October 2007 to increase the production of rice, wheat, and pulses?",
+    hi: "चावल, गेहूँ और दालों के उत्पादन को बढ़ाने के लिए अक्टूबर 2007 में 'राष्ट्रीय खाद्य सुरक्षा मिशन' (NFSM) किस पंचवर्षीय योजना के दौरान शुरू किया गया था?",
+    options: [
+      "Ninth Five-Year Plan / नौवीं पंचवर्षीय योजना",
+      "Tenth Five-Year Plan / दसवीं पंचवर्षीय योजना",
+      "Eleventh Five-Year Plan / ग्यारहवीं पंचवर्षीय योजना",
+      "Twelfth Five-Year Plan / बारहवीं पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Following the resolution of the National Development Council (NDC) in May 2007, the centrally sponsored 'National Food Security Mission' (NFSM) was launched in October 2007 (at the beginning of the Eleventh Five-Year Plan, 2007–12) to increase the production of rice by 10 million tonnes, wheat by 8 million tonnes, and pulses by 2 million tonnes by the end of the 11th Plan. Rashtriya Krishi Vikas Yojana (RKVY) was also launched in 2007.",
+    expHi: "राष्ट्रीय विकास परिषद (NDC) के प्रस्ताव के आधार पर ग्यारहवीं पंचवर्षीय योजना (2007–12) के प्रथम वर्ष अर्थात अक्टूबर 2007 में 'राष्ट्रीय खाद्य सुरक्षा मिशन' (NFSM) शुरू किया गया था। इसका प्रारंभिक लक्ष्य 11वीं योजना के अंत तक चावल के उत्पादन में 10 मिलियन टन, गेहूँ में 8 मिलियन टन और दलहन में 2 मिलियन टन की अतिरिक्त वृद्धि करना था।",
+    fact: "Both the National Food Security Mission (NFSM) and Rashtriya Krishi Vikas Yojana (RKVY) were launched in 2007 during the Eleventh Five-Year Plan. (Note: The National Food Security Act - NFSA was enacted later in 2013 during the 12th Plan)."
+  },
+  {
+    q: 91,
+    en: "What does the economic term 'Perspective Planning' (परिप्रेक्ष्य/दीर्घकालीन नियोजन) used by the Planning Commission refer to?",
+    hi: "योजना आयोग द्वारा प्रयुक्त आर्थिक शब्दावली 'परिप्रेक्ष्य नियोजन' (Perspective Planning) का क्या अर्थ है?",
+    options: [
+      "Planning only for a period of 1 year / केवल 1 वर्ष की अवधि के लिए नियोजन",
+      "Long-term planning for a period of 15 to 20 years, within which shorter Five-Year Plans are formulated / 15 से 20 वर्षों की दीर्घकालिक अवधि के लिए नियोजन, जिसके अंतर्गत पंचवर्षीय योजनाएँ तैयार की जाती हैं",
+      "Emergency planning during wartime / युद्धकाल के दौरान आपातकालीन नियोजन",
+      "Planning exclusively by private foreign companies / केवल विदेशी निजी कंपनियों द्वारा नियोजन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "As explicitly highlighted in NCERT Class 12 Indian Economic Development, a Five-Year Plan document specifies objectives for 5 years, while 'Perspective Plan' is a long-term plan covering a 15-to-20-year horizon that provides the broader long-range vision and foundation for the Five-Year Plans.",
+    expHi: "NCERT (कक्षा 12) के अनुसार, जहाँ पंचवर्षीय योजनाएँ 5 वर्षों के लक्ष्यों को निर्धारित करती हैं, वहीं 15 से 20 वर्षों की दीर्घकालिक योजना को 'परिप्रेक्ष्य योजना' (Perspective Plan) कहा जाता है। पंचवर्षीय योजनाएँ इसी दीर्घकालिक परिप्रेक्ष्य योजना को आधार बनाकर तैयार की जाती थीं।",
+    fact: "The Perspective Planning Division in the Planning Commission was originally set up under Pitambar Pant during the Second/Third Plan era."
+  },
+  {
+    q: 92,
+    en: "Who is regarded as the 'Architect of Indian Economic Planning' (भारतीय आर्थिक नियोजन के वास्तुकार) in the NCERT curriculum?",
+    hi: "NCERT पाठ्यक्रम में किसे 'भारतीय आर्थिक नियोजन का वास्तुकार' (Architect of Indian Planning) माना जाता है?",
+    options: [
+      "Dadabhai Naoroji / दादाभाई नौरोजी",
+      "Prasanta Chandra Mahalanobis (P.C. Mahalanobis) / प्रशांत चंद्र महालनोबिस (पी.सी. महालनोबिस)",
+      "V.K.R.V. Rao / वी.के.आर.वी. राव",
+      "Amartya Sen / अमर्त्य सेन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Chapter 2 of NCERT Class 12 (Indian Economic Development) explicitly features a dedicated profile on Prasanta Chandra Mahalanobis titled 'Mahalanobis: The Architect of Indian Planning', noting that the real beginning of structural long-term planning in India began with the Second Five-Year Plan based on his growth model.",
+    expHi: "NCERT (भारतीय आर्थिक विकास, कक्षा 12) में सांख्यिकीविद् 'प्रशांत चंद्र महालनोबिस' (पी.सी. महालनोबिस) को 'भारतीय नियोजन का वास्तुकार' (Architect of Indian Planning) कहा गया है, क्योंकि उनके मॉडल पर आधारित द्वितीय पंचवर्षीय योजना से ही भारत में वास्तविक आधारभूत आर्थिक नियोजन की नींव पड़ी।",
+    fact: "P.C. Mahalanobis also started the famous statistical journal 'Sankhya' and founded the Indian Statistical Institute (ISI) in Calcutta in 1931."
+  },
+  {
+    q: 93,
+    en: "ACCORDING TO NCERT, what were the FOUR overarching long-term goals of India's Five-Year Plans?",
+    hi: "NCERT के अनुसार, भारत की पंचवर्षीय योजनाओं के चार मुख्य दीर्घकालिक लक्ष्य (Four Goals of Five-Year Plans) कौन-से थे?",
+    options: [
+      "Growth, Modernization, Self-Reliance, and Equity (संवृद्धि, आधुनिकीकरण, आत्मनिर्भरता और समानता) / संवृद्धि, आधुनिकीकरण, आत्मनिर्भरता और समानता",
+      "Privatization, Globalization, Taxation, and Defense / निजीकरण, वैश्वीकरण, कराधान और रक्षा",
+      "Imports, Exports, Devaluation, and Inflation / आयात, निर्यात, अवमूल्यन और मुद्रास्फीति",
+      "Urbanization, Migration, Mechanization, and Disinvestment / शहरीकरण, प्रवासन, मशीनीकरण और विनिवेश",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "NCERT Class 12 (Chapter 2: Indian Economy 1950–1990) states that the four basic goals of India's Five-Year Plans were: (1) Growth (संवृद्धि - increase in the country's capacity to produce goods and services/GDP), (2) Modernization (आधुनिकीकरण - adoption of new technology and change in social outlook), (3) Self-Reliance (आत्मनिर्भरता - avoiding dependence on foreign imports for essential goods), and (4) Equity (समानता - ensuring the benefits of economic prosperity reach the poor sections of society).",
+    expHi: "NCERT के अनुसार भारत की पंचवर्षीय योजनाओं के चार मूलभूत लक्ष्य थे: (1) संवृद्धि (Growth - जीडीपी में वृद्धि), (2) आधुनिकीकरण (Modernization - नई तकनीक अपनाना व सामाजिक दृष्टिकोण में बदलाव), (3) आत्मनिर्भरता (Self-Reliance), और (4) समानता (Equity - आर्थिक समृद्धि का लाभ गरीब वर्ग तक पहुँचना)।",
+    fact: "Direct NCERT Conceptual Question: Which goal ensures that a country has both modern technology and progressive social attitudes (like gender equality)? Answer: Modernization."
+  },
+  {
+    q: 94,
+    en: "What was the 'Permit License Raj' (परमिट लाइसेंस राज) during the first seven Five-Year Plans (1951–1990), and who originally coined this term?",
+    hi: "प्रथम सात पंचवर्षीय योजनाओं (1951–1990) के दौरान प्रचलित 'परमिट लाइसेंस राज' (Permit License Raj) क्या था, और यह शब्द मूल रूप से किसने गढ़ा था?",
+    options: [
+      "System of strict government licensing and regulations required to set up or expand private industries under the Industries (Development and Regulation) Act, 1951; coined by C. Rajagopalachari / उद्योग (विकास और विनियमन) अधिनियम, 1951 के तहत निजी उद्योगों की स्थापना या विस्तार के लिए कठोर सरकारी लाइसेंस प्रणाली; यह शब्द सी. राजगोपालाचारी द्वारा गढ़ा गया था",
+      "System of issuing driving licenses in rural areas; coined by Mahatma Gandhi / ग्रामीण क्षेत्रों में ड्राइविंग लाइसेंस जारी करने की प्रणाली; महात्मा गांधी द्वारा प्रयुक्त",
+      "System of free duty-free trade with Britain; coined by Lord Mountbatten / ब्रिटेन के साथ शुल्क-मुक्त व्यापार की प्रणाली; लॉर्ड माउंटबेटन द्वारा प्रयुक्त",
+      "Agricultural land revenue system; coined by Sardar Patel / कृषि भू-राजस्व प्रणाली; सरदार पटेल द्वारा प्रयुक्त",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Under the Industries (Development and Regulation) Act, 1951 and the Industrial Policy Resolution of 1956, no new private industry could be established or expanded without obtaining a license from the government. Veteran statesman C. Rajagopalachari (Rajaji), founder of the Swatantra Party, coined the term 'License-Permit-Quota Raj' to critique this excessive bureaucratic control, which was finally dismantled by the New Industrial Policy of July 1991.",
+    expHi: "उद्योग (विकास और विनियमन) अधिनियम, 1951 और 1956 की औद्योगिक नीति के तहत निजी क्षेत्र में किसी भी नए उद्योग की स्थापना या उत्पादन क्षमता के विस्तार के लिए सरकार से लाइसेंस लेना अनिवार्य था। चक्रवर्ती राजगोपालाचारी ने इस नौकरशाही नियंत्रण को 'लाइसेंस-परमिट-कोटा राज' नाम दिया था, जिसे जुलाई 1991 की नई आर्थिक नीति द्वारा समाप्त किया गया।",
+    fact: "The Industries (Development and Regulation) Act (IDRA) was passed in 1951 (First Plan) to enforce industrial licensing."
+  },
+  {
+    q: 95,
+    en: "During the first seven Five-Year Plans (1950–1990), India followed an 'Inward-Looking Trade Strategy'. By what economic name is this strategy known?",
+    hi: "प्रथम सात पंचवर्षीय योजनाओं (1950–1990) के दौरान भारत ने 'अंतर्मुखी व्यापार रणनीति' (Inward-Looking Trade Strategy) अपनाई। अर्थशास्त्र में इस नीति को किस नाम से जाना जाता है?",
+    options: [
+      "Export Promotion Strategy / निर्यात संवर्धन रणनीति",
+      "Import Substitution (आयात प्रतिस्थापन) / आयात प्रतिस्थापन",
+      "Free Trade Policy / मुक्त व्यापार नीति",
+      "Currency Convertibility / मुद्रा परिवर्तनीयता",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "In the first seven Five-Year Plans, India's foreign trade policy was characterized by an 'Inward-Looking Trade Strategy' technically called Import Substitution (आयात प्रतिस्थापन). This policy aimed at replacing imports with domestic production and protecting domestic industries from foreign competition using two instruments: Tariffs (taxes on imported goods) and Quotas (quantitative restrictions on imports).",
+    expHi: "प्रथम सात पंचवर्षीय योजनाओं (1950–1990) के दौरान भारत ने 'अंतर्मुखी व्यापार रणनीति' अपनाई, जिसे तकनीकी रूप से 'आयात प्रतिस्थापन' (Import Substitution) कहा जाता है। इसका उद्देश्य विदेशों से आयात की जाने वाली वस्तुओं का देश में ही उत्पादन करना और 'प्रशुल्क' (Tariffs - कर) तथा 'कोटा' (Quotas - मात्रात्मक प्रतिबंध) के माध्यम से घरेलू उद्योगों को विदेशी प्रतिस्पर्धा से संरक्षण देना था।",
+    fact: "The two main instruments of Import Substitution were Tariffs (make imports expensive) and Quotas (specify maximum quantity that can be imported)."
+  },
+  {
+    q: 96,
+    en: "Which Committee was appointed in 1960 during the Second Five-Year Plan to examine the distribution of national income and concentration of economic power in India?",
+    hi: "द्वितीय पंचवर्षीय योजना के दौरान वर्ष 1960 में भारत में राष्ट्रीय आय के वितरण और आर्थिक शक्ति के केंद्रीकरण की जाँच करने के लिए किस समिति की नियुक्ति की गई थी?",
+    options: [
+      "P.C. Mahalanobis Committee / पी.सी. महालनोबिस समिति",
+      "Wanchoo Committee / वांचू समिति",
+      "Rajamannar Committee / राजमन्नार समिति",
+      "Sarkaria Commission / सरकारिया आयोग",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "In October 1960 (during the Second Five-Year Plan), the Planning Commission appointed the Committee on Distribution of Income and Levels of Living under the chairmanship of Prof. P.C. Mahalanobis. Following this and the Monopolies Inquiry Commission (K.C. Dasgupta, 1964) & Hazari Committee (1967, which examined industrial licensing abuse), the government enacted the MRTP Act in 1969 (Fourth Plan).",
+    expHi: "द्वितीय पंचवर्षीय योजना के दौरान अक्टूबर 1960 में राष्ट्रीय आय के वितरण और जीवन स्तर के अध्ययन के लिए 'पी.सी. महालनोबिस समिति' गठित की गई थी। बाद में आर.के. हजारी समिति (1967 - औद्योगिक लाइसेंसिंग प्रणाली की समीक्षा) और दत्त समिति (1969) की रिपोर्टों के बाद 1969 में MRTP अधिनियम पारित किया गया।",
+    fact: "R.K. Hazari Committee (1967) and Subimal Dutt Committee (1969) are famously associated with reviewing the defects of the Industrial Licensing Policy during the Planning era."
+  },
+  {
+    q: 97,
+    en: "In which Five-Year Plan was the 'Hill Area Development Programme' (HADP) and the 'Tribal Sub-Plan' (TSP) strategy formally introduced to address regional and social disparities?",
+    hi: "क्षेत्रीय और सामाजिक असमानताओं को दूर करने के लिए 'पर्वतीय क्षेत्र विकास कार्यक्रम' (HADP) और 'जनजातीय उप-योजना' (Tribal Sub-Plan - TSP) की रणनीति औपचारिक रूप से किस पंचवर्षीय योजना में शुरू की गई थी?",
+    options: [
+      "First Five-Year Plan / प्रथम पंचवर्षीय योजना",
+      "Third Five-Year Plan / तृतीय पंचवर्षीय योजना",
+      "Fifth Five-Year Plan (1974–78) / पाँचवीं पंचवर्षीय योजना (1974–78)",
+      "Tenth Five-Year Plan / दसवीं पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Both the Hill Area Development Programme (HADP) and the Tribal Sub-Plan (TSP) strategy were formally introduced during the Fifth Five-Year Plan (1974–78) to ensure earmarked budgetary flows and focused socio-economic development for ecologically fragile hill regions and Scheduled Tribe populations.",
+    expHi: "पाँचवीं पंचवर्षीय योजना (1974–78) के दौरान क्षेत्रीय असंतुलन को कम करने के लिए 'पर्वतीय क्षेत्र विकास कार्यक्रम' (Hill Area Development Programme - HADP) और अनुसूचित जनजातियों के समग्र विकास हेतु 'जनजातीय उप-योजना' (Tribal Sub-Plan - TSP, 1974–75) की शुरुआत की गई थी।",
+    fact: "The Special Component Plan (SCP, now Scheduled Caste Sub-Plan - SCSP) for Scheduled Castes was introduced shortly after in 1979–80 (Sixth Plan framework)."
+  },
+  {
+    q: 98,
+    en: "Match the following Five-Year Plans with their Primary Focus / Core Slogans and select the CORRECT statement: (1) First Plan – Agriculture, Irrigation & Power; (2) Second Plan – Rapid Industrialization & Heavy Industries; (3) Fifth Plan – Garibi Hatao & Self-Reliance; (4) Eleventh Plan – Towards Faster and More Inclusive Growth.",
+    hi: "निम्नलिखित पंचवर्षीय योजनाओं को उनकी मुख्य प्राथमिकताओं के साथ सुमेलित कीजिए: (1) प्रथम योजना – कृषि, सिंचाई व बिजली; (2) द्वितीय योजना – तीव्र औद्योगीकरण व भारी उद्योग; (3) पाँचवीं योजना – गरीबी हटाओ व आत्मनिर्भरता; (4) ग्यारहवीं योजना – तीव्रतर और अधिक समावेशी विकास की ओर।",
+    options: [
+      "Only 1 and 2 are correct / केवल 1 और 2 सही हैं",
+      "Only 2 and 3 are correct / केवल 2 और 3 सही हैं",
+      "Only 1, 3 and 4 are correct / केवल 1, 3 और 4 सही हैं",
+      "All 1, 2, 3, and 4 are correctly matched / 1, 2, 3 और 4 सभी सही सुमेलित हैं",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "All four pairings represent the foundational summary of Indian Five-Year Plans frequently tested in UPSSSC PET: 1st Plan: Agriculture, Price Stability, Power & Transport (Harrod-Domar Model); 2nd Plan: Rapid Industrialization & Heavy/Basic Industries (Mahalanobis Model); 5th Plan: Removal of Poverty (Garibi Hatao) & Self-Reliance (D.P. Dhar Model); 11th Plan: Towards Faster and More Inclusive Growth.",
+    expHi: "दिए गए चारों युग्म पूर्णतः सुमेलित हैं: प्रथम योजना (कृषि एवं सिंचाई), द्वितीय योजना (तीव्र औद्योगीकरण एवं भारी उद्योग), पाँचवीं योजना (गरीबी उन्मूलन एवं आत्मनिर्भरता), तथा ग्यारहवीं योजना (तीव्रतर और अधिक समावेशी विकास की ओर)।",
+    fact: "Quick Revision of Models: 1st = Harrod-Domar; 2nd = P.C. Mahalanobis; 3rd = Sukhamoy Chakravarty & John Sandy / Gadgil Yojana; 4th = Ashok Rudra & Alan Manne / Gadgil; 5th = D.P. Dhar; 8th = John W. Miller."
+  },
+  {
+    q: 99,
+    en: "After the end of the Twelfth Five-Year Plan (2017), NITI Aayog's 'Aspirational Districts Programme' (आकांक्षी जिला कार्यक्रम - launched in January 2018) aimed to rapidly transform how many socio-economically underdeveloped districts?",
+    hi: "बारहवीं पंचवर्षीय योजना की समाप्ति (2017) के पश्चात नीति आयोग द्वारा जनवरी 2018 में शुरू किए गए 'आकांक्षी जिला कार्यक्रम' (Aspirational Districts Programme) का मुख्य उद्देश्य कितने पिछड़े जिलों का तीव्र रूपांतरण करना था?",
+    options: [
+      "50 Most Developed Districts / 50 सर्वाधिक विकसित जिले",
+      "112 (initially 115) Most Socio-Economically Underdeveloped Districts across the country / देश भर के 112 (प्रारंभ में 115) सामाजिक-आर्थिक रूप से पिछड़े जिले",
+      "Only 10 Capital Cities / केवल 10 राजधानी शहर",
+      "500 Coastal Villages / 500 तटीय गाँव",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "After the completion of the 12th Five-Year Plan on 31 March 2017, NITI Aayog launched the 'Transformation of Aspirational Districts' programme in January 2018 across 112 (initially 115) most underdeveloped districts of India (including 8 districts from Uttar Pradesh: Bahraich, Balrampur, Chandauli, Chitrakoot, Fatehpur, Shrawasti, Siddharthnagar, and Sonbhadra), focusing on 5 themes: Health & Nutrition (30%), Education (30%), Agriculture & Water Resources (20%), Financial Inclusion & Skill Development (10%), and Basic Infrastructure (10%).",
+    expHi: "31 मार्च 2017 को बारहवीं पंचवर्षीय योजना समाप्त होने के बाद, नीति आयोग ने जनवरी 2018 में देश के 112 (प्रारंभ में 115) सबसे पिछड़े जिलों के तीव्र सामाजिक-आर्थिक विकास हेतु 'आकांक्षी जिला कार्यक्रम' शुरू किया। इसमें उत्तर प्रदेश के 8 जिले (बहराइच, बलरामपुर, चंदौली, चित्रकूट, फतेहपुर, श्रावस्ती, सिद्धार्थनगर और सोनभद्र) शामिल हैं।",
+    fact: "UP Special Fact for PET: Exactly 8 districts of Uttar Pradesh are included in NITI Aayog's Aspirational Districts Programme (Chandauli and Sonbhadra from Purvanchal region are among them)."
+  },
+  {
+    q: 100,
+    en: "Which of the following statements accurately summarizes the timeline of the Five-Year Plans in India from start to finish?",
+    hi: "निम्नलिखित में से कौन-सा कथन भारत में पंचवर्षीय योजनाओं की शुरुआत से लेकर समाप्ति तक की समय-सारणी का सटीक सारांश प्रस्तुत करता है?",
+    options: [
+      "India implemented a total of 10 Five-Year Plans from 1950 to 2014 / भारत ने 1950 से 2014 तक कुल 10 पंचवर्षीय योजनाएँ लागू कीं",
+      "India implemented a total of 12 Five-Year Plans and 7 Annual Plans between 1 April 1951 (start of 1st Plan) and 31 March 2017 (completion of 12th Plan) / भारत ने 1 अप्रैल 1951 (प्रथम योजना का प्रारंभ) से 31 मार्च 2017 (12वीं योजना की समाप्ति) के बीच कुल 12 पंचवर्षीय योजनाएँ और 7 वार्षिक योजनाएँ लागू कीं",
+      "India implemented 15 Five-Year Plans without any break from 1947 to 2022 / भारत ने 1947 से 2022 तक बिना किसी अंतराल के 15 पंचवर्षीय योजनाएँ लागू कीं",
+      "The Twelfth Five-Year Plan was terminated midway in 2014 / बारहवीं पंचवर्षीय योजना को 2014 में बीच में ही समाप्त कर दिया गया था",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "India's journey of Five-Year Plans spanned 66 years from 1 April 1951 (launch of the First Five-Year Plan) to 31 March 2017 (completion of the Twelfth Five-Year Plan). During these 66 years, India implemented 12 Five-Year Plans (totaling 59 years, as the 5th Plan ran for 4 years: 1974–78) and 7 Annual Plans across three breaks (1966–69, 1978–80, and 1990–92). Even though the Planning Commission was replaced by NITI Aayog on 1 January 2015, the Twelfth Five-Year Plan completed its full five-year tenure up to 31 March 2017.",
+    expHi: "भारत में पंचवर्षीय योजनाओं का सफर 1 अप्रैल 1951 (प्रथम पंचवर्षीय योजना के प्रारंभ) से लेकर 31 मार्च 2017 (बारहवीं पंचवर्षीय योजना की समाप्ति) तक कुल 66 वर्षों तक चला। इस दौरान कुल 12 पंचवर्षीय योजनाएँ (कुल 59 वर्ष, क्योंकि 5वीं योजना केवल 4 वर्ष चली) और तीन अंतरालों (1966–69, 1978–80 तथा 1990–92) में कुल 7 वार्षिक योजनाएँ (59 + 7 = 66 वर्ष) लागू की गईं।",
+    fact: "Complete Timeline Math: 11 Plans of 5 years (55 yrs) + 1 Plan (5th Plan) of 4 years (4 yrs) + 7 Annual Plans (7 yrs) = 66 Years (1951 to 2017)."
+  }
+];
+
+const letters = ["A", "B", "C", "D", "E"];
+let currentIndex = 0;
+
+// State per question:
+// status: 'not-visited' | 'unanswered' | 'correct' | 'incorrect' | 'skipped' | 'review'
+const userState = questionsData.map((_, idx) => ({
+  status: idx === 0 ? 'unanswered' : 'not-visited',
+  selectedOption: null,
+  locked: false,
+  markedReview: false
+}));
+
+function renderQuestion(idx) {
+  const qObj = questionsData[idx];
+  const st = userState[idx];
+
+  if (st.status === 'not-visited') {
+    st.status = 'unanswered';
+  }
+
+  document.getElementById('qCounterBadge').textContent = `Question ${idx + 1} of 100`;
+  document.getElementById('qNumLabel').textContent = `QUESTION ${qObj.q}`;
+  document.getElementById('qStemEn').textContent = qObj.en;
+  document.getElementById('qStemHi').textContent = qObj.hi;
+
+  updateStatusPill(st);
+
+  const optionsContainer = document.getElementById('optionsContainer');
+  optionsContainer.innerHTML = '';
+
+  qObj.options.forEach((optText, optIdx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-item';
+    if (st.locked) {
+      btn.classList.add('locked');
+      if (optIdx === st.selectedOption) {
+        if (optIdx === qObj.ans) {
+          btn.classList.add('correct-choice');
+        } else {
+          btn.classList.add('wrong-choice');
+        }
+      } else if (optIdx === qObj.ans) {
+        btn.classList.add('correct-outline');
+      }
+    }
+
+    btn.innerHTML = `
+      <span class="opt-letter">${letters[optIdx]}</span>
+      <span>${optText}</span>
+    `;
+
+    btn.onclick = () => selectOption(idx, optIdx);
+    optionsContainer.appendChild(btn);
+  });
+
+  const expCard = document.getElementById('explanationCard');
+  if (st.locked) {
+    expCard.classList.add('visible');
+    const verdictHeader = document.getElementById('expVerdictHeader');
+    if (st.selectedOption === qObj.ans) {
+      verdictHeader.innerHTML = `<span style="color:var(--correct);">✔ Correct Answer! (+1.00 Mark)</span>`;
+    } else {
+      verdictHeader.innerHTML = `<span style="color:var(--incorrect);">✖ Incorrect Answer (-0.25 Mark) — You selected (${letters[st.selectedOption]})</span>`;
+    }
+    document.getElementById('expCorrectOpt').textContent = `(${letters[qObj.ans]}) ${qObj.options[qObj.ans]}`;
+    document.getElementById('expEnText').textContent = qObj.expEn;
+    document.getElementById('expHiText').textContent = qObj.expHi;
+    document.getElementById('expFactText').textContent = qObj.fact;
+  } else {
+    expCard.classList.remove('visible');
+  }
+
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('prevBtn').style.opacity = idx === 0 ? '0.45' : '1';
+  document.getElementById('skipBtn').disabled = st.locked;
+  document.getElementById('skipBtn').style.opacity = st.locked ? '0.45' : '1';
+
+  updateScoreAndPalette();
+}
+
+function updateStatusPill(st) {
+  const pill = document.getElementById('qStatusPill');
+  if (st.status === 'correct') {
+    pill.textContent = '🟢 Answered & Correct (+1.00)';
+    pill.style.color = '#4ade80';
+  } else if (st.status === 'incorrect') {
+    pill.textContent = '🔴 Answered & Incorrect (-0.25)';
+    pill.style.color = '#f87171';
+  } else if (st.status === 'review') {
+    pill.textContent = '🟣 Marked for Review';
+    pill.style.color = '#c084fc';
+  } else if (st.status === 'skipped') {
+    pill.textContent = '⚪ Skipped (0.00)';
+    pill.style.color = '#cbd5e1';
+  } else {
+    pill.textContent = '🟠 Unanswered';
+    pill.style.color = '#fb923c';
+  }
+}
+
+function selectOption(qIdx, optIdx) {
+  const st = userState[qIdx];
+  if (st.locked) return; // Strict one-tap lock
+
+  st.locked = true;
+  st.selectedOption = optIdx;
+  const isCorrect = optIdx === questionsData[qIdx].ans;
+  st.status = isCorrect ? 'correct' : 'incorrect';
+
+  renderQuestion(qIdx);
+}
+
+function skipQuestion() {
+  const st = userState[currentIndex];
+  if (st.locked) return;
+  st.status = 'skipped';
+  renderQuestion(currentIndex);
+}
+
+function markForReview() {
+  const st = userState[currentIndex];
+  st.markedReview = !st.markedReview;
+  if (!st.locked) {
+    st.status = st.markedReview ? 'review' : 'unanswered';
+  }
+  renderQuestion(currentIndex);
+}
+
+function nextQuestion() {
+  if (currentIndex < questionsData.length - 1) {
+    currentIndex++;
+    renderQuestion(currentIndex);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    showReportDashboard();
+  }
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion(currentIndex);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function computeStats() {
+  let correct = 0;
+  let incorrect = 0;
+  let unanswered = 0;
+  let skipped = 0;
+  let review = 0;
+  let notVisited = 0;
+
+  userState.forEach(st => {
+    if (st.status === 'correct') correct++;
+    else if (st.status === 'incorrect') incorrect++;
+    else if (st.status === 'skipped') skipped++;
+    else if (st.status === 'review') review++;
+    else if (st.status === 'unanswered') unanswered++;
+    else if (st.status === 'not-visited') notVisited++;
+  });
+
+  const netScore = ((correct * 1.0) - (incorrect * 0.25)).toFixed(2);
+  const attempted = correct + incorrect;
+  const accuracy = attempted > 0 ? ((correct / attempted) * 100).toFixed(1) : "0.0";
+
+  return { correct, incorrect, unanswered, skipped, review, notVisited, netScore, attempted, accuracy };
+}
+
+function updateScoreAndPalette() {
+  const stats = computeStats();
+  document.getElementById('liveScoreBadge').textContent = `Net Score: ${stats.netScore}`;
+
+  document.getElementById('legCorrect').textContent = stats.correct;
+  document.getElementById('legIncorrect').textContent = stats.incorrect;
+  document.getElementById('legUnanswered').textContent = stats.unanswered;
+  document.getElementById('legSkipped').textContent = stats.skipped;
+  document.getElementById('legReview').textContent = stats.review;
+  document.getElementById('legNotVisited').textContent = stats.notVisited;
+
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = '';
+
+  userState.forEach((st, idx) => {
+    const btn = document.createElement('button');
+    btn.className = `p-btn st-${st.status}`;
+    if (idx === currentIndex) {
+      btn.classList.add('current-q');
+    }
+    btn.textContent = idx + 1;
+    btn.onclick = () => {
+      currentIndex = idx;
+      renderQuestion(currentIndex);
+      closePalette();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function openPalette() {
+  updateScoreAndPalette();
+  document.getElementById('paletteBackdrop').classList.add('open');
+}
+
+function closePalette() {
+  document.getElementById('paletteBackdrop').classList.remove('open');
+}
+
+function handleBackdropClick(e) {
+  if (e.target.id === 'paletteBackdrop') {
+    closePalette();
+  }
+}
+
+function showReportDashboard() {
+  const stats = computeStats();
+  document.getElementById('simulatorView').style.display = 'none';
+  document.getElementById('reportView').style.display = 'block';
+
+  document.getElementById('repNetScore').textContent = stats.netScore;
+  document.getElementById('repAccuracy').textContent = `${stats.accuracy}%`;
+  document.getElementById('repCorrect').textContent = stats.correct;
+  document.getElementById('repIncorrect').textContent = stats.incorrect;
+  document.getElementById('repSkipped').textContent = stats.skipped + stats.unanswered + stats.notVisited;
+  document.getElementById('repReviewed').textContent = stats.review;
+
+  const matrix = document.getElementById('reviewMatrixContainer');
+  matrix.innerHTML = '';
+
+  questionsData.forEach((qObj, idx) => {
+    const st = userState[idx];
+    const userChoiceText = st.selectedOption !== null
+      ? `(${letters[st.selectedOption]}) ${qObj.options[st.selectedOption]}`
+      : `Not Attempted (${st.status.toUpperCase()})`;
+
+    const badgeColor = st.status === 'correct'
+      ? 'var(--correct)'
+      : st.status === 'incorrect'
+      ? 'var(--incorrect)'
+      : 'var(--skipped)';
+
+    const item = document.createElement('div');
+    item.className = 'review-matrix-item';
+    item.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; flex-wrap:wrap; gap:0.5rem;">
+        <strong style="color:#60a5fa;">Q${qObj.q}. ${qObj.en}</strong>
+        <span style="background:${badgeColor}; padding:0.2rem 0.65rem; border-radius:6px; font-size:0.78rem; font-weight:700;">
+          ${st.status.toUpperCase()}
+        </span>
+      </div>
+      <div style="color:#d1d5db; margin-bottom:0.75rem; font-size:0.95rem;">${qObj.hi}</div>
+      <div style="font-size:0.9rem; margin-bottom:0.35rem;">
+        <strong style="color:#cbd5e1;">Your Answer: </strong>
+        <span style="color:${st.status === 'correct' ? '#4ade80' : st.status === 'incorrect' ? '#f87171' : '#94a3b8'};">${userChoiceText}</span>
+      </div>
+      <div style="font-size:0.9rem; margin-bottom:0.65rem;">
+        <strong style="color:#4ade80;">Correct Option: </strong>
+        <span>(${letters[qObj.ans]}) ${qObj.options[qObj.ans]}</span>
+      </div>
+      <div style="font-size:0.88rem; color:#adb5bd; border-top:1px solid var(--border-color); padding-top:0.6rem;">
+        <div><strong>EN:</strong> ${qObj.expEn}</div>
+        <div style="margin-top:0.35rem;"><strong>HI:</strong> ${qObj.expHi}</div>
+        <div style="margin-top:0.4rem; color:#fde047;"><strong>🎯 Key Exam Fact:</strong> ${qObj.fact}</div>
+      </div>
+    `;
+    matrix.appendChild(item);
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function returnToSimulator() {
+  document.getElementById('reportView').style.display = 'none';
+  document.getElementById('simulatorView').style.display = 'block';
+  renderQuestion(currentIndex);
+}
+
+// Initialize Simulator
+renderQuestion(0);
+</script>
+</body>
+</html>

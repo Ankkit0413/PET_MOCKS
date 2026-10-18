@@ -1,0 +1,2508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPSSSC PET CBT Simulator - वर्ष 1991 में आर्थिक सुधार तथा उसके बाद की अर्थव्यवस्था</title>
+  <style>
+    :root {
+      --bg-dark: #121316;
+      --card-bg: #1e2024;
+      --card-border: #2c2f36;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --correct: #10b981;
+      --correct-bg: rgba(16, 185, 129, 0.15);
+      --incorrect: #ef4444;
+      --incorrect-bg: rgba(239, 68, 68, 0.15);
+      --unanswered: #f59e0b;
+      --skipped: #64748b;
+      --review: #8b5cf6;
+      --not-visited: #2a2d34;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .header-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-title h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+
+    .header-title span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .badge {
+      background: #282b32;
+      border: 1px solid var(--card-border);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .badge-score {
+      color: #34d399;
+    }
+
+    .btn {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background-color: #2e323b;
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      background-color: #3b3f4a;
+    }
+
+    .btn-review {
+      background-color: #4c1d95;
+      color: #ddd6fe;
+      border: 1px solid #6d28d9;
+    }
+
+    .btn-review:hover {
+      background-color: #5b21b6;
+    }
+
+    .btn-finish {
+      background-color: #059669;
+    }
+
+    .btn-finish:hover {
+      background-color: #047857;
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 24px 16px 80px 16px;
+    }
+
+    .question-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .q-stem-en {
+      font-size: 1.15rem;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .q-stem-hi {
+      font-size: 1.1rem;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      color: #d1d5db;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-item {
+      background: #17181c;
+      border: 1px solid #33363e;
+      border-radius: 8px;
+      padding: 14px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .option-item:hover:not(.locked) {
+      background: #23262c;
+      border-color: #4b5563;
+    }
+
+    .option-item.locked {
+      cursor: default;
+    }
+
+    .opt-key {
+      background: #282b33;
+      border: 1px solid #3f4450;
+      min-width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #93c5fd;
+      flex-shrink: 0;
+    }
+
+    .opt-text {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #e5e7eb;
+    }
+
+    .option-item.correct {
+      background: var(--correct-bg) !important;
+      border-color: var(--correct) !important;
+    }
+
+    .option-item.correct .opt-key {
+      background: var(--correct);
+      color: white;
+      border-color: var(--correct);
+    }
+
+    .option-item.incorrect {
+      background: var(--incorrect-bg) !important;
+      border-color: var(--incorrect) !important;
+    }
+
+    .option-item.incorrect .opt-key {
+      background: var(--incorrect);
+      color: white;
+      border-color: var(--incorrect);
+    }
+
+    /* Explanation Card */
+    .explanation-card {
+      display: none;
+      background: #151922;
+      border-left: 4px solid #3b82f6;
+      border-radius: 6px;
+      padding: 18px;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .explanation-card.active {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .exp-title {
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 8px;
+    }
+
+    .exp-sec {
+      margin-bottom: 12px;
+    }
+
+    .exp-keyfact {
+      background: #1e1b2e;
+      border: 1px solid #5b21b6;
+      padding: 10px 14px;
+      border-radius: 6px;
+      color: #c4b5fd;
+      margin-top: 10px;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .controls-left, .controls-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Palette Drawer Modal */
+    .palette-drawer {
+      position: fixed;
+      top: 0;
+      right: -420px;
+      width: 400px;
+      max-width: 90vw;
+      height: 100vh;
+      background: var(--card-bg);
+      border-left: 1px solid var(--card-border);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
+      z-index: 100;
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .palette-drawer.open {
+      right: 0;
+    }
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 90;
+      display: none;
+    }
+
+    .drawer-overlay.open {
+      display: block;
+    }
+
+    .drawer-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-header h2 {
+      font-size: 1.1rem;
+      color: #e5e7eb;
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    .btn-close:hover {
+      color: white;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 0.75rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-correct { background-color: var(--correct); }
+    .dot-incorrect { background-color: var(--incorrect); }
+    .dot-unanswered { background-color: var(--unanswered); }
+    .dot-skipped { background-color: var(--skipped); }
+    .dot-review { background-color: var(--review); }
+    .dot-notvisited { background-color: var(--not-visited); }
+
+    .drawer-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+    }
+
+    .grid-palette {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .palette-btn {
+      height: 38px;
+      border-radius: 6px;
+      border: 1px solid #33363e;
+      background: var(--not-visited);
+      color: #e5e7eb;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .palette-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .palette-btn.status-correct {
+      background: var(--correct);
+      color: white;
+      border-color: #059669;
+    }
+
+    .palette-btn.status-incorrect {
+      background: var(--incorrect);
+      color: white;
+      border-color: #dc2626;
+    }
+
+    .palette-btn.status-unanswered {
+      background: var(--unanswered);
+      color: black;
+      border-color: #d97706;
+    }
+
+    .palette-btn.status-skipped {
+      background: var(--skipped);
+      color: white;
+      border-color: #475569;
+    }
+
+    .palette-btn.status-review {
+      background: var(--review);
+      color: white;
+      border-color: #7c3aed;
+    }
+
+    .palette-btn.active-current {
+      outline: 2px solid #60a5fa;
+      outline-offset: 2px;
+    }
+
+    /* Scorecard View */
+    .scorecard-view {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+
+    .scorecard-view.active {
+      display: block;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .summary-card {
+      background: #17191e;
+      border: 1px solid #2b2e38;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .summary-card h3 {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .summary-card p {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .palette-drawer {
+        width: 100%;
+        max-width: 100vw;
+      }
+      .controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .controls-left, .controls-right {
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header>
+    <div class="header-title">
+      <h1>UPSSSC PET: वर्ष 1991 में आर्थिक सुधार तथा उसके बाद की अर्थव्यवस्था</h1>
+      <span>Full Mock Test (100 Questions) | Correct: +1.00 | Incorrect: -0.25</span>
+    </div>
+    <div class="header-stats">
+      <div class="badge" id="counterBadge">Question 1 of 100</div>
+      <div class="badge badge-score" id="scoreBadge">Score: 0.00</div>
+      <button class="btn btn-secondary" id="openPaletteBtn">📋 Open Palette</button>
+    </div>
+  </header>
+
+  <!-- Main View -->
+  <main>
+    <!-- Question Card View -->
+    <div id="testArea">
+      <div class="question-card">
+        <div class="question-header">
+          <span id="qTag">Q1 • UPSSSC PET Level</span>
+          <span id="markingTag">Marks: +1.00 / -0.25</span>
+        </div>
+
+        <div class="q-stem-en" id="qStemEn"></div>
+        <div class="q-stem-hi" id="qStemHi"></div>
+
+        <div class="options-grid" id="optionsContainer"></div>
+
+        <!-- Explanation Card -->
+        <div class="explanation-card" id="explanationCard">
+          <div class="exp-title">Detailed Analysis &amp; Rationale:</div>
+          <div class="exp-sec" id="expEn"></div>
+          <div class="exp-sec" id="expHi"></div>
+          <div class="exp-keyfact" id="expFact"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+          <div class="controls-left">
+            <button class="btn btn-secondary" id="prevBtn">➔ Prev</button>
+            <button class="btn btn-secondary" id="skipBtn">Skip Question</button>
+            <button class="btn btn-review" id="reviewBtn">Mark for Review</button>
+          </div>
+          <div class="controls-right">
+            <button class="btn" id="nextBtn">Next Question ➔</button>
+            <button class="btn btn-finish" id="finishBtn">Finish Test</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Scorecard Dashboard -->
+    <div class="scorecard-view" id="scorecardArea">
+      <h2 style="font-size: 1.5rem; color: #60a5fa; margin-bottom: 8px;">Final Performance Report</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Official UPSSSC PET Marking Scheme: Correct: +1.00 Mark | Incorrect: -0.25 Mark</p>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <h3>NET SCORE</h3>
+          <p id="resNetScore" style="color: #34d399;">0.00</p>
+        </div>
+        <div class="summary-card">
+          <h3>ACCURACY</h3>
+          <p id="resAccuracy" style="color: #60a5fa;">0%</p>
+        </div>
+        <div class="summary-card">
+          <h3>CORRECT</h3>
+          <p id="resCorrect" style="color: #10b981;">0</p>
+        </div>
+        <div class="summary-card">
+          <h3>INCORRECT</h3>
+          <p id="resIncorrect" style="color: #ef4444;">0</p>
+        </div>
+        <div class="summary-card">
+          <h3>SKIPPED / UNATTEMPTED</h3>
+          <p id="resUnattempted" style="color: #9ca3af;">0</p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button class="btn btn-secondary" id="reviewTestBtn">Review Questions in Palette</button>
+        <button class="btn" id="restartTestBtn">Restart Test</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Slide-in Palette Drawer & Overlay -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="palette-drawer" id="paletteDrawer">
+    <div class="drawer-header">
+      <h2>Question Palette</h2>
+      <button class="btn-close" id="closePaletteBtn">✕</button>
+    </div>
+
+    <div class="legend-grid">
+      <div class="legend-item"><div class="dot dot-correct"></div> Correct (+1.00)</div>
+      <div class="legend-item"><div class="dot dot-incorrect"></div> Incorrect (-0.25)</div>
+      <div class="legend-item"><div class="dot dot-unanswered"></div> Visited (Pending)</div>
+      <div class="legend-item"><div class="dot dot-skipped"></div> Skipped</div>
+      <div class="legend-item"><div class="dot dot-review"></div> For Review</div>
+      <div class="legend-item"><div class="dot dot-notvisited"></div> Not Visited</div>
+    </div>
+
+    <div class="drawer-content">
+      <div class="grid-palette" id="paletteGrid"></div>
+    </div>
+  </aside>
+
+  <script>
+    // Balanced option distribution across A, B, C, D (E strictly "None of these / इनमें से कोई नहीं")
+    const questions = [
+      // Q1 - Q25 (Batch 1)
+      {
+        id: 1,
+        stemEn: "Who was the Prime Minister of India when the New Economic Policy (NEP) was introduced in July 1991?",
+        stemHi: "जुलाई 1991 में जब नई आर्थिक नीति (NEP) लागू की गई, तब भारत के प्रधानमंत्री कौन थे?",
+        options: [
+          "Rajiv Gandhi / राजीव गांधी",
+          "P. V. Narasimha Rao / पी. वी. नरसिम्हा राव",
+          "Atal Bihari Vajpayee / अटल बिहारी वाजपेयी",
+          "V. P. Singh / वी. पी. सिंह",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The New Economic Policy of 1991 was initiated under the minority government headed by Prime Minister P. V. Narasimha Rao, with Dr. Manmohan Singh serving as the Finance Minister. This transformation model is popularly referred to as the 'Rao-Manmohan Model'.",
+        expHi: "जुलाई 1991 में नई आर्थिक नीति (LPG सुधार) की शुरुआत प्रधानमंत्री पी. वी. नरसिम्हा राव के कार्यकाल में हुई थी। इस समय वित्त मंत्री डॉ. मनमोहन सिंह थे, और इन सुधारों को 'राव-मनमोहन मॉडल' भी कहा जाता है।",
+        keyFact: "P. V. Narasimha Rao is known as the 'Father of Indian Economic Reforms' (भारतीय आर्थिक सुधारों के जनक)."
+      },
+      {
+        id: 2,
+        stemEn: "Who served as the Union Finance Minister of India during the launch of the 1991 economic reforms?",
+        stemHi: "वर्ष 1991 के आर्थिक सुधारों की शुरुआत के समय भारत के केंद्रीय वित्त मंत्री कौन थे?",
+        options: [
+          "P. Chidambaram / पी. चिदंबरम",
+          "Yashwant Sinha / यशवंत सिन्हा",
+          "Dr. Manmohan Singh / डॉ. मनमोहन सिंह",
+          "Pranab Mukherjee / प्रणब मुखर्जी",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Dr. Manmohan Singh presented the historic Union Budget on July 24, 1991, which dismantled the 'License-Permit Raj' and laid the foundation for Liberalisation, Privatisation, and Globalisation (LPG).",
+        expHi: "24 जुलाई 1991 को तत्कालीन वित्त मंत्री डॉ. मनमोहन सिंह ने ऐतिहासिक बजट प्रस्तुत किया था, जिसने लाइसेंस राज को समाप्त कर उदारीकरण, निजीकरण और वैश्वीकरण (LPG) की नींव रखी।",
+        keyFact: "Dr. Manmohan Singh also served as the Governor of the Reserve Bank of India (1982–1985) prior to becoming Finance Minister."
+      },
+      {
+        id: 3,
+        stemEn: "The economic reforms of 1991 are commonly known by which popular acronym?",
+        stemHi: "1991 के आर्थिक सुधारों को सामान्यतः किस संक्षिप्त नाम (एक्रोनम) से जाना जाता है?",
+        options: [
+          "FDI Model / एफडीआई मॉडल",
+          "PPP Model / पीपीपी मॉडल",
+          "SEZ Model / एसईजेड मॉडल",
+          "LPG Model / एलपीजी मॉडल",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The 1991 reforms are known as the LPG model, which stands for Liberalisation, Privatisation, and Globalisation. It aimed to reduce state controls, encourage private enterprise, and integrate the domestic economy with the world economy.",
+        expHi: "वर्ष 1991 के सुधारों को 'LPG मॉडल' कहा जाता है, जिसका पूर्ण रूप Liberalisation (उदारीकरण), Privatisation (निजीकरण) तथा Globalisation (वैश्वीकरण) है।",
+        keyFact: "LPG सुधारों का प्राथमिक उद्देश्य भारत को 1991 के गंभीर भुगतान संतुलन संकट (BoP Crisis) से उबारना था।"
+      },
+      {
+        id: 4,
+        stemEn: "Under the New Industrial Policy announced on July 24, 1991, industrial licensing was abolished for all except how many industries initially?",
+        stemHi: "24 जुलाई 1991 को घोषित नई औद्योगिक नीति के तहत प्रारंभ में कितने उद्योगों को छोड़कर बाकी सभी के लिए औद्योगिक लाइसेंसिंग समाप्त कर दी गई थी?",
+        options: [
+          "14 industries / 14 उद्योग",
+          "18 industries / 18 उद्योग",
+          "8 industries / 8 उद्योग",
+          "6 industries / 6 उद्योग",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "In the Statement on Industrial Policy of July 24, 1991, compulsory licensing was retained for only 18 industries related to security, strategic concerns, social reasons, and hazardous chemicals. This list was gradually reduced to just 4-5 over subsequent years.",
+        expHi: "24 जुलाई 1991 की नई औद्योगिक नीति में सुरक्षा, पर्यावरण और सामरिक महत्व से जुड़े केवल 18 उद्योगों को अनिवार्य लाइसेंसिंग के अंतर्गत रखा गया था, बाकी सभी से लाइसेंसिंग समाप्त कर दी गई थी।",
+        keyFact: "वर्तमान समय में अनिवार्य औद्योगिक लाइसेंस केवल 4-5 विशिष्ट क्षेत्रों (जैसे रक्षा उपकरण, विस्फोटक, खतरनाक रसायन आदि) में ही लागू है।"
+      },
+      {
+        id: 5,
+        stemEn: "At the onset of the 1991 economic crisis, India had foreign exchange reserves sufficient to finance imports for approximately how many weeks?",
+        stemHi: "1991 के आर्थिक संकट के समय भारत के पास लगभग कितने सप्ताह के आयात के भुगतान हेतु ही विदेशी मुद्रा भंडार शेष रह गया था?",
+        options: [
+          "About 6 weeks / लगभग 6 सप्ताह",
+          "About 10 weeks / लगभग 10 सप्ताह",
+          "About 2 weeks / लगभग 2 सप्ताह",
+          "About 4 weeks / लगभग 4 सप्ताह",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "In June 1991, India's foreign exchange reserves plummeted to roughly $1.2 billion, barely sufficient to finance about two weeks of essential imports, leading to a severe Balance of Payments (BoP) crisis.",
+        expHi: "जून 1991 में भारत का विदेशी मुद्रा भंडार गिरकर लगभग 1.2 बिलियन डॉलर रह गया था, जो केवल लगभग 2 सप्ताह के आवश्यक आयात (पेट्रोलियम आदि) के भुगतान के लिए ही पर्याप्त था।",
+        keyFact: "इस संकट के दौरान भारत सरकार और RBI को बैंक ऑफ इंग्लैंड और यूनियन बैंक ऑफ स्विट्जरलैंड के पास लगभग 47 टन सोना गिरवी रखना पड़ा था।"
+      },
+      {
+        id: 6,
+        stemEn: "To overcome the 1991 Balance of Payments crisis, India availed financial assistance under structural adjustment programmes primarily from which international institutions?",
+        stemHi: "1991 के भुगतान संतुलन संकट से उबरने के लिए भारत ने मुख्य रूप से किन अंतरराष्ट्रीय वित्तीय संस्थानों से संरचनात्मक समायोजन ऋण प्राप्त किया था?",
+        options: [
+          "Asian Development Bank and BRICS Bank / एशियाई विकास बैंक और ब्रिक्स बैंक",
+          "WTO and UNESCO / डब्ल्यूटीओ और यूनेस्को",
+          "IMF and World Bank / आईएमएफ और विश्व बैंक",
+          "Federal Reserve and Bank of Japan / फेडरल रिजर्व और बैंक ऑफ जापान",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "India secured a $7 billion loan bailout package from the International Monetary Fund (IMF) and the International Bank for Reconstruction and Development (IBRD / World Bank) conditionally under Structural Adjustment Facility, requiring economic deregulation.",
+        expHi: "भारत ने अंतरराष्ट्रीय मुद्रा कोष (IMF) और विश्व बैंक (IBRD) से लगभग 7 बिलियन डॉलर का ऋण सहायता पैकेज प्राप्त किया था, जिसकी शर्त अर्थव्यवस्था का उदारीकरण और संरचनात्मक सुधार करना था।",
+        keyFact: "IMF का मुख्यालय वाशिंगटन डी.सी. (USA) में स्थित है।"
+      },
+      {
+        id: 7,
+        stemEn: "In July 1991, as an immediate measure to stabilise external trade and correct the BoP crisis, the Indian Rupee was:",
+        stemHi: "जुलाई 1991 में विदेशी व्यापार को स्थिर करने और भुगतान संतुलन संकट को दूर करने के लिए तात्कालिक कदम के रूप में भारतीय रुपये का क्या किया गया?",
+        options: [
+          "Revalued upward by 25% / 25% अधिमूल्यन (Revaluation)",
+          "Demonetised completely / पूरी तरह विमुद्रीकरण",
+          "Replaced with a gold-standard dollar peg / स्वर्ण-मानक डॉलर से जोड़ दिया गया",
+          "Devalued in two steps by around 18-19% / दो चरणों में लगभग 18-19% अवमूल्यन (Devaluation)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "On July 1 and July 3, 1991, the Reserve Bank of India devalued the Indian Rupee in two successive tranches against major foreign currencies by a cumulative total of around 18-19% to boost exports and curb capital flight.",
+        expHi: "1 जुलाई और 3 जुलाई 1991 को भारतीय रिजर्व बैंक (RBI) द्वारा दो चरणों में भारतीय रुपये का लगभग 18-19% अवमूल्यन (Devaluation) किया गया था, ताकि भारतीय निर्यात प्रतिस्पर्धी बने और विदेशी मुद्रा का बहिर्वाह रुके।",
+        keyFact: "स्वतंत्र भारत में रुपये का अवमूल्यन तीन प्रमुख वर्षों—1949, 1966 और 1991 में किया गया।"
+      },
+      {
+        id: 8,
+        stemEn: "The process of transferring the ownership, management, or control of Public Sector Enterprises (PSEs) to the private sector is termed as:",
+        stemHi: "सार्वजनिक क्षेत्र के उद्यमों (PSEs) के स्वामित्व, प्रबंधन या नियंत्रण को निजी क्षेत्र को सौंपने की प्रक्रिया क्या कहलाती है?",
+        options: [
+          "Privatisation / निजीकरण",
+          "Nationalisation / राष्ट्रीयकरण",
+          "Globalisation / वैश्वीकरण",
+          "Centralisation / केंद्रीकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Privatisation implies shedding the role of government ownership and management in Public Sector Enterprises. It can happen either by withdrawal of government from ownership and management or by outright sale of public sector companies.",
+        expHi: "सार्वजनिक क्षेत्र के उद्यमों (PSUs) में सरकारी स्वामित्व या नियंत्रण को निजी हाथों में सौंपने की प्रक्रिया 'निजीकरण' (Privatisation) कहलाती है।",
+        keyFact: "सरकारी उपक्रमों के इक्विटी शेयरों को निजी क्षेत्र को बेचने की प्रक्रिया को 'विनिवेश' (Disinvestment) कहा जाता है।"
+      },
+      {
+        id: 9,
+        stemEn: "The sale of government-held equity shares of Public Sector Undertakings (PSUs) to private investors or general public is known as:",
+        stemHi: "सार्वजनिक उपक्रमों (PSUs) में सरकार द्वारा धारित इक्विटी शेयरों को निजी निवेशकों या आम जनता को बेचने की प्रक्रिया को क्या कहा जाता है?",
+        options: [
+          "Amalgamation / समामेलन",
+          "Subsidisation / सहायिकीकरण",
+          "Disinvestment / विनिवेश",
+          "Demonetisation / विमुद्रीकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Disinvestment refers to the process of dilution of a government's stake in public sector undertakings. The primary objective is to improve financial discipline, modernise management, and raise capital for public welfare.",
+        expHi: "सरकार द्वारा सार्वजनिक उपक्रमों में अपनी हिस्सेदारी या शेयर पूंजी को बेचना 'विनिवेश' (Disinvestment) कहलाता है। इसका उद्देश्य वित्तीय घाटे को कम करना और कार्यकुशलता बढ़ाना है।",
+        keyFact: "1999 में भारत सरकार ने विनिवेश के लिए एक अलग 'विनिवेश मंत्रालय' (Department of Disinvestment) का गठन किया, जिसे वर्तमान में DIPAM कहा जाता है।"
+      },
+      {
+        id: 10,
+        stemEn: "What is the full form of 'DIPAM', the nodal agency managing government equity and disinvestment in India?",
+        stemHi: "भारत में सरकारी इक्विटी और विनिवेश प्रबंधन की नोडल एजेंसी 'DIPAM' का पूर्ण रूप क्या है?",
+        options: [
+          "Directorate of Industrial Production and Asset Marketing / औद्योगिक उत्पादन और परिसंपत्ति विपणन निदेशालय",
+          "Department of Investment and Public Asset Management / निवेश और लोक परिसंपत्ति प्रबंधन विभाग",
+          "Department of Indian Private Asset Mobilisation / भारतीय निजी परिसंपत्ति गतिशीलता विभाग",
+          "Division of Internal Procurement and Audit Management / आंतरिक खरीद और लेखा परीक्षा प्रबंधन प्रभाग",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "DIPAM stands for Department of Investment and Public Asset Management. It operates under the Ministry of Finance, Government of India, and handles all disinvestment and strategic asset sales of central public sector enterprises.",
+        expHi: "DIPAM का पूर्ण रूप 'Department of Investment and Public Asset Management' (निवेश और लोक परिसंपत्ति प्रबंधन विभाग) है। यह केंद्रीय वित्त मंत्रालय के अधीन कार्य करता है।",
+        keyFact: "वर्ष 2016 में पूर्ववर्ती 'विनिवेश विभाग' का नाम बदलकर DIPAM कर दिया गया था।"
+      },
+      {
+        id: 11,
+        stemEn: "Which high-level committee was set up in August 1991 to recommend comprehensive financial and banking sector reforms in India?",
+        stemHi: "भारत में वित्तीय एवं बैंकिंग क्षेत्र में व्यापक सुधारों की सिफारिश करने के लिए अगस्त 1991 में किस उच्चस्तरीय समिति का गठन किया गया था?",
+        options: [
+          "Chakravarty Committee / चक्रवर्ती समिति",
+          "Kelkar Committee / केलकर समिति",
+          "Rangarajan Committee / रंगराजन समिति",
+          "Narasimham Committee-I / नरसिम्हम समिति-I",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Committee on the Financial System was appointed under the chairmanship of former RBI Governor M. Narasimham in August 1991. Its recommendations included reduction in SLR/CRR, introduction of prudential accounting norms, capital adequacy standards, and entry of private sector banks.",
+        expHi: "वित्तीय क्षेत्र सुधारों के लिए अगस्त 1991 में पूर्व RBI गवर्नर एम. नरसिम्हम की अध्यक्षता में 'नरसिम्हम समिति' का गठन किया गया था। इसने SLR और CRR में कमी तथा निजी बैंकों के प्रवेश की सिफारिश की।",
+        keyFact: "एम. नरसिम्हम समिति को 'भारतीय बैंकिंग सुधारों का अग्रदूत' माना जाता है। 1998 में नरसिम्हम समिति-II का गठन बैंकिंग क्षेत्र सुधारों के सुदृढ़ीकरण हेतु हुआ।"
+      },
+      {
+        id: 12,
+        stemEn: "Under the post-1991 financial reforms, the primary role of the Reserve Bank of India (RBI) was transitioned:",
+        stemHi: "1991 के बाद के वित्तीय सुधारों के तहत भारतीय रिजर्व बैंक (RBI) की प्राथमिक भूमिका में क्या बदलाव हुआ?",
+        options: [
+          "From a Facilitator to a strict Regulator / एक सुगमकर्ता (Facilitator) से सख्त नियंत्रक (Regulator) के रूप में",
+          "Solely to an agricultural credit institution / केवल कृषि साख संस्थान के रूप में",
+          "From a Regulator/Controller to a Facilitator / एक नियंत्रक (Regulator) से वित्तीय प्रणाली के सुगमकर्ता (Facilitator) के रूप में",
+          "Directly to a commercial retail lending bank / प्रत्यक्ष वाणिज्यिक खुदरा ऋणदाता बैंक के रूप में",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "As highlighted in NCERT economics, financial sector reforms changed the role of the RBI from that of a strict controller/regulator to a facilitator of the financial market, giving commercial banks greater autonomy in setting interest rates and opening branches.",
+        expHi: "1991 के वित्तीय सुधारों के परिणामस्वरूप RBI की भूमिका 'नियामक/नियंत्रक' (Regulator) से बदलकर वित्तीय तंत्र के 'सुगमकर्ता' (Facilitator) के रूप में परिवर्तित हुई, जिससे बैंकों को ब्याज दरें तय करने की स्वायत्तता मिली।",
+        keyFact: "इसके बाद ही भारतीय बाजार में निजी क्षेत्र के नए बैंकों (जैसे HDFC, ICICI, Axis Bank) को लाइसेंस प्रदान किए गए।"
+      },
+      {
+        id: 13,
+        stemEn: "The Chelliah Committee (1991) was constituted by the Government of India to recommend reforms in which sector?",
+        stemHi: "भारत सरकार द्वारा 1991 में गठित राजा चेलैया समिति (Chelliah Committee) ने किस क्षेत्र में सुधारों की सिफारिश की थी?",
+        options: [
+          "Telecommunication Reforms / दूरसंचार सुधार",
+          "Agricultural Land Tenures / कृषि भूमि सुधार",
+          "Railway Modernisation / रेलवे आधुनिकीकरण",
+          "Tax Reforms (Direct and Indirect Taxes) / कर सुधार (प्रत्यक्ष एवं अप्रत्यक्ष कर)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Tax Reforms Committee was set up under Dr. Raja J. Chelliah in 1991. It recommended simplifying tax laws, rationalising direct tax slabs, reducing corporate tax rates, and introducing moderate custom duties and Value Added Tax (VAT).",
+        expHi: "डॉ. राजा जे. चेलैया समिति (1991) 'कर सुधारों' (Tax Reforms) से संबंधित थी। इसने कर संरचना के सरलीकरण, कर दरों में कमी तथा अनुपालन में वृद्धि की सिफारिश की थी।",
+        keyFact: "डॉ. राजा चेलैया को भारतीय कर प्रणाली सुधारों का जनक (Father of Indian Tax Reforms) कहा जाता है।"
+      },
+      {
+        id: 14,
+        stemEn: "The Monopolies and Restrictive Trade Practices (MRTP) Act, 1969 was repealed and replaced by which legislation in the post-reform period?",
+        stemHi: "एकाधिकार तथा प्रतिबंधात्मक व्यापार व्यवहार (MRTP) अधिनियम, 1969 को निरस्त कर सुधारोत्तर काल में किस नए अधिनियम द्वारा प्रतिस्थापित किया गया?",
+        options: [
+          "Competition Act, 2002 / प्रतिस्पर्धा अधिनियम, 2002",
+          "Consumer Protection Act, 2019 / उपभोक्ता संरक्षण अधिनियम, 2019",
+          "Companies Act, 1956 / कंपनी अधिनियम, 1956",
+          "Foreign Trade Regulation Act, 1992 / विदेश व्यापार विनियमन अधिनियम, 1992",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "In the reform era, the restrictive MRTP Act of 1969 was replaced by the modern Competition Act, 2002 (enacted on the recommendations of the Raghavan Committee) to promote fair market competition and prevent anti-competitive agreements.",
+        expHi: "सुधार काल में एमआरटीपी (MRTP) अधिनियम, 1969 को समाप्त कर उसके स्थान पर 'प्रतिस्पर्धा अधिनियम, 2002' (Competition Act, 2002) लागू किया गया।",
+        keyFact: "प्रतिस्पर्धा अधिनियम, 2002 के तहत वर्ष 2003 में 'भारतीय प्रतिस्पर्धा आयोग' (CCI - Competition Commission of India) की स्थापना की गई थी।"
+      },
+      {
+        id: 15,
+        stemEn: "In which year was the Foreign Exchange Management Act (FEMA) enacted to replace the stringent FERA of 1973?",
+        stemHi: "कठोर 'फेरा' (FERA, 1973) को प्रतिस्थापित करने के लिए 'फेमा' (Foreign Exchange Management Act - FEMA) किस वर्ष अधिनियमित किया गया था?",
+        options: [
+          "1991",
+          "2005",
+          "1999",
+          "1995",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Foreign Exchange Regulation Act (FERA, 1973) criminalised forex violations. In line with external sector reforms, it was replaced by the Foreign Exchange Management Act (FEMA), enacted in 1999 and enforced from June 1, 2000, treating forex violations as civil offenses.",
+        expHi: "विदेशी मुद्रा के सुचारु प्रबंधन हेतु वर्ष 1999 में FEMA (विदेशी मुद्रा प्रबंधन अधिनियम) पारित किया गया, जिसने कठोर FERA (1973) का स्थान लिया और 1 जून 2000 से प्रभावी हुआ।",
+        keyFact: "FERA के तहत उल्लंघन 'आपराधिक अपराध' (Criminal Offence) था, जबकि FEMA के तहत इसे 'दीवानी अपराध' (Civil Offence) बना दिया गया।"
+      },
+      {
+        id: 16,
+        stemEn: "Which autonomous body was granted statutory status on January 30, 1992, to protect investors and regulate the Indian securities market?",
+        stemHi: "निवेशकों के हितों की रक्षा और भारतीय प्रतिभूति बाजार को विनियमित करने के लिए 30 जनवरी 1992 को किस स्वायत्त संस्था को वैधानिक दर्जा प्रदान किया गया था?",
+        options: [
+          "Reserve Bank of India (RBI) / भारतीय रिजर्व बैंक",
+          "Insurance Regulatory and Development Authority (IRDAI) / बीमा विनियामक और विकास प्राधिकरण",
+          "Small Industries Development Bank of India (SIDBI) / भारतीय लघु उद्योग विकास बैंक",
+          "Securities and Exchange Board of India (SEBI) / भारतीय प्रतिभूति एवं विनिमय बोर्ड (सेबी)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Established in 1988 as a non-statutory body, SEBI was granted statutory powers on January 30, 1992, via the SEBI Ordinance (later replaced by the SEBI Act, 1992) to regulate the stock markets and protect investors.",
+        expHi: "सेबी (SEBI) की स्थापना 1988 में एक गैर-सांविधिक निकाय के रूप में हुई थी, लेकिन 1992 में संसद द्वारा 'सेबी अधिनियम, 1992' पारित कर इसे पूर्ण वैधानिक (Statutory) दर्जा दिया गया।",
+        keyFact: "सेबी (SEBI) का मुख्यालय मुंबई में स्थित है।"
+      },
+      {
+        id: 17,
+        stemEn: "On which account did India establish full convertibility of the Indian Rupee in August 1994?",
+        stemHi: "अगस्त 1994 में भारत ने भारतीय रुपये को किस खाते पर पूर्ण परिवर्तनीय (Full Convertibility) घोषित किया?",
+        options: [
+          "Capital Account / पूंजीगत खाता",
+          "Current Account / चालू खाता",
+          "Both Current and Capital Accounts / चालू और पूंजीगत दोनों खाते",
+          "Sovereign Reserve Account / संप्रभु आरक्षित खाता",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "India accepted Article VIII obligations of the IMF in August 1994, making the Rupee fully convertible on the Current Account (trade in goods, services, transfers, and dividend remittances). The Rupee remains partially convertible on the Capital Account.",
+        expHi: "अगस्त 1994 में भारत ने चालू खाते (Current Account) पर रुपये को पूर्ण परिवर्तनीय घोषित कर दिया। पूंजी खाते पर आज भी रुपया आंशिक रूप से ही परिवर्तनीय है।",
+        keyFact: "पूंजी खाते की पूर्ण परिवर्तनीयता की समीक्षा हेतु तारापोर समिति (Tarapore Committee, 1997 एवं 2006) का गठन किया गया था।"
+      },
+      {
+        id: 18,
+        stemEn: "Currently, which of the following areas is strictly reserved exclusively for the public sector in India?",
+        stemHi: "वर्तमान में निम्नलिखित में से कौन-सा क्षेत्र भारत में सार्वजनिक क्षेत्र के लिए पूरी तरह आरक्षित है?",
+        options: [
+          "Electricity generation / विद्युत उत्पादन",
+          "Telecommunication services / दूरसंचार सेवाएं",
+          "Atomic energy generation / परमाणु ऊर्जा उत्पादन",
+          "Civil Aviation / नागरिक उड्डयन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Under current industrial guidelines, only two sectors remain exclusively reserved for the public sector: (1) Atomic energy / certain nuclear operations, and (2) Railway operations (core rail operations). All others are open to private investment.",
+        expHi: "औद्योगिक नीति के तहत वर्तमान में केवल दो प्रमुख क्षेत्र सार्वजनिक क्षेत्र के लिए विशेष रूप से आरक्षित हैं: परमाणु ऊर्जा (Atomic Energy) और रेलवे परिचालन (कोर)।",
+        keyFact: "1956 की औद्योगिक नीति में सार्वजनिक क्षेत्र के लिए 17 उद्योग आरक्षित थे, जिन्हें 1991 में घटाकर 8 और अब केवल 2 कर दिया गया है।"
+      },
+      {
+        id: 19,
+        stemEn: "The World Trade Organization (WTO) was officially established on 1st January 1995, succeeding which historical agreement?",
+        stemHi: "1 जनवरी 1995 को विश्व व्यापार संगठन (WTO) की स्थापना किस पूर्ववर्ती समझौते के स्थान पर हुई थी?",
+        options: [
+          "UNCTAD / अंकटाड",
+          "Bretton Woods Agreement / ब्रेटन वुड्स समझौता",
+          "NAFTA / नाफ्टा",
+          "GATT (General Agreement on Tariffs and Trade) / गैट (प्रशुल्क एवं व्यापार पर सामान्य समझौता)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The World Trade Organization (WTO) was set up on January 1, 1995, under the Marrakesh Agreement, replacing the General Agreement on Tariffs and Trade (GATT, created in 1947). India is a founding member of the WTO.",
+        expHi: "1 जनवरी 1995 को 'गैट' (GATT) के स्थान पर विश्व व्यापार संगठन (WTO) की स्थापना की गई थी। भारत इसका संस्थापक सदस्य है।",
+        keyFact: "WTO का मुख्यालय जिनेवा, स्विट्जरलैंड (Geneva, Switzerland) में स्थित है।"
+      },
+      {
+        id: 20,
+        stemEn: "Which Five-Year Plan was delayed and implemented during the period 1992–1997 to accommodate the structural economic reforms of 1991?",
+        stemHi: "1991 के संरचनात्मक आर्थिक सुधारों के कारण कौन-सी पंचवर्षीय योजना स्थगित होकर 1992–1997 की अवधि में लागू की गई थी?",
+        options: [
+          "Seventh Five-Year Plan / सातवीं पंचवर्षीय योजना",
+          "Eighth Five-Year Plan / आठवीं पंचवर्षीय योजना",
+          "Ninth Five-Year Plan / नौवीं पंचवर्षीय योजना",
+          "Sixth Five-Year Plan / छठी पंचवर्षीय योजना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Due to political instability and the balance of payments crisis, the Eighth Five-Year Plan could not start in 1990. Instead, two Annual Plans (1990-91 and 1991-92) were operated, and the Eighth Five-Year Plan was officially implemented for 1992–1997.",
+        expHi: "आर्थिक संकट और राजनीतिक अस्थिरता के कारण आठवीं पंचवर्षीय योजना 1990 के स्थान पर 1992 में शुरू हुई और 1992–1997 तक संचालित रही। 1990-92 के दौरान दो वार्षिक योजनाएं चलाई गईं।",
+        keyFact: "8वीं पंचवर्षीय योजना में आर्थिक सुधारों के प्रभाव से 5.6% के लक्ष्य के मुकाबले 6.68% की उल्लेखनीय वार्षिक GDP विकास दर हासिल हुई।"
+      },
+      {
+        id: 21,
+        stemEn: "Which tier of enterprises was introduced under Central Public Sector Enterprises (CPSEs) in 1997 to grant financial and operational autonomy?",
+        stemHi: "केंद्रीय सार्वजनिक उपक्रमों (CPSEs) को वित्तीय और परिचालन स्वायत्तता प्रदान करने के लिए वर्ष 1997 में किस श्रेणी/दर्जे की शुरुआत की गई थी?",
+        options: [
+          "Maharatna / महारत्न",
+          "Bharatratna / भारतरत्न",
+          "Navratna and Miniratna / नवरत्न और मिनीरत्न",
+          "Udyog Ratna / उद्योग रत्न",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "In 1997, the Government of India introduced the 'Navratna' and 'Miniratna' categories to grant enhanced financial and managerial autonomy to well-performing CPSEs. The higher 'Maharatna' status was subsequently introduced in late 2009.",
+        expHi: "उत्कृष्ट प्रदर्शन करने वाले सार्वजनिक उपक्रमों को स्वायत्तता देने के लिए वर्ष 1997 में 'नवरत्न' और 'मिनीरत्न' दर्जे की शुरुआत की गई थी। 'महारत्न' श्रेणी की शुरुआत बाद में वर्ष 2009-10 में हुई।",
+        keyFact: "महारत्न कंपनियों को 5,000 करोड़ रुपये तक के निवेश के लिए सरकार की पूर्व अनुमति की आवश्यकता नहीं होती।"
+      },
+      {
+        id: 22,
+        stemEn: "The Fiscal Responsibility and Budget Management (FRBM) Act was passed by the Indian Parliament in which year to ensure fiscal discipline?",
+        stemHi: "राजकोषीय अनुशासन सुनिश्चित करने के लिए भारतीय संसद द्वारा राजकोषीय उत्तरदायित्व और बजट प्रबंधन (FRBM) अधिनियम किस वर्ष पारित किया गया था?",
+        options: [
+          "1998",
+          "1991",
+          "2008",
+          "2003",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The FRBM Act was enacted in August 2003 and came into force in July 2004. It mandated the government to eliminate the revenue deficit and bring down the fiscal deficit to a manageable target of 3% of GDP.",
+        expHi: "केंद्र सरकार के वित्तीय अनुशासन एवं राजकोषीय घाटे को नियंत्रित करने के लिए वर्ष 2003 में FRBM अधिनियम (राजकोषीय उत्तरदायित्व एवं बजट प्रबंधन) पारित किया गया था।",
+        keyFact: "FRBM समीक्षा समिति (2016) के अध्यक्ष एन. के. सिंह (N. K. Singh) थे।"
+      },
+      {
+        id: 23,
+        stemEn: "In the post-reform period, the system of administering pricing for petroleum products (Administered Price Mechanism - APM) was formally dismantled in which year?",
+        stemHi: "सुधारोत्तर काल में पेट्रोलियम उत्पादों के लिए लागू 'प्रशासित मूल्य तंत्र' (APM) को औपचारिक रूप से किस वर्ष समाप्त किया गया?",
+        options: [
+          "April 2002 / अप्रैल 2002",
+          "July 1991 / जुलाई 1991",
+          "January 1995 / जनवरी 1995",
+          "August 2014 / अगस्त 2014",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Government of India officially dismantled the Administered Price Mechanism (APM) for petroleum products effective April 1, 2002, allowing market forces greater say in petroleum product pricing.",
+        expHi: "पेट्रोलियम क्षेत्र में सुधार के तहत भारत सरकार ने 1 अप्रैल 2002 को 'प्रशासित मूल्य तंत्र' (Administered Price Mechanism - APM) को समाप्त कर दिया था।",
+        keyFact: "पेट्रोल की कीमतों को जून 2010 में और डीजल की कीमतों को अक्टूबर 2014 में पूरी तरह बाजार-आधारित किया गया।"
+      },
+      {
+        id: 24,
+        stemEn: "In the post-1991 economic reform era, which broad economic sector registered the highest sustained compound annual growth rate in India?",
+        stemHi: "1991 के आर्थिक सुधारों के बाद के काल में भारत में किस आर्थिक क्षेत्र ने सबसे तीव्र और सतत वृद्धि दर दर्ज की?",
+        options: [
+          "Agriculture and Allied Sector / कृषि एवं संबद्ध क्षेत्र",
+          "Mining and Quarrying / खनन और उत्खनन",
+          "Services (Tertiary) Sector / सेवा (तृतीयक) क्षेत्र",
+          "Heavy Manufacturing / भारी विनिर्माण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "A key structural feature of post-1991 Indian growth has been service-led expansion (IT, ITES, financial, banking, and telecom services). The Services sector's share in India's Gross Value Added (GVA) expanded from around 40% in 1990 to over 54% in the subsequent decades.",
+        expHi: "1991 के बाद के आर्थिक सुधारों का सबसे अधिक लाभ 'सेवा क्षेत्र' (तृतीयक क्षेत्र) को मिला। आईटी, सॉफ्टवेयर, संचार एवं बैंकिंग सेवाओं के तीव्र विस्तार से सेवा क्षेत्र भारतीय अर्थव्यवस्था का सबसे बड़ा घटक बन गया।",
+        keyFact: "भारत की अर्थव्यवस्था को अक्सर सेवा-क्षेत्र संचालित अर्थव्यवस्था (Service-led Growth Model) कहा जाता है।"
+      },
+      {
+        id: 25,
+        stemEn: "Which committee recommended the introduction of the Value Added Tax (VAT) in India to reform the indirect taxation structure?",
+        stemHi: "अप्रत्यक्ष कर संरचना में सुधार के लिए भारत में मूल्य वर्धित कर (VAT) लागू करने की सिफारिश किस समिति ने की थी?",
+        options: [
+          "Sarkaria Commission / सरकारिया आयोग",
+          "Malhotra Committee / मल्होत्रा समिति",
+          "Verma Committee / वर्मा समिति",
+          "L. K. Jha Committee (1976) and Asim Dasgupta Empowered Committee / एल. के. झा समिति और असीम दासगुप्ता अधिकार प्राप्त समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The concept of VAT was first mooted by the L. K. Jha Committee (1976 as MANVAT) and further shaped by the Chelliah Committee. For state-level VAT (implemented universally in India from April 1, 2005), the blueprint was designed under the Empowered Committee of State Finance Ministers led by Dr. Asim Dasgupta.",
+        expHi: "भारत में राज्यों के स्तर पर मूल्य संवर्धित कर (VAT) लागू करने का प्रारूप डॉ. असीम दासगुप्ता की अध्यक्षता वाली अधिकार प्राप्त समिति द्वारा तैयार किया गया था और यह अधिकांश राज्यों में 1 अप्रैल 2005 से लागू हुआ।",
+        keyFact: "हरियाणा देश का पहला राज्य था जिसने 2003 में वैट (VAT) लागू किया था; 2017 में GST ने अधिकांश VAT को प्रतिस्थापित कर दिया।"
+      },
+
+      // Q26 - Q50 (Batch 2)
+      {
+        id: 26,
+        stemEn: "Which high-powered committee was constituted in 1993 to recommend reforms and deregulation in the Indian Insurance sector?",
+        stemHi: "भारतीय बीमा क्षेत्र में सुधार एवं विनियमन हेतु वर्ष 1993 में किस उच्चस्तरीय समिति का गठन किया गया था?",
+        options: [
+          "Bimal Jalan Committee / बिमल जालान समिति",
+          "R. N. Malhotra Committee / आर. एन. मल्होत्रा समिति",
+          "C. Rangarajan Committee / सी. रंगराजन समिति",
+          "Kirit Parikh Committee / किरीट पारिख समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Malhotra Committee (headed by former RBI Governor R. N. Malhotra) was appointed in 1993 to evaluate the insurance sector. It recommended opening the sector to private domestic players, allowing foreign equity participation, and creating an independent regulatory body.",
+        expHi: "पूर्व RBI गवर्नर आर. एन. मल्होत्रा की अध्यक्षता में वर्ष 1993 में 'मल्होत्रा समिति' का गठन किया गया था। इस समिति की सिफारिशों के आधार पर बीमा क्षेत्र को निजी एवं विदेशी कंपनियों के लिए खोला गया।",
+        keyFact: "मल्होत्रा समिति की सिफारिश पर ही वर्ष 1999 में बीमा विनियामक और विकास प्राधिकरण अधिनियम (IRDA Act) पारित हुआ।"
+      },
+      {
+        id: 27,
+        stemEn: "In which year was the Insurance Regulatory and Development Authority of India (IRDAI) established as a statutory body?",
+        stemHi: "बीमा विनियामक और विकास प्राधिकरण (IRDAI) को एक सांविधिक निकाय के रूप में किस वर्ष स्थापित किया गया था?",
+        options: [
+          "1991",
+          "2005",
+          "1999",
+          "1995",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Insurance Regulatory and Development Authority Act was passed in 1999, formally establishing IRDAI as a statutory regulatory body in April 2000 to protect the interests of policyholders and regulate the insurance industry.",
+        expHi: "वर्ष 1999 में संसद द्वारा पारित 'IRDA अधिनियम' के तहत अप्रैल 2000 में बीमा विनियामक और विकास प्राधिकरण (IRDAI) की एक वैधानिक निकाय के रूप में स्थापना हुई।",
+        keyFact: "IRDAI का मुख्यालय हैदराबाद (तेलंगाना) में स्थित है।"
+      },
+      {
+        id: 28,
+        stemEn: "What was the core purpose of establishing the Disinvestment Commission in August 1996 under the chairmanship of G. V. Ramakrishna?",
+        stemHi: "अगस्त 1996 में जी. वी. रामकृष्ण की अध्यक्षता में गठित 'विनिवेश आयोग' का मुख्य उद्देश्य क्या था?",
+        options: [
+          "To nationalise sick private commercial banks / रुग्ण निजी वाणिज्यिक बैंकों का राष्ट्रीयकरण करना",
+          "To regulate agricultural commodity pricing / कृषि जिंसों के मूल्य निर्धारण को विनियमित करना",
+          "To fix corporate tax brackets for export firms / निर्यात कंपनियों के लिए कॉर्पोरेट कर स्लैब तय करना",
+          "To advise the government on disinvestment procedures and strategic sales of PSUs / सार्वजनिक उपक्रमों के विनिवेश और रणनीतिक बिक्री पर सरकार को सलाह देना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "In August 1996, the Government of India established the Disinvestment Commission headed by G. V. Ramakrishna for a three-year period to draw up a long-term disinvestment programme and advise on strategic sales, restructuring, and pricing of PSU shares.",
+        expHi: "केंद्र सरकार ने अगस्त 1996 में जी. वी. रामकृष्ण की अध्यक्षता में प्रथम 'विनिवेश आयोग' का गठन किया था, जिसका कार्य सार्वजनिक क्षेत्र के उपक्रमों के विनिवेश के तौर-तरीकों, वित्तीय पुनर्गठन और रणनीतिक बिक्री पर सलाह देना था।",
+        keyFact: "इस आयोग ने 58 सार्वजनिक उद्यमों की जांच कर उनकी इक्विटी बिक्री की ठोस रणनीतियां सुझाई थीं।"
+      },
+      {
+        id: 29,
+        stemEn: "Under the post-1991 reforms, how did the quantitative restrictions (QRs) on imports of manufactured consumer goods and agricultural products change?",
+        stemHi: "1991 के बाद के सुधारों के अंतर्गत विनिर्मित उपभोक्ता वस्तुओं और कृषि उत्पादों के आयात पर मात्रात्मक प्रतिबंधों (QRs) पर क्या निर्णय लिया गया?",
+        options: [
+          "They were completely removed by April 2001 in phased manner / उन्हें अप्रैल 2001 तक चरणबद्ध तरीके से पूरी तरह समाप्त कर दिया गया",
+          "They were permanently doubled / उन्हें स्थायी रूप से दोगुना कर दिया गया",
+          "They were converted into military export quotas / उन्हें सैन्य निर्यात कोटे में बदल दिया गया",
+          "They were restricted solely to bilateral barter trade / उन्हें केवल द्विपक्षीय वस्तु-विनिमय तक सीमित कर दिया गया",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "As part of trade policy liberalisation and WTO commitments, import licensing and Quantitative Restrictions (QRs) on manufactured consumer goods and agricultural products were fully dismantled by April 1, 2001.",
+        expHi: "व्यापार उदारीकरण नीति और WTO की प्रतिबद्धताओं के तहत भारत सरकार ने 1 अप्रैल 2001 तक सभी आयातों से मात्रात्मक प्रतिबंध (Quantitative Restrictions - कोटा व लाइसेंस) पूरी तरह हटा दिए।",
+        keyFact: "मात्रात्मक प्रतिबंध हटाने के बाद घरेलू उद्योगों के संरक्षण के लिए केवल आयात शुल्क (Tariffs) का उपयोग किया जाने लगा।"
+      },
+      {
+        id: 30,
+        stemEn: "The Special Economic Zones (SEZ) Act was enacted by the Indian Parliament in which year to promote export-led growth and attract FDI?",
+        stemHi: "निर्यात संवर्धन और विदेशी निवेश को आकर्षित करने के उद्देश्य से भारतीय संसद द्वारा विशेष आर्थिक क्षेत्र (SEZ) अधिनियम किस वर्ष पारित किया गया था?",
+        options: [
+          "2000",
+          "1991",
+          "2005",
+          "2010",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "While the SEZ policy was first announced in April 2000, the Special Economic Zones Act was formally passed by the Parliament in May 2005 and came into effect along with the SEZ Rules on February 10, 2006.",
+        expHi: "यद्यपि SEZ नीति की घोषणा अप्रैल 2000 में हुई थी, लेकिन 'विशेष आर्थिक क्षेत्र अधिनियम' (SEZ Act) संसद द्वारा मई 2005 में पारित किया गया और यह फरवरी 2006 से प्रभावी हुआ।",
+        keyFact: "भारत ने 1965 में कांडला (गुजरात) में एशिया का पहला निर्यात प्रसंस्करण क्षेत्र (EPZ) स्थापित किया था, जिन्हें बाद में SEZ में बदला गया।"
+      },
+      {
+        id: 31,
+        stemEn: "In the post-1991 economic reform context, what does 'Outsourcing' (विशेषकर BPO/ITES) primarily refer to?",
+        stemHi: "1991 के आर्थिक सुधारों के संदर्भ में 'आउटसोर्सिंग' (Outsourcing) का मुख्य रूप से क्या अर्थ है?",
+        options: [
+          "Purchasing sick domestic factories by the public sector / सार्वजनिक क्षेत्र द्वारा रुग्ण घरेलू कारखानों को खरीदना",
+          "Imposing maximum quotas on foreign equity holding / विदेशी इक्विटी धारिता पर अधिकतम कोटा लगाना",
+          "Nationalising foreign financial assets / विदेशी वित्तीय परिसंपत्तियों का राष्ट्रीयकरण करना",
+          "Contracting out regular domestic business operations to external international service providers / किसी कंपनी द्वारा अपनी नियमित व्यावसायिक प्रक्रियाओं को बाह्य अंतरराष्ट्रीय सेवा प्रदाताओं को सौंपना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Outsourcing is an important outcome of globalisation where a company hires regular service from external sources, often abroad (e.g., call centres, transcription, software development, data analytics), benefiting from India's skilled and cost-effective English-speaking workforce.",
+        expHi: "आउटसोर्सिंग (बाह्यस्रोतन) वैश्वीकरण का प्रमुख परिणाम है, जिसमें कोई बहुराष्ट्रीय कंपनी अपनी नियमित सेवाएं (जैसे बीपीओ, कॉल सेंटर, आईटी सेवाएं) किसी बाहरी देश (विशेषकर भारत) की फर्मों को सौंपती है।",
+        keyFact: "भारत अपनी कम लागत और कुशल अंग्रेजी-भाषी जनशक्ति के कारण वैश्विक आउटसोर्सिंग का प्रमुख केंद्र बनकर उभरा।"
+      },
+      {
+        id: 32,
+        stemEn: "Which institutional mechanism was created in 1991 to facilitate single-window clearance for foreign direct investment proposals in India?",
+        stemHi: "भारत में विदेशी प्रत्यक्ष निवेश (FDI) के प्रस्तावों को एकल-खिड़की स्वीकृति प्रदान करने के लिए 1991 में किस संस्थागत निकाय का गठन किया गया था?",
+        options: [
+          "National Development Council (NDC) / राष्ट्रीय विकास परिषद",
+          "Foreign Investment Promotion Board (FIPB) / विदेशी निवेश संवर्धन बोर्ड",
+          "Central Vigilance Commission (CVC) / केंद्रीय सतर्कता आयोग",
+          "Export Credit Guarantee Corporation (ECGC) / निर्यात ऋण गारंटी निगम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Foreign Investment Promotion Board (FIPB) was set up in the Prime Minister's Office post-1991 reforms to process FDI proposals not eligible for the automatic route. The government formally abolished the FIPB in May 2017 to further ease FDI clearance.",
+        expHi: "1991 के सुधारों के तुरंत बाद प्रधानमंत्री कार्यालय के तहत 'विदेशी निवेश संवर्धन बोर्ड' (FIPB) की स्थापना की गई थी, जिसे मई 2017 में सरकार द्वारा व्यापार सुगमता हेतु समाप्त कर दिया गया।",
+        keyFact: "वर्तमान में अधिकांश क्षेत्रों में FDI स्वचालित मार्ग (Automatic Route) के अंतर्गत स्वीकृत है।"
+      },
+      {
+        id: 33,
+        stemEn: "The Sick Industrial Companies Act (SICA), 1985 and its associated body BIFR were officially repealed and replaced by which modern framework?",
+        stemHi: "रुग्ण औद्योगिक कंपनी अधिनियम (SICA, 1985) और उससे जुड़े निकाय BIFR को निरस्त कर सुधारोत्तर काल में किस आधुनिक व्यवस्था द्वारा प्रतिस्थापित किया गया?",
+        options: [
+          "Real Estate Regulation Act (RERA), 2016 / रियल एस्टेट विनियमन अधिनियम (रेरा), 2016",
+          "Insolvency and Bankruptcy Code (IBC), 2016 / दिवाला एवं शोधन अक्षमता संहिता (IBC), 2016",
+          "Negotiable Instruments Act, 1881 / परक्राम्य लिखत अधिनियम, 1881",
+          "Consumer Dispute Redressal Act, 1986 / उपभोक्ता विवाद निवारण अधिनियम, 1986",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "To provide a time-bound and market-driven solution for corporate insolvency and bad debts, the Government of India repealed SICA and dissolved BIFR, operationalising the Insolvency and Bankruptcy Code (IBC) in 2016 with the NCLT as the adjudicating authority.",
+        expHi: "रुग्ण औद्योगिक इकाइयों के पुनरुद्धार और समाधान के लिए BIFR तथा SICA को निरस्त कर वर्ष 2016 में 'दिवाला एवं शोधन अक्षमता संहिता' (IBC, 2016) और NCLT को लागू किया गया।",
+        keyFact: "IBC 2016 के तहत समाधान प्रक्रिया (CIRP) की मानक समय सीमा 180 से 330 दिन निर्धारित की गई है।"
+      },
+      {
+        id: 34,
+        stemEn: "Under the post-1991 regime, what distinguishes Foreign Direct Investment (FDI) from Foreign Portfolio Investment (FPI/FII)?",
+        stemHi: "1991 के बाद के विनियामक ढांचे में प्रत्यक्ष विदेशी निवेश (FDI) और विदेशी पोर्टफोलियो निवेश (FPI) के बीच प्राथमिक अंतर क्या है?",
+        options: [
+          "FDI is purely short-term speculative money while FPI is permanent state equity / FDI अल्पकालिक सट्टा पूंजी है जबकि FPI स्थायी सरकारी हिस्सेदारी है",
+          "FPI is allowed only in agriculture whereas FDI is restricted to cottage handicrafts / FPI केवल कृषि में अनुमत है जबकि FDI कुटीर उद्योगों तक सीमित है",
+          "FDI involves physical asset creation and managerial control, whereas FPI involves financial assets without management control / FDI में भौतिक परिसंपत्ति निर्माण और प्रबंधकीय नियंत्रण शामिल है, जबकि FPI केवल वित्तीय प्रतिभूतियों में गैर-प्रबंधकीय निवेश है",
+          "FDI carries no legal status in India while FPI is fully insured by RBI / भारत में FDI का कोई कानूनी दर्जा नहीं है जबकि FPI का बीमा RBI करता है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "FDI is a long-term investment by a foreign entity in enterprise assets with lasting interest and significant degree of influence/management control (typically ≥10% equity). FPI/FII refers to passive investment in listed stocks and bonds without managerial control.",
+        expHi: "प्रत्यक्ष विदेशी निवेश (FDI) दीर्घकालिक होता है जिसमें कंपनी के प्रबंधन और परिसंपत्तियों में सीधा नियंत्रण या हिस्सेदारी (सामान्यतः ≥10%) होती है। FPI वित्तीय परिसंपत्तियों (शेयर/बॉन्ड) में किया गया अल्पकालिक या गैर-प्रबंधकीय निवेश होता है।",
+        keyFact: "FPI को अक्सर इसकी अस्थिरता के कारण 'हॉट मनी' (Hot Money) भी कहा जाता है।"
+      },
+      {
+        id: 35,
+        stemEn: "What major structural weakness of the 1991 economic reforms is widely highlighted by economists regarding the employment sector?",
+        stemHi: "रोजगार क्षेत्र के संबंध में अर्थशास्त्रियों द्वारा 1991 के आर्थिक सुधारों की सबसे प्रमुख संरचनात्मक खामी किसे बताया गया है?",
+        options: [
+          "Total abolition of agricultural output / कृषि उत्पादन की पूरी तरह समाप्ति",
+          "Complete closure of the public service commission / लोक सेवा आयोगों का पूर्ण समापन",
+          "Complete disappearance of private software companies / निजी सॉफ्टवेयर कंपनियों का पूर्ण रूप से लुप्त हो जाना",
+          "'Jobless Growth' (रोजगार-विहीन संवृद्धि) / उच्च जीडीपी वृद्धि के बावजूद पर्याप्त रोजगार अवसरों का सृजन न होना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "A principal criticism documented in NCERT economics is that while GDP growth accelerated noticeably post-1991, it was driven by capital-intensive and skill-intensive service sectors rather than labour-intensive manufacturing, creating a phenomenon termed 'Jobless Growth'.",
+        expHi: "1991 के बाद के सुधारों की सबसे बड़ी आलोचना 'रोजगार-विहीन संवृद्धि' (Jobless Growth) रही है, क्योंकि GDP में तीव्र वृद्धि तो दर्ज हुई किंतु विनिर्माण और कृषि में श्रम-गहन रोजगार के अनुपात में पर्याप्त वृद्धि नहीं हुई।",
+        keyFact: "भारतीय कार्यबल का 45% से अधिक हिस्सा आज भी प्राथमिक (कृषि) क्षेत्र पर निर्भर है, जबकि GDP में इसका योगदान लगभग 16-18% है।"
+      },
+      {
+        id: 36,
+        stemEn: "In which year was the 'National Investment Fund' (NIF) constituted by the Government of India to channelise proceeds from PSU disinvestment?",
+        stemHi: "सार्वजनिक क्षेत्र के उपक्रमों के विनिवेश से प्राप्त राशि को संचित एवं व्यवस्थित करने के लिए भारत सरकार द्वारा 'राष्ट्रीय निवेश कोष' (NIF) का गठन किस वर्ष किया गया था?",
+        options: [
+          "1991",
+          "2005",
+          "1999",
+          "2014",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Government of India constituted the National Investment Fund (NIF) in November 2005. The proceeds from the disinvestment of Central Public Sector Enterprises were channelised into this fund to finance social infrastructure (education, health) and revive viable CPSEs.",
+        expHi: "केंद्र सरकार द्वारा नवंबर 2005 में 'राष्ट्रीय निवेश कोष' (NIF) की स्थापना की गई थी। केंद्रीय सार्वजनिक उपक्रमों के विनिवेश से प्राप्त पूंजीगत आय को सामाजिक क्षेत्र की योजनाओं और सार्वजनिक उद्यमों के पूंजीकरण में लगाने हेतु इसमें रखा जाता है।",
+        keyFact: "NIF का 75% हिस्सा स्वास्थ्य, शिक्षा और रोजगार सृजन जैसी सामाजिक योजनाओं में खर्च करने का प्रावधान रखा गया था।"
+      },
+      {
+        id: 37,
+        stemEn: "Which committee was constituted by the Reserve Bank of India in 1997 to lay down the road map towards Full Capital Account Convertibility?",
+        stemHi: "रुपये की पूर्ण पूंजी खाता परिवर्तनीयता (Full Capital Account Convertibility) का रोडमैप तैयार करने के लिए RBI द्वारा 1997 में किस समिति का गठन किया गया था?",
+        options: [
+          "Abid Hussain Committee / आबिद हुसैन समिति",
+          "Bimal Jalan Committee / बिमल जालान समिति",
+          "S. S. Tarapore Committee / एस. एस. तारापोर समिति",
+          "Y. V. Reddy Committee / वाई. वी. रेड्डी समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Committee on Capital Account Convertibility was set up under former RBI Deputy Governor S. S. Tarapore in 1997 (and a second committee in 2006). It recommended stringent preconditions including fiscal deficit below 3.5%, low inflation, and gross NPAs below 5% before full capital convertibility.",
+        expHi: "भारतीय रिजर्व बैंक द्वारा एस. एस. तारापोर की अध्यक्षता में 1997 में 'पूंजी खाता परिवर्तनीयता समिति' का गठन किया गया था (तथा पुनः 2006 में तारापोर समिति-II बनी)। इसने राजकोषीय घाटा और एनपीए कम करने जैसी पूर्व-शर्तें रखीं।",
+        keyFact: "चालू खाता (Current Account) वस्तुओं व सेवाओं के व्यापार से संबंधित है, जबकि पूंजी खाता (Capital Account) परिसंपत्तियों व ऋणों के स्वामित्व से संबंधित है।"
+      },
+      {
+        id: 38,
+        stemEn: "The National Telecom Policy of 1994 (NTP 1994) and subsequent NTP 1999 led to the creation of which regulatory body for telecommunications in 1997?",
+        stemHi: "राष्ट्रीय दूरसंचार नीति 1994 एवं 1999 के सुधारों के परिणामस्वरूप दूरसंचार क्षेत्र को विनियमित करने हेतु 1997 में किस स्वायत्त विनियामक निकाय की स्थापना की गई?",
+        options: [
+          "BSNL / बीएसएनएल",
+          "MTNL / एमटीएनएल",
+          "C-DOT / सी-डॉट",
+          "TRAI (Telecom Regulatory Authority of India) / ट्राई (भारतीय दूरसंचार विनियामक प्राधिकरण)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Telecom Regulatory Authority of India (TRAI) was established on February 20, 1997, by an Act of Parliament to regulate telecom services, fix tariffs, and ensure fair competition between state and private service providers.",
+        expHi: "दूरसंचार क्षेत्र के उदारीकरण और निजी कंपनियों के प्रवेश के बाद निष्पक्ष प्रतिस्पर्धा एवं टैरिफ विनियमन हेतु 20 फरवरी 1997 को 'भारतीय दूरसंचार विनियामक प्राधिकरण' (TRAI) की स्थापना की गई थी।",
+        keyFact: "बाद में वर्ष 2000 में न्यायिक विवादों के निपटारे के लिए TRAI से अलग 'TDSAT' (दूरसंचार विवाद निपटान और अपीलीय न्यायाधिकरण) बनाया गया।"
+      },
+      {
+        id: 39,
+        stemEn: "What was the direct impact of the 1991 economic reforms on the Statutory Liquidity Ratio (SLR) and Cash Reserve Ratio (CRR) of commercial banks?",
+        stemHi: "1991 के आर्थिक सुधारों के परिणामस्वरूप वाणिज्यिक बैंकों के वैधानिक तरलता अनुपात (SLR) और नकद आरक्षित अनुपात (CRR) पर क्या सीधा प्रभाव पड़ा?",
+        options: [
+          "They were drastically lowered to release loanable funds for the private sector / निजी क्षेत्र को ऋण उपलब्धता बढ़ाने हेतु उन्हें काफी कम किया गया",
+          "They were increased to 100% to cease commercial banking / वाणिज्यिक बैंकिंग को रोकने हेतु उन्हें 100% तक बढ़ा दिया गया",
+          "They were permanently frozen at 1991 levels / उन्हें 1991 के स्तर पर स्थायी रूप से फ्रीज कर दिया गया",
+          "They were transferred to the World Bank's reserve accounts / उन्हें विश्व बैंक के आरक्षित खातों में स्थानांतरित कर दिया गया",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Prior to 1991, high SLR (up to 38.5%) and CRR (up to 15%) pre-empted bank resources for government financing. On the recommendations of the Narasimham Committee, SLR and CRR were systematically reduced to free up liquidity for productive private lending.",
+        expHi: "1991 से पूर्व SLR लगभग 38.5% और CRR 15% तक पहुंच गया था, जिससे बैंकों के पास निजी क्षेत्र को ऋण देने के लिए धन की कमी हो जाती थी। नरसिम्हम समिति की सिफारिश पर इनमें भारी कटौती की गई ताकि बैंकों की ऋण देने की क्षमता बढ़े।",
+        keyFact: "SLR वह अनुपात है जिसे बैंकों को अपने पास स्वर्ण, सरकारी प्रतिभूतियों या नकदी के रूप में रखना अनिवार्य होता है।"
+      },
+      {
+        id: 40,
+        stemEn: "Which autonomous organization was set up in 1993 to promote and develop agricultural and processed food exports in the post-reform era?",
+        stemHi: "सुधारोत्तर काल में कृषि एवं प्रसंस्कृत खाद्य उत्पादों के निर्यात को बढ़ावा देने और विकसित करने के लिए किस सांविधिक निकाय को सशक्त बनाया गया?",
+        options: [
+          "NABARD / नाबार्ड",
+          "APEDA (Agricultural and Processed Food Products Export Development Authority) / एपीडा",
+          "NITI Aayog / नीति आयोग",
+          "FCI (Food Corporation of India) / भारतीय खाद्य निगम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Established under the APEDA Act 1985 and coming into full operational prominence during post-1991 agricultural trade opening, APEDA operates under the Ministry of Commerce and Industry to promote export of scheduled agricultural products.",
+        expHi: "एपीडा (APEDA - कृषि और प्रसंस्कृत खाद्य उत्पाद निर्यात विकास प्राधिकरण) वाणिज्य और उद्योग मंत्रालय के अधीन कृषि निर्यात को वैश्विक बाजारों में बढ़ावा देने वाली प्रमुख संस्था है।",
+        keyFact: "बासमती चावल, ताजे फल, सब्जियां और प्रसंस्कृत उत्पादों के निर्यात प्रमाणीकरण का कार्य APEDA द्वारा किया जाता है।"
+      },
+      {
+        id: 41,
+        stemEn: "In the post-reform era, in which year did the Government of India launch the 'Micro, Small and Medium Enterprises Development (MSMED) Act'?",
+        stemHi: "सुधारोत्तर काल में भारत सरकार द्वारा 'सूक्ष्म, लघु और मध्यम उद्यम विकास (MSMED) अधिनियम' किस वर्ष लागू किया गया था?",
+        options: [
+          "1991",
+          "1999",
+          "2006",
+          "2014",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The MSMED Act was enacted in 2006 to provide a unified legal and institutional framework for classifying and promoting micro, small, and medium enterprises, replacing the earlier fragmented small-scale industries regulatory regime.",
+        expHi: "सूक्ष्म, लघु और मध्यम उद्यमों के संवर्धन, विकास और प्रतिस्पर्धात्मकता को बढ़ाने के लिए वर्ष 2006 में 'MSMED अधिनियम' लागू किया गया था।",
+        keyFact: "1 जुलाई 2020 को MSME की परिभाषा को संशोधित कर निवेश और टर्नओवर (कारोबार) दोनों पर आधारित समग्र मानदंड अपनाया गया।"
+      },
+      {
+        id: 42,
+        stemEn: "Which agreement under the World Trade Organization (WTO) regime directly governs international standards for patents, copyrights, and intellectual property?",
+        stemHi: "विश्व व्यापार संगठन (WTO) के तहत कौन-सा समझौता पेटेंट, कॉपीराइट और बौद्धिक संपदा अधिकारों के अंतरराष्ट्रीय मानकों को सीधे नियंत्रित करता है?",
+        options: [
+          "TRIMS (Trade-Related Investment Measures) / ट्रिम्स",
+          "GATS (General Agreement on Trade in Services) / गैट्स",
+          "AoA (Agreement on Agriculture) / कृषि समझौता",
+          "TRIPS (Trade-Related Aspects of Intellectual Property Rights) / ट्रिप्स",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "TRIPS is a comprehensive multilateral agreement administered by the WTO that sets down minimum standards for intellectual property regulation (patents, copyrights, trademarks, industrial designs, geographical indications).",
+        expHi: "ट्रिप्स (TRIPS - बौद्धिक संपदा अधिकारों के व्यापार संबंधी पहलू) WTO का एक प्रमुख समझौता है जो पेटेंट, कॉपीराइट, ट्रेडमार्क और भौगोलिक संकेतक (GI) से संबंधित वैश्विक नियम निर्धारित करता है।",
+        keyFact: "TRIPS समझौते की शर्तों के अनुपालन हेतु भारत ने अपने पेटेंट अधिनियम, 1970 में 2005 में संशोधन कर उत्पाद पेटेंट (Product Patent) प्रणाली लागू की।"
+      },
+      {
+        id: 43,
+        stemEn: "What does 'Strategic Disinvestment' (रणनीतिक विनिवेश) of a Public Sector Undertaking specifically entail?",
+        stemHi: "किसी सार्वजनिक क्षेत्र के उपक्रम (PSU) के 'रणनीतिक विनिवेश' (Strategic Disinvestment) का क्या विशिष्ट अर्थ है?",
+        options: [
+          "Sale of a substantial government shareholding (50% or more) along with the transfer of management control / प्रबंधन नियंत्रण के हस्तांतरण के साथ सरकार की पर्याप्त हिस्सेदारी (50% या अधिक) की बिक्री",
+          "Closing down the public sector unit without selling shares / बिना शेयर बेचे सार्वजनिक इकाई को बंद कर देना",
+          "Converting the company entirely into a cooperative society / कंपनी को पूरी तरह से सहकारी समिति में बदल देना",
+          "Distributing free shares solely to existing company employees / मौजूदा कंपनी कर्मचारियों को मुफ्त शेयर वितरित करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Strategic Disinvestment refers to the sale of a substantial portion of government shareholding in a central public enterprise (usually 50% or more, or bringing government holding below 51%) accompanied by the transfer of management control to a strategic private partner.",
+        expHi: "रणनीतिक विनिवेश का तात्पर्य सार्वजनिक उपक्रम में सरकारी हिस्सेदारी के एक बड़े भाग (50% या उससे अधिक) को बेचने के साथ-साथ उपक्रम का 'प्रबंधन नियंत्रण' (Management Control) निजी रणनीतिक खरीदार को सौंपने से है।",
+        keyFact: "उदाहरण के तौर पर मारुति उद्योग, हिंदुस्तान जिंक, और हाल ही में एयर इंडिया का निजीकरण रणनीतिक विनिवेश के प्रमुख उदाहरण हैं।"
+      },
+      {
+        id: 44,
+        stemEn: "The 'C. Rangarajan Committee on Disinvestment' was set up by the Government of India in which year?",
+        stemHi: "भारत सरकार द्वारा 'विनिवेश पर सी. रंगराजन समिति' का गठन किस वर्ष किया गया था?",
+        options: [
+          "1991",
+          "1993",
+          "1999",
+          "2004",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Committee on the Divestment of Shares in PSEs was constituted in 1993 under the chairmanship of Dr. C. Rangarajan. The committee recommended that public sector equity dilution could go up to 49% in reserved industries and up to 74% in non-reserved industries.",
+        expHi: "वर्ष 1993 में डॉ. सी. रंगराजन की अध्यक्षता में विनिवेश समिति का गठन किया गया था, जिसने गैर-आरक्षित क्षेत्रों में सरकारी हिस्सेदारी 74% तक घटाने की सिफारिश की थी।",
+        keyFact: "सी. रंगराजन भारतीय रिजर्व बैंक के 19वें गवर्नर (1992-1997) रहे थे।"
+      },
+      {
+        id: 45,
+        stemEn: "Which of the following is an example of an Indirect Tax reform initiated after 1991 that culminated on 1st July 2017?",
+        stemHi: "निम्नलिखित में से कौन-सा 1991 के बाद शुरू किए गए अप्रत्यक्ष कर सुधारों का ऐसा उदाहरण है जो 1 जुलाई 2017 को अपने अंतिम मुकाम पर पहुंचा?",
+        options: [
+          "Income Tax Act / आयकर अधिनियम",
+          "Wealth Tax / धन कर",
+          "Goods and Services Tax (GST) / वस्तु एवं सेवा कर (जीएसटी)",
+          "Securities Transaction Tax (STT) / प्रतिभूति लेनदेन कर",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Starting with MODVAT (1986), CENVAT (2000), and State VAT (2005), the indirect tax reform trajectory culminated in the rollout of the Goods and Services Tax (GST) on July 1, 2017 (via the 101st Constitutional Amendment Act), creating a unified national market.",
+        expHi: "1991 के सुधारों के बाद शुरू हुए अप्रत्यक्ष कर सुधारों का शिखर 1 जुलाई 2017 को 'वस्तु एवं सेवा कर' (GST) के रूप में लागू हुआ (101वां संविधान संशोधन), जिसने 'एक देश, एक कर, एक बाजार' की अवधारणा को साकार किया।",
+        keyFact: "GST लागू करने वाला विश्व का पहला देश फ्रांस (1954) था, जबकि भारत में इसे असम राज्य ने सबसे पहले अनुमोदित किया था।"
+      },
+      {
+        id: 46,
+        stemEn: "What was the impact of the 1991 economic reforms on the custom duty (peak tariff rates) on non-agricultural imports in India?",
+        stemHi: "1991 के आर्थिक सुधारों का भारत में गैर-कृषि आयातों पर सीमा शुल्क (Peak Tariff Rates) पर क्या प्रभाव पड़ा?",
+        options: [
+          "Peak customs duties were escalated up to 1000% / उच्चतम सीमा शुल्क को 1000% तक बढ़ा दिया गया",
+          "All custom duty was declared illegal under Constitution / सभी सीमा शुल्कों को असंवैधानिक घोषित कर दिया गया",
+          "Custom tariffs were applied solely to exports and removed on imports / सीमा शुल्क केवल निर्यातों पर लगाया गया और आयातों से हटा दिया गया",
+          "Peak tariffs were drastically slashed down from over 150-300% to lower competitive rates / उच्चतम सीमा शुल्क को 150-300% से घटाकर अत्यधिक कम व प्रतिस्पर्धी स्तर पर लाया गया",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Prior to 1991, India had some of the highest tariff walls in the world, with peak customs duties exceeding 300%. As part of trade deregulation, peak tariff rates on non-agricultural imports were systematically brought down to 150% in 1991, 50% by 1995, and further lowered to around 10% over the following years.",
+        expHi: "1991 से पूर्व भारत में सीमा शुल्क की दरें 300% से अधिक थीं। व्यापार उदारीकरण के तहत इन प्रशुल्क दरों (Tariffs) में भारी कटौती की गई ताकि भारतीय उद्योग अंतरराष्ट्रीय प्रतिस्पर्धा का सामना कर सकें।",
+        keyFact: "सीमा शुल्क में कटौती का उद्देश्य घरेलू उद्योगों को संरक्षण के खोल से बाहर निकालकर वैश्विक रूप से प्रतिस्पर्धी बनाना था।"
+      },
+      {
+        id: 47,
+        stemEn: "The Fiscal Responsibility and Budget Management (FRBM) Act, 2003 had originally set a target to reduce the Gross Fiscal Deficit to what percentage of GDP?",
+        stemHi: "राजकोषीय उत्तरदायित्व और बजट प्रबंधन (FRBM) अधिनियम, 2003 ने मूल रूप से सकल राजकोषीय घाटे को सकल घरेलू उत्पाद (GDP) के कितने प्रतिशत तक सीमित करने का लक्ष्य रखा था?",
+        options: [
+          "8.5% of GDP / जीडीपी का 8.5%",
+          "3.0% of GDP / जीडीपी का 3.0%",
+          "12.0% of GDP / जीडीपी का 12.0%",
+          "0.0% of GDP / जीडीपी का 0.0%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The original target laid down under the FRBM Act, 2003 was to eliminate the revenue deficit completely and bring down the gross fiscal deficit to 3.0% of GDP by March 31, 2008 (later extended to 2009 and revised subsequently).",
+        expHi: "FRBM अधिनियम, 2003 का प्राथमिक उद्देश्य राजस्व घाटे को पूरी तरह समाप्त करना तथा राजकोषीय घाटे को GDP के 3.0% तक सीमित करना था।",
+        keyFact: "राजकोषीय घाटा (Fiscal Deficit) सरकार के कुल व्यय और कुल प्राप्तियों (उधार को छोड़कर) के बीच का अंतर होता है।"
+      },
+      {
+        id: 48,
+        stemEn: "Following the 1991 reforms, the National Stock Exchange of India (NSE) was incorporated in which year on the recommendation of the Pherwani Committee?",
+        stemHi: "1991 के सुधारों के बाद फेरवानी समिति (Pherwani Committee) की सिफारिश पर 'नेशनल स्टॉक एक्सचेंज ऑफ इंडिया' (NSE) की स्थापना किस वर्ष की गई थी?",
+        options: [
+          "1982",
+          "2001",
+          "1992",
+          "1998",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "On the recommendations of the M. J. Pherwani Committee (1991), the National Stock Exchange (NSE) was incorporated in November 1992 and commenced operations in 1994, introducing modern nationwide electronic screen-based trading to Indian capital markets.",
+        expHi: "एम. जे. फेरवानी समिति की सिफारिश पर नवंबर 1992 में नेशनल स्टॉक एक्सचेंज (NSE) की स्थापना की गई, जिसने भारत में पहली बार पारदर्शी एवं इलेक्ट्रॉनिक स्क्रीन-आधारित ट्रेडिंग की शुरुआत की।",
+        keyFact: "NSE का प्रमुख शेयर बाजार सूचकांक 'निफ्टी 50' (NIFTY 50) है, जबकि BSE का सूचकांक 'सेंसेक्स' (SENSEX) है।"
+      },
+      {
+        id: 49,
+        stemEn: "Which prominent development financial institution was established in April 1990 to promote, finance, and develop micro, small, and medium industrial units?",
+        stemHi: "सूक्ष्म, लघु एवं मध्यम औद्योगिक इकाइयों को वित्तपोषित करने तथा उनका संवर्धन करने हेतु अप्रैल 1990 में किस प्रमुख वित्तीय संस्थान की स्थापना की गई थी?",
+        options: [
+          "NABARD / नाबार्ड",
+          "Industrial Development Bank of India (IDBI) / भारतीय औद्योगिक विकास बैंक",
+          "Export-Import Bank of India (EXIM Bank) / भारतीय आयात-निर्यात बैंक",
+          "Small Industries Development Bank of India (SIDBI) / भारतीय लघु उद्योग विकास बैंक (सिडबी)",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "SIDBI was set up on April 2, 1990, under an Act of the Indian Parliament as a principal financial institution for the promotion, financing, and development of micro, small, and medium enterprise (MSME) sector.",
+        expHi: "सूक्ष्म, लघु और मध्यम उद्यमों (MSME) की वित्तीय जरूरतों को पूरा करने के लिए 2 अप्रैल 1990 को 'भारतीय लघु उद्योग विकास बैंक' (SIDBI) की स्थापना की गई थी।",
+        keyFact: "SIDBI का मुख्यालय लखनऊ (उत्तर प्रदेश) में स्थित है, जो UPSSSC परीक्षाओं का एक अत्यधिक महत्वपूर्ण प्रश्न है।"
+      },
+      {
+        id: 50,
+        stemEn: "How did the Foreign Trade Policy change its stance on export subsidies in the post-1991 era?",
+        stemHi: "1991 के बाद के युग में विदेश व्यापार नीति ने निर्यात सब्सिडी (Export Subsidies) के प्रति क्या दृष्टिकोण अपनाया?",
+        options: [
+          "Direct cash compensatory support subsidies were phased out and replaced with duty-neutralisation and market-driven incentives / प्रत्यक्ष नकद क्षतिपूर्ति सब्सिडी (CCS) को समाप्त कर शुल्क-मुक्त एवं बाजार-आधारित प्रोत्साहन व्यवस्था अपनाई गई",
+          "Complete ban was enforced on all export shipments / सभी निर्यात खेपों पर पूर्ण प्रतिबंध लगा दिया गया",
+          "Subsidies were escalated to 100% of export invoice / सब्सिडी को निर्यात बिल के 100% तक बढ़ा दिया गया",
+          "All foreign export was prohibited for private firms / निजी कंपनियों द्वारा किसी भी विदेशी निर्यात को प्रतिबंधित कर दिया गया",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "As part of external sector reforms in July 1991, the government abolished the Cash Compensatory Support (CCS) scheme. Instead of direct budgetary cash subsidies, policies shifted towards duty exemption schemes, advance licensing, and a competitive exchange rate.",
+        expHi: "जुलाई 1991 के व्यापार सुधारों में नकद क्षतिपूर्ति सहायता (Cash Compensatory Support - CCS) जैसी प्रत्यक्ष नकद निर्यात सब्सिडी को समाप्त कर दिया गया तथा निर्यातकों को शुल्क-मुक्ति और प्रतिस्पर्धी विनिमय दर आधारित प्रोत्साहन दिए गए।",
+        keyFact: "यह कदम WTO के 'अनुदान और प्रतिकारी उपाय समझौते' (ASCM) के अनुकूल था।"
+      },
+
+      // Q51 - Q75 (Batch 3)
+      {
+        id: 51,
+        stemEn: "What exchange rate system was adopted by India in March 1993 following the dual-track Liberalised Exchange Rate Management System (LERMS)?",
+        stemHi: "मार्च 1993 में उदारीकृत विनिमय दर प्रबंधन प्रणाली (LERMS) के बाद भारत द्वारा कौन-सी विनिमय दर प्रणाली अपनाई गई?",
+        options: [
+          "Fixed Gold Parity System / निश्चित स्वर्ण सममूल्य प्रणाली",
+          "Unified Market-Determined Exchange Rate System / एकीकृत बाजार-निर्धारित विनिमय दर प्रणाली",
+          "Centrally Planned Barter Peg / केंद्रीय रूप से नियोजित वस्तु-विनिमय प्रणाली",
+          "Permanent Crawling Sterling Peg / स्थायी क्रॉलिंग स्टर्लिंग पेग प्रणाली",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "In March 1992, India introduced the dual exchange rate system known as LERMS (Liberalised Exchange Rate Management System). Exactly one year later, in the Union Budget of March 1993, India unified the dual rate into a single market-determined floating exchange rate mechanism.",
+        expHi: "मार्च 1992 में शुरू की गई दोहरी विनिमय दर प्रणाली (LERMS) को समाप्त कर मार्च 1993 के बजट में भारत ने 'एकीकृत बाजार-निर्धारित विनिमय दर प्रणाली' अपनाई, जिसमें रुपये का मूल्य विदेशी मुद्रा बाजार की मांग और आपूर्ति से तय होने लगा।",
+        keyFact: "भारत की मौजूदा विनिमय व्यवस्था को औपचारिक रूप से 'प्रबंधित फ्लोटिंग दर प्रणाली' (Managed Floating Exchange Rate System) कहा जाता है।"
+      },
+      {
+        id: 52,
+        stemEn: "Which committee recommended the introduction of the Core Banking Solution, modern payment systems, and electronic clearing in the Indian financial sector?",
+        stemHi: "भारतीय वित्तीय क्षेत्र में कोर बैंकिंग समाधान (CBS), आधुनिक भुगतान प्रणाली और इलेक्ट्रॉनिक क्लीयरिंग शुरू करने की सिफारिश किस समिति ने की थी?",
+        options: [
+          "R. H. Patil Committee / आर. एच. पाटिल समिति",
+          "Godbole Committee / गोडबोले समिति",
+          "Rangarajan Committee on Computerisation in Banks / बैंकों में कंप्यूटरीकरण पर रंगराजन समिति",
+          "Deepak Parekh Committee / दीपक पारेख समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Committee on Computerisation in Banks (1988–1989) headed by Dr. C. Rangarajan laid the blueprint for technology adoption, telecommunication links, and MICR/electronic funds clearance, paving the way for the transformation of commercial banking in the 1990s.",
+        expHi: "डॉ. सी. रंगराजन की अध्यक्षता में गठित समिति ने भारतीय बैंकिंग में कंप्यूटरीकरण, इंटरनेट आधारित नेटवर्क और इलेक्ट्रॉनिक फंड ट्रांसफर (EFT) की आधारशिला रखी, जिससे 1990 के दशक में आधुनिक बैंकिंग का मार्ग प्रशस्त हुआ।",
+        keyFact: "भारत में राष्ट्रीय इलेक्ट्रॉनिक निधि अंतरण (NEFT) और रियल टाइम ग्रॉस सेटलमेंट (RTGS) की शुरुआत इसी तकनीकी सुधार श्रृंखला का परिणाम थी।"
+      },
+      {
+        id: 53,
+        stemEn: "In which year was the 'National Highways Authority of India' (NHAI) operationalised as an autonomous body to build post-reform modern road infrastructure?",
+        stemHi: "सुधारोत्तर काल में आधुनिक सड़क अवसंरचना के निर्माण हेतु 'भारतीय राष्ट्रीय राजमार्ग प्राधिकरण' (NHAI) को किस वर्ष पूर्णतः क्रियाशील (Operationalised) किया गया था?",
+        options: [
+          "1985",
+          "2005",
+          "2014",
+          "1995",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Although the NHAI Act was passed in 1988, the authority was officially operationalised in February 1995 to undertake the development, maintenance, and management of national highways, later implementing landmark projects like the Golden Quadrilateral.",
+        expHi: "संसद द्वारा 'भारतीय राष्ट्रीय राजमार्ग प्राधिकरण अधिनियम, 1988' पारित होने के बाद NHAI को औपचारिक रूप से फरवरी 1995 में क्रियाशील किया गया। इसने बाद में 'स्वर्णिम चतुर्भुज' जैसी महापरियोजनाओं का क्रियान्वयन किया।",
+        keyFact: "स्वर्णिम चतुर्भुज परियोजना (Golden Quadrilateral) की शुरुआत पूर्व प्रधानमंत्री अटल बिहारी वाजपेयी के कार्यकाल में 2001 में की गई थी।"
+      },
+      {
+        id: 54,
+        stemEn: "Which policy was introduced in 1999 to replace the legacy system of fixed license fees with a revenue-sharing model in the Indian telecom sector?",
+        stemHi: "भारतीय दूरसंचार क्षेत्र में निश्चित लाइसेंस शुल्क व्यवस्था को हटाकर राजस्व साझाकरण (Revenue Sharing) मॉडल लागू करने वाली नीति कौन-सी थी?",
+        options: [
+          "National Telecom Policy 1999 (NTP 1999) / नई दूरसंचार नीति 1999",
+          "Telegraph Code of 1991 / टेलीग्राफ संहिता 1991",
+          "Digital India Order 2005 / डिजिटल इंडिया आदेश 2005",
+          "Spectrum Allocation Code 1986 / स्पेक्ट्रम आवंटन संहिता 1986",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The New Telecom Policy of 1999 (NTP-99) resolved the financial crisis of private cellular operators by migrating them from fixed upfront license fees to a one-time entry fee plus a revenue-sharing percentage model, triggering exponential mobile telephony growth in India.",
+        expHi: "नई दूरसंचार नीति 1999 (NTP-99) के तहत पूर्ववर्ती भारी 'निश्चित लाइसेंस शुल्क' प्रणाली को समाप्त कर 'राजस्व साझाकरण मॉडल' (Revenue Sharing Model) अपनाया गया, जिससे भारत में मोबाइल और दूरसंचार क्रांति की शुरुआत हुई।",
+        keyFact: "NTP-99 के बाद ही भारत में निजी दूरसंचार कंपनियों का अभूतपूर्व विस्तार हुआ और कॉल दरों में तीव्र गिरावट आई।"
+      },
+      {
+        id: 55,
+        stemEn: "Under the post-1991 reforms, which organization was established in 1996 as the first national central depository for electronic securities in India?",
+        stemHi: "1991 के सुधारों के बाद भारत में इलेक्ट्रॉनिक प्रतिभूतियों के भंडारण हेतु वर्ष 1996 में प्रथम राष्ट्रीय केंद्रीय डिपॉजिटरी के रूप में किसकी स्थापना की गई?",
+        options: [
+          "Central Depository Services Limited (CDSL) / सेंट्रल डिपॉजिटरी सर्विसेज लिमिटेड",
+          "National Securities Depository Limited (NSDL) / नेशनल सिक्योरिटीज डिपॉजिटरी लिमिटेड",
+          "Unit Trust of India (UTI) / भारतीय यूनिट ट्रस्ट",
+          "Life Insurance Corporation (LIC) / भारतीय जीवन बीमा निगम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Following the enactment of the Depositories Act, 1996, NSDL was established in August 1996 as India’s first depository to facilitate holding and transfer of securities in dematerialised (electronic) form, eliminating paper-based physical share certificates.",
+        expHi: "'डिपॉजिटरी अधिनियम, 1996' के तहत अगस्त 1996 में NSDL की स्थापना भारत की पहली इलेक्ट्रॉनिक प्रतिभूति डिपॉजिटरी के रूप में हुई, जिसने शेयरों के अभौतिकीकरण (Dematerialisation - Demat) की शुरुआत की।",
+        keyFact: "भारत की दूसरी डिपॉजिटरी CDSL (सेंट्रल डिपॉजिटरी सर्विसेज लिमिटेड) की स्थापना 1999 में BSE द्वारा की गई थी।"
+      },
+      {
+        id: 56,
+        stemEn: "What does the term 'Disinvestment' in the post-1991 Indian budgetary context directly contribute to in the Union Budget?",
+        stemHi: "1991 के बाद के भारतीय बजटीय संदर्भ में 'विनिवेश' (Disinvestment) से प्राप्त राशि सीधे किस खाते में दर्ज होती है?",
+        options: [
+          "Revenue Expenditure / राजस्व व्यय",
+          "Capital Expenditure on defence debt / रक्षा ऋण पर पूंजीगत व्यय",
+          "Non-debt Capital Receipts / गैर-ऋण पूंजीगत प्राप्तियां",
+          "Indirect Tax Revenue / अप्रत्यक्ष कर राजस्व",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The proceeds realised from the sale of public sector assets or PSU shares do not generate any debt repayment obligations; hence, they are classified in the Union Budget under 'Non-debt Capital Receipts' (NDCR).",
+        expHi: "सार्वजनिक उपक्रमों के विनिवेश से मिलने वाली आय सरकार के लिए किसी ऋण दायित्व का निर्माण नहीं करती, इसलिए इसे केंद्रीय बजट में 'गैर-ऋण पूंजीगत प्राप्तियों' (Non-debt Capital Receipts) के अंतर्गत वर्गीकृत किया जाता है।",
+        keyFact: "विनिवेश प्राप्तियों का उपयोग राजकोषीय घाटे को कम करने और पूंजीगत विकास परियोजनाओं के वित्तपोषण में किया जाता है।"
+      },
+      {
+        id: 57,
+        stemEn: "The SARFAESI Act was enacted by the Indian Parliament in which year to empower banks and financial institutions to recover Non-Performing Assets (NPAs)?",
+        stemHi: "बैंकों और वित्तीय संस्थानों को गैर-निष्पादित परिसंपत्तियों (NPAs) की वसूली हेतु सशक्त बनाने के लिए संसद द्वारा 'सरफेसी अधिनियम' (SARFAESI Act) किस वर्ष पारित किया गया था?",
+        options: [
+          "1991",
+          "1998",
+          "2012",
+          "2002",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Securitisation and Reconstruction of Financial Assets and Enforcement of Security Interest (SARFAESI) Act was passed in 2002. It empowered banks to auction residential or commercial properties pledged as collateral without court intervention to recover bad loans.",
+        expHi: "बैंकों के फंसे हुए कर्जों (NPA) की तीव्र वसूली के लिए वर्ष 2002 में 'सरफेसी अधिनियम' पारित किया गया, जिसने बैंकों को अदालत के हस्तक्षेप के बिना गिरवी रखी संपत्तियों को जब्त करने और नीलाम करने का अधिकार दिया।",
+        keyFact: "SARFAESI अधिनियम कृषि भूमि (Agricultural Land) पर लागू नहीं होता है।"
+      },
+      {
+        id: 58,
+        stemEn: "In which year was the 'Golden Quadrilateral' (स्वर्णिम चतुर्भुज) highway project launched under the National Highways Development Project (NHDP)?",
+        stemHi: "राष्ट्रीय राजमार्ग विकास परियोजना (NHDP) के तहत 'स्वर्णिम चतुर्भुज' परियोजना किस वर्ष आधिकारिक रूप से शुरू की गई थी?",
+        options: [
+          "2001",
+          "1991",
+          "1989",
+          "2011",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Golden Quadrilateral highway network project connecting India's four major metro hubs (Delhi, Mumbai, Chennai, and Kolkata) was launched in 2001 under Prime Minister Atal Bihari Vajpayee as Phase-I of the National Highways Development Project.",
+        expHi: "स्वर्णिम चतुर्भुज राजमार्ग परियोजना को वर्ष 2001 में प्रधानमंत्री अटल बिहारी वाजपेयी के नेतृत्व में शुरू किया गया था। यह भारत के चार प्रमुख महानगरों (दिल्ली, मुंबई, चेन्नई और कोलकाता) को 4 से 6 लेन वाले राजमार्गों से जोड़ती है।",
+        keyFact: "स्वर्णिम चतुर्भुज की कुल लंबाई 5,846 किलोमीटर है।"
+      },
+      {
+        id: 59,
+        stemEn: "What structural changes were made to the Monopolies and Restrictive Trade Practices (MRTP) Commission's asset limit for large corporate houses in July 1991?",
+        stemHi: "जुलाई 1991 में बड़े औद्योगिक घरानों के लिए MRTP आयोग की पूर्ववर्ती परिसंपत्ति सीमा (Asset Threshold) पर क्या निर्णय लिया गया था?",
+        options: [
+          "It was raised from ₹100 crore to ₹500 crore / इसे ₹100 करोड़ से बढ़ाकर ₹500 करोड़ किया गया",
+          "The pre-entry threshold asset limit was completely removed / पूर्व-मंजूरी वाली परिसंपत्ति सीमा को पूरी तरह समाप्त कर दिया गया",
+          "It was reduced to ₹10 crore / इसे घटाकर ₹10 करोड़ कर दिया गया",
+          "It was frozen permanently at ₹20 crore / इसे ₹20 करोड़ पर स्थायी कर दिया गया",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under the New Industrial Policy of July 1991, the pre-entry asset threshold requirement (earlier ₹100 crore) for MRTP companies to invest, expand, or establish new units was entirely eliminated, removing prior government approval hurdles for corporate growth.",
+        expHi: "1991 की नई औद्योगिक नीति के तहत बड़े कॉर्पोरेट घरानों के लिए पूर्ववर्ती ₹100 करोड़ की परिसंपत्ति सीमा की पूर्व-अनुमति अनिवार्यता को पूर्णतः समाप्त कर दिया गया, जिससे निजी कंपनियों को नए संयंत्र स्थापित करने और विस्तार करने की पूर्ण स्वतंत्रता मिली।",
+        keyFact: "इसके बाद MRTP आयोग की भूमिका केवल अनुचित और एकाधिकारवादी व्यापार व्यवहारों की जांच तक सीमित रह गई।"
+      },
+      {
+        id: 60,
+        stemEn: "In the post-reform period, in which year was the 'Pravasi Bharatiya Divas' initiated to reconnect with the Indian diaspora and leverage NRI investment?",
+        stemHi: "सुधारोत्तर काल में प्रवासी भारतीयों को देश से जोड़ने और अनिवासी भारतीयों (NRI) के निवेश को प्रोत्साहित करने हेतु 'प्रवासी भारतीय दिवस' किस वर्ष से शुरू किया गया?",
+        options: [
+          "1991",
+          "1998",
+          "2003",
+          "2010",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "On the recommendations of the High-Level Committee on Indian Diaspora chaired by Dr. L. M. Singhvi, Pravasi Bharatiya Divas was celebrated starting from January 9, 2003, marking the anniversary of Mahatma Gandhi’s return to India from South Africa in 1915.",
+        expHi: "डॉ. एल. एम. सिंघवी समिति की सिफारिशों पर पहला 'प्रवासी भारतीय दिवस' 9 जनवरी 2003 को आयोजित किया गया था। यह दिन 1915 में महात्मा गांधी के दक्षिण अफ्रीका से भारत लौटने की याद में मनाया जाता है।",
+        keyFact: "विदेश से प्रेषित धन (Remittances) प्राप्त करने में भारत वर्तमान में विश्व में शीर्ष स्थान पर है।"
+      },
+      {
+        id: 61,
+        stemEn: "Which sector was granted infrastructure status and opened to 100% Foreign Direct Investment under the automatic route in the 2000s to boost urbanization?",
+        stemHi: "शहरीकरण और अवसंरचना को बढ़ावा देने के लिए 2000 के दशक में किस क्षेत्र को बुनियादी ढांचे का दर्जा देकर स्वचालित मार्ग से 100% प्रत्यक्ष विदेशी निवेश (FDI) के लिए खोला गया?",
+        options: [
+          "Nuclear weapons testing / परमाणु हथियार परीक्षण",
+          "Primary currency printing / प्राथमिक मुद्रा मुद्रण",
+          "Sovereign passport issuance / संप्रभु पासपोर्ट जारी करना",
+          "Telecommunication and Townships/Housing Construction / दूरसंचार और नगर निर्माण/आवास विकास",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "As economic reforms deepened, the Government opened construction development projects (including housing, commercial premises, hotels, and townships) and telecom infrastructure up to 100% FDI under the automatic route to channel foreign capital into modern urban infrastructure.",
+        expHi: "आर्थिक सुधारों के विस्तार के तहत निर्माण विकास (टाउनशिप, आवास, वाणिज्यिक परिसर) और दूरसंचार अवसंरचना में स्वचालित मार्ग (Automatic Route) के जरिए 100% FDI की अनुमति दी गई।",
+        keyFact: "स्वचालित मार्ग (Automatic Route) के तहत विदेशी निवेशकों को सरकार या RBI की पूर्व अनुमति की आवश्यकता नहीं होती।"
+      },
+      {
+        id: 62,
+        stemEn: "What was the primary objective of introducing the 'Open Market Operations' (OMO) more aggressively by the RBI post-1991?",
+        stemHi: "1991 के बाद RBI द्वारा 'खुला बाजार परिचालन' (OMO) को अधिक सक्रियता से संचालित करने का मुख्य उद्देश्य क्या था?",
+        options: [
+          "To regulate liquidity and interest rates by buying and selling government securities / सरकारी प्रतिभूतियों की खरीद-बिक्री के माध्यम से तरलता और ब्याज दरों को नियंत्रित करना",
+          "To directly fix the wholesale prices of agricultural grain / कृषि खाद्यान्नों के थोक भाव सीधे तय करना",
+          "To distribute cash grants to unorganised sector workers / असंगठित क्षेत्र के श्रमिकों को नकद अनुदान देना",
+          "To run retail department stores across state capitals / राज्य की राजधानियों में खुदरा डिपार्टमेंटल स्टोर चलाना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "With financial deregulation, direct quantitative credit controls were replaced with indirect, market-friendly monetary instruments. RBI extensively deployed Open Market Operations (OMO)—the purchase and sale of Government Securities in the open market—to absorb or inject market liquidity.",
+        expHi: "वित्तीय सुधारों के बाद RBI ने प्रत्यक्ष साख नियंत्रण के स्थान पर बाजार-आधारित मौद्रिक उपकरणों का सहारा लिया। खुला बाजार परिचालन (OMO) के अंतर्गत RBI बाजार में तरलता (मुद्रा की आपूर्ति) को नियंत्रित करने के लिए सरकारी प्रतिभूतियों की खरीद और बिक्री करता है।",
+        keyFact: "जब RBI बाजार से तरलता सोखना चाहता है, तो वह सरकारी प्रतिभूतियां बेचता है; और तरलता बढ़ाने हेतु उन्हें खरीदता है।"
+      },
+      {
+        id: 63,
+        stemEn: "In the post-reform period, which constitutional amendment facilitated the creation of the Goods and Services Tax (GST) Council?",
+        stemHi: "सुधारोत्तर काल में किस संविधान संशोधन अधिनियम द्वारा 'वस्तु एवं सेवा कर (GST) परिषद' के गठन का प्रावधान किया गया था?",
+        options: [
+          "44th Constitutional Amendment Act, 1978 / 44वां संविधान संशोधन अधिनियम, 1978",
+          "101st Constitutional Amendment Act, 2016 / 101वां संविधान संशोधन अधिनियम, 2016",
+          "73rd Constitutional Amendment Act, 1992 / 73वां संविधान संशोधन अधिनियम, 1992",
+          "86th Constitutional Amendment Act, 2002 / 86वां संविधान संशोधन अधिनियम, 2002",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The 101st Constitutional Amendment Act, 2016 introduced Article 279A into the Constitution of India, empowering the President to constitute the GST Council, which serves as a joint federal forum of the Centre and the States for decisions on GST rates and exemptions.",
+        expHi: "101वें संविधान संशोधन अधिनियम, 2016 के तहत संविधान में अनुच्छेद 279A जोड़कर 'जीएसटी परिषद' (GST Council) के गठन का प्रावधान किया गया। यह केंद्र और राज्यों का एक संयुक्त मंच है।",
+        keyFact: "केंद्रीय वित्त मंत्री जीएसटी परिषद के पदेन अध्यक्ष (Ex-officio Chairperson) होते हैं।"
+      },
+      {
+        id: 64,
+        stemEn: "The Electricity Act, which unbundled state electricity boards into separate generation, transmission, and distribution entities, was passed in which year?",
+        stemHi: "राज्य विद्युत बोर्डों को उत्पादन, पारेषण और वितरण की पृथक इकाइयों में पुनर्गठित करने वाला 'विद्युत अधिनियम' (Electricity Act) किस वर्ष पारित किया गया था?",
+        options: [
+          "1991",
+          "1989",
+          "2003",
+          "2010",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Electricity Act, 2003 was a watershed power-sector reform legislation in India. It replaced legacy colonial and post-independence electricity laws, mandated open access in transmission, de-licensed generation (except hydro), and unbundled State Electricity Boards (SEBs).",
+        expHi: "विद्युत क्षेत्र में सुधार लाने के उद्देश्य से वर्ष 2003 में 'विद्युत अधिनियम' पारित किया गया। इसने राज्य बिजली बोर्डों (SEBs) को उत्पादन, पारेषण (ट्रांसमिशन) और वितरण (डिस्कॉम) की अलग-अलग स्वतंत्र कंपनियों में विभाजित किया।",
+        keyFact: "इस अधिनियम के तहत थर्मल पावर (ताप विद्युत) उत्पादन के लिए अनिवार्य लाइसेंस व्यवस्था समाप्त कर दी गई।"
+      },
+      {
+        id: 65,
+        stemEn: "Which apex institution was established on July 12, 1982, and saw its role expand significantly post-1991 for rural and priority sector refinancing?",
+        stemHi: "12 जुलाई 1982 को स्थापित किस शीर्ष संस्था की भूमिका 1991 के बाद ग्रामीण साख और प्राथमिकता प्राप्त क्षेत्र के पुनर्वित्तपोषण हेतु अत्यधिक विस्तारित हुई?",
+        options: [
+          "Industrial Finance Corporation of India (IFCI) / भारतीय औद्योगिक वित्त निगम",
+          "Unit Trust of India (UTI) / भारतीय यूनिट ट्रस्ट",
+          "EXIM Bank / एक्जिम बैंक",
+          "NABARD (National Bank for Agriculture and Rural Development) / नाबार्ड",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Established on the recommendations of the B. Sivaraman Committee in 1982, NABARD played a central role post-1991 in rural financial inclusion, administering the Rural Infrastructure Development Fund (RIDF, set up in 1995-96) and facilitating the Self-Help Group (SHG)-Bank Linkage Programme.",
+        expHi: "शिवरामन समिति की सिफारिश पर 12 जुलाई 1982 को स्थापित नाबार्ड (NABARD) ने सुधार काल में 'ग्रामीण अवसंरचना विकास निधि' (RIDF, 1995-96) और स्वयं सहायता समूह (SHG) लिंकेज कार्यक्रम के माध्यम से ग्रामीण ऋण प्रवाह को अभूतपूर्व विस्तार दिया।",
+        keyFact: "NABARD का पूर्ण रूप 'राष्ट्रीय कृषि और ग्रामीण विकास बैंक' है और इसका मुख्यालय मुंबई में है।"
+      },
+      {
+        id: 66,
+        stemEn: "What was the primary mandate of the Kelkar Committee set up in 2002 regarding Indian fiscal health?",
+        stemHi: "भारतीय राजकोषीय स्थिति के संदर्भ में वर्ष 2002 में गठित केलकर कार्यबल (Kelkar Committee) का प्राथमिक अधिदेश क्या था?",
+        options: [
+          "Tax policy and tax administration reforms / कर नीति और कर प्रशासन में सुधार",
+          "Closure of rural cooperative societies / ग्रामीण सहकारी समितियों को बंद करना",
+          "Enforcing minimum wage caps on industrial workers / औद्योगिक श्रमिकों पर न्यूनतम वेतन सीमा तय करना",
+          "Merging the Reserve Bank of India with SEBI / भारतीय रिजर्व बैंक का सेबी में विलय करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Vijay Kelkar Task Force (2002) submitted comprehensive reports on Direct and Indirect Taxes. It recommended widening the tax net, rationalising exemptions, introducing a unified Goods and Services Tax (GST), and modernising tax administration through automation.",
+        expHi: "वर्ष 2002 में डॉ. विजय केलकर की अध्यक्षता में गठित टास्क फोर्स ने प्रत्यक्ष और अप्रत्यक्ष करों के सरलीकरण, कर छूटों को घटाने और भारत में एकीकृत राष्ट्रीय वस्तु एवं सेवा कर (GST) लागू करने की ऐतिहासिक सिफारिश की थी।",
+        keyFact: "विजय केलकर 13वें वित्त आयोग (2010–2015) के अध्यक्ष भी रहे थे।"
+      },
+      {
+        id: 67,
+        stemEn: "What was the key recommendation of the Narasimham Committee-II (1998) regarding the structure of the Indian banking system?",
+        stemHi: "भारतीय बैंकिंग प्रणाली की संरचना के संबंध में नरसिम्हम समिति-II (1998) की प्रमुख सिफारिश क्या थी?",
+        options: [
+          "Complete ban on all foreign banking operations / सभी विदेशी बैंकिंग परिचालनों पर पूर्ण प्रतिबंध",
+          "Creation of a 3-tier banking structure with 2 to 3 large global Indian banks / 2 से 3 बड़े वैश्विक भारतीय बैंकों सहित 3-स्तरीय बैंकिंग संरचना का निर्माण",
+          "Complete abolition of commercial deposits / वाणिज्यिक जमाराशियों को पूरी तरह समाप्त करना",
+          "Nationalisation of all co-operative credit societies / सभी सहकारी साख समितियों का राष्ट्रीयकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Narasimham Committee-II (1998) on Banking Sector Reforms recommended a multi-tiered banking system consisting of 2 to 3 large Indian banks with international orientation, 8 to 10 national banks, and local/regional rural banks focusing on agriculture and local enterprises.",
+        expHi: "नरसिम्हम समिति-II (1998) ने भारतीय बैंकों के विलय और सुदृढ़ीकरण की सिफारिश की, जिसके तहत अंतरराष्ट्रीय स्तर के 2-3 बड़े बैंक, राष्ट्रीय स्तर के 8-10 बैंक और निचले स्तर पर स्थानीय/ग्रामीण बैंक बनाने का त्रि-स्तरीय ढांचा सुझाया गया।",
+        keyFact: "इसी समिति ने बैंकों की वित्तीय सुदृढ़ता के लिए पूंजी पर्याप्तता अनुपात (CRAR/CAR) को 8% से बढ़ाकर 9% करने की सिफारिश की थी।"
+      },
+      {
+        id: 68,
+        stemEn: "Under the post-1991 regime, what is the role of the 'Depository Participant' (DP) in the Indian capital markets?",
+        stemHi: "1991 के बाद के विनियामक तंत्र में भारतीय पूंजी बाजार में 'डिपॉजिटरी पार्टिसिपेंट' (DP) की क्या भूमिका है?",
+        options: [
+          "It sets the daily monetary repo rates for the central bank / यह केंद्रीय बैंक के लिए दैनिक मौद्रिक रेपो दरें तय करता है",
+          "It supervises state government expenditure / यह राज्य सरकारों के खर्चों का निरीक्षण करता है",
+          "It acts as an intermediary connecting retail investors with the central depository / यह खुदरा निवेशकों और केंद्रीय डिपॉजिटरी (NSDL/CDSL) के बीच मध्यस्थ के रूप में कार्य करता है",
+          "It manufactures paper dividend warrants / यह कागजी लाभांश वारंटों का मुद्रण करता है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "A Depository Participant (DP) is an agent and business partner of the central depository (NSDL or CDSL) through which retail investors open and maintain Demat accounts to trade and hold shares electronically.",
+        expHi: "डिपॉजिटरी पार्टिसिपेंट (DP) वह बैंक, वित्तीय संस्थान या स्टॉकब्रोकर होता है जो केंद्रीय डिपॉजिटरी (NSDL या CDSL) और आम निवेशकों के बीच एजेंट या कड़ी के रूप में कार्य करता है, जहां निवेशक अपना डीमैट खाता खोलते हैं।",
+        keyFact: "शेयर बाजार में शेयरों की इलेक्ट्रॉनिक खरीद-फरोख्त के लिए डीमैट (Demat) और ट्रेडिंग खाता अनिवार्य है।"
+      },
+      {
+        id: 69,
+        stemEn: "Which scheme was launched in 1997 to resolve disputes and realize pending direct tax arrears by offering immunity from penalty and prosecution?",
+        stemHi: "लंबित प्रत्यक्ष कर विवादों को निपटाने और बकाया कर वसूलने हेतु 1997 में कौन-सी योजना शुरू की गई थी, जिसमें अर्थदंड और अभियोजन से छूट दी गई थी?",
+        options: [
+          "FERA Amnesty Order, 1991 / फेरा माफी आदेश, 1991",
+          "Kisan Vikas Patra Expansion, 1999 / किसान विकास पत्र विस्तार, 1999",
+          "Gold Monetisation Bonds 1995 / स्वर्ण मुद्रीकरण बॉन्ड 1995",
+          "Voluntary Disclosure of Income Scheme (VDIS), 1997 / स्वैच्छिक आय प्रकटीकरण योजना (VDIS), 1997",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Voluntary Disclosure of Income Scheme (VDIS) was launched by Finance Minister P. Chidambaram in the Union Budget 1997-98 to tap unaccounted black money, recovering over ₹10,000 crore into state coffers without levying penal actions on declarants.",
+        expHi: "वर्ष 1997 के ऐतिहासिक 'ड्रीम बजट' में तत्कालीन वित्त मंत्री पी. चिदंबरम ने 'स्वैच्छिक आय प्रकटीकरण योजना' (VDIS, 1997) प्रस्तुत की थी, ताकि काले धन को बाहर निकाला जा सके और कर राजस्व में वृद्धि हो सके।",
+        keyFact: "1997-98 के केंद्रीय बजट को कर की दरों में भारी कटौती (उच्चतम व्यक्तिगत आयकर दर घटाकर 30% करने) के कारण 'ड्रीम बजट' (Dream Budget) कहा जाता है।"
+      },
+      {
+        id: 70,
+        stemEn: "In the post-reform period, which state enacted India's first state-level Fiscal Responsibility legislation in the year 2002?",
+        stemHi: "सुधारोत्तर काल में किस राज्य ने वर्ष 2002 में भारत का पहला राज्य-स्तरीय राजकोषीय उत्तरदायित्व कानून अधिनियमित किया था?",
+        options: [
+          "Karnataka / कर्नाटक",
+          "Uttar Pradesh / उत्तर प्रदेश",
+          "Kerala / केरल",
+          "Bihar / बिहार",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Karnataka was the first state in India to pass the Karnataka Fiscal Responsibility Act (KFRA) in 2002, even before the Union Government enacted the Central FRBM Act in 2003, setting a fiscal consolidation benchmark for Indian states.",
+        expHi: "कर्नाटक भारत का पहला राज्य था जिसने केंद्र के FRBM अधिनियम (2003) से भी पहले, वर्ष 2002 में अपना 'राज्य राजकोषीय उत्तरदायित्व अधिनियम' (KFRA, 2002) पारित किया था।",
+        keyFact: "उत्तर प्रदेश ने अपना राजकोषीय उत्तरदायित्व और बजट प्रबंधन अधिनियम वर्ष 2004 में पारित किया।"
+      },
+      {
+        id: 71,
+        stemEn: "What does the term 'Current Account Deficit' (CAD) specifically represent in the context of India's external economy?",
+        stemHi: "भारत की बाह्य अर्थव्यवस्था के संदर्भ में 'चालू खाता घाटा' (CAD) का क्या विशिष्ट अर्थ है?",
+        options: [
+          "When state governments default on RBI short-term ways and means advances / जब राज्य सरकारें RBI के अर्थोपाय अग्रिम चुकाने में असमर्थ होती हैं",
+          "When total value of imports of goods and services plus net outward transfers exceeds total value of exports and inward receipts / जब वस्तुओं और सेवाओं के कुल आयात तथा निवल बाह्य अंतरण का मूल्य, कुल निर्यात और प्राप्तियों से अधिक हो जाता है",
+          "When commercial banks have zero currency reserves / जब वाणिज्यिक बैंकों के पास नकदी भंडार शून्य हो जाता है",
+          "When public sector units earn zero dividends / जब सार्वजनिक उपक्रमों को शून्य लाभांश प्राप्त होता है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Current Account Deficit (CAD) occurs when the value of a nation’s imports of goods, services, and net transfers exceeds the value of its exports of goods, services, and net transfers over a specific period, measured as a percentage of GDP.",
+        expHi: "चालू खाता घाटा (CAD) तब होता है जब किसी देश द्वारा आयात की जाने वाली वस्तुओं, सेवाओं और अंतरणों का कुल मूल्य, उसके निर्यात और प्राप्तियों के कुल मूल्य से अधिक हो जाता है।",
+        keyFact: "1991 के संकट का मूल कारण चालू खाता घाटा का GDP के लगभग 3% के खतरनाक स्तर तक पहुंच जाना था।"
+      },
+      {
+        id: 72,
+        stemEn: "The 'National Manufacturing Policy' (NMP) was approved by the Union Cabinet in which post-reform year to raise manufacturing's share in GDP to 25%?",
+        stemHi: "विनिर्माण क्षेत्र का जीडीपी में योगदान बढ़ाकर 25% करने के लक्ष्य के साथ केंद्रीय मंत्रिमंडल द्वारा 'राष्ट्रीय विनिर्माण नीति' (NMP) किस वर्ष स्वीकृत की गई थी?",
+        options: [
+          "1991",
+          "1998",
+          "2011",
+          "2002",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Government of India announced the National Manufacturing Policy (NMP) in October 2011 with the objective of increasing the manufacturing sector's share in GDP from 16% to 25% within a decade and creating 100 million additional jobs through National Investment and Manufacturing Zones (NIMZs).",
+        expHi: "भारत सरकार ने अक्टूबर 2011 में 'राष्ट्रीय विनिर्माण नीति' (NMP) को मंजूरी दी थी, जिसका उद्देश्य एक दशक में सकल घरेलू उत्पाद में विनिर्माण क्षेत्र की हिस्सेदारी को 16% से बढ़ाकर 25% करना और 10 करोड़ अतिरिक्त रोजगार सृजित करना था।",
+        keyFact: "इस नीति के अंतर्गत विशेष औद्योगिक टाउनशिप के रूप में राष्ट्रीय निवेश और विनिर्माण क्षेत्रों (NIMZ) की संकल्पना की गई थी।"
+      },
+      {
+        id: 73,
+        stemEn: "In the post-1991 era, what was the primary mandate of the Tariff Commission established in 1997?",
+        stemHi: "1991 के बाद के युग में वर्ष 1997 में स्थापित 'प्रशुल्क आयोग' (Tariff Commission) का मुख्य कार्य क्या था?",
+        options: [
+          "To nationalise foreign logistics companies / विदेशी लॉजिस्टिक्स कंपनियों का राष्ट्रीयकरण करना",
+          "To supervise university entrance examinations / विश्वविद्यालय प्रवेश परीक्षाओं का संचालन करना",
+          "To issue postal stamps for commercial couriers / वाणिज्यिक कोरियर सेवाओं के लिए डाक टिकट जारी करना",
+          "To advise the government on tariff fixation, rationalisation of customs duties, and domestic price structures / प्रशुल्क निर्धारण, सीमा शुल्क के युक्तिकरण और घरेलू मूल्य संरचना पर सरकार को सलाह देना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Tariff Commission was established by the Government of India in 1997 under the Ministry of Commerce and Industry as an independent, institutionalised advisory body to examine tariff rationalisation, analyse industry cost data, and advise on protective and countervailing duties.",
+        expHi: "वर्ष 1997 में गठित प्रशुल्क आयोग (Tariff Commission) का उद्देश्य सरकार को आयात-निर्यात शुल्क, सीमा शुल्क युक्तिकरण और घरेलू उद्योगों की लागत प्रतिस्पर्धात्मकता पर निष्पक्ष तकनीकी सलाह देना था।",
+        keyFact: "इसने पूर्ववर्ती 'मूल्य लागत ब्यूरो' (Bureau of Industrial Costs and Prices - BICP) का स्थान लिया था।"
+      },
+      {
+        id: 74,
+        stemEn: "Which of the following is a direct tax whose rate was reduced in the post-1991 era to stimulate private corporate investment?",
+        stemHi: "निम्नलिखित में से कौन-सा एक प्रत्यक्ष कर (Direct Tax) है जिसकी दर को 1991 के बाद निजी कॉर्पोरेट निवेश को प्रोत्साहित करने हेतु उत्तरोत्तर कम किया गया?",
+        options: [
+          "Corporation Tax (Company Income Tax) / निगम कर",
+          "Central Excise Duty / केंद्रीय उत्पाद शुल्क",
+          "Customs Tariff Duty / सीमा शुल्क",
+          "Value Added Tax / मूल्य संवर्धित कर",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Corporation tax is a direct tax levied on the net income/profit of companies. Pre-1991, corporate taxes were punitive (exceeding 50%), but tax reforms systematically rationalised and slashed corporate tax rates (reaching 30% and later 22% for new domestic manufacturing firms) to foster competitive investments.",
+        expHi: "निगम कर (Corporation Tax) कंपनियों के शुद्ध लाभ पर लगने वाला एक प्रत्यक्ष कर है। 1991 के बाद के सुधारों में कंपनियों को वैश्विक रूप से प्रतिस्पर्धी बनाने और निजी निवेश आकर्षित करने के लिए निगम कर की दरों में लगातार कटौती की गई।",
+        keyFact: "प्रत्यक्ष करों का भार उसी व्यक्ति या संस्था पर पड़ता है जिस पर वह लगाया जाता है; इसे दूसरों पर स्थानांतरित नहीं किया जा सकता।"
+      },
+      {
+        id: 75,
+        stemEn: "In the context of post-1991 capital market reforms, what does the term 'Qualified Institutional Buyers' (QIBs) refer to?",
+        stemHi: "1991 के बाद के पूंजी बाजार सुधारों के संदर्भ में 'योग्य संस्थागत खरीदार' (QIBs) का क्या अर्थ है?",
+        options: [
+          "Retail individual investors investing less than ₹1,000 / ₹1,000 से कम निवेश करने वाले आम खुदरा निवेशक",
+          "Institutional investors possessing specialized financial expertise to evaluate and invest in capital markets / पूंजी बाजार में निवेश करने के लिए वित्तीय विशेषज्ञता रखने वाले संस्थागत निवेशक (जैसे म्यूचुअल फंड, बैंक व बीमा कंपनियां)",
+          "Foreign tourists purchasing agricultural land / कृषि भूमि खरीदने वाले विदेशी पर्यटक",
+          "Cooperative farmers availing fertilizer subsidies / उर्वरक सब्सिडी का लाभ उठाने वाले सहकारी किसान",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Qualified Institutional Buyers (QIBs) are institutional investors defined by SEBI (such as Mutual Funds, scheduled commercial banks, insurance companies, and foreign portfolio investors) possessing expert capabilities to evaluate risk and participate in primary market IPO book-building offerings.",
+        expHi: "योग्य संस्थागत खरीदार (QIBs) सेबी द्वारा परिभाषित ऐसे संस्थागत निवेशक होते हैं (जैसे बैंक, जीवन बीमा कंपनियां, म्यूचुअल फंड हाउस और पेंशन फंड) जिनके पास वित्तीय जोखिम का विश्लेषण करने की तकनीकी क्षमता और विशाल पूंजी होती है।",
+        keyFact: "किसी IPO में SEBI के नियमों के तहत सामान्यतः 50% तक शेयर QIBs श्रेणी के लिए आरक्षित रखे जाते हैं।"
+      },
+
+      // Q76 - Q100 (Batch 4)
+      {
+        id: 76,
+        stemEn: "What was the original financial threshold net worth criterion for a Central Public Sector Enterprise (CPSE) to be granted 'Maharatna' status when introduced in 2009-10?",
+        stemHi: "वर्ष 2009-10 में शुरू किए गए केंद्रीय सार्वजनिक उपक्रमों (CPSEs) के 'महारत्न' दर्जे हेतु न्यूनतम निवल मूल्य (Net Worth) का मूल वित्तीय मानक क्या निर्धारित किया गया था?",
+        options: [
+          "Average annual net worth of over ₹1,000 crore / ₹1,000 करोड़ का औसत वार्षिक निवल मूल्य",
+          "Net profit of strictly ₹100 crore in a single financial year / एक वित्तीय वर्ष में केवल ₹100 करोड़ का शुद्ध लाभ",
+          "Average annual net worth of over ₹10,000 crore during the last 3 years / पिछले 3 वर्षों के दौरान ₹10,000 करोड़ से अधिक का औसत वार्षिक निवल मूल्य",
+          "Total export turnover of over ₹500 crore / ₹500 करोड़ से अधिक का कुल निर्यात कारोबार",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Under Department of Public Enterprises criteria, eligibility for Maharatna status requires having Navratna status, listing on an Indian stock exchange, and over the past 3 years: average annual turnover > ₹20,000 crore (later ₹25,000 crore), average annual net worth > ₹10,000 crore (later ₹15,000 crore), and average annual net profit after tax > ₹2,500 crore (later ₹5,000 crore).",
+        expHi: "सार्वजनिक उद्यम विभाग के मानकों के अनुसार, किसी नवरत्न कंपनी को महारत्न दर्जा प्राप्त करने के लिए पिछले 3 वर्षों में औसत वार्षिक निवल मूल्य ₹10,000 करोड़ (बाद में संशोधित) से अधिक होना तथा औसत वार्षिक शुद्ध लाभ ₹2,500 करोड़ से अधिक होना अनिवार्य किया गया था।",
+        keyFact: "महारत्न कंपनियों के निदेशक मंडल को किसी एकल परियोजना में ₹5,000 करोड़ या अपनी कुल निवल संपत्ति का 15% तक निवेश करने का वित्तीय अधिकार होता है।"
+      },
+      {
+        id: 77,
+        stemEn: "Which Committee on Banking Sector Reforms submitted its report in 2014 recommending the reduction of government stake in public sector banks below 50%?",
+        stemHi: "सार्वजनिक क्षेत्र के बैंकों में सरकारी हिस्सेदारी 50% से नीचे लाने की सिफारिश करने वाली किस समिति ने 2014 में अपनी रिपोर्ट प्रस्तुत की थी?",
+        options: [
+          "Urjit Patel Committee / उर्जित पटेल समिति",
+          "Bimal Jalan Committee / बिमल जालान समिति",
+          "K. V. Kamath Committee / के. वी. कामथ समिति",
+          "P. J. Nayak Committee / पी. जे. नायक समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Committee to Review Governance of Boards of Banks in India, headed by former Axis Bank Chairman P. J. Nayak, submitted its report in May 2014, recommending that government equity in Public Sector Banks be brought down below 50% and bank governance be vested in a Bank Investment Company (BIC).",
+        expHi: "मई 2014 में पी. जे. नायक समिति ने बैंकों के शासन सुधार पर अपनी रिपोर्ट दी थी, जिसमें सार्वजनिक क्षेत्र के बैंकों में सरकारी हिस्सेदारी को 50% से कम करने और एक स्वतंत्र 'बैंक निवेश कंपनी' बनाने की सिफारिश की गई थी।",
+        keyFact: "नायक समिति की सिफारिशों के आधार पर ही 2016 में 'बैंक बोर्ड ब्यूरो' (Bank Boards Bureau - BBB) की स्थापना की गई थी, जिसे अब FSIB कहा जाता है।"
+      },
+      {
+        id: 78,
+        stemEn: "In the post-1991 regime, which institution was set up in 2003 to handle disputes and appeals arising in the electricity sector across India?",
+        stemHi: "1991 के बाद के विनियामक ढांचे में भारत भर के विद्युत क्षेत्र में विवादों और अपीलों के निपटारे हेतु वर्ष 2003 में किस अपीलीय न्यायाधिकरण की स्थापना की गई थी?",
+        options: [
+          "Appellate Tribunal for Electricity (APTEL) / विद्युत अपीलीय न्यायाधिकरण (APTEL)",
+          "National Green Tribunal (NGT) / राष्ट्रीय हरित अधिकरण",
+          "Central Administrative Tribunal (CAT) / केंद्रीय प्रशासनिक न्यायाधिकरण",
+          "Armed Forces Tribunal (AFT) / सशस्त्र बल न्यायाधिकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Appellate Tribunal for Electricity (APTEL) was established in 2005 pursuant to Section 110 of the Electricity Act, 2003, with jurisdiction to hear appeals against the orders of Central and State Electricity Regulatory Commissions (CERC/SERC).",
+        expHi: "विद्युत अधिनियम, 2003 की धारा 110 के अंतर्गत 'विद्युत अपीलीय न्यायाधिकरण' (APTEL) की स्थापना की गई थी, जो केंद्रीय और राज्य विद्युत विनियामक आयोगों के आदेशों के विरुद्ध अपीलों की सुनवाई करता है।",
+        keyFact: "APTEL का मुख्यालय नई दिल्ली में स्थित है।"
+      },
+      {
+        id: 79,
+        stemEn: "What was the key recommendation of the Urjit Patel Committee report (2014) regarding India's monetary policy framework?",
+        stemHi: "भारत के मौद्रिक नीति ढांचे के संबंध में उर्जित पटेल समिति (2014) की मुख्य सिफारिश क्या थी?",
+        options: [
+          "Fixation of rupee value strictly to 1 gram of silver / रुपये के मूल्य को 1 ग्राम चांदी से निश्चित करना",
+          "Adoption of Flexible Inflation Targeting (FIT) using CPI Combined as the nominal anchor / उपभोक्ता मूल्य सूचकांक (CPI) को नॉमिनल एंकर मानकर लचीले मुद्रास्फीति लक्ष्यीकरण (FIT) को अपनाना",
+          "Abolition of the repo rate mechanism completely / रेपो दर तंत्र को पूरी तरह समाप्त करना",
+          "Complete pegging of monetary policy to US Federal Reserve rates / मौद्रिक नीति को पूरी तरह अमेरिकी फेडरल रिजर्व की दरों से जोड़ना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Expert Committee to Revise and Strengthen the Monetary Policy Framework headed by Dr. Urjit Patel recommended adopting headline Consumer Price Index (CPI-Combined) inflation as the nominal anchor with a 4% target (+/- 2% tolerance band) and establishing a statutory Monetary Policy Committee (MPC).",
+        expHi: "डॉ. उर्जित पटेल समिति (2014) ने पूर्ववर्ती थोक मूल्य सूचकांक (WPI) के स्थान पर उपभोक्ता मूल्य सूचकांक (CPI) को आधार मानकर 4% (±2%) की मुद्रास्फीति लक्ष्यीकरण प्रणाली और 'मौद्रिक नीति समिति' (MPC) के गठन की सिफारिश की थी।",
+        keyFact: "वर्ष 2016 में RBI अधिनियम में संशोधन कर 6 सदस्यीय 'मौद्रिक नीति समिति' (MPC) का गठन किया गया, जिसके अध्यक्ष RBI गवर्नर होते हैं।"
+      },
+      {
+        id: 80,
+        stemEn: "In which year was the 'Competition Commission of India' (CCI) established by the Central Government under the Competition Act, 2002?",
+        stemHi: "केंद्र सरकार द्वारा प्रतिस्पर्धा अधिनियम, 2002 के अंतर्गत 'भारतीय प्रतिस्पर्धा आयोग' (CCI) की स्थापना किस वर्ष की गई थी?",
+        options: [
+          "1991",
+          "1998",
+          "2003",
+          "2015",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Following the enactment of the Competition Act, 2002 (which repealed the MRTP Act), the Central Government established the Competition Commission of India (CCI) in October 2003, and it became fully functional in May 2009 to prevent anti-competitive agreements and abuse of dominance.",
+        expHi: "प्रतिस्पर्धा अधिनियम, 2002 के तहत अक्टूबर 2003 में केंद्र सरकार द्वारा 'भारतीय प्रतिस्पर्धा आयोग' (CCI) की स्थापना की गई थी, जिसका मुख्य कार्य बाजार में निष्पक्ष प्रतिस्पर्धा को बढ़ावा देना और एकाधिकारवादी समझौतों को रोकना है।",
+        keyFact: "CCI एक अर्द्ध-न्यायिक (Quasi-judicial) सांविधिक निकाय है, जिसका मुख्यालय नई दिल्ली में है।"
+      },
+      {
+        id: 81,
+        stemEn: "Under the post-1991 trade policy regime, what does 'Inverted Duty Structure' refer to in Indian manufacturing economics?",
+        stemHi: "1991 के बाद के व्यापार नीति परिदृश्य में भारतीय विनिर्माण अर्थशास्त्र में 'उल्टे शुल्क ढांचे' (Inverted Duty Structure) का क्या तात्पर्य है?",
+        options: [
+          "When export tax is higher than personal income tax / जब निर्यात कर व्यक्तिगत आयकर से अधिक हो जाता है",
+          "When GST on services is zero across all sectors / जब सभी क्षेत्रों में सेवाओं पर जीएसटी शून्य होता है",
+          "When commercial banks charge zero interest on corporate loans / जब वाणिज्यिक बैंक कॉर्पोरेट ऋणों पर शून्य ब्याज लेते हैं",
+          "When import duty on finished goods is lower than the import duty on raw materials and intermediate components / जब तैयार (अंतिम) माल पर आयात शुल्क, कच्चे माल और मध्यवर्ती घटकों पर लगने वाले आयात शुल्क से कम होता है",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "An Inverted Duty Structure occurs when tariff rates on imported raw materials/inputs are higher than those on finished consumer goods, making domestic manufacturers less competitive compared to foreign manufactured imports. Correcting this was a central focus of subsequent tariff reforms.",
+        expHi: "उल्टे शुल्क ढांचे (Inverted Duty Structure) का अर्थ ऐसी स्थिति से है जहां कच्चे माल या मध्यवर्ती सामानों पर आयात शुल्क की दर तैयार वस्तुओं पर लगने वाले शुल्क से अधिक होती है, जिससे घरेलू विनिर्माण की लागत बढ़ जाती है और वे विदेशी आयातों से पिछड़ जाते हैं।",
+        keyFact: "सरकार ने मेक इन इंडिया पहल के तहत उल्टे शुल्क ढांचे को समाप्त करने के लिए कई मध्यवर्ती घटकों पर बुनियादी सीमा शुल्क को युक्तिसंगत बनाया है।"
+      },
+      {
+        id: 82,
+        stemEn: "Which landmark pension reform was introduced in India on 1st January 2004 for new central government recruits, replacing the defined benefit pension?",
+        stemHi: "1 जनवरी 2004 को केंद्र सरकार के नए कर्मचारियों के लिए पुरानी पेंशन योजना के स्थान पर किस युगांतरकारी पेंशन सुधार को लागू किया गया था?",
+        options: [
+          "National Pension System (NPS) / राष्ट्रीय पेंशन प्रणाली (एनपीएस)",
+          "Employees' Provident Fund (EPF) / कर्मचारी भविष्य निधि",
+          "Public Provident Fund (PPF) / लोक भविष्य निधि",
+          "Indira Gandhi National Old Age Pension Scheme / इंदिरा गांधी राष्ट्रीय वृद्धावस्था पेंशन योजना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The National Pension System (NPS), a defined-contribution pension scheme, was introduced for all new central government employees (except armed forces) joining on or after January 1, 2004, to rein in government pension liabilities. It was opened to all citizens in May 2009.",
+        expHi: "केंद्र सरकार ने 1 जनवरी 2004 से सशस्त्र बलों को छोड़कर सभी नए केंद्रीय कर्मचारियों के लिए अंशदायी पेंशन योजना के रूप में 'राष्ट्रीय पेंशन प्रणाली' (NPS) लागू की थी, जिसे वर्ष 2009 में सभी भारतीय नागरिकों के लिए खोल दिया गया।",
+        keyFact: "NPS का विनियामक निकाय 'पेंशन निधि विनियामक और विकास प्राधिकरण' (PFRDA) है, जिसकी स्थापना 2003 में हुई थी।"
+      },
+      {
+        id: 83,
+        stemEn: "What was the name of the statutory body established in 2006 to regulate and ensure safety standards for food manufacturing and distribution in India?",
+        stemHi: "भारत में खाद्य निर्माण, भंडारण और वितरण हेतु सुरक्षा मानकों को विनियमित करने के लिए वर्ष 2006 के अधिनियम द्वारा किस सांविधिक निकाय की स्थापना की गई थी?",
+        options: [
+          "Food Corporation of India (FCI) / भारतीय खाद्य निगम",
+          "Food Safety and Standards Authority of India (FSSAI) / भारतीय खाद्य सुरक्षा और मानक प्राधिकरण (एफएसएसएआई)",
+          "Central Warehousing Corporation (CWC) / केंद्रीय भंडारण निगम",
+          "Bureau of Indian Standards (BIS) / भारतीय मानक ब्यूरो",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Food Safety and Standards Authority of India (FSSAI) was established under the Food Safety and Standards Act, 2006 (consolidating multiple older food orders like PFA, FPO, and MFPO) under the Ministry of Health and Family Welfare to enforce science-based food standards.",
+        expHi: "खाद्य सुरक्षा और मानक अधिनियम, 2006 के तहत स्वास्थ्य एवं परिवार कल्याण मंत्रालय के अधीन 'भारतीय खाद्य सुरक्षा और मानक प्राधिकरण' (FSSAI) की स्थापना की गई, जिसने पूर्ववर्ती कई पुराने खाद्य कानूनों को एक ही मंच पर समेकित किया।",
+        keyFact: "FSSAI का मुख्यालय नई दिल्ली में स्थित है।"
+      },
+      {
+        id: 84,
+        stemEn: "In the post-reform period, which specialized corporate structure was launched in India in 2008 to combine corporate limited liability with partnership flexibility?",
+        stemHi: "सुधारोत्तर काल में कॉर्पोरेट सीमित देयता और साझेदारी की लचीलापन को संयोजित करने के लिए वर्ष 2008 में किस विशेष व्यावसायिक संरचना को कानूनी मान्यता दी गई?",
+        options: [
+          "Sole Proprietorship / एकल स्वामित्व",
+          "Hindu Undivided Family (HUF) / हिंदू अविभाजित परिवार",
+          "Limited Liability Partnership (LLP) / सीमित देयता भागीदारी (एलएलपी)",
+          "Statutory Public Trust / सांविधिक सार्वजनिक न्यास",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Parliament enacted the Limited Liability Partnership Act, 2008 (enforced from April 2009), introducing LLPs in India. It offers the benefit of limited liability to its partners at low compliance cost while allowing them flexibility in organizing internal management.",
+        expHi: "संसद द्वारा पारित 'सीमित देयता भागीदारी अधिनियम, 2008' (LLP Act, 2008) के तहत भारत में LLP की शुरुआत हुई। यह भागीदारों को सीमित दायित्व का संरक्षण प्रदान करते हुए पारंपरिक साझेदारी का लचीलापन देती है।",
+        keyFact: "LLP में किसी एक साझेदार के गलत आचरण या लापरवाही के लिए अन्य साझेदार व्यक्तिगत रूप से उत्तरदायी नहीं होते हैं।"
+      },
+      {
+        id: 85,
+        stemEn: "Which high-level committee appointed in 2007 recommended making Mumbai an International Financial Services Centre (IFSC)?",
+        stemHi: "वर्ष 2007 में नियुक्त किस उच्चस्तरीय समिति ने मुंबई को एक अंतरराष्ट्रीय वित्तीय सेवा केंद्र (IFSC) के रूप में विकसित करने की सिफारिश की थी?",
+        options: [
+          "Raghuram Rajan Committee / रघुराम राजन समिति",
+          "Y. V. Reddy Committee / वाई. वी. रेड्डी समिति",
+          "Tarapore Committee / तारापोर समिति",
+          "Percy Mistry Committee / पर्सी मिस्त्री समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The High-Powered Expert Committee headed by Percy Mistry submitted its report in 2007, titled 'Making Mumbai an International Financial Centre', recommending broad financial sector reforms, full capital convertibility, and opening of debt markets.",
+        expHi: "वर्ष 2007 में गठित पर्सी मिस्त्री समिति ने भारत को वैश्विक वित्तीय हब बनाने और मुंबई को एक 'अंतरराष्ट्रीय वित्तीय सेवा केंद्र' (IFSC) के रूप में विकसित करने की विस्तृत रिपोर्ट प्रस्तुत की थी।",
+        keyFact: "भारत का पहला क्रियाशील अंतरराष्ट्रीय वित्तीय सेवा केंद्र (IFSC) गांधीनगर, गुजरात में 'GIFT City' में स्थापित किया गया है।"
+      },
+      {
+        id: 86,
+        stemEn: "What was the primary objective of establishing the 'National Payments Corporation of India' (NPCI) in 2008?",
+        stemHi: "वर्ष 2008 में 'भारतीय राष्ट्रीय भुगतान निगम' (NPCI) की स्थापना का प्राथमिक उद्देश्य क्या था?",
+        options: [
+          "To operate and unify all retail payments and settlement systems in India / भारत में सभी खुदरा भुगतान और निपटान प्रणालियों का संचालन और एकीकरण करना",
+          "To collect sovereign income taxes from corporate houses / कॉर्पोरेट घरानों से आयकर वसूलना",
+          "To print and issue high-denomination banknotes / उच्च मूल्यवर्ग के बैंक नोटों की छपाई और जारी करना",
+          "To regulate public sector port trusts / सार्वजनिक क्षेत्र के बंदरगाह ट्रस्टों का विनियमन करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "NPCI was incorporated in December 2008 as an umbrella organisation for operating retail payments and settlement systems in India, initiated by the RBI and Indian Banks' Association (IBA) under the Payment and Settlement Systems Act, 2007.",
+        expHi: "NPCI (भारतीय राष्ट्रीय भुगतान निगम) की स्थापना दिसंबर 2008 में RBI और IBA द्वारा भारत में खुदरा भुगतान और निपटान प्रणालियों (जैसे ATM नेटवर्क, UPI, IMPS, RuPay) को संचालित और एकीकृत करने वाले एक छत्र संगठन के रूप में की गई थी।",
+        keyFact: "NPCI कंपनी अधिनियम की धारा 8 के तहत स्थापित एक गैर-लाभकारी (Not-for-Profit) कंपनी है जिसने यूनिफाइड पेमेंट्स इंटरफेस (UPI) का विकास किया।"
+      },
+      {
+        id: 87,
+        stemEn: "Under the post-1991 foreign trade framework, which trade facilitation agreement allows exporters to import duty-free inputs required for export production?",
+        stemHi: "1991 के बाद के विदेश व्यापार ढांचे के तहत कौन-सी व्यापार सुगमता योजना निर्यातकों को निर्यात उत्पादन हेतु आवश्यक कच्चे माल का शुल्क-मुक्त आयात करने की अनुमति देती है?",
+        options: [
+          "Minimum Support Price Order / न्यूनतम समर्थन मूल्य आदेश",
+          "Advance Authorisation Scheme / अग्रिम प्राधिकार योजना",
+          "Essential Commodities Procurement Scheme / आवश्यक वस्तु खरीद योजना",
+          "Priority Sector Quota Certificate / प्राथमिकता क्षेत्र कोटा प्रमाण पत्र",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under the Foreign Trade Policy, the Advance Authorisation Scheme allows the duty-free import of inputs (raw materials, components, fuel) that are physically incorporated into the final export product, ensuring cost-competitiveness in global markets.",
+        expHi: "विदेश व्यापार नीति के अंतर्गत 'अग्रिम प्राधिकार योजना' (Advance Authorisation Scheme) निर्यातकों को निर्यातित वस्तुओं के उत्पादन में सीधे प्रयुक्त होने वाले कच्चे माल और घटकों को बिना सीमा शुल्क (Customs Duty) चुकाए आयात करने की छूट देती है।",
+        keyFact: "यह योजना विदेश व्यापार महानिदेशालय (DGFT) द्वारा प्रशासित की जाती है।"
+      },
+      {
+        id: 88,
+        stemEn: "The landmark Microfinance Institutions (Development and Regulation) recommendations were formulated by which committee set up by RBI in 2010?",
+        stemHi: "वर्ष 2010 में RBI द्वारा गठित किस समिति ने सूक्ष्म वित्त संस्थानों (MFIs) के नियमन और विकास हेतु ऐतिहासिक सिफारिशें तैयार की थीं?",
+        options: [
+          "Deepak Mohanty Committee / दीपक मोहंती समिति",
+          "Usha Thorat Committee / उषा थोरात समिति",
+          "Y. H. Malegam Committee / वाई. एच. मालेगाम समिति",
+          "Nachiket Mor Committee / नचिकेत मोर समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Following the Andhra Pradesh microfinance crisis, the RBI appointed a sub-committee of its Central Board under the chairmanship of Y. H. Malegam in October 2010. Its recommendations created a separate category of NBFCs called 'NBFC-MFIs' with clear caps on margins, lending rates, and borrower leverage.",
+        expHi: "सूक्ष्म वित्त क्षेत्र के संकट के बाद अक्टूबर 2010 में RBI ने वाई. एच. मालेगाम की अध्यक्षता में एक समिति का गठन किया। इसकी सिफारिशों के आधार पर RBI ने गैर-बैंकिंग वित्तीय कंपनियों की एक नई श्रेणी 'NBFC-MFI' बनाई और ब्याज मार्जिन की सीमा तय की।",
+        keyFact: "मालेगाम समिति ने ग्रामीण क्षेत्रों में कमजोर वर्ग के परिवारों के लिए सूक्ष्म ऋण की पात्रता सीमाएं भी निर्धारित की थीं।"
+      },
+      {
+        id: 89,
+        stemEn: "In the post-reform period, which constitutional amendment made elementary education a fundamental right under Article 21A, driving long-term human capital formation?",
+        stemHi: "सुधारोत्तर काल में किस संविधान संशोधन अधिनियम द्वारा प्रारंभिक शिक्षा को अनुच्छेद 21A के तहत एक मौलिक अधिकार बनाया गया, जिसने दीर्घकालिक मानव पूंजी निर्माण को गति दी?",
+        options: [
+          "73rd Constitutional Amendment Act, 1992 / 73वां संविधान संशोधन अधिनियम, 1992",
+          "91st Constitutional Amendment Act, 2003 / 91वां संविधान संशोधन अधिनियम, 2003",
+          "42nd Constitutional Amendment Act, 1976 / 42वां संविधान संशोधन अधिनियम, 1976",
+          "86th Constitutional Amendment Act, 2002 / 86वां संविधान संशोधन अधिनियम, 2002",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The 86th Constitutional Amendment Act of 2002 inserted Article 21A into the Constitution, providing free and compulsory education to all children aged 6 to 14 years. This structural socio-economic reform underpinned India's post-reform transition to a skill-based, knowledge-driven service economy.",
+        expHi: "86वें संविधान संशोधन अधिनियम, 2002 द्वारा संविधान में अनुच्छेद 21A जोड़ा गया, जिसके तहत 6 से 14 वर्ष के बच्चों के लिए निःशुल्क और अनिवार्य शिक्षा को मौलिक अधिकार का दर्जा दिया गया।",
+        keyFact: "इस संशोधन के क्रियान्वयन हेतु संसद द्वारा 'शिक्षा का अधिकार अधिनियम, 2009' (RTE Act) पारित किया गया जो 1 अप्रैल 2010 से लागू हुआ।"
+      },
+      {
+        id: 90,
+        stemEn: "What is the role of the 'Credit Rating Information Services of India Limited' (CRISIL), which grew rapidly in the post-1991 deregulated capital market?",
+        stemHi: "1991 के बाद गैर-विनियमित पूंजी बाजार में तेजी से उभरी संस्था 'CRISIL' का मुख्य कार्य क्या है?",
+        options: [
+          "Evaluating and assigning credit ratings to debt instruments and commercial entities / ऋण लिखतों (Debentures/Bonds) और वाणिज्यिक संस्थाओं की साख रेटिंग का मूल्यांकन और निर्धारण करना",
+          "Directly fixing agricultural procurement prices / कृषि खरीद मूल्यों का सीधा निर्धारण करना",
+          "Conducting population censuses / जनगणना का संचालन करना",
+          "Providing sovereign loans to foreign countries / विदेशी देशों को संप्रभु ऋण प्रदान करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "CRISIL (incorporated in 1987 as India's first credit rating agency) became pivotal post-1991 to evaluate the creditworthiness and default probability of debt instruments issued by corporate entities, aiding institutional and retail investors.",
+        expHi: "क्रिसिल (CRISIL) भारत की पहली क्रेडिट रेटिंग एजेंसी है, जिसका मुख्य कार्य कॉरपोरेट कंपनियों, बैंकों और उनके द्वारा जारी ऋण पत्रों (डिबेंचर, बॉन्ड, कमर्शियल पेपर) की वित्तीय साख और जोखिम क्षमता का आकलन कर रेटिंग प्रदान करना है।",
+        keyFact: "ICRA और CARE भी भारत की अन्य प्रमुख सेबी-पंजीकृत क्रेडिट रेटिंग एजेंसियां हैं।"
+      },
+      {
+        id: 91,
+        stemEn: "Under the post-1991 economic reforms, what major change was introduced in the interest rate structure of commercial banks?",
+        stemHi: "1991 के आर्थिक सुधारों के तहत वाणिज्यिक बैंकों की ब्याज दर संरचना में क्या बड़ा परिवर्तन किया गया था?",
+        options: [
+          "Direct fixing of all commercial deposit rates by the President of India / भारत के राष्ट्रपति द्वारा सभी जमा दरों का प्रत्यक्ष निर्धारण",
+          "Complete deregulation of lending and deposit interest rates, allowing banks to price loans based on risk and market cost of funds / ऋण और जमा की ब्याज दरों का विनियमन समाप्त करना, जिससे बैंक बाजार लागत व जोखिम के आधार पर दरें तय करने हेतु स्वतंत्र हुए",
+          "Mandating a uniform flat 2% interest rate for all loans / सभी ऋणों के लिए एकसमान 2% ब्याज दर तय करना",
+          "Abolition of all interest charges on corporate debt / कॉर्पोरेट ऋणों पर ब्याज की पूर्ण समाप्ति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Before 1991, the RBI strictly administered and dictated deposit and lending interest rates across the entire banking spectrum. Post-Narasimham Committee recommendations, interest rates were progressively deregulated, giving commercial banks operational autonomy to price credit based on their cost of funds and borrower risk profiles.",
+        expHi: "1991 से पहले RBI द्वारा सभी प्रकार की जमा और ऋण दरों का सख्त नियंत्रण किया जाता था। सुधारों के बाद ब्याज दरों का प्रशासनिक नियंत्रण हटा दिया गया (Deregulation) और बैंकों को बाजार की मांग, आपूर्ति व निधियों की लागत के आधार पर अपनी ब्याज दरें तय करने की छूट मिली।",
+        keyFact: "वर्तमान में बैंक अपनी उधारी दरें 'MCLR' (Marginal Cost of Funds based Lending Rate) और 'EBLR' (External Benchmark Lending Rate) के आधार पर तय करते हैं।"
+      },
+      {
+        id: 92,
+        stemEn: "In which year was the 'National Skill Development Corporation' (NSDC) set up as a public-private partnership model to bridge the post-reform industrial skill gap?",
+        stemHi: "सुधारोत्तर काल में उद्योगों की मांग के अनुसार कौशल अंतर को पाटने हेतु 'राष्ट्रीय कौशल विकास निगम' (NSDC) की स्थापना एक सार्वजनिक-निजी भागीदारी (PPP) के रूप में किस वर्ष की गई थी?",
+        options: [
+          "1991",
+          "1999",
+          "2008",
+          "2018",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The National Skill Development Corporation (NSDC) was established in July 2008 as a not-for-profit company under Section 25 of the Companies Act, 1956, with 51% private equity and 49% government equity, to catalyse vocational training and skill creation across sectors.",
+        expHi: "जुलाई 2008 में वित्त मंत्रालय के तहत एक सार्वजनिक-निजी भागीदारी (PPP) मॉडल के रूप में 'राष्ट्रीय कौशल विकास निगम' (NSDC) का गठन किया गया था, जिसमें 51% हिस्सेदारी निजी क्षेत्र और 49% हिस्सेदारी भारत सरकार के पास रखी गई।",
+        keyFact: "NSDC वर्तमान में कौशल विकास और उद्यमशीलता मंत्रालय (MSDE) के तहत कार्य करता है।"
+      },
+      {
+        id: 93,
+        stemEn: "What was the central feature of the 'Targeted Public Distribution System' (TPDS) launched in June 1997 to rationalize consumer food subsidies?",
+        stemHi: "खाद्य सब्सिडी को लक्षित एवं युक्तिसंगत बनाने हेतु जून 1997 में शुरू की गई 'लक्षित सार्वजनिक वितरण प्रणाली' (TPDS) की केंद्रीय विशेषता क्या थी?",
+        options: [
+          "Free food grain distribution universally to all millionaires / सभी करोड़पतियों को मुफ्त खाद्यान्न वितरण",
+          "Complete ban on open-market purchase of grains / खुले बाजार से खाद्यान्न खरीद पर पूर्ण प्रतिबंध",
+          "Closing down of all fair price ration shops in urban areas / शहरी क्षेत्रों में सभी उचित दर की राशन दुकानों को बंद करना",
+          "Categorisation of beneficiaries into Below Poverty Line (BPL) and Above Poverty Line (APL) with differential issue prices / लाभार्थियों को गरीबी रेखा से नीचे (BPL) और गरीबी रेखा से ऊपर (APL) में वर्गीकृत कर विभेदक निर्गम मूल्य लागू करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "In June 1997, the Government replaced the universal PDS with the Targeted Public Distribution System (TPDS) to direct food subsidies towards low-income households. Beneficiaries were categorized into BPL (subsidized prices) and APL (economic cost/near-market prices), later adding the poorest-of-the-poor category (Antyodaya Anna Yojana in 2000).",
+        expHi: "जून 1997 में सार्वजनिक वितरण प्रणाली को पुनर्गठित कर 'TPDS' लागू किया गया, जिसके तहत गरीब परिवारों को 'BPL' और गैर-गरीबों को 'APL' में विभाजित कर खाद्यान्न का विभेदक मूल्य पर वितरण सुनिश्चित किया गया।",
+        keyFact: "दिसंबर 2000 में सबसे निर्धन परिवारों के लिए 'अंत्योदय अन्न योजना' (AAY) शुरू की गई, जिसके तहत 35 किलोग्राम खाद्यान्न प्रति परिवार अत्यधिक रियायती दरों पर दिया गया।"
+      },
+      {
+        id: 94,
+        stemEn: "In the post-reform period, which legislation was enacted in 2005 to mandate 100 days of guaranteed wage employment to rural households?",
+        stemHi: "सुधारोत्तर काल में ग्रामीण परिवारों को 100 दिनों के गारंटीकृत मजदूरी रोजगार का कानूनी अधिकार प्रदान करने के लिए वर्ष 2005 में कौन-सा ऐतिहासिक कानून बनाया गया था?",
+        options: [
+          "Mahatma Gandhi National Rural Employment Guarantee Act (MGNREGA) / महात्मा गांधी राष्ट्रीय ग्रामीण रोजगार गारंटी अधिनियम (मनरेगा)",
+          "National Food Security Act / राष्ट्रीय खाद्य सुरक्षा अधिनियम",
+          "Industrial Disputes Act / औद्योगिक विवाद अधिनियम",
+          "Minimum Wages Act / न्यूनतम मजदूरी अधिनियम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The National Rural Employment Guarantee Act (NREGA) was passed in September 2005 and launched on February 2, 2006 (renamed MGNREGA in October 2009). It provided a legal guarantee of 100 days of unskilled wage employment per financial year to rural households willing to do manual work, creating rural social safety nets.",
+        expHi: "सितंबर 2005 में पारित 'राष्ट्रीय ग्रामीण रोजगार गारंटी अधिनियम' (मनरेगा - MGNREGA) 2 फरवरी 2006 से लागू हुआ (2009 में महात्मा गांधी के नाम पर पुनः नामित)। यह ग्रामीण क्षेत्र के प्रत्येक परिवार को एक वित्तीय वर्ष में कम से कम 100 दिनों के अकुशल कार्य का कानूनी अधिकार देता है।",
+        keyFact: "इस योजना में कम से कम एक-तिहाई (33%) लाभार्थी महिलाएं होना अनिवार्य है।"
+      },
+      {
+        id: 95,
+        stemEn: "Which body was constituted in 2015 to replace the 65-year-old Planning Commission of India in line with modern cooperative federalism?",
+        stemHi: "सहकारी संघवाद और बाजार-अनुकूल आर्थिक प्राथमिकताओं के अनुरूप 65 वर्ष पुराने योजना आयोग के स्थान पर 2015 में किस संस्था का गठन किया गया?",
+        options: [
+          "National Development Council (NDC) / राष्ट्रीय विकास परिषद",
+          "NITI Aayog (National Institution for Transforming India) / नीति आयोग",
+          "Finance Commission of India / भारत का वित्त आयोग",
+          "Inter-State Council / अंतर-राज्यीय परिषद",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "On January 1, 2015, the Government of India replaced the top-down Planning Commission (established in 1950) with NITI Aayog via a Union Cabinet resolution. NITI Aayog serves as a policy think tank promoting cooperative and competitive federalism without financial allocation powers.",
+        expHi: "1 जनवरी 2015 को केंद्रीय मंत्रिमंडल के प्रस्ताव द्वारा 1950 से कार्यरत 'योजना आयोग' को समाप्त कर 'नीति आयोग' (National Institution for Transforming India) की स्थापना की गई। यह सरकार के एक प्रबुद्ध मंडल (Think Tank) के रूप में कार्य करता है।",
+        keyFact: "प्रधानमंत्री नीति आयोग के पदेन अध्यक्ष (Ex-officio Chairperson) होते हैं।"
+      },
+      {
+        id: 96,
+        stemEn: "What was the central purpose of the 'New Exploration Licensing Policy' (NELP) launched by the Government of India in 1997-99?",
+        stemHi: "भारत सरकार द्वारा 1997-99 में शुरू की गई 'नई अन्वेषण लाइसेंस नीति' (NELP) का केंद्रीय उद्देश्य क्या था?",
+        options: [
+          "Prohibiting private oil refineries across coastal states / तटीय राज्यों में निजी तेल रिफाइनरियों पर प्रतिबंध लगाना",
+          "Mandating bullock-cart haulage of crude petroleum / कच्चे तेल की ढुलाई बैलगाड़ियों से अनिवार्य करना",
+          "Opening up oil and natural gas upstream exploration to 100% private and foreign participation with level-playing bidding / पारदर्शी बोली प्रक्रिया के जरिए तेल और प्राकृतिक गैस अन्वेषण को 100% निजी और विदेशी भागीदारी के लिए खोलना",
+          "Merging ONGC and Indian Oil into a single railway company / ओएनजीसी और इंडियन ऑयल का रेलवे कंपनी में विलय करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "NELP was operationalised in 1999 to stimulate domestic hydrocarbons exploration. It provided equal treatment to private domestic/foreign companies and state PSEs (ONGC/OIL) through competitive international bidding blocks with 100% FDI allowed.",
+        expHi: "हाइड्रोकार्बन क्षेत्र में घरेलू उत्पादन बढ़ाने के लिए वर्ष 1999 में 'NELP' नीति लागू की गई। इसने तेल और प्राकृतिक गैस के अन्वेषण और उत्पादन (Upstream) में निजी एवं विदेशी कंपनियों को सार्वजनिक कंपनियों के समकक्ष प्रतिस्पर्धा करने की पूरी छूट दी।",
+        keyFact: "वर्ष 2016 में NELP को प्रतिस्थापित कर 'HELP' (Hydrocarbon Exploration and Licensing Policy) तथा राजस्व साझाकरण अनुबंध (Revenue Sharing Contract) प्रणाली लागू की गई।"
+      },
+      {
+        id: 97,
+        stemEn: "In the post-reform era, in which year did India officially enact the 'Information Technology Act' to provide legal recognition to electronic transactions and e-commerce?",
+        stemHi: "सुधारोत्तर काल में भारत ने किस वर्ष इलेक्ट्रॉनिक लेनदेन और ई-कॉमर्स को कानूनी मान्यता प्रदान करने हेतु 'सूचना प्रौद्योगिकी अधिनियम' (IT Act) आधिकारिक रूप से पारित किया था?",
+        options: [
+          "1991",
+          "1995",
+          "2010",
+          "2000",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Information Technology Act, 2000 (IT Act, 2000) was enacted on June 9, 2000, and notified on October 17, 2000, based on the United Nations Model Law on Electronic Commerce (UNCITRAL). It provided legal validity to electronic governance, digital signatures, electronic contracts, and penalized cybercrimes.",
+        expHi: "यूएनसीट्रल (UNCITRAL) के मॉडल कानून पर आधारित 'सूचना प्रौद्योगिकी अधिनियम, 2000' (IT Act, 2000) को 17 अक्टूबर 2000 से लागू किया गया था। इसने ई-कॉमर्स, डिजिटल हस्ताक्षर और इलेक्ट्रॉनिक दस्तावेजों को कानूनी मान्यता दी तथा साइबर अपराधों के लिए दंड का प्रावधान किया।",
+        keyFact: "इस अधिनियम में वर्ष 2008 में व्यापक संशोधन (IT Amendment Act, 2008) किया गया था।"
+      },
+      {
+        id: 98,
+        stemEn: "Which committee recommended the phased introduction of the Prompt Corrective Action (PCA) framework by the RBI to handle weak and stressed commercial banks?",
+        stemHi: "कमजोर और दबावग्रस्त वाणिज्यिक बैंकों की वित्तीय स्थिति सुधारने हेतु RBI द्वारा त्वरित सुधारात्मक कार्रवाई (PCA) ढांचा लागू करने की सिफारिश किस समिति/पहल ने की थी?",
+        options: [
+          "Committee on Banking Sector Reforms (Narasimham Committee-II, 1998) / बैंकिंग क्षेत्र सुधार समिति (नरसिम्हम समिति-II, 1998)",
+          "Sukhamoy Chakravarty Committee / सुखमय चक्रवर्ती समिति",
+          "Hazari Committee on Industrial Licensing / हजारी समिति",
+          "Tendulkar Committee / तेंदुलकर समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Drawing recommendations from the Narasimham Committee-II (1998) report on addressing bank vulnerabilities and international Basel standards, RBI operationalized the Prompt Corrective Action (PCA) framework in December 2002 to intervene early when a bank breaches trigger points on Capital, Asset Quality (NPA), and Profitability.",
+        expHi: "नरसिम्हम समिति-II (1998) की सिफारिशों के आधार पर दिसंबर 2002 में भारतीय रिजर्व बैंक ने 'त्वरित सुधारात्मक कार्रवाई' (Prompt Corrective Action - PCA) ढांचा लागू किया। जब किसी बैंक का NPA अत्यधिक बढ़ जाता है या पूंजी पर्याप्तता घट जाती है, तो RBI उसके ऋण वितरण और विस्तार पर प्रतिबंध लगा देता है।",
+        keyFact: "PCA ढांचे के तहत बैंक की ऋण देने की सीमा, नई शाखाएं खोलने और लाभांश वितरण पर अस्थायी प्रतिबंध लगाए जा सकते हैं।"
+      },
+      {
+        id: 99,
+        stemEn: "What was the core purpose of establishing the 'National Disaster Management Authority' (NDMA) in the post-reform period under the DM Act, 2005?",
+        stemHi: "सुधारोत्तर काल में आपदा प्रबंधन अधिनियम, 2005 के तहत 'राष्ट्रीय आपदा प्रबंधन प्राधिकरण' (NDMA) की स्थापना का मूल उद्देश्य क्या था?",
+        options: [
+          "To set foreign exchange spot rates for the bullion market / सर्राफा बाजार के लिए विदेशी मुद्रा दरें निर्धारित करना",
+          "To lay down institutional policies, plans, and guidelines for disaster management and economic resilience / आपदा प्रबंधन, रोकथाम और त्वरित राहत हेतु नीतियां, योजनाएं एवं दिशा-निर्देश तैयार करना",
+          "To conduct national civil service interviews / राष्ट्रीय सिविल सेवा साक्षात्कारों का संचालन करना",
+          "To regulate private mutual fund advertising / निजी म्यूचुअल फंड विज्ञापनों का नियमन करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Enacted post-2004 Indian Ocean Tsunami, the Disaster Management Act, 2005 mandated an institutional shift from reactive relief to proactive disaster preparedness, mitigation, and response to protect public infrastructure, economy, and lives. NDMA is headed by the Prime Minister.",
+        expHi: "2004 की सुनामी के बाद पारित 'आपदा प्रबंधन अधिनियम, 2005' के तहत NDMA की स्थापना की गई। इसका उद्देश्य केवल आपदा के बाद राहत देने के बजाय पूर्व-तैयारी, रोकथाम, शमन और त्वरित प्रतिक्रिया की समग्र प्रणाली स्थापित करना है।",
+        keyFact: "भारत के प्रधानमंत्री NDMA के पदेन अध्यक्ष (Ex-officio Chairperson) होते हैं, जबकि राज्यों में SDMA के अध्यक्ष मुख्यमंत्री होते हैं।"
+      },
+      {
+        id: 100,
+        stemEn: "In the post-1991 Indian economy, which indicator is most commonly used to measure the degree of economic openness of India to the outside world?",
+        stemHi: "1991 के बाद की भारतीय अर्थव्यवस्था में बाहरी दुनिया के साथ भारत के आर्थिक खुलेपन की डिग्री को मापने के लिए सबसे अधिक किस संकेतक का उपयोग किया जाता है?",
+        options: [
+          "Cash Reserve Ratio (CRR) of the central bank / केंद्रीय बैंक का नकद आरक्षित अनुपात",
+          "Statutory Liquidity Ratio (SLR) / वैधानिक तरलता अनुपात",
+          "Trade-to-GDP Ratio ((Total Exports + Total Imports) / GDP) / व्यापार-जीडीपी अनुपात ((कुल निर्यात + कुल आयात) / जीडीपी)",
+          "High-powered currency issue multiplier / उच्च अधिकार प्राप्त मुद्रा निर्गम गुणक",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Trade-to-GDP ratio—the sum of merchandise and services exports and imports expressed as a percentage of GDP—is the standard metric of economic openness and globalisation. India's Trade-to-GDP ratio expanded dramatically from roughly 15-16% in 1990-91 to over 40-50% in subsequent decades, highlighting India's integration with the global economy.",
+        expHi: "किसी देश की अर्थव्यवस्था के वैश्वीकरण और खुलेपन को मापने का सबसे प्रामाणिक पैमाना 'व्यापार-जीडीपी अनुपात' (Trade-to-GDP Ratio) है, जो कुल निर्यातों और आयातों के योग को GDP के प्रतिशत के रूप में दर्शाता है। भारत का यह अनुपात 1991 के लगभग 15-16% से बढ़कर 40% से अधिक हो गया है।",
+        keyFact: "यह तीव्र वृद्धि दर्शाती है कि 1991 के बाद भारतीय अर्थव्यवस्था वैश्विक आपूर्ति श्रृंखला और अंतरराष्ट्रीय व्यापार के साथ गहराई से जुड़ गई है।"
+      }
+    ];
+
+    // State Variables
+    let currentIndex = 0;
+    const userResponses = Array(100).fill(null).map(() => ({
+      selected: null,
+      status: 'not-visited',
+      isReview: false
+    }));
+
+    // DOM Elements
+    const qStemEnEl = document.getElementById("qStemEn");
+    const qStemHiEl = document.getElementById("qStemHi");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const explanationCard = document.getElementById("explanationCard");
+    const expEnEl = document.getElementById("expEn");
+    const expHiEl = document.getElementById("expHi");
+    const expFactEl = document.getElementById("expFact");
+
+    const counterBadge = document.getElementById("counterBadge");
+    const scoreBadge = document.getElementById("scoreBadge");
+    const qTagEl = document.getElementById("qTag");
+
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const skipBtn = document.getElementById("skipBtn");
+    const reviewBtn = document.getElementById("reviewBtn");
+    const finishBtn = document.getElementById("finishBtn");
+
+    const paletteDrawer = document.getElementById("paletteDrawer");
+    const drawerOverlay = document.getElementById("drawerOverlay");
+    const openPaletteBtn = document.getElementById("openPaletteBtn");
+    const closePaletteBtn = document.getElementById("closePaletteBtn");
+    const paletteGrid = document.getElementById("paletteGrid");
+
+    const testArea = document.getElementById("testArea");
+    const scorecardArea = document.getElementById("scorecardArea");
+    const reviewTestBtn = document.getElementById("reviewTestBtn");
+    const restartTestBtn = document.getElementById("restartTestBtn");
+
+    function initPalette() {
+      paletteGrid.innerHTML = "";
+      for (let i = 0; i < 100; i++) {
+        const btn = document.createElement("button");
+        btn.className = "palette-btn";
+        btn.id = `palette-btn-${i}`;
+        btn.textContent = i + 1;
+        btn.onclick = () => {
+          jumpToQuestion(i);
+          closePalette();
+        };
+        paletteGrid.appendChild(btn);
+      }
+    }
+
+    function calculateScore() {
+      let correct = 0;
+      let incorrect = 0;
+      userResponses.forEach(r => {
+        if (r.status === 'correct') correct++;
+        if (r.status === 'incorrect') incorrect++;
+      });
+      const netScore = (correct * 1.0) - (incorrect * 0.25);
+      return {
+        correct,
+        incorrect,
+        netScore: netScore.toFixed(2)
+      };
+    }
+
+    function updateScoreDisplay() {
+      const { netScore } = calculateScore();
+      scoreBadge.textContent = `Score: ${netScore}`;
+    }
+
+    function updatePaletteButton(idx) {
+      const btn = document.getElementById(`palette-btn-${idx}`);
+      if (!btn) return;
+      btn.className = "palette-btn";
+
+      if (idx === currentIndex) {
+        btn.classList.add("active-current");
+      }
+
+      const st = userResponses[idx].status;
+      if (st === 'correct') btn.classList.add("status-correct");
+      else if (st === 'incorrect') btn.classList.add("status-incorrect");
+      else if (st === 'review') btn.classList.add("status-review");
+      else if (st === 'skipped') btn.classList.add("status-skipped");
+      else if (st === 'unanswered') btn.classList.add("status-unanswered");
+    }
+
+    function loadQuestion(idx) {
+      currentIndex = idx;
+      const q = questions[idx];
+      const resp = userResponses[idx];
+
+      if (resp.status === 'not-visited') {
+        resp.status = 'unanswered';
+      }
+
+      counterBadge.textContent = `Question ${idx + 1} of 100`;
+      qTagEl.textContent = `Q${q.id} • UPSSSC PET Level`;
+      qStemEnEl.textContent = `Q${q.id}. ${q.stemEn}`;
+      qStemHiEl.textContent = q.stemHi;
+
+      optionsContainer.innerHTML = "";
+      const letters = ['A', 'B', 'C', 'D', 'E'];
+      const isAnswered = resp.selected !== null;
+
+      q.options.forEach((optText, oIdx) => {
+        const optDiv = document.createElement("div");
+        optDiv.className = "option-item";
+        if (isAnswered) optDiv.classList.add("locked");
+
+        const keyDiv = document.createElement("div");
+        keyDiv.className = "opt-key";
+        keyDiv.textContent = letters[oIdx];
+
+        const textDiv = document.createElement("div");
+        textDiv.className = "opt-text";
+        textDiv.textContent = `(${letters[oIdx]}) ${optText}`;
+
+        optDiv.appendChild(keyDiv);
+        optDiv.appendChild(textDiv);
+
+        if (isAnswered) {
+          if (oIdx === q.correct) {
+            optDiv.classList.add("correct");
+          }
+          if (oIdx === resp.selected && resp.selected !== q.correct) {
+            optDiv.classList.add("incorrect");
+          }
+        } else {
+          optDiv.onclick = () => selectOption(idx, oIdx);
+        }
+
+        optionsContainer.appendChild(optDiv);
+      });
+
+      if (isAnswered) {
+        expEnEl.innerHTML = `<strong>English:</strong> ${q.expEn}`;
+        expHiEl.innerHTML = `<strong>व्याख्या (Hindi):</strong> ${q.expHi}`;
+        expFactEl.innerHTML = `<strong>Key Exam Fact:</strong> ${q.keyFact}`;
+        explanationCard.classList.add("active");
+      } else {
+        explanationCard.classList.remove("active");
+      }
+
+      if (resp.isReview) {
+        reviewBtn.textContent = "Unmark Review";
+        reviewBtn.style.backgroundColor = "#7c3aed";
+      } else {
+        reviewBtn.textContent = "Mark for Review";
+        reviewBtn.style.backgroundColor = "";
+      }
+
+      prevBtn.disabled = (idx === 0);
+      nextBtn.disabled = (idx === 99);
+
+      for (let i = 0; i < 100; i++) updatePaletteButton(i);
+      updateScoreDisplay();
+    }
+
+    function selectOption(qIdx, optIdx) {
+      const q = questions[qIdx];
+      const resp = userResponses[qIdx];
+      if (resp.selected !== null) return;
+
+      resp.selected = optIdx;
+      if (optIdx === q.correct) {
+        resp.status = 'correct';
+      } else {
+        resp.status = 'incorrect';
+      }
+
+      loadQuestion(qIdx);
+    }
+
+    function jumpToQuestion(idx) {
+      loadQuestion(idx);
+    }
+
+    function openPalette() {
+      paletteDrawer.classList.add("open");
+      drawerOverlay.classList.add("open");
+    }
+
+    function closePalette() {
+      paletteDrawer.classList.remove("open");
+      drawerOverlay.classList.remove("open");
+    }
+
+    function showFinalScorecard() {
+      const stats = calculateScore();
+      const attempted = stats.correct + stats.incorrect;
+      const accuracy = attempted > 0 ? ((stats.correct / attempted) * 100).toFixed(1) : 0;
+      const unattempted = 100 - attempted;
+
+      document.getElementById("resNetScore").textContent = stats.netScore;
+      document.getElementById("resAccuracy").textContent = `${accuracy}%`;
+      document.getElementById("resCorrect").textContent = stats.correct;
+      document.getElementById("resIncorrect").textContent = stats.incorrect;
+      document.getElementById("resUnattempted").textContent = unattempted;
+
+      testArea.style.display = "none";
+      scorecardArea.classList.add("active");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Event Bindings
+    prevBtn.onclick = () => {
+      if (currentIndex > 0) loadQuestion(currentIndex - 1);
+    };
+
+    nextBtn.onclick = () => {
+      if (currentIndex < 99) loadQuestion(currentIndex + 1);
+    };
+
+    skipBtn.onclick = () => {
+      const resp = userResponses[currentIndex];
+      if (resp.selected === null) {
+        resp.status = 'skipped';
+        updatePaletteButton(currentIndex);
+      }
+      if (currentIndex < 99) loadQuestion(currentIndex + 1);
+    };
+
+    reviewBtn.onclick = () => {
+      const resp = userResponses[currentIndex];
+      resp.isReview = !resp.isReview;
+      if (resp.isReview) {
+        if (resp.selected === null) resp.status = 'review';
+      } else {
+        if (resp.selected === null) resp.status = 'unanswered';
+      }
+      loadQuestion(currentIndex);
+    };
+
+    openPaletteBtn.onclick = openPalette;
+    closePaletteBtn.onclick = closePalette;
+    drawerOverlay.onclick = closePalette;
+
+    finishBtn.onclick = () => {
+      if (confirm("Are you sure you want to finish the test and view your performance scorecard?")) {
+        showFinalScorecard();
+      }
+    };
+
+    reviewTestBtn.onclick = () => {
+      scorecardArea.classList.remove("active");
+      testArea.style.display = "block";
+      openPalette();
+    };
+
+    restartTestBtn.onclick = () => {
+      if (confirm("Restart the test? All recorded selections and scores will be cleared.")) {
+        for (let i = 0; i < 100; i++) {
+          userResponses[i] = { selected: null, status: 'not-visited', isReview: false };
+        }
+        scorecardArea.classList.remove("active");
+        testArea.style.display = "block";
+        loadQuestion(0);
+      }
+    };
+
+    // Initialize Simulator
+    initPalette();
+    loadQuestion(0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPSSSC PET CBT Simulator - Indian Economy</title>
+    <style>
+        :root {
+            --green: #28a745;
+            --red: #dc3545;
+            --orange: #fd7e14;
+            --slate: #6c757d;
+            --purple: #6f42c1;
+            --dark-gray: #343a40;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; background-color: #e9ecef; display: flex; flex-direction: column; height: 100vh; }
+        
+        header { background-color: #0056b3; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 1.2rem; }
+        .score-display { font-weight: bold; font-size: 1.1rem; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 5px; }
+        
+        .main-container { display: flex; flex: 1; overflow: hidden; }
+        
+        .question-section { flex: 3; padding: 20px; overflow-y: auto; background: white; border-right: 2px solid var(--border-color); display: flex; flex-direction: column; }
+        .q-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; font-weight: bold; color: #495057; }
+        
+        .question-text { font-size: 1.1rem; margin-bottom: 10px; color: #212529; }
+        .question-text.hindi { font-size: 1.15rem; color: #495057; margin-bottom: 20px; }
+        
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option { padding: 12px 15px; border: 1px solid #ced4da; border-radius: 5px; cursor: pointer; background: #fff; transition: 0.2s; display: flex; align-items: center; }
+        .option:hover:not(.locked) { background: #f1f3f5; }
+        .option.locked { cursor: not-allowed; }
+        .option.correct { background: #d4edda; border-color: var(--green); border-width: 2px; }
+        .option.incorrect { background: #f8d7da; border-color: var(--red); border-width: 2px; }
+        
+        .explanation-box { margin-top: 20px; padding: 15px; background: #e2e3e5; border-left: 4px solid #0056b3; border-radius: 4px; display: none; }
+        .explanation-box h4 { margin: 0 0 10px 0; color: #0056b3; }
+        .explanation-box p { margin: 5px 0; font-size: 0.95rem; }
+        .key-fact { font-weight: bold; color: #856404; background: #fff3cd; padding: 5px; display: inline-block; margin-top: 10px; border-radius: 3px; }
+
+        .controls { margin-top: auto; padding-top: 20px; display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-prev { background: var(--dark-gray); }
+        .btn-mark { background: var(--purple); }
+        .btn-skip { background: var(--slate); }
+        .btn-next { background: #007bff; }
+        button:hover { opacity: 0.9; }
+
+        .palette-section { flex: 1; background: var(--light-bg); padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
+        .palette-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; font-size: 0.85rem; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .legend-item { display: flex; align-items: center; gap: 5px; width: 45%; }
+        .legend-color { width: 15px; height: 15px; border-radius: 3px; }
+        
+        .palette-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; }
+        .palette-btn { height: 40px; border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; background: var(--dark-gray); }
+        
+        .btn-submit { background: var(--green); width: 100%; margin-top: 20px; padding: 15px; font-size: 1.1rem; }
+
+        .dashboard { display: none; padding: 40px; text-align: center; background: white; height: 100%; overflow-y: auto; }
+        .dash-stats { display: flex; justify-content: center; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+        .stat-card { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); min-width: 150px; }
+        .stat-card h3 { margin: 0; font-size: 2rem; color: #0056b3; }
+
+        /* Status Colors */
+        .status-correct { background-color: var(--green) !important; }
+        .status-incorrect { background-color: var(--red) !important; }
+        .status-unanswered { background-color: var(--orange) !important; }
+        .status-skipped { background-color: var(--slate) !important; }
+        .status-review { background-color: var(--purple) !important; }
+        .status-not-visited { background-color: var(--dark-gray) !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>UPSSSC PET - Indian Economy (Dairy Development)</h1>
+        <div class="score-display">Live Score: <span id="live-score">0.00</span></div>
+    </header>
+
+    <div class="main-container" id="quiz-container">
+        <div class="question-section">
+            <div class="q-header">
+                <span id="q-number">Question 1 / 100</span>
+                <span>Marks: +1.00 / -0.25</span>
+            </div>
+            
+            <div class="question-text" id="q-text-en">Question loading...</div>
+            <div class="question-text hindi" id="q-text-hi">प्रश्न लोड हो रहा है...</div>
+            
+            <div class="options" id="options-container">
+                <!-- Options injected by JS -->
+            </div>
+
+            <div class="explanation-box" id="explanation-container">
+                <h4>Explanation / व्याख्या</h4>
+                <p id="exp-en"></p>
+                <p id="exp-hi"></p>
+                <div class="key-fact" id="key-fact"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn-prev" onclick="prevQuestion()">&#8592; Previous</button>
+                <button class="btn-mark" onclick="markForReview()">Mark for Review</button>
+                <button class="btn-skip" onclick="skipQuestion()">Skip</button>
+                <button class="btn-next" onclick="nextQuestion()">Next Question &#8594;</button>
+            </div>
+        </div>
+
+        <div class="palette-section">
+            <h3>Question Palette</h3>
+            <div class="palette-legend">
+                <div class="legend-item"><div class="legend-color status-correct"></div> Correct</div>
+                <div class="legend-item"><div class="legend-color status-incorrect"></div> Incorrect</div>
+                <div class="legend-item"><div class="legend-color status-unanswered"></div> Unanswered</div>
+                <div class="legend-item"><div class="legend-color status-skipped"></div> Skipped</div>
+                <div class="legend-item"><div class="legend-color status-review"></div> Review</div>
+                <div class="legend-item"><div class="legend-color status-not-visited"></div> Not Visited</div>
+            </div>
+            <div class="palette-grid" id="palette-grid">
+                <!-- Palette buttons injected by JS -->
+            </div>
+            <button class="btn-submit" onclick="showDashboard()">Submit Test</button>
+        </div>
+    </div>
+
+    <div class="dashboard" id="dashboard-container">
+        <h2>Performance Dashboard</h2>
+        <h1 style="color: #0056b3; font-size: 3rem;">Net Score: <span id="final-score">0.00</span></h1>
+        <div class="dash-stats">
+            <div class="stat-card"><h3><span id="dash-attempted">0</span></h3><p>Attempted</p></div>
+            <div class="stat-card"><h3><span id="dash-correct">0</span></h3><p style="color: var(--green);">Correct</p></div>
+            <div class="stat-card"><h3><span id="dash-incorrect">0</span></h3><p style="color: var(--red);">Incorrect</p></div>
+            <div class="stat-card"><h3><span id="dash-skipped">0</span></h3><p style="color: var(--slate);">Skipped</p></div>
+            <div class="stat-card"><h3><span id="dash-accuracy">0</span>%</h3><p>Accuracy</p></div>
+        </div>
+        <br>
+        <button class="btn-next" onclick="location.reload()">Restart Test</button>
+    </div>
+
+    <script>
+        // QUESTION BANK (Expand this array with all 100 questions)
+        const quizData = [
+            {
+                qEn: "Who is known as the 'Father of the White Revolution' in India?",
+                qHi: "भारत में 'श्वेत क्रांति का जनक' किसे कहा जाता है?",
+                options: [
+                    "(A) M.S. Swaminathan / एम.एस. स्वामीनाथन",
+                    "(B) Verghese Kurien / वर्गीज कुरियन",
+                    "(C) Norman Borlaug / नॉर्मन बोरलॉग",
+                    "(D) Hiralal Chaudhuri / हीरालाल चौधरी"
+                ],
+                correctIndex: 1,
+                expEn: "Dr. Verghese Kurien is known as the Father of the White Revolution for his billionaire-cooperative model (Operation Flood).",
+                expHi: "डॉ. वर्गीज कुरियन को भारत में श्वेत क्रांति का जनक कहा जाता है, जिनके 'ऑपरेशन फ्लड' कार्यक्रम ने भारत को दुनिया का सबसे बड़ा दुग्ध उत्पादक देश बना दिया।",
+                keyFact: "Verghese Kurien was the founder-chairman of the National Dairy Development Board (NDDB) from 1965 to 1998."
+            },
+            {
+                qEn: "In which year was 'Operation Flood' launched in India?",
+                qHi: "भारत में 'ऑपरेशन फ्लड' किस वर्ष शुरू किया गया था?",
+                options: [
+                    "(A) 1965",
+                    "(B) 1970",
+                    "(C) 1975",
+                    "(D) 1980"
+                ],
+                correctIndex: 1,
+                expEn: "Operation Flood, the world's largest dairy development program, was launched in 1970 by the National Dairy Development Board (NDDB).",
+                expHi: "दुनिया का सबसे बड़ा डेयरी विकास कार्यक्रम 'ऑपरेशन फ्लड' 1970 में राष्ट्रीय डेयरी विकास बोर्ड (NDDB) द्वारा शुरू किया गया था।",
+                keyFact: "Operation Flood was launched during the 4th Five-Year Plan in India."
+            },
+            {
+                qEn: "Where is the headquarters of the National Dairy Development Board (NDDB) located?",
+                qHi: "राष्ट्रीय डेयरी विकास बोर्ड (NDDB) का मुख्यालय कहाँ स्थित है?",
+                options: [
+                    "(A) New Delhi / नई दिल्ली",
+                    "(B) Karnal / करनाल",
+                    "(C) Anand / आणंद",
+                    "(D) Jaipur / जयपुर"
+                ],
+                correctIndex: 2,
+                expEn: "The headquarters of NDDB is located in Anand, Gujarat.",
+                expHi: "NDDB का मुख्यालय गुजरात के आणंद में स्थित है। इसकी स्थापना अमूल सहकारी मॉडल की सफलता को पूरे भारत में दोहराने के लिए की गई थी।",
+                keyFact: "NDDB was established in 1965 by the then Prime Minister Lal Bahadur Shastri."
+            },
+            {
+                qEn: "How many phases did 'Operation Flood' have?",
+                qHi: "'ऑपरेशन फ्लड' कितने चरणों में पूरा हुआ था?",
+                options: [
+                    "(A) Two / दो",
+                    "(B) Three / तीन",
+                    "(C) Four / चार",
+                    "(D) Five / पांच"
+                ],
+                correctIndex: 1,
+                expEn: "Operation Flood was implemented in three phases: Phase I (1970-1980), Phase II (1981-1985), and Phase III (1985-1996).",
+                expHi: "ऑपरेशन फ्लड को तीन चरणों में लागू किया गया था: चरण I (1970-1980), चरण II (1981-1985), और चरण III (1985-1996)।",
+                keyFact: "Phase I was financed by the sale of skimmed milk powder and butter oil gifted by the EEC."
+            },
+            {
+                qEn: "What does the acronym 'AMUL' stand for?",
+                qHi: "'AMUL' (अमूल) का पूर्ण रूप क्या है?",
+                options: [
+                    "(A) Anand Milk Union Limited / आणंद मिल्क यूनियन लिमिटेड",
+                    "(B) All India Milk United League / ऑल इंडिया मिल्क यूनाइटेड League",
+                    "(C) Asian Milk Union Limited / एशियन मिल्क यूनियन लिमिटेड",
+                    "(D) Associated Milk Union of Local / एसोसिएटेड मिल्क यूनियन ऑफ लोकल"
+                ],
+                correctIndex: 0,
+                expEn: "AMUL stands for Anand Milk Union Limited. It is an Indian dairy cooperative society based in Anand, Gujarat.",
+                expHi: "AMUL का पूर्ण रूप आणंद मिल्क यूनियन लिमिटेड है। यह आणंद, गुजरात में स्थित एक भारतीय डेयरी सहकारी समिति है।",
+                keyFact: "Tribhuvandas Patel was the founder of the Kaira District Co-operative Milk Producers' Union in 1946."
+            },
+            {
+                qEn: "Which country is currently the largest producer of milk in the world?",
+                qHi: "वर्तमान में विश्व में दुग्ध का सबसे बड़ा उत्पादक देश कौन सा है?",
+                options: [
+                    "(A) USA / संयुक्त राज्य अमेरिका",
+                    "(B) China / चीन",
+                    "(C) India / भारत",
+                    "(D) Denmark / डेनमार्क"
+                ],
+                correctIndex: 2,
+                expEn: "India is the world's largest milk producer, contributing to roughly 24% of global milk production, largely due to the success of Operation Flood.",
+                expHi: "भारत दुनिया का सबसे बड़ा दुग्ध उत्पादक देश है, जिसका वैश्विक दुग्ध उत्पादन में लगभग 24% का योगदान है। यह मुख्य रूप से ऑपरेशन फ्लड की सफलता के कारण है।",
+                keyFact: "Uttar Pradesh and Rajasthan are consistently among the top milk-producing states in India."
+            },
+            {
+                qEn: "On which date is 'National Milk Day' celebrated in India?",
+                qHi: "भारत में 'राष्ट्रीय दुग्ध दिवस' किस तिथि को मनाया जाता है?",
+                options: [
+                    "(A) 1st June / 1 जून",
+                    "(B) 26th November / 26 नवंबर",
+                    "(C) 16th October / 16 अक्टूबर",
+                    "(D) 23rd December / 23 दिसंबर"
+                ],
+                correctIndex: 1,
+                expEn: "National Milk Day is celebrated on 26th November every year in India to commemorate the birth anniversary of Dr. Verghese Kurien.",
+                expHi: "डॉ. वर्गीज कुरियन की जयंती के उपलक्ष्य में भारत में हर साल 26 नवंबर को राष्ट्रीय दुग्ध दिवस मनाया जाता है।",
+                keyFact: "World Milk Day, established by the FAO, is celebrated globally on 1st June."
+            },
+            {
+                qEn: "The National Dairy Research Institute (NDRI) is located in:",
+                qHi: "राष्ट्रीय डेयरी अनुसंधान संस्थान (NDRI) कहाँ स्थित है?",
+                options: [
+                    "(A) Lucknow / लखनऊ",
+                    "(B) Karnal / करनाल",
+                    "(C) Mathura / मथुरा",
+                    "(D) Ludhiana / लुधियाना"
+                ],
+                correctIndex: 1,
+                expEn: "The National Dairy Research Institute (NDRI), India's premier dairy research institution, is located in Karnal, Haryana.",
+                expHi: "भारत का प्रमुख डेयरी अनुसंधान संस्थान, राष्ट्रीय डेयरी अनुसंधान संस्थान (NDRI), हरियाणा के करनाल में स्थित है।",
+                keyFact: "NDRI was originally established as the Imperial Institute of Animal Husbandry and Dairying in Bangalore in 1923, before shifting to Karnal in 1955."
+            },
+            {
+                qEn: "Which protein is primarily found in milk and gives it a white color?",
+                qHi: "दूध में मुख्य रूप से कौन सा प्रोटीन पाया जाता है जो इसे सफेद रंग प्रदान करता है?",
+                options: [
+                    "(A) Keratin / केराटिन",
+                    "(B) Globulin / ग्लोबुलिन",
+                    "(C) Casein / कैसिइन",
+                    "(D) Albumin / एल्ब्यूमिन"
+                ],
+                correctIndex: 2,
+                expEn: "Casein is the chief protein found in milk, comprising about 80% of cow's milk protein, and is responsible for its white, opaque appearance.",
+                expHi: "कैसिइन दूध में पाया जाने वाला मुख्य प्रोटीन है, जो गाय के दूध के प्रोटीन का लगभग 80% है, और इसके सफेद रंग के लिए जिम्मेदार है।",
+                keyFact: "Carotene is the pigment responsible for the slight yellowish tint often seen in cow's milk."
+            },
+            {
+                qEn: "What is the primary objective of the 'White Revolution' in India?",
+                qHi: "भारत में 'श्वेत क्रांति' का प्राथमिक उद्देश्य क्या था?",
+                options: [
+                    "(A) To increase cotton production / कपास उत्पादन बढ़ाना",
+                    "(B) To increase milk production / दुग्ध उत्पादन बढ़ाना",
+                    "(C) To increase egg production / अंडा उत्पादन बढ़ाना",
+                    "(D) To increase fish production / मत्स्य उत्पादन बढ़ाना"
+                ],
+                correctIndex: 1,
+                expEn: "The primary objective of the White Revolution was to significantly increase milk production and make dairy farming a sustainable livelihood for rural households.",
+                expHi: "श्वेत क्रांति का प्राथमिक उद्देश्य दुग्ध उत्पादन में उल्लेखनीय वृद्धि करना और ग्रामीण परिवारों के लिए डेयरी फार्मिंग को एक स्थायी आजीविका बनाना था।",
+                keyFact: "The cooperative movement associated with it eliminated middlemen, directly benefiting the farmers."
+            },
+            {
+                qEn: "Which international organization primarily assisted India with food aid to finance Phase I of Operation Flood?",
+                qHi: "किस अंतर्राष्ट्रीय संगठन ने ऑपरेशन फ्लड के चरण I को वित्तपोषित करने के लिए मुख्य रूप से भारत को खाद्य सहायता प्रदान की थी?",
+                options: [
+                    "(A) World Bank / विश्व बैंक",
+                    "(B) European Economic Community (EEC) / यूरोपीय आर्थिक समुदाय (EEC)",
+                    "(C) World Trade Organization (WTO) / विश्व व्यापार संगठन (WTO)",
+                    "(D) Asian Development Bank (ADB) / एशियाई विकास बैंक (ADB)"
+                ],
+                correctIndex: 1,
+                expEn: "Phase I of Operation Flood was financed by the sale of skimmed milk powder and butter oil donated by the European Economic Community (EEC) through the World Food Programme.",
+                expHi: "ऑपरेशन फ्लड के चरण I का वित्तपोषण विश्व खाद्य कार्यक्रम के माध्यम से यूरोपीय आर्थिक समुदाय (EEC) द्वारा दान किए गए स्किम्ड मिल्क पाउडर और बटर ऑयल की बिक्री से किया गया था।",
+                keyFact: "The World Food Programme (WFP) acted as the intermediary for this food aid."
+            },
+            {
+                qEn: "What is the process of heating milk to a specific temperature to kill harmful bacteria called?",
+                qHi: "हानिकारक बैक्टीरिया को मारने के लिए दूध को एक विशिष्ट तापमान पर गर्म करने की प्रक्रिया को क्या कहा जाता है?",
+                options: [
+                    "(A) Homogenization / समरूपीकरण (होमोजेनाइजेशन)",
+                    "(B) Pasteurization / पाश्चुरीकरण",
+                    "(C) Fermentation / किण्वन",
+                    "(D) Coagulation / जमाव (कोगुलेशन)"
+                ],
+                correctIndex: 1,
+                expEn: "Pasteurization is the process of heating milk (usually to 71.7°C for 15 seconds) to destroy pathogenic microorganisms and increase its shelf life.",
+                expHi: "पाश्चुरीकरण दूध को गर्म करने की वह प्रक्रिया है (आमतौर पर 15 सेकंड के लिए 71.7°C पर) जिसमें रोगजनक सूक्ष्मजीव नष्ट हो जाते हैं और इसकी शेल्फ लाइफ बढ़ जाती है।",
+                keyFact: "The process was invented by French scientist Louis Pasteur in 1864."
+            },
+            {
+                qEn: "Which of the following is a prominent indigenous milch (milk-producing) breed of cow in India?",
+                qHi: "निम्नलिखित में से कौन सी भारत में गाय की एक प्रमुख स्वदेशी दुधारू (दूध देने वाली) नस्ल है?",
+                options: [
+                    "(A) Malvi / मालवी",
+                    "(B) Sahiwal / साहीवाल",
+                    "(C) Hallikar / हल्लीकर",
+                    "(D) Khillari / खिल्लारी"
+                ],
+                correctIndex: 1,
+                expEn: "Sahiwal is one of the best indigenous milch dairy breeds in India, known for its high milk yield. Malvi, Hallikar, and Khillari are primarily draught (working) breeds.",
+                expHi: "साहीवाल भारत में सबसे अच्छी स्वदेशी दुधारू डेयरी नस्लों में से एक है, जो अपने उच्च दुग्ध उत्पादन के लिए जानी जाती है। मालवी, हल्लीकर और खिल्लारी मुख्य रूप से भारवाही नस्लें हैं।",
+                keyFact: "Gir, Red Sindhi, and Sahiwal are the three major indigenous milch breeds of cows in India."
+            },
+            {
+                qEn: "The term 'Anand Pattern' is most closely associated with which of the following?",
+                qHi: "'आणंद पैटर्न' शब्द का संबंध निम्नलिखित में से किसके साथ सबसे अधिक है?",
+                options: [
+                    "(A) Private dairy farming / निजी डेयरी फार्मिंग",
+                    "(B) Cooperative dairy structure / सहकारी डेयरी संरचना",
+                    "(C) Import of foreign cattle / विदेशी मवेशियों का आयात",
+                    "(D) Artificial insemination / कृत्रिम गर्भाधान"
+                ],
+                correctIndex: 1,
+                expEn: "The 'Anand Pattern' is a three-tier cooperative structure (village level, district level, and state level) that formed the basis of Operation Flood.",
+                expHi: "'आणंद पैटर्न' एक त्रि-स्तरीय सहकारी संरचना (ग्राम स्तर, जिला स्तर और राज्य स्तर) है जिसने ऑपरेशन फ्लड का आधार बनाया।",
+                keyFact: "This model ensures that the maximum share of the consumer's rupee goes directly to the milk producer."
+            },
+            {
+                qEn: "Which acid is formed when milk turns sour?",
+                qHi: "दूध के खट्टा होने पर कौन सा अम्ल बनता है?",
+                options: [
+                    "(A) Citric acid / साइट्रिक अम्ल",
+                    "(B) Acetic acid / एसिटिक अम्ल",
+                    "(C) Lactic acid / लैक्टिक अम्ल",
+                    "(D) Tartaric acid / टार्टरिक अम्ल"
+                ],
+                correctIndex: 2,
+                expEn: "Lactic acid is produced by bacteria during the fermentation of lactose (milk sugar), which causes the milk to turn sour and eventually curdle.",
+                expHi: "लैक्टोज (दूध की शर्करा) के किण्वन के दौरान बैक्टीरिया द्वारा लैक्टिक अम्ल का उत्पादन होता है, जिसके कारण दूध खट्टा हो जाता है और अंततः फट जाता है।",
+                keyFact: "Lactobacillus is the primary genus of bacteria responsible for converting lactose into lactic acid."
+            },
+            {
+                qEn: "Under Operation Flood, the 'National Milk Grid' was created to link which of the following?",
+                qHi: "ऑपरेशन फ्लड के तहत, निम्नलिखित में से किसे जोड़ने के लिए 'नेशनल मिल्क ग्रिड' बनाया गया था?",
+                options: [
+                    "(A) Milk producers with urban consumers / दुग्ध उत्पादकों को शहरी उपभोक्ताओं से",
+                    "(B) Indian dairy farmers with foreign markets / भारतीय डेयरी किसानों को विदेशी बाजारों से",
+                    "(C) State governments with the central government / राज्य सरकारों को केंद्र सरकार से",
+                    "(D) Veterinary doctors with farmers / पशु चिकित्सकों को किसानों से"
+                ],
+                correctIndex: 0,
+                expEn: "The National Milk Grid linked milk producers throughout India to consumers in over 700 towns and cities, reducing seasonal price variations.",
+                expHi: "नेशनल मिल्क ग्रिड ने पूरे भारत में दुग्ध उत्पादकों को 700 से अधिक कस्बों और शहरों में उपभोक्ताओं से जोड़ा, जिससे मौसमी कीमतों में उतार-चढ़ाव कम हुआ।",
+                keyFact: "It ensured a stable supply of milk in urban areas and a guaranteed market for rural producers."
+            },
+            {
+                qEn: "The 'Rashtriya Gokul Mission' aims primarily to:",
+                qHi: "'राष्ट्रीय गोकुल मिशन' का प्राथमिक उद्देश्य क्या है?",
+                options: [
+                    "(A) Import high-yielding Jersey cows / उच्च उपज वाली जर्सी गायों का आयात करना",
+                    "(B) Conserve and develop indigenous cattle breeds / स्वदेशी गोजातीय नस्लों का संरक्षण और विकास करना",
+                    "(C) Promote sheep and goat rearing / भेड़ और बकरी पालन को बढ़ावा देना",
+                    "(D) Privatize all dairy cooperatives / सभी डेयरी सहकारी समितियों का निजीकरण करना"
+                ],
+                correctIndex: 1,
+                expEn: "Launched in 2014, the Rashtriya Gokul Mission focuses on the development and conservation of indigenous bovine breeds and enhancing their milk production.",
+                expHi: "2014 में शुरू किया गया राष्ट्रीय गोकुल मिशन स्वदेशी गोजातीय नस्लों के विकास और संरक्षण तथा उनके दुग्ध उत्पादन को बढ़ाने पर केंद्रित है।",
+                keyFact: "Gokul Grams are being established under this mission to act as centers for the development of indigenous breeds."
+            },
+            {
+                qEn: "The Central Institute for Research on Buffaloes (CIRB) is located in:",
+                qHi: "केंद्रीय भैंस अनुसंधान संस्थान (CIRB) कहाँ स्थित है?",
+                options: [
+                    "(A) Hisar / हिसार",
+                    "(B) Bareilly / बरेली",
+                    "(C) Bikaner / बीकानेर",
+                    "(D) Anand / आणंद"
+                ],
+                correctIndex: 0,
+                expEn: "The Central Institute for Research on Buffaloes (CIRB) is an institute under the Indian Council of Agricultural Research (ICAR), located in Hisar, Haryana.",
+                expHi: "केंद्रीय भैंस अनुसंधान संस्थान (CIRB) भारतीय कृषि अनुसंधान परिषद (ICAR) के तहत एक संस्थान है, जो हरियाणा के हिसार में स्थित है।",
+                keyFact: "India holds the number one position globally in buffalo population."
+            },
+            {
+                qEn: "Which instrument is used to determine the purity of milk?",
+                qHi: "दूध की शुद्धता मापने के लिए किस उपकरण का उपयोग किया जाता है?",
+                options: [
+                    "(A) Barometer / बैरोमीटर",
+                    "(B) Lactometer / लैक्टोमीटर",
+                    "(C) Hygrometer / हाइग्रोमीटर",
+                    "(D) Sphygmomanometer / स्फिग्मोमैनोमीटर"
+                ],
+                correctIndex: 1,
+                expEn: "A lactometer is used to check the purity of milk by measuring its specific gravity. It helps detect if water has been added to the milk.",
+                expHi: "लैक्टोमीटर का उपयोग दूध के विशिष्ट गुरुत्व को मापकर उसकी शुद्धता की जांच करने के लिए किया जाता है। यह यह पता लगाने में मदद करता है कि दूध में पानी मिलाया गया है या नहीं।",
+                keyFact: "The lactometer works on the principle of Archimedes."
+            },
+            {
+                qEn: "Which scheme was launched by the Government of India to provide a real-time information portal connecting breeders and farmers for bovine germplasm?",
+                qHi: "गोजातीय जर्मप्लाज्म (प्रजनन सामग्री) के लिए प्रजनकों और किसानों को जोड़ने वाले रियल-टाइम सूचना पोर्टल को प्रदान करने के लिए भारत सरकार द्वारा कौन सी योजना शुरू की गई थी?",
+                options: [
+                    "(A) e-Pashuhaat / ई-पशुहाट",
+                    "(B) e-Gokul / ई-गोकुल",
+                    "(C) Dairy India / डेयरी इंडिया",
+                    "(D) e-Nam / ई-नाम"
+                ],
+                correctIndex: 0,
+                expEn: "The e-Pashuhaat portal was launched to connect farmers and breeders for the sale and purchase of disease-free bovine germplasm (semen, embryos, etc.).",
+                expHi: "ई-पशुहाट पोर्टल को रोग मुक्त गोजातीय जर्मप्लाज्म (वीर्य, भ्रूण आदि) की बिक्री और खरीद के लिए किसानों और प्रजनकों को जोड़ने के लिए शुरू किया गया था।",
+                keyFact: "It was launched in 2016 under the Rashtriya Gokul Mission."
+            },
+            {
+                qEn: "The yellowish color of cow's milk is due to the presence of:",
+                qHi: "गाय के दूध का पीला रंग किसकी उपस्थिति के कारण होता है?",
+                options: [
+                    "(A) Riboflavin / राइबोफ्लेविन",
+                    "(B) Carotene / कैरोटीन",
+                    "(C) Vitamin D / विटामिन D",
+                    "(D) Xanthophyll / ज़ैंथोफिल"
+                ],
+                correctIndex: 1,
+                expEn: "The slight yellowish color in cow's milk is due to the presence of beta-carotene, a precursor to Vitamin A.",
+                expHi: "गाय के दूध में हल्का पीला रंग बीटा-कैरोटीन की उपस्थिति के कारण होता है, जो विटामिन A का अग्रदूत (precursor) है।",
+                keyFact: "Buffalo milk lacks carotene, which is why it is stark white compared to cow milk."
+            },
+            {
+                qEn: "In 2019, the Government of India created a separate ministry for dairy development. What is its name?",
+                qHi: "2019 में, भारत सरकार ने डेयरी विकास के लिए एक अलग मंत्रालय बनाया। इसका नाम क्या है?",
+                options: [
+                    "(A) Ministry of Agriculture and Dairy / कृषि और डेयरी मंत्रालय",
+                    "(B) Ministry of Rural Dairy Development / ग्रामीण डेयरी विकास मंत्रालय",
+                    "(C) Ministry of Fisheries, Animal Husbandry and Dairying / मत्स्य पालन, पशुपालन और डेयरी मंत्रालय",
+                    "(D) Ministry of Livestock and Food Processing / पशुधन और खाद्य प्रसंस्करण मंत्रालय"
+                ],
+                correctIndex: 2,
+                expEn: "The Ministry of Fisheries, Animal Husbandry and Dairying was carved out of the Ministry of Agriculture in 2019 to provide a targeted focus on these sectors.",
+                expHi: "मत्स्य पालन, पशुपालन और डेयरी मंत्रालय को 2019 में कृषि मंत्रालय से अलग कर बनाया गया था ताकि इन क्षेत्रों पर विशेष ध्यान दिया जा सके।",
+                keyFact: "Giriraj Singh was the first cabinet minister to head this newly formed ministry."
+            },
+            {
+                qEn: "Which buffalo breed is known for having the highest fat content in its milk?",
+                qHi: "भैंस की कौन सी नस्ल अपने दूध में सबसे अधिक वसा (फैट) की मात्रा के लिए जानी जाती है?",
+                options: [
+                    "(A) Murrah / मुर्रा",
+                    "(B) Jaffarabadi / जाफराबादी",
+                    "(C) Bhadawari / भदावरी",
+                    "(D) Mehsana / मेहसाणा"
+                ],
+                correctIndex: 2,
+                expEn: "The Bhadawari breed, primarily found in Uttar Pradesh and Madhya Pradesh, is famous for having the highest fat percentage (up to 13%) in its milk.",
+                expHi: "मुख्य रूप से उत्तर प्रदेश और मध्य प्रदेश में पाई जाने वाली भदावरी नस्ल अपने दूध में सबसे अधिक वसा प्रतिशत (13% तक) होने के लिए प्रसिद्ध है।",
+                keyFact: "Murrah is the most popular buffalo breed in India for high milk yield, though its fat percentage is around 7-8%."
+            },
+            {
+                qEn: "Milk is an emulsion of:",
+                qHi: "दूध किसका एक पायस (इमल्शन) है?",
+                options: [
+                    "(A) Liquid in solid / ठोस में तरल",
+                    "(B) Liquid in gas / गैस में तरल",
+                    "(C) Fat in liquid / तरल में वसा",
+                    "(D) Solid in gas / गैस में ठोस"
+                ],
+                correctIndex: 2,
+                expEn: "Milk is a natural oil-in-water emulsion, where tiny droplets of butterfat are dispersed in an aqueous (water-based) solution.",
+                expHi: "दूध एक प्राकृतिक तेल-इन-वाटर पायस है, जहाँ मक्खन-वसा (बटरफैट) की छोटी बूंदें एक जलीय (पानी आधारित) घोल में फैली होती हैं।",
+                keyFact: "The homogenization process prevents these fat droplets from separating and floating to the top as cream."
+            },
+            {
+                qEn: "Which Indian state has a famous indigenous cow breed named 'Gangatiri'?",
+                qHi: "किस भारतीय राज्य में 'गंगातीरी' नामक एक प्रसिद्ध स्वदेशी गाय की नस्ल पाई जाती है?",
+                options: [
+                    "(A) Gujarat / गुजरात",
+                    "(B) Uttar Pradesh / उत्तर प्रदेश",
+                    "(C) Rajasthan / राजस्थान",
+                    "(D) Maharashtra / महाराष्ट्र"
+                ],
+                correctIndex: 1,
+                expEn: "Gangatiri is an indigenous cattle breed primarily found in the regions along the banks of the river Ganga in eastern Uttar Pradesh and parts of Bihar.",
+                expHi: "गंगातीरी एक स्वदेशी मवेशी नस्ल है जो मुख्य रूप से पूर्वी उत्तर प्रदेश और बिहार के कुछ हिस्सों में गंगा नदी के तटों के साथ वाले क्षेत्रों में पाई जाती है।",
+                keyFact: "Given the UPSSSC PET context, knowing native UP breeds like Gangatiri is highly important for the exam."
+            },
+            {
+                qEn: "What was the main focus of Phase III of Operation Flood?",
+                qHi: "ऑपरेशन फ्लड के चरण III का मुख्य फोकस क्या था?",
+                options: [
+                    "(A) Starting the program in Gujarat only / कार्यक्रम को केवल गुजरात में शुरू करना",
+                    "(B) Consolidating India's dairy cooperative movement / भारत के डेयरी सहकारी आंदोलन को मजबूत करना",
+                    "(C) Importing high-yield cattle from Europe / यूरोप से उच्च उपज वाले मवेशियों का आयात करना",
+                    "(D) Eradicating the Foot and Mouth Disease completely / खुरपका-मुंहपका रोग (FMD) को पूरी तरह से मिटाना"
+                ],
+                correctIndex: 1,
+                expEn: "Phase III (1985–1996) enabled dairy cooperatives to expand and consolidate, increasing the number of cooperative societies and boosting milk procurement significantly.",
+                expHi: "चरण III (1985-1996) ने डेयरी सहकारी समितियों के विस्तार और सुदृढ़ीकरण को सक्षम बनाया, जिससे सहकारी समितियों की संख्या में वृद्धि हुई और दूध की खरीद में काफी वृद्धि हुई।",
+                keyFact: "Phase III focused on building a robust infrastructure for veterinary healthcare and artificial insemination."
+            },
+            {
+                qEn: "The National Dairy Development Board (NDDB) was founded in which year?",
+                qHi: "राष्ट्रीय डेयरी विकास बोर्ड (NDDB) की स्थापना किस वर्ष हुई थी?",
+                options: [
+                    "(A) 1955",
+                    "(B) 1965",
+                    "(C) 1975",
+                    "(D) 1985"
+                ],
+                correctIndex: 1,
+                expEn: "The NDDB was founded in 1965 by an act of Parliament to support and strengthen farmer-owned cooperative dairy societies across the nation.",
+                expHi: "NDDB की स्थापना 1965 में संसद के एक अधिनियम द्वारा की गई थी ताकि देश भर में किसान-स्वामित्व वाली सहकारी डेयरी समितियों का समर्थन और सुदृढ़ीकरण किया जा सके।",
+                keyFact: "Lal Bahadur Shastri inaugurated the first modern dairy of Amul and strongly backed the formation of NDDB."
+            },
+            {
+                qEn: "What is the name of the sugar naturally present in milk?",
+                qHi: "दूध में प्राकृतिक रूप से मौजूद शर्करा का क्या नाम है?",
+                options: [
+                    "(A) Sucrose / सुक्रोज",
+                    "(B) Fructose / फ्रुक्टोज",
+                    "(C) Lactose / लैक्टोज",
+                    "(D) Maltose / माल्टोज़"
+                ],
+                correctIndex: 2,
+                expEn: "Lactose is a disaccharide sugar derived from galactose and glucose that is naturally found in milk.",
+                expHi: "लैक्टोज एक डाइसैकेराइड शर्करा है जो गैलेक्टोज और ग्लूकोज से प्राप्त होती है और प्राकृतिक रूप से दूध में पाई जाती है।",
+                keyFact: "Lactose intolerance occurs when a person's body does not produce enough of the lactase enzyme needed to digest this sugar."
+            },
+            {
+                qEn: "Dr. Verghese Kurien was honored with which prestigious international award for his contribution to the White Revolution?",
+                qHi: "डॉ. वर्गीज कुरियन को श्वेत क्रांति में उनके योगदान के लिए किस प्रतिष्ठित अंतरराष्ट्रीय पुरस्कार से सम्मानित किया गया था?",
+                options: [
+                    "(A) Nobel Peace Prize / नोबेल शांति पुरस्कार",
+                    "(B) World Food Prize / विश्व खाद्य पुरस्कार",
+                    "(C) Booker Prize / बुकर पुरस्कार",
+                    "(D) Pulitzer Prize / पुलित्जर पुरस्कार"
+                ],
+                correctIndex: 1,
+                expEn: "Dr. Verghese Kurien received the World Food Prize in 1989 for his leadership in making India a self-sufficient milk producer. He also received the Ramon Magsaysay Award.",
+                expHi: "डॉ. वर्गीज कुरियन को 1989 में भारत को आत्मनिर्भर दुग्ध उत्पादक बनाने में उनके नेतृत्व के लिए विश्व खाद्य पुरस्कार मिला था। उन्हें रेमन मैग्सेसे पुरस्कार भी मिला था।",
+                keyFact: "He was also awarded India's second-highest civilian honor, the Padma Vibhushan, in 1999."
+            },
+            {
+                qEn: "Under the 'Anand Pattern', who owns the dairy cooperative societies?",
+                qHi: "'आणंद पैटर्न' के तहत, डेयरी सहकारी समितियों का स्वामित्व किसके पास होता है?",
+                options: [
+                    "(A) The State Government / राज्य सरकार",
+                    "(B) Private Corporate Investors / निजी कॉर्पोरेट निवेशक",
+                    "(C) The Milk Producers (Farmers) / दुग्ध उत्पादक (किसान)",
+                    "(D) NDDB / राष्ट्रीय डेयरी विकास बोर्ड"
+                ],
+                correctIndex: 2,
+                expEn: "The core principle of the Anand Pattern is that the cooperative is owned and controlled entirely by the primary milk producers (the farmers themselves).",
+                expHi: "आणंद पैटर्न का मुख्य सिद्धांत यह है कि सहकारी समिति का स्वामित्व और नियंत्रण पूरी तरह से प्राथमिक दुग्ध उत्पादकों (स्वयं किसानों) के पास होता है।",
+                keyFact: "This model ensures democratic control, with professional management hired by the farmers' representatives."
+            },
+            {
+                qEn: "Which state is the largest producer of milk in India as per recent agricultural statistics (2023-24)?",
+                qHi: "हालिया कृषि आंकड़ों (2023-24) के अनुसार भारत में दूध का सबसे बड़ा उत्पादक राज्य कौन सा है?",
+                options: [
+                    "(A) Gujarat / गुजरात",
+                    "(B) Uttar Pradesh / उत्तर प्रदेश",
+                    "(C) Punjab / पंजाब",
+                    "(D) Haryana / हरियाणा"
+                ],
+                correctIndex: 1,
+                expEn: "Uttar Pradesh is the leading milk-producing state in India, accounting for nearly 15-16% of the country's total milk production.",
+                expHi: "उत्तर प्रदेश भारत में सबसे अधिक दूध उत्पादक राज्य है, जो देश के कुल दुग्ध उत्पादन का लगभग 15-16% योगदान देता है।",
+                keyFact: "For UP state exams like UPSSSC PET, UP's dominance in agriculture and dairy production is a highly repetitive question topic."
+            },
+            {
+                qEn: "Which of the following nutrients is almost entirely absent in milk?",
+                qHi: "दूध में निम्नलिखित में से कौन सा पोषक तत्व लगभग पूरी तरह से अनुपस्थित होता है?",
+                options: [
+                    "(A) Calcium / कैल्शियम",
+                    "(B) Protein / प्रोटीन",
+                    "(C) Vitamin C / विटामिन C",
+                    "(D) Phosphorus / फास्फोरस"
+                ],
+                correctIndex: 2,
+                expEn: "Milk is a complete food containing proteins, fats, carbohydrates, and minerals, but it is deficient in Vitamin C and Iron.",
+                expHi: "दूध एक संपूर्ण आहार है जिसमें प्रोटीन, वसा, कार्बोहाइड्रेट और खनिज होते हैं, लेकिन इसमें विटामिन C और आयरन (लौह तत्व) की कमी होती है।",
+                keyFact: "Boiling milk further destroys whatever negligible trace of Vitamin C might be present."
+            },
+            {
+                qEn: "What is the name of the apex dairy cooperative federation operating in Uttar Pradesh?",
+                qHi: "उत्तर प्रदेश में कार्यरत शीर्ष डेयरी सहकारी संघ का क्या नाम है?",
+                options: [
+                    "(A) AMUL / अमूल",
+                    "(B) PCDF (Parag) / पीसीडीएफ (पराग)",
+                    "(C) RCDF (Saras) / आरसीडीएफ (सरस)",
+                    "(D) KMF (Nandini) / केएमएफ (नंदिनी)"
+                ],
+                correctIndex: 1,
+                expEn: "The Pradeshik Cooperative Dairy Federation (PCDF) is the apex dairy cooperative body in Uttar Pradesh, and its dairy products are marketed under the brand name 'Parag'.",
+                expHi: "प्रादेशिक को-ऑपरेटिव डेयरी फेडरेशन (PCDF) उत्तर प्रदेश में शीर्ष डेयरी सहकारी संस्था है, और इसके डेयरी उत्पादों का विपणन 'पराग' ब्रांड नाम के तहत किया जाता है।",
+                keyFact: "'Parag' was established on the lines of the Anand pattern to support dairy farmers in UP."
+            },
+            {
+                qEn: "In which year was the Pradeshik Cooperative Dairy Federation (PCDF) established in Uttar Pradesh?",
+                qHi: "उत्तर प्रदेश में प्रादेशिक को-ऑपरेटिव डेयरी फेडरेशन (PCDF) की स्थापना किस वर्ष हुई थी?",
+                options: [
+                    "(A) 1958",
+                    "(B) 1962",
+                    "(C) 1970",
+                    "(D) 1975"
+                ],
+                correctIndex: 1,
+                expEn: "PCDF was formed in 1962 to develop the dairy industry in Uttar Pradesh and to eliminate the exploitation of milk producers by middlemen.",
+                expHi: "पीसीडीएफ (PCDF) का गठन 1962 में उत्तर प्रदेश में डेयरी उद्योग को विकसित करने और बिचौलियों द्वारा दुग्ध उत्पादकों के शोषण को खत्म करने के लिए किया गया था।",
+                keyFact: "It predates the national launch of Operation Flood (1970)."
+            },
+            {
+                qEn: "'Karan Swiss' is a high-yielding cross-breed of which of the following domestic animals?",
+                qHi: "'करन स्विस' निम्नलिखित में से किस पालतू जानवर की उच्च उपज वाली संकर नस्ल है?",
+                options: [
+                    "(A) Buffalo / भैंस",
+                    "(B) Sheep / भेड़",
+                    "(C) Goat / बकरी",
+                    "(D) Cow / गाय"
+                ],
+                correctIndex: 3,
+                expEn: "'Karan Swiss' is a cross-breed cow developed by crossing the Sahiwal cow (indigenous) with the Brown Swiss (exotic) at the National Dairy Research Institute (NDRI).",
+                expHi: "'करन स्विस' एक संकर गाय है जिसे राष्ट्रीय डेयरी अनुसंधान संस्थान (NDRI) में साहीवाल गाय (स्वदेशी) और ब्राउन स्विस (विदेशी) के संकरण द्वारा विकसित किया गया है।",
+                keyFact: "Another famous cross-breed cow developed at NDRI is 'Karan Fries'."
+            },
+            {
+                qEn: "What is the minimum fat percentage required for 'Toned Milk' as per the Food Safety and Standards Authority of India (FSSAI)?",
+                qHi: "भारतीय खाद्य सुरक्षा और मानक प्राधिकरण (FSSAI) के अनुसार 'टोंड दूध' के लिए आवश्यक न्यूनतम वसा प्रतिशत कितना है?",
+                options: [
+                    "(A) 1.5%",
+                    "(B) 3.0%",
+                    "(C) 4.5%",
+                    "(D) 6.0%"
+                ],
+                correctIndex: 1,
+                expEn: "Toned milk must contain at least 3.0% fat and 8.5% SNF (Solids-Not-Fat) according to FSSAI standards.",
+                expHi: "FSSAI मानकों के अनुसार टोंड दूध में कम से कम 3.0% वसा (फैट) और 8.5% SNF (सॉलिड्स-नॉट-फैट) होना चाहिए।",
+                keyFact: "Toning is the process of adding water and skim milk powder to whole milk to reduce its fat content while maintaining other nutritional values."
+            },
+            {
+                qEn: "What is the minimum fat percentage required for 'Double Toned Milk'?",
+                qHi: "'डबल टोंड दूध' के लिए न्यूनतम वसा प्रतिशत कितना होना चाहिए?",
+                options: [
+                    "(A) 0.5%",
+                    "(B) 1.5%",
+                    "(C) 2.0%",
+                    "(D) 3.0%"
+                ],
+                correctIndex: 1,
+                expEn: "Double Toned milk has an even lower fat content, requiring a minimum of 1.5% fat and 9.0% SNF.",
+                expHi: "डबल टोंड दूध में वसा की मात्रा और भी कम होती है, जिसके लिए न्यूनतम 1.5% वसा और 9.0% SNF की आवश्यकता होती है।",
+                keyFact: "Double toned milk is ideal for people seeking low-calorie and low-fat dietary options."
+            },
+            {
+                qEn: "In the context of milk quality and dairy parameters, what does 'SNF' stand for?",
+                qHi: "दूध की गुणवत्ता और डेयरी मापदंडों के संदर्भ में, 'SNF' का पूर्ण रूप क्या है?",
+                options: [
+                    "(A) Synthetic Non-Fat / सिंथेटिक नॉन-फैट",
+                    "(B) Standardized Natural Fat / स्टैंडर्डाइज्ड नेचुरल फैट",
+                    "(C) Solids-Not-Fat / सॉलिड्स-नॉट-फैट",
+                    "(D) Soluble Nutrient Factor / सॉल्यूबल न्यूट्रिएंट फैक्टर"
+                ],
+                correctIndex: 2,
+                expEn: "SNF stands for Solids-Not-Fat. It includes proteins, lactose, minerals, and other water-soluble components of milk, excluding water and butterfat.",
+                expHi: "SNF का अर्थ सॉलिड्स-नॉट-फैट (वसा रहित ठोस पदार्थ) है। इसमें पानी और मक्खन-वसा (बटरफैट) को छोड़कर दूध के प्रोटीन, लैक्टोज, खनिज और अन्य पानी में घुलनशील घटक शामिल होते हैं।",
+                keyFact: "The pricing of milk procured from farmers is primarily determined by its Fat and SNF percentages."
+            },
+            {
+                qEn: "The thick, yellowish milk secreted by a cow for the first few days after giving birth, which is highly rich in antibodies, is called:",
+                qHi: "जन्म देने के बाद पहले कुछ दिनों तक गाय द्वारा स्रावित गाढ़ा, पीला दूध, जो एंटीबॉडी से भरपूर होता है, क्या कहलाता है?",
+                options: [
+                    "(A) Whey / मट्ठा",
+                    "(B) Casein / कैसिइन",
+                    "(C) Colostrum / कोलोस्ट्रम (खीस)",
+                    "(D) Buttermilk / छाछ"
+                ],
+                correctIndex: 2,
+                expEn: "Colostrum is the first form of milk produced by mammals immediately following delivery. It contains antibodies to protect the newborn against disease.",
+                expHi: "कोलोस्ट्रम (खीस) स्तनधारियों द्वारा प्रसव के तुरंत बाद उत्पादित दूध का पहला रूप है। इसमें नवजात शिशु को बीमारियों से बचाने के लिए एंटीबॉडी होते हैं।",
+                keyFact: "It has a much higher protein and mineral content compared to normal milk."
+            },
+            {
+                qEn: "Which Indian Prime Minister inaugurated the modern cattle feed plant of AMUL and urged for the replication of the Anand Pattern nationwide?",
+                qHi: "किस भारतीय प्रधान मंत्री ने अमूल के आधुनिक पशु चारा संयंत्र का उद्घाटन किया और देश भर में आणंद पैटर्न को दोहराने का आग्रह किया?",
+                options: [
+                    "(A) Jawaharlal Nehru / जवाहरलाल नेहरू",
+                    "(B) Lal Bahadur Shastri / लाल बहादुर शास्त्री",
+                    "(C) Indira Gandhi / इंदिरा गांधी",
+                    "(D) Morarji Desai / मोरारजी देसाई"
+                ],
+                correctIndex: 1,
+                expEn: "Prime Minister Lal Bahadur Shastri visited Anand in 1964 to inaugurate Amul's cattle feed plant and subsequently proposed the creation of the NDDB.",
+                expHi: "प्रधान मंत्री लाल बहादुर शास्त्री ने 1964 में अमूल के पशु चारा संयंत्र का उद्घाटन करने के लिए आणंद का दौरा किया और बाद में NDDB के निर्माण का प्रस्ताव रखा।",
+                keyFact: "This visionary step laid the foundational stone for the historic Operation Flood."
+            },
+            {
+                qEn: "Which of the following is a highly contagious viral disease that severely affects milk production in cattle?",
+                qHi: "निम्नलिखित में से कौन सी एक अत्यधिक संक्रामक वायरल बीमारी है जो मवेशियों में दुग्ध उत्पादन को गंभीर रूप से प्रभावित करती है?",
+                options: [
+                    "(A) Anthrax / एंथ्रेक्स",
+                    "(B) Foot and Mouth Disease (FMD) / खुरपका-मुंहपका रोग (FMD)",
+                    "(C) Mastitis / मास्टिटिस (थनैला रोग)",
+                    "(D) Brucellosis / ब्रूसेलोसिस"
+                ],
+                correctIndex: 1,
+                expEn: "Foot and Mouth Disease (FMD) is a severe, highly contagious viral disease of cattle and swine. It causes massive economic losses due to a sharp drop in milk yield.",
+                expHi: "खुरपका-मुंहपका रोग (FMD) मवेशियों और सूअरों की एक गंभीर, अत्यधिक संक्रामक वायरल बीमारी है। दूध की उपज में भारी गिरावट के कारण यह बड़े पैमाने पर आर्थिक नुकसान का कारण बनती है।",
+                keyFact: "The National Animal Disease Control Programme (NADCP) aims to completely eradicate FMD and Brucellosis in India by 2030."
+            },
+            {
+                qEn: "Which breed of goat is popularly known as the 'Milk Queen of the Goat World'?",
+                qHi: "बकरियों की किस नस्ल को लोकप्रिय रूप से 'बकरियों की दुनिया की मिल्क क्वीन' के रूप में जाना जाता है?",
+                options: [
+                    "(A) Jamunapari / जमुनापारी",
+                    "(B) Boer / बोअर",
+                    "(C) Saanen / सानेन",
+                    "(D) Black Bengal / ब्लैक बंगाल"
+                ],
+                correctIndex: 2,
+                expEn: "The Saanen goat, originating from Switzerland, is the largest of the dairy goat breeds and is famous for its very high milk production, hence termed the 'Milk Queen'.",
+                expHi: "स्विट्जरलैंड की सानेन बकरी, डेयरी बकरी की नस्लों में सबसे बड़ी है और अपने अत्यधिक दुग्ध उत्पादन के लिए प्रसिद्ध है, इसलिए इसे 'मिल्क क्वीन' कहा जाता है।",
+                keyFact: "In India, the Jamunapari is the best indigenous milch breed of goat."
+            },
+            {
+                qEn: "What is the normal pH range of fresh, healthy cow milk?",
+                qHi: "ताजे, स्वस्थ गाय के दूध की सामान्य pH सीमा (रेंज) क्या है?",
+                options: [
+                    "(A) 4.5 to 5.0",
+                    "(B) 5.5 to 6.0",
+                    "(C) 6.5 to 6.7",
+                    "(D) 7.2 to 7.5"
+                ],
+                correctIndex: 2,
+                expEn: "Fresh cow milk has a pH ranging from 6.5 to 6.7, making it slightly acidic. The acidity is primarily due to the presence of lactic acid, casein, and phosphates.",
+                expHi: "ताजे गाय के दूध का pH 6.5 से 6.7 के बीच होता है, जिससे यह थोड़ा अम्लीय हो जाता है। यह अम्लता मुख्य रूप से लैक्टिक एसिड, कैसिइन और फॉस्फेट के कारण होती है।",
+                keyFact: "If the pH falls below 6.4, it indicates the milk is turning sour due to bacterial action."
+            },
+            {
+                qEn: "Which enzyme is responsible for the natural coagulation of milk in the stomach of young mammals?",
+                qHi: "युवा स्तनधारियों के पेट में प्राकृतिक रूप से दूध के जमने (कोएगुलेशन) के लिए कौन सा एंजाइम जिम्मेदार है?",
+                options: [
+                    "(A) Amylase / एमाइलेज",
+                    "(B) Pepsin / पेप्सिन",
+                    "(C) Rennin / रेनिन",
+                    "(D) Lipase / लाइपेज"
+                ],
+                correctIndex: 2,
+                expEn: "Rennin (also known as chymosin) is an enzyme found in the stomach of young mammals that helps curdle milk, making it easier to digest.",
+                expHi: "रेनिन (जिसे काइमोसिन भी कहा जाता है) युवा स्तनधारियों के पेट में पाया जाने वाला एक एंजाइम है जो दूध को फाड़ने (दही बनने) में मदद करता है, जिससे इसे पचाना आसान हो जाता है।",
+                keyFact: "Rennet, containing rennin, is widely used commercially in the cheese-making process."
+            },
+            {
+                qEn: "Which Indian state launched the 'Nand Baba Milk Mission' to boost milk production and empower milk producers?",
+                qHi: "किस भारतीय राज्य ने दुग्ध उत्पादन को बढ़ावा देने और दुग्ध उत्पादकों को सशक्त बनाने के लिए 'नंद बाबा दुग्ध मिशन' शुरू किया?",
+                options: [
+                    "(A) Gujarat / गुजरात",
+                    "(B) Haryana / हरियाणा",
+                    "(C) Uttar Pradesh / उत्तर प्रदेश",
+                    "(D) Punjab / पंजाब"
+                ],
+                correctIndex: 2,
+                expEn: "The Uttar Pradesh government launched the 'Nand Baba Milk Mission' to provide milk producers the facility to sell their milk at a reasonable price in villages.",
+                expHi: "उत्तर प्रदेश सरकार ने दुग्ध उत्पादकों को गांवों में उचित मूल्य पर अपना दूध बेचने की सुविधा प्रदान करने के लिए 'नंद बाबा दुग्ध मिशन' शुरू किया।",
+                keyFact: "This current affair/static overlap is highly relevant for UPSSSC PET."
+            },
+            {
+                qEn: "What was the budget allocated by the Uttar Pradesh government for the 'Nand Baba Milk Mission'?",
+                qHi: "'नंद बाबा दुग्ध मिशन' के लिए उत्तर प्रदेश सरकार द्वारा कितना बजट आवंटित किया गया था?",
+                options: [
+                    "(A) ₹ 500 Crore / ₹ 500 करोड़",
+                    "(B) ₹ 1,000 Crore / ₹ 1,000 करोड़",
+                    "(C) ₹ 2,000 Crore / ₹ 2,000 करोड़",
+                    "(D) ₹ 5,000 Crore / ₹ 5,000 करोड़"
+                ],
+                correctIndex: 1,
+                expEn: "The UP government allocated a budget of ₹1,000 crore for the Nand Baba Milk Mission to strengthen the dairy sector and cooperative framework in the state.",
+                expHi: "यूपी सरकार ने राज्य में डेयरी क्षेत्र और सहकारी ढांचे को मजबूत करने के लिए नंद बाबा मिल्क मिशन के लिए ₹1,000 करोड़ का बजट आवंटित किया।",
+                keyFact: "State-specific schemes and their exact budget allocations are frequently asked in Group C UP exams."
+            },
+            {
+                qEn: "The popular dairy brand 'Sudha' belongs to the State Milk Cooperative Federation of:",
+                qHi: "लोकप्रिय डेयरी ब्रांड 'सुधा' किस राज्य के दुग्ध सहकारी संघ से संबंधित है?",
+                options: [
+                    "(A) Jharkhand / झारखंड",
+                    "(B) Bihar / बिहार",
+                    "(C) Madhya Pradesh / मध्य प्रदेश",
+                    "(D) Chhattisgarh / छत्तीसगढ़"
+                ],
+                correctIndex: 1,
+                expEn: "'Sudha' is the brand name of the Bihar State Milk Co-operative Federation (COMFED), functioning on the Anand Pattern.",
+                expHi: "'सुधा' बिहार स्टेट मिल्क को-ऑपरेटिव फेडरेशन (COMFED) का ब्रांड नाम है, जो आणंद पैटर्न पर कार्य करता है।",
+                keyFact: "Knowing regional dairy brands helps understand the spread of Operation Flood across India."
+            },
+            {
+                qEn: "The widely known dairy brand 'Nandini' is managed by the cooperative federation of which state?",
+                qHi: "व्यापक रूप से ज्ञात डेयरी ब्रांड 'नंदिनी' का प्रबंधन किस राज्य के सहकारी संघ द्वारा किया जाता है?",
+                options: [
+                    "(A) Andhra Pradesh / आंध्र प्रदेश",
+                    "(B) Tamil Nadu / तमिलनाडु",
+                    "(C) Karnataka / कर्नाटक",
+                    "(D) Kerala / केरल"
+                ],
+                correctIndex: 2,
+                expEn: "'Nandini' is the popular brand of the Karnataka Milk Federation (KMF), which is one of the largest dairy cooperatives in the country after Amul.",
+                expHi: "'नंदिनी' कर्नाटक मिल्क फेडरेशन (KMF) का लोकप्रिय ब्रांड है, जो अमूल के बाद देश की सबसे बड़ी डेयरी सहकारी समितियों में से एक है।",
+                keyFact: "Kerala's counterpart is 'Milma', and Tamil Nadu's is 'Aavin'."
+            },
+            {
+                qEn: "Who is the author of the book 'I Too Had a Dream', which chronicles the story of the White Revolution?",
+                qHi: "श्वेत क्रांति की कहानी बयां करने वाली पुस्तक 'आई टू हैड ए ड्रीम' के लेखक कौन हैं?",
+                options: [
+                    "(A) M.S. Swaminathan / एम.एस. स्वामीनाथन",
+                    "(B) APJ Abdul Kalam / एपीजे अब्दुल कलाम",
+                    "(C) Amartya Sen / अमर्त्य सेन",
+                    "(D) Verghese Kurien / वर्गीज कुरियन"
+                ],
+                correctIndex: 3,
+                expEn: "'I Too Had a Dream' is an inspiring autobiography written by Dr. Verghese Kurien, detailing the genesis of Amul and Operation Flood.",
+                expHi: "'आई टू हैड ए ड्रीम' डॉ. वर्गीज कुरियन द्वारा लिखित एक प्रेरक आत्मकथा है, जिसमें अमूल और ऑपरेशन फ्लड की उत्पत्ति का विवरण है।",
+                keyFact: "The book provides an inside look at farmer empowerment and the cooperative movement in India."
+            },
+            {
+                qEn: "Which scientific test is most commonly used in dairies to determine the fat content of milk?",
+                qHi: "दूध में वसा की मात्रा निर्धारित करने के लिए डेयरियों में आमतौर पर किस वैज्ञानिक परीक्षण का उपयोग किया जाता है?",
+                options: [
+                    "(A) Widal test / विडाल टेस्ट",
+                    "(B) Gerber test / गार्बर टेस्ट",
+                    "(C) Benedict's test / बेनेडिक्ट टेस्ट",
+                    "(D) Biuret test / बाइएरेट टेस्ट"
+                ],
+                correctIndex: 1,
+                expEn: "The Gerber method or Gerber test is a widely used chemical test globally to accurately determine the fat percentage in milk and other dairy products.",
+                expHi: "दूध और अन्य डेयरी उत्पादों में वसा प्रतिशत का सटीक निर्धारण करने के लिए विश्व स्तर पर गार्बर विधि या गार्बर टेस्ट का व्यापक रूप से उपयोग किया जाता है।",
+                keyFact: "It involves using sulphuric acid and amyl alcohol to separate the fat from the milk."
+            },
+            {
+                qEn: "The National Dairy Plan Phase-I (NDP-I), a central sector scheme to increase the productivity of milch animals, was launched in which year?",
+                qHi: "दुधारू पशुओं की उत्पादकता बढ़ाने के लिए एक केंद्रीय क्षेत्र की योजना, राष्ट्रीय डेयरी योजना चरण-I (NDP-I) किस वर्ष शुरू की गई थी?",
+                options: [
+                    "(A) 2005",
+                    "(B) 2012",
+                    "(C) 2014",
+                    "(D) 2019"
+                ],
+                correctIndex: 1,
+                expEn: "The National Dairy Plan Phase-I (NDP-I) was launched in 2012 by the NDDB with the support of the World Bank to meet the rapidly growing demand for milk.",
+                expHi: "तेजी से बढ़ती दूध की मांग को पूरा करने के लिए विश्व बैंक के सहयोग से NDDB द्वारा 2012 में राष्ट्रीय डेयरी योजना चरण-I (NDP-I) शुरू की गई थी।",
+                keyFact: "It operated with a focus on scientifically breeding and feeding dairy animals."
+            },
+            {
+                qEn: "Which hormone injection is illegally used by some dairy farmers to forcefully induce milk let-down in cows and buffaloes?",
+                qHi: "कुछ डेयरी किसानों द्वारा गायों और भैंसों में जबरन दूध उतारने (let-down) के लिए अवैध रूप से किस हार्मोन इंजेक्शन का उपयोग किया जाता है?",
+                options: [
+                    "(A) Insulin / इंसुलिन",
+                    "(B) Oxytocin / ऑक्सीटोसिन",
+                    "(C) Thyroxine / थायरोक्सिन",
+                    "(D) Prolactin / प्रोलैक्टिन"
+                ],
+                correctIndex: 1,
+                expEn: "Oxytocin, often called the 'love hormone', is illegally injected into cattle to induce rapid milk let-down. Its animal use is heavily restricted in India.",
+                expHi: "ऑक्सीटोसिन को मवेशियों में तेजी से दूध उतारने के लिए अवैध रूप से इंजेक्ट किया जाता है। भारत में जानवरों पर इसके उपयोग पर कड़ा प्रतिबंध है।",
+                keyFact: "Prolactin is responsible for milk *production*, while oxytocin triggers milk *ejection*."
+            },
+            {
+                qEn: "'Milk Fever' in high-yielding dairy cows is a metabolic disease caused by the acute deficiency of:",
+                qHi: "उच्च उपज देने वाली डेयरी गायों में 'मिल्क फीवर' किसकी तीव्र कमी के कारण होने वाला एक चयापचय रोग है?",
+                options: [
+                    "(A) Iron / आयरन",
+                    "(B) Vitamin A / विटामिन A",
+                    "(C) Calcium / कैल्शियम",
+                    "(D) Phosphorus / फास्फोरस"
+                ],
+                correctIndex: 2,
+                expEn: "Milk fever occurs primarily around the time of calving when there is a sudden demand for calcium for milk production, leading to hypocalcemia.",
+                expHi: "मिल्क फीवर मुख्य रूप से ब्याने के समय के आसपास होता है, जब दूध उत्पादन के लिए कैल्शियम की अचानक मांग होती है, जिससे रक्त में कैल्शियम की कमी हो जाती है।",
+                keyFact: "Despite its name, a cow with milk fever usually has a normal or even sub-normal body temperature."
+            },
+            {
+                qEn: "Who among the following was the founder-chairman of the Kaira District Co-operative Milk Producers' Union (now Amul)?",
+                qHi: "निम्नलिखित में से कौन कैरा डिस्ट्रिक्ट को-ऑपरेटिव (अब अमूल) के संस्थापक-अध्यक्ष थे?",
+                options: [
+                    "(A) Sardar Vallabhbhai Patel / सरदार वल्लभभाई पटेल",
+                    "(B) Tribhuvandas Kishibhai Patel / त्रिभुवनदास कृषिभाई पटेल",
+                    "(C) Morarji Desai / मोरारजी देसाई",
+                    "(D) H. M. Dalaya / एच. एम. दलाया"
+                ],
+                correctIndex: 1,
+                expEn: "Tribhuvandas Patel founded the Kaira cooperative under the guidance of Sardar Patel in 1946. He later hired and mentored Verghese Kurien.",
+                expHi: "त्रिभुवनदास पटेल ने 1946 में सरदार पटेल के मार्गदर्शन में कैरा सहकारी समिति की स्थापना की थी। बाद में उन्होंने वर्गीज कुरियन का मार्गदर्शन किया।",
+                keyFact: "He was awarded the Ramon Magsaysay Award for Community Leadership in 1963."
+            },
+            {
+                qEn: "In India, the Livestock Census is conducted at an interval of how many years?",
+                qHi: "भारत में, पशुधन गणना कितने वर्षों के अंतराल पर आयोजित की जाती है?",
+                options: [
+                    "(A) 3 years / 3 वर्ष",
+                    "(B) 5 years / 5 वर्ष",
+                    "(C) 10 years / 10 वर्ष",
+                    "(D) 2 years / 2 वर्ष"
+                ],
+                correctIndex: 1,
+                expEn: "The Livestock Census in India has been conducted periodically every 5 years since 1919-20.",
+                expHi: "भारत में पशुधन गणना 1919-20 से समय-समय पर हर 5 साल में आयोजित की जाती है।",
+                keyFact: "The 20th Livestock Census was conducted in 2019, showing Uttar Pradesh with the highest livestock population."
+            },
+            {
+                qEn: "Which Indian state has the highest population of buffaloes, contributing significantly to its top rank in milk production?",
+                qHi: "किस भारतीय राज्य में भैंसों की आबादी सबसे अधिक है?",
+                options: [
+                    "(A) Punjab / पंजाब",
+                    "(B) Haryana / हरियाणा",
+                    "(C) Rajasthan / राजस्थान",
+                    "(D) Uttar Pradesh / उत्तर प्रदेश"
+                ],
+                correctIndex: 3,
+                expEn: "Uttar Pradesh possesses the largest population of buffaloes in the country, which is the primary driver of the state's massive milk output.",
+                expHi: "उत्तर प्रदेश में देश में भैंसों की सबसे बड़ी आबादी है, जो राज्य के बड़े पैमाने पर दूध उत्पादन का प्राथमिक चालक है।",
+                keyFact: "Buffalo milk constitutes more than 45% of India's total milk production."
+            },
+            {
+                qEn: "'Mother Dairy', established in 1974, was set up as a wholly owned subsidiary of which organization?",
+                qHi: "1974 में स्थापित 'मदर डेयरी', किस संगठन की पूर्ण स्वामित्व वाली सहायक कंपनी के रूप में स्थापित की गई थी?",
+                options: [
+                    "(A) FSSAI / एफएसएसएआई",
+                    "(B) NDRI / एनडीआरआई",
+                    "(C) NDDB / एनडीडीबी",
+                    "(D) Ministry of Agriculture / कृषि मंत्रालय"
+                ],
+                correctIndex: 2,
+                expEn: "Mother Dairy was established in 1974 under Operation Flood as a wholly owned subsidiary of the National Dairy Development Board (NDDB).",
+                expHi: "मदर डेयरी की स्थापना 1974 में ऑपरेशन फ्लड के तहत राष्ट्रीय डेयरी विकास बोर्ड (NDDB) की पूर्ण स्वामित्व वाली सहायक कंपनी के रूप में की गई थी।",
+                keyFact: "It was initially set up to manage the liquid milk supply to Delhi and the National Capital Region (NCR)."
+            },
+            {
+                qEn: "What is the primary purpose of chilling milk immediately after it is drawn from the udder?",
+                qHi: "थनों से निकाले जाने के तुरंत बाद दूध को ठंडा करने का प्राथमिक उद्देश्य क्या है?",
+                options: [
+                    "(A) To increase its fat content / वसा की मात्रा बढ़ाने के लिए",
+                    "(B) To improve its taste / इसके स्वाद में सुधार करने के लिए",
+                    "(C) To retard the growth of bacteria / बैक्टीरिया के विकास को रोकने के लिए",
+                    "(D) To naturally pasteurize it / इसे प्राकृतिक रूप से पाश्चुरीकृत करने के लिए"
+                ],
+                correctIndex: 2,
+                expEn: "Cooling milk quickly to around 4°C slows down bacterial multiplication, maintaining its quality until processing.",
+                expHi: "दूध को जल्दी से लगभग 4°C तक ठंडा करने से जीवाणुओं का गुणन धीमा हो जाता है, जिससे प्रसंस्करण तक इसकी गुणवत्ता बनी रहती है।",
+                keyFact: "Bulk Milk Coolers (BMCs) are heavily subsidized by the government at the village cooperative level for this exact purpose."
+            },
+            {
+                qEn: "The 'Amul Girl' mascot was created by which famous ad executive?",
+                qHi: "'अमूल गर्ल' शुभंकर किस प्रसिद्ध विज्ञापन कार्यकारी द्वारा बनाया गया था?",
+                options: [
+                    "(A) Piyush Pandey / पीयूष पांडे",
+                    "(B) Prasoon Joshi / प्रसून जोशी",
+                    "(C) Sylvester daCunha / सिल्वेस्टर दाकुन्हा",
+                    "(D) R.K. Laxman / आर.के. लक्ष्मण"
+                ],
+                correctIndex: 2,
+                expEn: "The iconic 'Amul Girl' mascot was created by Sylvester daCunha and art director Eustace Fernandes in 1966.",
+                expHi: "प्रतिष्ठित 'अमूल गर्ल' शुभंकर 1966 में सिल्वेस्टर दाकुन्हा और कला निर्देशक यूस्टेस फर्नांडीस द्वारा बनाया गया था।",
+                keyFact: "The tag line 'Utterly Butterly Delicious' was coined by Sylvester's wife, Nisha daCunha."
+            },
+            {
+                qEn: "According to the FSSAI standards, what is the minimum fat percentage required for 'Standardized Milk'?",
+                qHi: "FSSAI मानकों के अनुसार, 'मानकीकृत दूध' के लिए आवश्यक न्यूनतम वसा प्रतिशत कितना है?",
+                options: [
+                    "(A) 3.0%",
+                    "(B) 4.5%",
+                    "(C) 6.0%",
+                    "(D) 1.5%"
+                ],
+                correctIndex: 1,
+                expEn: "Standardized milk is milk whose fat and SNF content have been adjusted to a specific minimum requirement: 4.5% Fat and 8.5% SNF.",
+                expHi: "मानकीकृत दूध वह दूध है जिसके वसा और SNF को न्यूनतम आवश्यकता में समायोजित किया गया है: 4.5% वसा और 8.5% SNF।",
+                keyFact: "Full cream milk, on the other hand, requires a minimum of 6.0% fat."
+            },
+            {
+                qEn: "What does 'INAPH', an IT application used extensively in India's dairy sector, stand for?",
+                qHi: "भारत के डेयरी क्षेत्र में उपयोग किए जाने वाले आईटी एप्लिकेशन 'INAPH' का पूर्ण रूप क्या है?",
+                options: [
+                    "(A) Indian Network for Animal Protection and Health",
+                    "(B) Information Network for Animal Productivity and Health",
+                    "(C) International Node for Agriculture and Pasture Husbandry",
+                    "(D) Integrated National Animal Processing Hub"
+                ],
+                correctIndex: 1,
+                expEn: "INAPH (Information Network for Animal Productivity and Health) is used to capture real-time data on animal breeding and health services.",
+                expHi: "INAPH का उपयोग पशु प्रजनन, पोषण और स्वास्थ्य सेवाओं पर वास्तविक समय के डेटा को पकड़ने के लिए किया जाता है।",
+                keyFact: "The Pashu Aadhaar scheme uses INAPH to assign a unique 12-digit identification number to cattle and buffaloes."
+            },
+            {
+                qEn: "Which buffalo breed is widely known as the 'Black Gold' of India due to its exceptionally high milk yield?",
+                qHi: "भैंस की किस नस्ल को भारत के 'ब्लैक गोल्ड' के रूप में जाना जाता है?",
+                options: [
+                    "(A) Surti / सुरती",
+                    "(B) Mehsana / मेहसाणा",
+                    "(C) Murrah / मुर्रा",
+                    "(D) Nili-Ravi / नीली-रावी"
+                ],
+                correctIndex: 2,
+                expEn: "The Murrah buffalo is the premier milk-producing breed in India. It is highly valued for its productivity and is often referred to as 'Black Gold'.",
+                expHi: "मुर्रा भैंस भारत में प्रमुख दूध उत्पादक नस्ल है। इसे अक्सर 'काला सोना' (ब्लैक गोल्ड) कहा जाता है।",
+                keyFact: "Murrah buffaloes are easily identified by their tightly curled, short horns."
+            },
+            {
+                qEn: "The mechanical process that prevents cream from rising to the surface by breaking down fat globules is called:",
+                qHi: "वह यांत्रिक प्रक्रिया जो वसा के कणों को तोड़कर क्रीम को सतह पर उठने से रोकती है, क्या कहलाती है?",
+                options: [
+                    "(A) Pasteurization / पाश्चुरीकरण",
+                    "(B) Fortification / फोर्टिफिकेशन",
+                    "(C) Homogenization / समरूपीकरण (होमोजेनाइजेशन)",
+                    "(D) Fermentation / किण्वन"
+                ],
+                correctIndex: 2,
+                expEn: "Homogenization forces milk under high pressure through small holes, breaking fat globules so they stay suspended.",
+                expHi: "होमोजेनाइजेशन दूध को उच्च दबाव के तहत छिद्रों से गुजरने पर मजबूर करता है, जिससे वसा के कण तरल में निलंबित रहते हैं।",
+                keyFact: "Homogenized milk is easier to digest and has a whiter appearance."
+            },
+            {
+                qEn: "In India, milk is commonly 'fortified' with which two vitamins to fight widespread malnutrition?",
+                qHi: "भारत में, दूध को आमतौर पर किन दो विटामिनों के साथ 'फोर्टिफाइड' किया जाता है?",
+                options: [
+                    "(A) Vitamin B12 and Vitamin C",
+                    "(B) Vitamin A and Vitamin D",
+                    "(C) Vitamin E and Vitamin K",
+                    "(D) Iron and Calcium"
+                ],
+                correctIndex: 1,
+                expEn: "The FSSAI encourages the fortification of milk with Vitamin A and Vitamin D since these fat-soluble vitamins are often lost during skimming.",
+                expHi: "FSSAI दूध को विटामिन A और विटामिन D के साथ फोर्टिफिकेशन को प्रोत्साहित करता है, क्योंकि ये स्किमिंग प्रक्रिया के दौरान नष्ट हो जाते हैं।",
+                keyFact: "Look for the '+F' logo on fortified food products in India."
+            },
+            {
+                qEn: "What is the approximate per capita availability of milk in India as of the 2022-23 period?",
+                qHi: "2022-23 की अवधि तक भारत में प्रति व्यक्ति दूध की अनुमानित उपलब्धता क्या है?",
+                options: [
+                    "(A) 250 grams/day / 250 ग्राम/दिन",
+                    "(B) 350 grams/day / 350 ग्राम/दिन",
+                    "(C) 459 grams/day / 459 ग्राम/दिन",
+                    "(D) 600 grams/day / 600 ग्राम/दिन"
+                ],
+                correctIndex: 2,
+                expEn: "According to recent statistics, the per capita availability of milk in India has reached approximately 459 grams per day.",
+                expHi: "हालिया सांख्यिकी के अनुसार, भारत में दूध की प्रति व्यक्ति उपलब्धता लगभग 459 ग्राम प्रति दिन तक पहुंच गई है।",
+                keyFact: "The ICMR recommends a minimum consumption of 300 grams of milk per day."
+            },
+            {
+                qEn: "Which dairy disease is characterized by the inflammation of the mammary gland (udder) in cows?",
+                qHi: "गायों में किस डेयरी रोग की विशेषता स्तन ग्रंथि (थन) की सूजन है?",
+                options: [
+                    "(A) Brucellosis / ब्रूसेलोसिस",
+                    "(B) Rinderpest / रिंडरपेस्ट",
+                    "(C) Mastitis / मास्टिटिस (थनैला रोग)",
+                    "(D) Anthrax / एंथ्रेक्स"
+                ],
+                correctIndex: 2,
+                expEn: "Mastitis is an infection of the udder primarily caused by bacteria entering through the teat canal. It leads to swelling and watery milk.",
+                expHi: "मास्टिटिस (थनैला रोग) थन का एक संक्रमण है जो मुख्य रूप से थन की नलिका के माध्यम से प्रवेश करने वाले जीवाणुओं के कारण होता है।",
+                keyFact: "Proper milking hygiene is the most effective way to prevent mastitis."
+            },
+            {
+                qEn: "NDDB created a technological breakthrough by converting which animal's milk into milk powder for the first time?",
+                qHi: "NDDB ने दुनिया में पहली बार किस जानवर के दूध को मिल्क पाउडर में बदलकर तकनीकी सफलता हासिल की?",
+                options: [
+                    "(A) Goat / बकरी",
+                    "(B) Buffalo / भैंस",
+                    "(C) Sheep / भेड़",
+                    "(D) Camel / ऊंट"
+                ],
+                correctIndex: 1,
+                expEn: "Dr. Kurien and H.M. Dalaya revolutionized dairy by successfully creating skimmed milk powder from buffalo milk.",
+                expHi: "डॉ. कुरियन और एच.एम. दलाया ने भैंस के दूध से स्किम्ड मिल्क पाउडर को सफलतापूर्वक बनाकर क्रांति ला दी।",
+                keyFact: "This was crucial because buffaloes provided the majority of India's milk supply."
+            },
+            {
+                qEn: "What is the standard gestation (pregnancy) period of a cow?",
+                qHi: "गाय का मानक गर्भकाल (गर्भावस्था की अवधि) क्या होता है?",
+                options: [
+                    "(A) 200 - 210 days",
+                    "(B) 280 - 285 days",
+                    "(C) 310 - 320 days",
+                    "(D) 350 - 365 days"
+                ],
+                correctIndex: 1,
+                expEn: "The average gestation period for a cow is around 9 months and 9 days, which roughly translates to 280 to 285 days.",
+                expHi: "गाय की औसत गर्भधारण अवधि लगभग 9 महीने और 9 दिन होती है, जो लगभग 280 से 285 दिनों के बराबर होती है।",
+                keyFact: "In comparison, the gestation period for a buffalo is typically around 310 days."
+            },
+            {
+                qEn: "The period when a cow is NOT producing milk before giving birth to a new calf is called:",
+                qHi: "वह अवधि जब एक गाय नए बछड़े को जन्म देने से पहले दूध का उत्पादन नहीं कर रही होती है, क्या कहलाती है?",
+                options: [
+                    "(A) Lactation period / दुग्धकाल",
+                    "(B) Dry period / ड्राई पीरियड (शुष्क काल)",
+                    "(C) Gestation period / गर्भकाल",
+                    "(D) Weaning period / वीनिंग पीरियड"
+                ],
+                correctIndex: 1,
+                expEn: "The 'Dry Period' is the resting phase for a cow, typically lasting 45 to 60 days before calving.",
+                expHi: "'ड्राई पीरियड' एक गाय के लिए आराम का चरण है, जो आमतौर पर ब्याने से 45 से 60 दिन पहले तक रहता है।",
+                keyFact: "Skipping the dry period severely limits the milk yield in the subsequent lactation."
+            },
+            {
+                qEn: "Which of the following is the liquid by-product formed during the manufacturing of cheese or paneer?",
+                qHi: "पनीर के निर्माण के दौरान बनने वाला तरल उप-उत्पाद कौन सा है?",
+                options: [
+                    "(A) Ghee / घी",
+                    "(B) Cream / मलाई",
+                    "(C) Whey / मट्ठा (व्हे)",
+                    "(D) Casein / कैसिइन"
+                ],
+                correctIndex: 2,
+                expEn: "Whey is the watery liquid remaining after milk has been curdled and strained. It is highly rich in whey proteins.",
+                expHi: "व्हे (मट्ठा) वह तरल पदार्थ है जो पनीर बनाने के दौरान दूध के फटने और छनने के बाद बच जाता है।",
+                keyFact: "Casein is the solid part (curd) used for cheese, while whey is the liquid run-off."
+            },
+            {
+                qEn: "What does the term 'UHT' stand for in the context of milk processing?",
+                qHi: "दूध प्रसंस्करण के संदर्भ में 'UHT' का क्या अर्थ है?",
+                options: [
+                    "(A) Ultra-High Temperature",
+                    "(B) Universal Heat Treatment",
+                    "(C) Uniform Homogenization Technique",
+                    "(D) Under Heated Test"
+                ],
+                correctIndex: 0,
+                expEn: "UHT stands for Ultra-High Temperature processing, where milk is heated above 135°C to destroy all harmful bacteria.",
+                expHi: "UHT का अर्थ अल्ट्रा-हाई टेम्परेचर है, जहाँ दूध को 135°C से ऊपर गर्म किया जाता है ताकि सभी हानिकारक बैक्टीरिया नष्ट हो जाएं।",
+                keyFact: "UHT milk packaged in sterile tetra packs can last for up to 6-9 months without refrigeration until opened."
+            },
+            {
+                qEn: "Which Indian state has the highest per capita availability of milk?",
+                qHi: "किस भारतीय राज्य में दूध की प्रति व्यक्ति उपलब्धता सबसे अधिक है?",
+                options: [
+                    "(A) Gujarat / गुजरात",
+                    "(B) Punjab / पंजाब",
+                    "(C) Haryana / हरियाणा",
+                    "(D) Uttar Pradesh / उत्तर प्रदेश"
+                ],
+                correctIndex: 1,
+                expEn: "Punjab consistently records the highest per capita availability of milk in India, significantly higher than the national average.",
+                expHi: "पंजाब में लगातार भारत में दूध की प्रति व्यक्ति उपलब्धता सबसे अधिक दर्ज की जाती है।",
+                keyFact: "While UP produces the highest total volume, Punjab leads in per capita availability."
+            },
+            {
+                qEn: "The 'e-Gopala' application was launched by the Government of India for which primary purpose?",
+                qHi: "भारत सरकार द्वारा 'ई-गोपाला' एप्लिकेशन किस प्राथमिक उद्देश्य के लिए लॉन्च किया गया था?",
+                options: [
+                    "(A) To track online milk delivery",
+                    "(B) To provide a digital platform for livestock management and breed improvement",
+                    "(C) To sell milk products internationally",
+                    "(D) To track stray cattle in urban areas"
+                ],
+                correctIndex: 1,
+                expEn: "e-Gopala is a comprehensive breed improvement marketplace and information portal for farmers to manage livestock.",
+                expHi: "ई-गोपाला किसानों द्वारा प्रत्यक्ष उपयोग के लिए एक व्यापक नस्ल सुधार बाज़ार और सूचना पोर्टल है।",
+                keyFact: "The app aims to eliminate middlemen in the trade of dairy animals."
+            },
+            {
+                qEn: "In the three-tier 'Anand Pattern' cooperative structure, what functions at the District level?",
+                qHi: "त्रि-स्तरीय 'आणंद पैटर्न' सहकारी संरचना में, जिला स्तर पर क्या कार्य करता है?",
+                options: [
+                    "(A) Dairy Cooperative Society",
+                    "(B) Milk Producers' Union / दुग्ध उत्पादक संघ",
+                    "(C) State Milk Federation",
+                    "(D) National Dairy Board"
+                ],
+                correctIndex: 1,
+                expEn: "In the Anand Pattern, the District level has the Milk Union (which processes the milk).",
+                expHi: "आणंद पैटर्न में, जिला स्तर पर मिल्क यूनियन (जो दूध को प्रोसेस करती है) होती है।",
+                keyFact: "The Kaira District Co-operative Milk Producers' Union (Amul) operates at this middle tier."
+            },
+            {
+                qEn: "Which chemical is commonly used to test the adulteration of milk with starch?",
+                qHi: "दूध में स्टार्च की मिलावट का परीक्षण करने के लिए आमतौर पर किस रसायन का उपयोग किया जाता है?",
+                options: [
+                    "(A) Sulphuric Acid / सल्फ्यूरिक एसिड",
+                    "(B) Iodine solution / आयोडीन का घोल",
+                    "(C) Nitric Acid / नाइट्रिक एसिड",
+                    "(D) Sodium Hydroxide / सोडियम हाइड्रॉक्साइड"
+                ],
+                correctIndex: 1,
+                expEn: "Adding a few drops of Iodine solution to milk will turn it blue-black if starch has been added to it.",
+                expHi: "दूध में आयोडीन के घोल की कुछ बूंदें मिलाने पर यदि यह नीला-काला हो जाता है, तो उसमें स्टार्च की मिलावट है।",
+                keyFact: "Pure milk remains slightly yellowish or brownish when iodine is added."
+            },
+            {
+                qEn: "Why do some unethical vendors adulterate milk with Urea?",
+                qHi: "कुछ अनैतिक विक्रेता दूध में यूरिया की मिलावट क्यों करते हैं?",
+                options: [
+                    "(A) To make it sweeter",
+                    "(B) To artificially increase the SNF and protein reading",
+                    "(C) To give it a bright white color",
+                    "(D) To increase its shelf life"
+                ],
+                correctIndex: 1,
+                expEn: "Urea is added to synthetic milk to artificially boost its nitrogen content, which tricks equipment into recording false high protein.",
+                expHi: "सिंथेटिक दूध में कृत्रिम रूप से नाइट्रोजन की मात्रा बढ़ाने के लिए यूरिया मिलाया जाता है, जो उच्च प्रोटीन दर्ज करने का धोखा देता है।",
+                keyFact: "Consumption of urea-adulterated milk can cause severe kidney and liver damage."
+            },
+            {
+                qEn: "What is the temperature of Liquid Nitrogen used to safely store cattle semen for Artificial Insemination?",
+                qHi: "कृत्रिम गर्भाधान के लिए मवेशियों के वीर्य को सुरक्षित रूप से संग्रहीत करने के लिए प्रयुक्त तरल नाइट्रोजन का तापमान क्या होता है?",
+                options: [
+                    "(A) 0°C",
+                    "(B) -78°C",
+                    "(C) -196°C",
+                    "(D) -273°C"
+                ],
+                correctIndex: 2,
+                expEn: "Cattle semen is cryopreserved in liquid nitrogen at a temperature of -196°C.",
+                expHi: "मवेशियों के वीर्य को -196°C के तापमान पर तरल नाइट्रोजन में क्रायोप्रिजर्व किया जाता है।",
+                keyFact: "This technology was the backbone of cross-breeding programs during Operation Flood."
+            },
+            {
+                qEn: "'Gokul Puraskar' is an award given by the Uttar Pradesh government to recognize excellence in:",
+                qHi: "'गोकुल पुरस्कार' उत्तर प्रदेश सरकार द्वारा किस क्षेत्र में उत्कृष्टता के लिए दिया जाता है?",
+                options: [
+                    "(A) Highest milk production from indigenous cows / स्वदेशी गायों से सर्वाधिक दुग्ध उत्पादन",
+                    "(B) Highest crop yield",
+                    "(C) Best veterinary doctor",
+                    "(D) Organic farming"
+                ],
+                correctIndex: 0,
+                expEn: "The UP government awards the 'Gokul Puraskar' to dairy farmers who achieve the highest milk production from indigenous breeds.",
+                expHi: "यूपी सरकार उन डेयरी किसानों को 'गोकुल पुरस्कार' प्रदान करती है जो स्वदेशी (देसी) गायों से उच्चतम दुग्ध उत्पादन प्राप्त करते हैं।",
+                keyFact: "This aligns with the state's Nand Baba Milk Mission objectives."
+            },
+            {
+                qEn: "Which dairy animal is referred to as the 'Poor man's cow' in India?",
+                qHi: "भारत में किस डेयरी जानवर को 'गरीब की गाय' कहा जाता है?",
+                options: [
+                    "(A) Buffalo / भैंस",
+                    "(B) Goat / बकरी",
+                    "(C) Sheep / भेड़",
+                    "(D) Camel / ऊंट"
+                ],
+                correctIndex: 1,
+                expEn: "Mahatma Gandhi famously referred to the goat as the 'poor man's cow' because it is cheap to maintain.",
+                expHi: "महात्मा गांधी ने बकरी को 'गरीब की गाय' कहा था क्योंकि इसका रखरखाव सस्ता है।",
+                keyFact: "Goat milk naturally consists of smaller fat globules, making it naturally homogenized."
+            },
+            {
+                qEn: "In India, the subject of 'Cooperative Societies' falls under which list of the Seventh Schedule of the Constitution?",
+                qHi: "भारत में, 'सहकारी समितियां' विषय संविधान की सातवीं अनुसूची की किस सूची के अंतर्गत आता है?",
+                options: [
+                    "(A) Union List / संघ सूची",
+                    "(B) State List / राज्य सूची",
+                    "(C) Concurrent List / समवर्ती सूची",
+                    "(D) Residuary Powers / अवशिष्ट शक्तियां"
+                ],
+                correctIndex: 1,
+                expEn: "'Cooperative Societies' is a State subject (Entry 32 of the State List).",
+                expHi: "'सहकारी समितियां' एक राज्य का विषय है (राज्य सूची की प्रविष्टि 32)।",
+                keyFact: "In 2021, the Central Government created a separate 'Ministry of Cooperation'."
+            },
+            {
+                qEn: "The disease 'Rinderpest', which once caused massive cattle mortality, was declared eradicated in which year?",
+                qHi: "'रिंडरपेस्ट' (पशु प्लेग) बीमारी को आधिकारिक तौर पर किस वर्ष विश्व स्तर पर समाप्त घोषित किया गया था?",
+                options: [
+                    "(A) 1990",
+                    "(B) 2001",
+                    "(C) 2011",
+                    "(D) 2020"
+                ],
+                correctIndex: 2,
+                expEn: "Following a massive global vaccination campaign, the FAO officially declared Rinderpest eradicated worldwide in 2011.",
+                expHi: "एक बड़े पैमाने पर वैश्विक टीकाकरण अभियान के बाद, FAO ने आधिकारिक तौर पर 2011 में इसे दुनिया भर से समाप्त घोषित कर दिया।",
+                keyFact: "Rinderpest is only the second infectious disease to have been eradicated globally, after Smallpox."
+            },
+            {
+                qEn: "Which of the following states is the native home of the highly productive 'Gir' cow breed?",
+                qHi: "निम्नलिखित में से कौन सा राज्य अत्यधिक उत्पादक 'गिर' गाय की नस्ल का मूल निवास स्थान है?",
+                options: [
+                    "(A) Rajasthan / राजस्थान",
+                    "(B) Gujarat / गुजरात",
+                    "(C) Maharashtra / महाराष्ट्र",
+                    "(D) Madhya Pradesh / मध्य प्रदेश"
+                ],
+                correctIndex: 1,
+                expEn: "The Gir cow is a famous indigenous dairy breed originating from the Gir forest region of Saurashtra in Gujarat.",
+                expHi: "गिर गाय एक प्रसिद्ध स्वदेशी डेयरी नस्ल है जिसकी उत्पत्ति गुजरात के सौराष्ट्र के गिर वन क्षेत्र से हुई है।",
+                keyFact: "Gir cows are known for their distinctively curved, leaf-like ears."
+            },
+            {
+                qEn: "Dr. Verghese Kurien was born in which Indian state?",
+                qHi: "डॉ. वर्गीज कुरियन का जन्म किस भारतीय राज्य में हुआ था?",
+                options: [
+                    "(A) Gujarat / गुजरात",
+                    "(B) Tamil Nadu / तमिलनाडु",
+                    "(C) Kerala / केरल",
+                    "(D) Karnataka / कर्नाटक"
+                ],
+                correctIndex: 2,
+                expEn: "Dr. Verghese Kurien was born in Calicut (Kozhikode), Kerala.",
+                expHi: "डॉ. वर्गीज कुरियन का जन्म कालीकट (कोझिकोड), केरल में हुआ था।",
+                keyFact: "Despite being the Milkman of India, Kurien personally disliked drinking milk."
+            },
+            {
+                qEn: "What is the central government scheme 'DIDF' launched by NABARD related to?",
+                qHi: "नाबार्ड (NABARD) द्वारा शुरू की गई केंद्र सरकार की योजना 'DIDF' किससे संबंधित है?",
+                options: [
+                    "(A) Dairy Infrastructure Development Fund / डेयरी अवसंरचना विकास कोष",
+                    "(B) Direct Investment in Dairy Farms",
+                    "(C) Dairy Import and Distribution Facility",
+                    "(D) Domestic Indian Dairy Federation"
+                ],
+                correctIndex: 0,
+                expEn: "DIDF was set up under NABARD to provide subsidized loans to dairy cooperatives for upgrading processing infrastructure.",
+                expHi: "DIDF की स्थापना नाबार्ड के तहत डेयरी सहकारी समितियों को उनके प्रसंस्करण ढांचे को उन्नत करने के लिए ऋण प्रदान करने के लिए की गई थी।",
+                keyFact: "It helps modernize old milk processing plants."
+            },
+            {
+                qEn: "'Gopal Ratna Award' is conferred at the national level in the field of:",
+                qHi: "'गोपाल रत्न पुरस्कार' राष्ट्रीय स्तर पर किस क्षेत्र में प्रदान किया जाता है?",
+                options: [
+                    "(A) Organic vegetable farming",
+                    "(B) Indigenous cattle rearing and dairy production / स्वदेशी पशुपालन और डेयरी उत्पादन",
+                    "(C) Fisheries development",
+                    "(D) Poultry farming"
+                ],
+                correctIndex: 1,
+                expEn: "The National Gopal Ratna Awards are the highest national awards given in the livestock and dairy sector for indigenous cattle.",
+                expHi: "राष्ट्रीय गोपाल रत्न पुरस्कार पशुधन और डेयरी क्षेत्र में स्वदेशी गाय और भैंस पालने वाले किसानों को दिए जाते हैं।",
+                keyFact: "It is awarded by the Ministry of Fisheries, Animal Husbandry and Dairying."
+            },
+            {
+                qEn: "Which dual-purpose breed of cattle, found in the Thar desert region of Rajasthan, is highly drought-resistant?",
+                qHi: "राजस्थान के थार रेगिस्तानी क्षेत्र में पाई जाने वाली मवेशियों की कौन सी नस्ल अत्यधिक सूखा-प्रतिरोधी है?",
+                options: [
+                    "(A) Tharparkar / थारपारकर",
+                    "(B) Rathi / राठी",
+                    "(C) Kankrej / कांकरेज",
+                    "(D) Nagori / नागोरी"
+                ],
+                correctIndex: 0,
+                expEn: "Tharparkar is a dual-purpose breed originating from Sindh and widely found in Rajasthan. It is highly drought-resistant.",
+                expHi: "थारपारकर एक द्विउद्देश्यीय नस्ल है जो राजस्थान में व्यापक रूप से पाई जाती है और अत्यधिक सूखा-प्रतिरोधी है।",
+                keyFact: "It is known for its white to light grey coat."
+            },
+            {
+                qEn: "Milk is notably deficient in which of the following essential minerals?",
+                qHi: "दूध में मुख्य रूप से निम्नलिखित में से किस आवश्यक खनिज की कमी होती है?",
+                options: [
+                    "(A) Calcium / कैल्शियम",
+                    "(B) Magnesium / मैग्नीशियम",
+                    "(C) Potassium / पोटेशियम",
+                    "(D) Iron / आयरन (लोहा)"
+                ],
+                correctIndex: 3,
+                expEn: "While milk is rich in Calcium, it is a very poor source of Iron.",
+                expHi: "जबकि दूध कैल्शियम से भरपूर होता है, यह आयरन (लोहे) का बहुत खराब स्रोत है।",
+                keyFact: "Vitamin C is also absent in milk."
+            },
+            {
+                qEn: "What was the core philosophy behind the 'Operation Flood' program regarding foreign aid?",
+                qHi: "विदेशी सहायता के संबंध में 'ऑपरेशन फ्लड' कार्यक्रम के पीछे मुख्य दर्शन क्या था?",
+                options: [
+                    "(A) To reject all foreign aid",
+                    "(B) To use food aid as an investment rather than charity / खाद्य सहायता को दान के बजाय निवेश के रूप में उपयोग करना",
+                    "(C) To permanently depend on European milk imports",
+                    "(D) To export Indian cattle in exchange for technology"
+                ],
+                correctIndex: 1,
+                expEn: "Dr. Kurien used donated milk powder as an investment to build India's own dairy infrastructure.",
+                expHi: "डॉ. कुरियन ने दान किए गए दूध पाउडर का उपयोग भारत के स्वयं के डेयरी बुनियादी ढांचे के निर्माण में निवेश के रूप में किया।",
+                keyFact: "This strategy successfully utilized 'food aid as a tool for development.'"
+            },
+            {
+                qEn: "Which city in Uttar Pradesh is known for housing the Parag Dairy Plant?",
+                qHi: "उत्तर प्रदेश का कौन सा शहर पराग डेयरी प्लांट के लिए जाना जाता है?",
+                options: [
+                    "(A) Kanpur / कानपुर",
+                    "(B) Varanasi / वाराणसी",
+                    "(C) Lucknow / लखनऊ",
+                    "(D) Agra / आगरा"
+                ],
+                correctIndex: 2,
+                expEn: "The Pradeshik Cooperative Dairy Federation (PCDF) is headquartered in Lucknow, home to the flagship Parag Dairy Plant.",
+                expHi: "प्रादेशिक को-ऑपरेटिव डेयरी फेडरेशन (PCDF) का मुख्यालय और प्रमुख पराग डेयरी प्लांट लखनऊ में है।",
+                keyFact: "PCDF operates on a cooperative model modeled closely after Amul."
+            },
+            {
+                qEn: "Which agricultural revolution is related to the massive increase in egg and poultry production in India?",
+                qHi: "भारत में अंडे और मुर्गी पालन उत्पादन में भारी वृद्धि से कौन सी कृषि क्रांति संबंधित है?",
+                options: [
+                    "(A) Blue Revolution",
+                    "(B) White Revolution",
+                    "(C) Silver Revolution / रजत क्रांति",
+                    "(D) Pink Revolution"
+                ],
+                correctIndex: 2,
+                expEn: "The Silver Revolution refers to the immense growth of egg and poultry production in India.",
+                expHi: "रजत क्रांति भारत में अंडे और मुर्गी पालन के अत्यधिक विकास को संदर्भित करती है।",
+                keyFact: "Knowing the color-coded revolutions is a staple for competitive exams like UPSSSC PET."
+            },
+            {
+                qEn: "What is 'Anthrax' in the context of dairy farming?",
+                qHi: "डेयरी फार्मिंग के संदर्भ में 'एंथ्रेक्स' क्या है?",
+                options: [
+                    "(A) A high-yield fodder crop",
+                    "(B) A fatal bacterial disease affecting cattle and humans / मवेशियों और मनुष्यों को प्रभावित करने वाली घातक बीमारी",
+                    "(C) A milking machine",
+                    "(D) A synthetic preservative"
+                ],
+                correctIndex: 1,
+                expEn: "Anthrax is a serious infectious disease caused by Bacillus anthracis. It can be transmitted from cattle to humans.",
+                expHi: "एंथ्रेक्स बैसिलस एंथ्रेसिस के कारण होने वाला एक गंभीर रोग है, जो मवेशियों से मनुष्यों में फैल सकता है।",
+                keyFact: "Blood failing to clot is a classic sign of Anthrax in cattle."
+            },
+            {
+                qEn: "The 'Bhadawari' breed of buffalo, famous for high milk fat, is native to which river valley region in Uttar Pradesh?",
+                qHi: "उच्च दूध वसा के लिए प्रसिद्ध भैंस की 'भदावरी' नस्ल उत्तर प्रदेश के किस नदी घाटी क्षेत्र की मूल निवासी है?",
+                options: [
+                    "(A) Ganga Valley / गंगा घाटी",
+                    "(B) Yamuna-Chambal Valley / यमुना-चंबल घाटी",
+                    "(C) Gomti Valley / गोमती घाटी",
+                    "(D) Ghaghara Valley / घाघरा घाटी"
+                ],
+                correctIndex: 1,
+                expEn: "The Bhadawari buffalo breed is native to the ravines of the Yamuna and Chambal valleys.",
+                expHi: "भदावरी भैंस की नस्ल यमुना और चंबल घाटियों के बीहड़ों की मूल निवासी है।",
+                keyFact: "Its milk can contain up to 13% fat, highly valued for making ghee."
+            },
+            {
+                qEn: "The Amul cooperative movement effectively broke the monopoly of which private dairy company in the 1940s?",
+                qHi: "अमूल सहकारी आंदोलन ने 1940 के दशक में किस निजी डेयरी कंपनी के एकाधिकार को तोड़ दिया था?",
+                options: [
+                    "(A) Polson Dairy / पॉल्सन डेयरी",
+                    "(B) Nestle / नेस्ले",
+                    "(C) Britannia / ब्रिटानिया",
+                    "(D) Cadbury / कैडबरी"
+                ],
+                correctIndex: 0,
+                expEn: "Polson Dairy had a monopoly in milk collection. Amul was born out of a farmers' strike against Polson.",
+                expHi: "पॉल्सन डेयरी का एकाधिकार था। अमूल का जन्म पॉल्सन के खिलाफ किसानों की हड़ताल के परिणामस्वरूप हुआ था।",
+                keyFact: "Polson butter was the dominant butter brand in India before Amul butter overtook it."
+            },
+            {
+                qEn: "Which of the following states is NOT considered a part of the major milk-producing belt of India?",
+                qHi: "निम्नलिखित में से किस राज्य को भारत के प्रमुख दुग्ध उत्पादक बेल्ट का हिस्सा नहीं माना जाता है?",
+                options: [
+                    "(A) Rajasthan / राजस्थान",
+                    "(B) Uttar Pradesh / उत्तर प्रदेश",
+                    "(C) Madhya Pradesh / मध्य प्रदेश",
+                    "(D) Meghalaya / मेघालय"
+                ],
+                correctIndex: 3,
+                expEn: "Northeastern states like Meghalaya contribute very little to national milk production compared to UP or Rajasthan.",
+                expHi: "मेघालय जैसे पूर्वोत्तर राज्य राष्ट्रीय दुग्ध उत्पादन में बहुत कम योगदान देते हैं।",
+                keyFact: "Geography and dietary habits heavily influence the concentration of the dairy industry."
+            },
+            {
+                qEn: "The central sector scheme targeted at providing mobile veterinary clinics at farmers' doorsteps is called:",
+                qHi: "किसानों के दरवाजे पर मोबाइल पशु चिकित्सा क्लिनिक प्रदान करने के उद्देश्य से शुरू की गई योजना क्या कहलाती है?",
+                options: [
+                    "(A) Mobile Pashu Chikitsa",
+                    "(B) Mobile Veterinary Units (MVUs) / मोबाइल पशु चिकित्सा इकाइयाँ",
+                    "(C) Kisan Rath",
+                    "(D) Dairy Ambulance"
+                ],
+                correctIndex: 1,
+                expEn: "The Government of India rolled out Mobile Veterinary Units (MVUs) to provide veterinary care at the farmer's doorstep.",
+                expHi: "भारत सरकार ने किसान के दरवाजे पर पशु चिकित्सा देखभाल प्रदान करने के लिए मोबाइल पशु चिकित्सा इकाइयाँ (MVUs) शुरू कीं।",
+                keyFact: "This significantly reduces the mortality rate of milch animals."
+            },
+            {
+                qEn: "Which component of milk is most variable depending on the breed of the animal and its feed?",
+                qHi: "जानवर की नस्ल और चारे के आधार पर दूध का कौन सा घटक सबसे अधिक परिवर्तनशील होता है?",
+                options: [
+                    "(A) Water / पानी",
+                    "(B) Protein / प्रोटीन",
+                    "(C) Lactose / लैक्टोज",
+                    "(D) Fat / वसा (फैट)"
+                ],
+                correctIndex: 3,
+                expEn: "The fat content in milk varies significantly between species and is highly dependent on feed.",
+                expHi: "दूध में वसा की मात्रा प्रजातियों के बीच काफी भिन्न होती है और चारे पर अत्यधिक निर्भर करती है।",
+                keyFact: "Lactose and mineral contents remain relatively constant regardless of diet."
+            },
+            {
+                qEn: "What is 'Paneer' scientifically classified as in dairy science?",
+                qHi: "डेयरी विज्ञान में 'पनीर' को वैज्ञानिक रूप से किस रूप में वर्गीकृत किया गया है?",
+                options: [
+                    "(A) Fermented milk product",
+                    "(B) Heat and acid coagulated milk product / गर्मी और एसिड द्वारा जमाया गया उत्पाद",
+                    "(C) Dried milk product",
+                    "(D) Clarified milk fat"
+                ],
+                correctIndex: 1,
+                expEn: "Paneer is made by curdling milk using heat and an acid (like lemon juice or citric acid).",
+                expHi: "पनीर को गर्मी और एक एसिड का उपयोग करके दूध को फाड़कर बनाया जाता है।",
+                keyFact: "Ghee is classified as clarified milk fat, while Yogurt (Dahi) is a fermented product."
+            },
+            {
+                qEn: "During Operation Flood, which international agency played a major role by providing loans to NDDB?",
+                qHi: "ऑपरेशन फ्लड के दौरान, किस अंतर्राष्ट्रीय एजेंसी ने NDDB को ऋण प्रदान करके एक प्रमुख भूमिका निभाई?",
+                options: [
+                    "(A) IMF / अंतर्राष्ट्रीय मुद्रा कोष",
+                    "(B) World Bank / विश्व बैंक",
+                    "(C) UNICEF / यूनिसेफ",
+                    "(D) WHO / विश्व स्वास्थ्य संगठन"
+                ],
+                correctIndex: 1,
+                expEn: "The World Bank provided significant long-term loans and credit to support massive infrastructure expansion.",
+                expHi: "विश्व बैंक ने आवश्यक बुनियादी ढांचे के विस्तार का समर्थन करने के लिए महत्वपूर्ण ऋण प्रदान किए।",
+                keyFact: "The World Bank recognized Operation Flood as one of its most successful rural development programs."
+            },
+            {
+                qEn: "What is the main characteristic of the 'Holstein Friesian' breed of cow, heavily used in cross-breeding in India?",
+                qHi: "भारत में संकरण में बड़े पैमाने पर उपयोग की जाने वाली गाय की 'होल्स्टीन फ्रीजियन' नस्ल की मुख्य विशेषता क्या है?",
+                options: [
+                    "(A) Highest milk fat percentage",
+                    "(B) Highest total milk volume production / उच्चतम कुल दुग्ध मात्रा उत्पादन",
+                    "(C) Smallest size and cheapest to maintain",
+                    "(D) Extreme heat tolerance"
+                ],
+                correctIndex: 1,
+                expEn: "The Holstein Friesian is globally recognized as the highest milk-producing dairy breed in terms of volume.",
+                expHi: "होल्स्टीन फ्रीजियन को विश्व स्तर पर मात्रा के मामले में सबसे अधिक दूध देने वाली डेयरी नस्ल के रूप में मान्यता प्राप्त है।",
+                keyFact: "It is cross-bred with indigenous cows to combine HF's high yield with native heat resistance."
+            },
+            {
+                qEn: "Before the launch of Operation Flood in 1970, what was the status of India's dairy sector?",
+                qHi: "1970 में ऑपरेशन फ्लड शुरू होने से पहले, भारत के डेयरी क्षेत्र की स्थिति क्या थी?",
+                options: [
+                    "(A) India was already the largest milk producer",
+                    "(B) India was a severe milk-deficient country reliant on imports / भारत एक गंभीर रूप से दूध की कमी वाला देश था",
+                    "(C) India exported milk to Europe",
+                    "(D) All Indian milk was produced entirely by private corporations"
+                ],
+                correctIndex: 1,
+                expEn: "Post-independence, India suffered from acute milk shortages and depended on imports to meet urban demand.",
+                expHi: "स्वतंत्रता के बाद, भारत में दूध की भारी कमी थी और शहरी मांग को पूरा करने के लिए आयात पर निर्भर था।",
+                keyFact: "Operation Flood reversed this, transitioning India to the world's largest milk producer."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        
+        // Tracking Arrays
+        const answers = new Array(quizData.length).fill(null); 
+        // Statuses: 'not-visited', 'unanswered', 'correct', 'incorrect', 'skipped', 'review'
+        const statuses = new Array(quizData.length).fill('not-visited');
+
+        const qNumberEl = document.getElementById('q-number');
+        const qTextEn = document.getElementById('q-text-en');
+        const qTextHi = document.getElementById('q-text-hi');
+        const optionsContainer = document.getElementById('options-container');
+        const explanationContainer = document.getElementById('explanation-container');
+        const liveScoreEl = document.getElementById('live-score');
+        const paletteGrid = document.getElementById('palette-grid');
+
+        function init() {
+            buildPalette();
+            loadQuestion(0);
+        }
+
+        function buildPalette() {
+            paletteGrid.innerHTML = '';
+            for (let i = 0; i < quizData.length; i++) {
+                const btn = document.createElement('button');
+                btn.className = `palette-btn status-${statuses[i]}`;
+                btn.innerText = i + 1;
+                btn.onclick = () => loadQuestion(i);
+                paletteGrid.appendChild(btn);
+            }
+        }
+
+        function updatePaletteButton(index) {
+            const btn = paletteGrid.children[index];
+            btn.className = `palette-btn status-${statuses[index]}`;
+        }
+
+        function loadQuestion(index) {
+            // Check previous question unvisited state
+            if (statuses[currentQuestion] === 'not-visited') {
+                statuses[currentQuestion] = 'unanswered';
+                updatePaletteButton(currentQuestion);
+            }
+
+            currentQuestion = index;
+            const q = quizData[currentQuestion];
+
+            qNumberEl.innerText = `Question ${currentQuestion + 1} / ${quizData.length}`;
+            qTextEn.innerText = q.qEn;
+            qTextHi.innerText = q.qHi;
+
+            optionsContainer.innerHTML = '';
+            explanationContainer.style.display = 'none';
+
+            // Mark as visited/unanswered if not touched yet
+            if (statuses[currentQuestion] === 'not-visited') {
+                statuses[currentQuestion] = 'unanswered';
+                updatePaletteButton(currentQuestion);
+            }
+
+            q.options.forEach((optText, i) => {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'option';
+                optDiv.innerText = optText;
+                
+                // If already answered
+                if (answers[currentQuestion] !== null) {
+                    optDiv.classList.add('locked');
+                    if (i === q.correctIndex) {
+                        optDiv.classList.add('correct');
+                    } else if (i === answers[currentQuestion]) {
+                        optDiv.classList.add('incorrect');
+                    }
+                } else {
+                    optDiv.onclick = () => selectOption(i);
+                }
+                optionsContainer.appendChild(optDiv);
+            });
+
+            if (answers[currentQuestion] !== null) {
+                showExplanation(q);
+            }
+        }
+
+        function selectOption(selectedIndex) {
+            if (answers[currentQuestion] !== null) return; // Prevent changing answer
+
+            answers[currentQuestion] = selectedIndex;
+            const q = quizData[currentQuestion];
+            const isCorrect = (selectedIndex === q.correctIndex);
+
+            if (isCorrect) {
+                score += 1.00;
+                statuses[currentQuestion] = 'correct';
+            } else {
+                score -= 0.25;
+                statuses[currentQuestion] = 'incorrect';
+            }
+
+            liveScoreEl.innerText = score.toFixed(2);
+            updatePaletteButton(currentQuestion);
+            loadQuestion(currentQuestion); // Reloads options visually locked
+        }
+
+        function showExplanation(q) {
+            document.getElementById('exp-en').innerText = q.expEn;
+            document.getElementById('exp-hi').innerText = q.expHi;
+            document.getElementById('key-fact').innerText = `Key Exam Fact: ${q.keyFact}`;
+            explanationContainer.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                loadQuestion(currentQuestion + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                loadQuestion(currentQuestion - 1);
+            }
+        }
+
+        function skipQuestion() {
+            if (answers[currentQuestion] === null) {
+                statuses[currentQuestion] = 'skipped';
+                updatePaletteButton(currentQuestion);
+                nextQuestion();
+            }
+        }
+
+        function markForReview() {
+            if (answers[currentQuestion] === null) {
+                statuses[currentQuestion] = 'review';
+                updatePaletteButton(currentQuestion);
+                nextQuestion();
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('dashboard-container').style.display = 'block';
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+            let skippedCount = 0;
+            let attemptedCount = 0;
+
+            statuses.forEach(status => {
+                if (status === 'correct') { correctCount++; attemptedCount++; }
+                if (status === 'incorrect') { incorrectCount++; attemptedCount++; }
+                if (status === 'skipped' || status === 'unanswered' || status === 'review' || status === 'not-visited') { skippedCount++; }
+            });
+
+            document.getElementById('final-score').innerText = score.toFixed(2);
+            document.getElementById('dash-attempted').innerText = attemptedCount;
+            document.getElementById('dash-correct').innerText = correctCount;
+            document.getElementById('dash-incorrect').innerText = incorrectCount;
+            document.getElementById('dash-skipped').innerText = skippedCount;
+            
+            let accuracy = attemptedCount > 0 ? (correctCount / attemptedCount) * 100 : 0;
+            document.getElementById('dash-accuracy').innerText = accuracy.toFixed(1);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

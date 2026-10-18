@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPSSSC PET CBT Simulator - वर्ष 2014 के पश्चात के आर्थिक सुधार</title>
+  <style>
+    :root {
+      --bg-main: #121316;
+      --card-bg: #1e2024;
+      --card-border: #2d3139;
+      --accent-blue: #2563eb;
+      --accent-blue-hover: #1d4ed8;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --correct-bg: rgba(16, 185, 129, 0.15);
+      --correct-border: #10b981;
+      --correct-text: #34d399;
+      --wrong-bg: rgba(239, 68, 68, 0.15);
+      --wrong-border: #ef4444;
+      --wrong-text: #f87171;
+      --review-color: #a855f7;
+      --unanswered-color: #f59e0b;
+      --skipped-color: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand-title span {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .score-badge {
+      background: #111827;
+      border: 1px solid #374151;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #60a5fa;
+    }
+
+    .score-badge span {
+      color: #fff;
+    }
+
+    .btn-palette-open {
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-palette-open:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 24px auto;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Question Card */
+    .question-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .q-number {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #93c5fd;
+    }
+
+    .q-marks-scheme {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .q-marks-scheme b {
+      color: #34d399;
+    }
+
+    .q-stem {
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .q-stem-en {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #f3f4f6;
+      margin-bottom: 10px;
+    }
+
+    .q-stem-hi {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #d1d5db;
+    }
+
+    /* Option Cards */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-card {
+      background-color: #17191d;
+      border: 1px solid #333742;
+      border-radius: 8px;
+      padding: 14px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .option-card:hover:not(.locked) {
+      background-color: #242730;
+      border-color: #4b5563;
+    }
+
+    .option-key {
+      background: #2b303c;
+      color: #e5e7eb;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.85rem;
+    }
+
+    .option-text {
+      flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* Evaluated Option States */
+    .option-card.correct {
+      background-color: var(--correct-bg) !important;
+      border-color: var(--correct-border) !important;
+      color: var(--correct-text) !important;
+    }
+
+    .option-card.correct .option-key {
+      background: var(--correct-border);
+      color: #fff;
+    }
+
+    .option-card.incorrect {
+      background-color: var(--wrong-bg) !important;
+      border-color: var(--wrong-border) !important;
+      color: var(--wrong-text) !important;
+    }
+
+    .option-card.incorrect .option-key {
+      background: var(--wrong-border);
+      color: #fff;
+    }
+
+    .option-card.locked {
+      cursor: default;
+    }
+
+    /* Explanation Card */
+    .explanation-container {
+      margin-top: 24px;
+      background: #15181e;
+      border-left: 4px solid #3b82f6;
+      border-radius: 0 8px 8px 0;
+      padding: 18px 20px;
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .exp-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .exp-body {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #d1d5db;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .exp-fact {
+      background: #1f2937;
+      border: 1px dashed #4b5563;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: #fbbf24;
+      margin-top: 6px;
+    }
+
+    /* Action Controls */
+    .card-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+      border-top: 1px solid var(--card-border);
+      padding-top: 18px;
+    }
+
+    .action-group-left, .action-group-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-secondary {
+      background: #262b35;
+      color: #e5e7eb;
+      border: 1px solid #3f4756;
+    }
+
+    .btn-secondary:hover {
+      background: #333a47;
+    }
+
+    .btn-review {
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid #a855f7;
+      color: #c084fc;
+    }
+
+    .btn-review.active {
+      background: #a855f7;
+      color: #fff;
+    }
+
+    .btn-primary {
+      background: var(--accent-blue);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    /* Question Palette Slide-over Drawer */
+    .palette-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 50;
+      backdrop-filter: blur(4px);
+      display: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .palette-drawer {
+      position: fixed;
+      top: 0;
+      right: -460px;
+      width: 100%;
+      max-width: 440px;
+      height: 100vh;
+      background: var(--card-bg);
+      border-left: 1px solid var(--card-border);
+      z-index: 55;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .palette-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .palette-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .btn-close-palette {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .btn-close-palette:hover {
+      color: #fff;
+    }
+
+    /* Legend */
+    .palette-legend {
+      padding: 12px 18px;
+      background: #16181c;
+      border-bottom: 1px solid var(--card-border);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px 14px;
+      font-size: 0.78rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Grid Numbers */
+    .palette-grid-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 20px;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .palette-btn {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      background: #17191e;
+      color: #9ca3af;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .palette-btn:hover {
+      border-color: #60a5fa;
+      color: #fff;
+    }
+
+    .palette-btn.current {
+      outline: 2px solid #60a5fa;
+      outline-offset: 2px;
+    }
+
+    /* 6-Status Color System */
+    .palette-btn.status-correct {
+      background: #10b981 !important;
+      color: #fff !important;
+      border-color: #059669 !important;
+    }
+
+    .palette-btn.status-incorrect {
+      background: #ef4444 !important;
+      color: #fff !important;
+      border-color: #dc2626 !important;
+    }
+
+    .palette-btn.status-unanswered {
+      background: #f59e0b !important;
+      color: #111 !important;
+      border-color: #d97706 !important;
+    }
+
+    .palette-btn.status-skipped {
+      background: #64748b !important;
+      color: #fff !important;
+      border-color: #475569 !important;
+    }
+
+    .palette-btn.status-review {
+      background: #a855f7 !important;
+      color: #fff !important;
+      border-color: #9333ea !important;
+    }
+
+    .palette-btn.status-not-visited {
+      background: #1f232b;
+      color: #6b7280;
+    }
+
+    /* Finish / Report Overlay */
+    .report-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 28px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .report-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .report-sub {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .score-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .score-box {
+      background: #16181d;
+      border: 1px solid #2d313a;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .score-box-num {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .score-box-label {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .report-btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 10px 14px;
+      }
+      .brand-title h1 {
+        font-size: 0.9rem;
+      }
+      main {
+        margin: 12px auto;
+      }
+      .question-card {
+        padding: 16px;
+      }
+      .palette-drawer {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Fixed Bar -->
+  <header>
+    <div class="brand-title">
+      <h1>UPSSSC PET — वर्ष 2014 के पश्चात के आर्थिक सुधार</h1>
+      <span>100 Questions | Standard CBT Examination Mode</span>
+    </div>
+    <div class="header-controls">
+      <div class="score-badge">Live Score: <span id="top-net-score">0.00</span></div>
+      <button class="btn-palette-open" onclick="openPalette()">📋 Open Palette</button>
+    </div>
+  </header>
+
+  <!-- Main Question Stage -->
+  <main>
+    <div id="cbt-question-container" class="question-card">
+      <div class="question-meta">
+        <span class="q-number" id="q-counter-text">Question 1 of 100</span>
+        <span class="q-marks-scheme">Marking: <b>+1.00</b> | Incorrect: <b>-0.25</b></span>
+      </div>
+
+      <div class="q-stem">
+        <div class="q-stem-en" id="q-text-en">Loading Question...</div>
+        <div class="q-stem-hi" id="q-text-hi">प्रश्न लोड हो रहा है...</div>
+      </div>
+
+      <div class="options-grid" id="options-container">
+        <!-- 5 Option Cards Rendered via JS -->
+      </div>
+
+      <!-- Bilingual Explanation Card (Shown on click) -->
+      <div class="explanation-container" id="explanation-box">
+        <div class="exp-title">
+          <span>💡 Verified Solution & Detailed Analysis</span>
+        </div>
+        <div class="exp-body">
+          <div><b>English Analysis:</b> <span id="exp-text-en"></span></div>
+          <div><b>हिंदी व्याख्या:</b> <span id="exp-text-hi"></span></div>
+          <div class="exp-fact" id="exp-fact-box"></div>
+        </div>
+      </div>
+
+      <!-- Manual Action Bar -->
+      <div class="card-actions">
+        <div class="action-group-left">
+          <button class="btn btn-secondary" onclick="prevQuestion()" id="btn-prev">❮ Previous</button>
+          <button class="btn btn-secondary" onclick="skipQuestion()" id="btn-skip">Skip</button>
+          <button class="btn btn-review" onclick="toggleReview()" id="btn-review">Mark for Review</button>
+        </div>
+        <div class="action-group-right">
+          <button class="btn btn-primary" onclick="nextQuestion()" id="btn-next">Next Question ❯</button>
+          <button class="btn btn-primary" style="background:#10b981; display:none;" onclick="showFinalReport()" id="btn-submit">Submit Test</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Score Dashboard Card -->
+    <div id="final-report-container" class="report-card">
+      <h2 class="report-title">Examination Completed</h2>
+      <p class="report-sub">UPSSSC PET Paper: Indian Economy (Post-2014 Economic Reforms)</p>
+
+      <div class="score-summary-grid">
+        <div class="score-box">
+          <div class="score-box-label">Final Net Score</div>
+          <div class="score-box-num" style="color: #60a5fa;" id="rep-net-score">0.00</div>
+        </div>
+        <div class="score-box">
+          <div class="score-box-label">Correct (+1.00)</div>
+          <div class="score-box-num" style="color: #34d399;" id="rep-correct">0</div>
+        </div>
+        <div class="score-box">
+          <div class="score-box-label">Incorrect (-0.25)</div>
+          <div class="score-box-num" style="color: #f87171;" id="rep-incorrect">0</div>
+        </div>
+        <div class="score-box">
+          <div class="score-box-label">Skipped / Left</div>
+          <div class="score-box-num" style="color: #9ca3af;" id="rep-skipped">0</div>
+        </div>
+        <div class="score-box">
+          <div class="score-box-label">Accuracy</div>
+          <div class="score-box-num" style="color: #fbbf24;" id="rep-accuracy">0.0%</div>
+        </div>
+      </div>
+
+      <div class="report-btn-group">
+        <button class="btn btn-secondary" onclick="openPalette()">📋 Review All in Palette</button>
+        <button class="btn btn-primary" onclick="restartTest()">↺ Retake Examination</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Slide-In Question Palette Drawer & Overlay -->
+  <div class="palette-overlay" id="palette-overlay" onclick="closePalette()"></div>
+  <div class="palette-drawer" id="palette-drawer">
+    <div class="palette-header">
+      <h3>Question Palette (1 - 100)</h3>
+      <button class="btn-close-palette" onclick="closePalette()">✕</button>
+    </div>
+
+    <div class="palette-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div> Correct (+1.00)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div> Incorrect (-0.25)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div> Visited (Unanswered)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#64748b;"></div> Skipped</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a855f7;"></div> Marked for Review</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#1f232b; border: 1px solid #374151;"></div> Not Visited</div>
+    </div>
+
+    <div class="palette-grid-wrapper">
+      <div class="palette-grid" id="palette-grid">
+        <!-- 100 Palette Buttons Generated Dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Complete 100 Questions Database Compiled Verbatim */
+    const QUESTIONS_DATA = [
+      {
+        id: 1,
+        stemEn: "Which constitutional body was replaced by the Government of India through an executive resolution on January 1, 2015, to foster cooperative federalism?",
+        stemHi: "सहकारी संघवाद को बढ़ावा देने के लिए 1 जनवरी 2015 को भारत सरकार द्वारा एक कार्यकारी संकल्प के माध्यम से किस निकाय को प्रतिस्थापित किया गया था?",
+        options: [
+          "Finance Commission / वित्त आयोग",
+          "Planning Commission / योजना आयोग",
+          "National Development Council / राष्ट्रीय विकास परिषद",
+          "Inter-State Council / अंतर-राज्य परिषद",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "NITI Aayog (National Institution for Transforming India) was established on January 1, 2015, via a Cabinet resolution, replacing the 65-year-old Planning Commission (established in March 1950). It functions as the premier policy think tank of the Government of India.",
+        expHi: "1 जनवरी 2015 को केंद्रीय मंत्रिमंडल के एक प्रस्ताव के तहत योजना आयोग (स्थापना मार्च 1950) के स्थान पर 'नीति आयोग' (राष्ट्रीय भारत परिवर्तन संस्थान) का गठन किया गया। इसका प्रमुख उद्देश्य राज्यों की सक्रिय भागीदारी के साथ 'सहकारी संघवाद' को सुदृढ़ करना है।",
+        fact: "NITI Aayog is a non-constitutional and non-statutory extra-constitutional body whose ex-officio Chairperson is the Prime Minister of India."
+      },
+      {
+        id: 2,
+        stemEn: "What is the maximum loan limit permitted under the 'Tarun' category of the Pradhan Mantri MUDRA Yojana (PMMY) as initially launched in 2015?",
+        stemHi: "2015 में मूल रूप से शुरू की गई प्रधानमंत्री मुद्रा योजना (PMMY) के 'तरुण' श्रेणी के तहत ऋण की अधिकतम सीमा क्या निर्धारित की गई थी?",
+        options: [
+          "₹50,000",
+          "₹2,00,000",
+          "₹5,00,000",
+          "₹10,00,000",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "PMMY was launched on April 8, 2015, categorizing loans into three stages: Shishu (up to ₹50,000), Kishor (above ₹50,000 and up to ₹5 lakh), and Tarun (above ₹5 lakh and up to ₹10 lakh) to fund non-corporate small businesses.",
+        expHi: "प्रधानमंत्री मुद्रा योजना (8 अप्रैल 2015 को शुरू) के अंतर्गत तीन श्रेणियों में ऋण प्रदान किया जाता है: शिशु (₹50,000 तक), किशोर (₹50,000 से ₹5 लाख तक), और तरुण (₹5 लाख से ₹10 लाख तक)।",
+        fact: "MUDRA stands for Micro Units Development & Refinance Agency Ltd., functioning as a subsidiary of SIDBI."
+      },
+      {
+        id: 3,
+        stemEn: "The Insolvency and Bankruptcy Code (IBC) was enacted in which year to consolidate and amend laws relating to reorganization and insolvency resolution of corporate persons and individuals?",
+        stemHi: "कॉर्पोरेट व्यक्तियों एवं अन्य इकाइयों के पुनर्गठन और दिवाला समाधान से संबंधित कानूनों को समेकित करने हेतु दिवाला और शोधन अक्षमता संहिता (IBC) किस वर्ष अधिनियमित की गई थी?",
+        options: [
+          "2014",
+          "2015",
+          "2016",
+          "2018",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Insolvency and Bankruptcy Code (IBC) was enacted in May 2016. It introduced a time-bound, creditor-in-control framework to resolve non-performing assets and ease company exit procedures in India.",
+        expHi: "दिवाला और शोधन अक्षमता संहिता (IBC) को संसद द्वारा मई 2016 में पारित किया गया था। इसका मुख्य उद्देश्य एनपीए (NPA) की समस्या का समयबद्ध समाधान कर 'ईज ऑफ डूइंग बिजनेस' को बढ़ावा देना है।",
+        fact: "The regulatory body governing insolvency proceedings under IBC is the Insolvency and Bankruptcy Board of India (IBBI), set up on October 1, 2016."
+      },
+      {
+        id: 4,
+        stemEn: "Under the Goods and Services Tax (GST) framework introduced in 2017, which Constitutional Amendment Act facilitated its nationwide implementation?",
+        stemHi: "वर्ष 2017 में लागू की गई वस्तु एवं सेवा कर (GST) व्यवस्था को किस संविधान संशोधन अधिनियम के माध्यम से लागू किया गया था?",
+        options: [
+          "99th Constitutional Amendment Act / 99वां संविधान संशोधन अधिनियम",
+          "100th Constitutional Amendment Act / 100वां संविधान संशोधन अधिनियम",
+          "101st Constitutional Amendment Act / 101वां संविधान संशोधन अधिनियम",
+          "102nd Constitutional Amendment Act / 102वां संविधान संशोधन अधिनियम",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The 101st Constitutional Amendment Act, 2016 paved the way for the introduction of the unified Goods and Services Tax (GST) in India, which took effect nationwide on July 1, 2017.",
+        expHi: "वस्तु एवं सेवा कर (GST) को 101वें संविधान संशोधन अधिनियम, 2016 द्वारा लागू किया गया था, जिसे 1 जुलाई 2017 से संपूर्ण देश में प्रभावी बनाया गया।",
+        fact: "GST is governed by Article 279A of the Indian Constitution, headed by the Union Finance Minister."
+      },
+      {
+        id: 5,
+        stemEn: "On which exact date did the historic demonetization of high-denomination currency notes of ₹500 and ₹1,000 take effect in India?",
+        stemHi: "भारत में ₹500 और ₹1,000 के उच्च मूल्यवर्ग के करेंसी नोटों का ऐतिहासिक विमुद्रीकरण किस निश्चित तिथि को प्रभावी हुआ था?",
+        options: [
+          "15 August 2016 / 15 अगस्त 2016",
+          "2 October 2016 / 2 अक्टूबर 2016",
+          "31 December 2016 / 31 दिसंबर 2016",
+          "26 January 2017 / 26 जनवरी 2017",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4,
+        expEn: "High-denomination banknotes of ₹500 and ₹1,000 were demonetized with effect from the midnight of November 8, 2016. Since November 8, 2016 is not among options A, B, C, or D, Option (E) is the correct answer.",
+        expHi: "₹500 और ₹1,000 के नोटों के विमुद्रीकरण की आधिकारिक घोषणा 8 नवंबर 2016 की मध्यरात्रि से प्रभावी की गई थी। विकल्प (A) से (D) में 8 नवंबर 2016 शामिल नहीं है, अतः सही उत्तर (E) है।",
+        fact: "Demonetization in 2016 was carried out under Section 26(2) of the Reserve Bank of India Act, 1934."
+      },
+      {
+        id: 6,
+        stemEn: "What was the central objective of the 'JAM Trinity' conceptualized in the Economic Survey 2014–15?",
+        stemHi: "आर्थिक सर्वेक्षण 2014-15 में परिकल्पित 'JAM त्रिमूर्ति' (JAM Trinity) का मुख्य उद्देश्य क्या था?",
+        options: [
+          "Direct transfer of subsidies and social welfare benefits / प्रत्यक्ष सब्सिडी एवं सामाजिक कल्याण लाभों का सीधा अंतरण",
+          "Promotion of export-oriented manufacturing / निर्यात-उन्मुख विनिर्माण को बढ़ावा देना",
+          "Regulation of corporate stock markets / कॉर्पोरेट शेयर बाजारों का नियमन",
+          "Expansion of highway and rail infrastructure / राजमार्ग एवं रेल अवसंरचना का विस्तार",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The JAM Trinity stands for Jan Dhan, Aadhaar, and Mobile. It was formulated to plug leakages and enable direct benefit transfers (DBT) straight into the bank accounts of targeted beneficiaries.",
+        expHi: "JAM का पूर्ण रूप जन-धन (Jan Dhan), आधार (Aadhaar) और मोबाइल (Mobile) है। इसका मुख्य उद्देश्य बिचौलियों और रिसाव (leakage) को समाप्त कर सरकारी योजनाओं का लाभ प्रत्यक्ष लाभ अंतरण (DBT) के माध्यम से सीधे नागरिकों के खाते में पहुंचाना है।",
+        fact: "Jan Dhan accounts provide an overdraft facility and an indigenous RuPay debit card with inbuilt accidental insurance."
+      },
+      {
+        id: 7,
+        stemEn: "In which year was the Monetary Policy Committee (MPC) officially constituted under the amended RBI Act to institutionalize flexible inflation targeting?",
+        stemHi: "मुद्रास्फीति लक्ष्यीकरण को संस्थागत रूप देने हेतु संशोधित RBI अधिनियम के तहत आधिकारिक तौर पर 'मौद्रिक नीति समिति' (MPC) का गठन किस वर्ष किया गया था?",
+        options: [
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Monetary Policy Committee (MPC) was constituted in September 2016 under Section 45ZB of the amended RBI Act, 1934, adopting an inflation target of 4% with a tolerance band of +/- 2%.",
+        expHi: "केंद्र सरकार द्वारा सितंबर 2016 में भारतीय रिज़र्व बैंक अधिनियम, 1934 की धारा 45ZB के तहत 6-सदस्यीय मौद्रिक नीति समिति (MPC) का गठन किया गया था, जिसका उद्देश्य 4% (+/- 2%) मुद्रास्फीति लक्ष्य प्राप्त करना है।",
+        fact: "The Governor of the Reserve Bank of India serves as the ex-officio Chairperson of the MPC and holds a casting vote in case of a tie."
+      },
+      {
+        id: 8,
+        stemEn: "Which portal was launched by the Union Government in 2016 as a unified digital platform for public procurement of goods and services by government departments?",
+        stemHi: "सरकारी विभागों द्वारा वस्तुओं और सेवाओं की सार्वजनिक खरीद के लिए 2016 में केंद्र सरकार द्वारा कौन सा एकीकृत डिजिटल पोर्टल लॉन्च किया गया था?",
+        options: [
+          "GeM (Government e-Marketplace) / जीईएम (गवर्नमेंट ई-मार्केटप्लेस)",
+          "e-Shram / ई-श्रम",
+          "UMANG / उमंग",
+          "SWAYAM / स्वयं",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "GeM (Government e-Marketplace) was launched on August 9, 2016, under the Ministry of Commerce and Industry to foster transparency, efficiency, and speed in public procurement.",
+        expHi: "गवर्नमेंट ई-मार्केटप्लेस (GeM) को 9 अगस्त 2016 को वाणिज्य एवं उद्योग मंत्रालय द्वारा सरकारी कार्यालयों और सार्वजनिक उपक्रमों में पारदर्शी व भ्रष्टाचार मुक्त खरीद प्रक्रिया हेतु शुरू किया गया था।",
+        fact: "GeM functions as a completely paperless, cashless, and system-driven online procurement marketplace."
+      },
+      {
+        id: 9,
+        stemEn: "In the Union Budget of 2017–18, a historic budgetary reform took place in India. Which of the following describes that reform?",
+        stemHi: "केंद्रीय बजट 2017-18 में भारत में एक ऐतिहासिक बजटीय सुधार किया गया। निम्नलिखित में से कौन सा सुधार उससे संबंधित है?",
+        options: [
+          "Merger of the Railway Budget with the Union General Budget / रेल बजट का आम बजट में विलय",
+          "Abolition of the Income Tax / आयकर की पूर्ण समाप्ति",
+          "Introduction of a Five-Year Plan budget cycle / पंचवर्षीय योजना बजट चक्र की शुरुआत",
+          "Delinking of state budgets from central devolution / राज्य बजटों का केंद्रीय हस्तांतरण से पृथक्करण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Based on the recommendations of the Bibek Debroy Committee, the 92-year-old practice of presenting a separate Railway Budget (started in 1924 following the Acworth Committee report) was discontinued and merged into the Union Budget starting from 2017–18.",
+        expHi: "बिबेक देबरॉय समिति की सिफारिशों के आधार पर वर्ष 2017-18 से 92 वर्ष पुरानी अलग रेल बजट की परंपरा (जो 1924 में एकवर्थ समिति की सिफारिश पर शुरू हुई थी) को समाप्त कर इसे आम बजट में मिला दिया गया।",
+        fact: "The Union Budget presentation date was also advanced from the end of February to February 1 starting in 2017."
+      },
+      {
+        id: 10,
+        stemEn: "Under the Make in India initiative unveiled in September 2014, what was the primary target regarding the share of manufacturing in India's GDP?",
+        stemHi: "सितंबर 2014 में शुरू की गई 'मेक इन इंडिया' पहल के तहत भारत के सकल घरेलू उत्पाद (GDP) में विनिर्माण क्षेत्र की हिस्सेदारी को कितने प्रतिशत तक बढ़ाने का लक्ष्य रखा गया था?",
+        options: [
+          "10%",
+          "15%",
+          "20%",
+          "25%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Make in India was launched on September 25, 2014, with the objective of transforming India into a global manufacturing hub and increasing the share of the manufacturing sector in GDP to 25% by 2025.",
+        expHi: "'मेक इन इंडिया' अभियान 25 सितंबर 2014 को शुरू किया गया था। इसका प्रमुख उद्देश्य देश में निवेश आकर्षित करना, नवाचार को बढ़ावा देना तथा सकल घरेलू उत्पाद (GDP) में विनिर्माण की हिस्सेदारी को बढ़ाकर 25% करना था।",
+        fact: "The logo of Make in India features a roaring lion made of industrial cogs/gears, symbolizing industrial strength."
+      },
+      {
+        id: 11,
+        stemEn: "What is the minimum and maximum financial coverage provided per family per year for secondary and tertiary hospitalization under Ayushman Bharat - PMJAY launched in 2018?",
+        stemHi: "2018 में शुरू की गई आयुष्मान भारत - PMJAY योजना के तहत द्वितीयक और तृतीयक देखभाल हेतु प्रति परिवार प्रति वर्ष कितनी वित्तीय कवरेज सीमा प्रदान की जाती है?",
+        options: [
+          "₹50,000",
+          "₹1,00,000",
+          "₹2,50,000",
+          "₹5,00,000",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (PM-JAY), launched on September 23, 2018, in Ranchi (Jharkhand), provides a health cover of ₹5 lakh per family per year for secondary and tertiary care hospitalization.",
+        expHi: "आयुष्मान भारत प्रधानमंत्री जन आरोग्य योजना (PM-JAY) 23 सितंबर 2018 को रांची, झारखंड से शुरू की गई थी। इसके अंतर्गत पात्र परिवारों को प्रति वर्ष ₹5 लाख तक का कैशलेस एवं पेपरलेस स्वास्थ्य बीमा कवर प्रदान किया जाता है।",
+        fact: "PM-JAY is world's largest government-funded healthcare assurance scheme, administered by the National Health Authority (NHA)."
+      },
+      {
+        id: 12,
+        stemEn: "What was the revised definition threshold of an 'Enterprise' categorized as a 'Micro Enterprise' under the MSME classification criteria effective from July 1, 2020?",
+        stemHi: "1 जुलाई 2020 से प्रभावी नए MSME वर्गीकरण मानदंडों के अनुसार 'सूक्ष्म उद्यम' (Micro Enterprise) के लिए परिभाषित सीमा क्या है?",
+        options: [
+          "Investment not exceeding ₹1 crore and Annual Turnover not exceeding ₹5 crore / संयंत्र एवं मशीनरी में निवेश ₹1 करोड़ से कम और वार्षिक कारोबार ₹5 करोड़ से कम",
+          "Investment not exceeding ₹10 crore and Annual Turnover not exceeding ₹50 crore / संयंत्र एवं मशीनरी में निवेश ₹10 करोड़ से कम और वार्षिक कारोबार ₹50 करोड़ से कम",
+          "Investment not exceeding ₹50 crore and Annual Turnover not exceeding ₹250 crore / संयंत्र एवं मशीनरी में निवेश ₹50 करोड़ से कम और वार्षिक कारोबार ₹250 करोड़ से कम",
+          "Investment not exceeding ₹25 lakh with no turnover criteria / ₹25 लाख तक निवेश बिना किसी टर्नओवर मानदंड के",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Under the composite criteria introduced on July 1, 2020, a Micro enterprise is defined as an entity with investment in plant and machinery up to ₹1 crore and annual turnover up to ₹5 crore.",
+        expHi: "1 जुलाई 2020 से लागू संशोधित परिभाषा के तहत सूक्ष्म (Micro) उद्यम वह है जहां संयंत्र और मशीनरी में निवेश ₹1 करोड़ तक तथा कुल वार्षिक टर्नओवर ₹5 करोड़ तक हो।",
+        fact: "The revised 2020 definition eliminated the distinction between manufacturing and services sector MSMEs."
+      },
+      {
+        id: 13,
+        stemEn: "In which year was the 'Pradhan Mantri Fasal Bima Yojana' (PMFBY) launched by the Government of India, replacing NAIS and MNAIS?",
+        stemHi: "भारत सरकार द्वारा पूर्ववर्ती NAIS और MNAIS योजनाओं के स्थान पर 'प्रधानमंत्री फसल बीमा योजना' (PMFBY) किस वर्ष शुरू की गई थी?",
+        options: [
+          "2014",
+          "2015",
+          "2016",
+          "2018",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "PMFBY was launched on January 13, 2016, to provide comprehensive risk insurance to farmers against non-preventable natural risks from pre-sowing to post-harvest stages.",
+        expHi: "प्रधानमंत्री फसल बीमा योजना (PMFBY) का शुभारंभ 13 जनवरी 2016 को किया गया था। इसका उद्देश्य प्राकृतिक आपदाओं, कीटों और रोगों से फसल हानि की स्थिति में किसानों को व्यापक बीमा आवरण उपलब्ध कराना है।",
+        fact: "Under PMFBY, the premium paid by farmers is capped at 2% for Kharif crops, 1.5% for Rabi crops, and 5% for annual commercial/horticultural crops."
+      },
+      {
+        id: 14,
+        stemEn: "What is the total direct financial benefit provided per year to eligible farmer families under the PM-KISAN scheme launched in February 2019?",
+        stemHi: "फरवरी 2019 में शुरू की गई 'पीएम-किसान' (PM-KISAN) योजना के तहत पात्र किसान परिवारों को प्रति वर्ष कुल कितना प्रत्यक्ष वित्तीय लाभ दिया जाता है?",
+        options: [
+          "₹4,000 per year / ₹4,000 प्रति वर्ष",
+          "₹6,000 per year / ₹6,000 प्रति वर्ष",
+          "₹8,000 per year / ₹8,000 प्रति वर्ष",
+          "₹12,000 per year / ₹12,000 प्रति वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under the Pradhan Mantri Kisan Samman Nidhi (PM-KISAN) scheme launched on February 24, 2019 (with retrospective effect from December 1, 2018), eligible landholder farmer families receive ₹6,000 per annum paid in three equal four-monthly installments of ₹2,000 each.",
+        expHi: "पीएम-किसान योजना के अंतर्गत पात्र कृषक परिवारों को ₹6,000 प्रति वर्ष की वित्तीय सहायता तीन समान किस्तों (प्रत्येक ₹2,000) में प्रत्यक्ष लाभ अंतरण (DBT) के माध्यम से बैंक खातों में अंतरित की जाती है।",
+        fact: "PM-KISAN is a 100% Central Sector Scheme administered directly by the Ministry of Agriculture and Farmers Welfare."
+      },
+      {
+        id: 15,
+        stemEn: "In what year was the Unified Payments Interface (UPI) pilot project publicly rolled out by the National Payments Corporation of India (NPCI)?",
+        stemHi: "भारतीय राष्ट्रीय भुगतान निगम (NPCI) द्वारा एकीकृत भुगतान इंटरफेस (UPI) का प्रायोगिक संस्करण किस वर्ष सार्वजनिक रूप से जारी किया गया था?",
+        options: [
+          "2014",
+          "2015",
+          "2016",
+          "2018",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Unified Payments Interface (UPI) was launched on April 11, 2016, by Dr. Raghuram Rajan (then RBI Governor) along with NPCI in Mumbai, transforming digital payments across India.",
+        expHi: "यूपीआई (UPI) को एनपीसीआई (NPCI) द्वारा 11 अप्रैल 2016 को लॉन्च किया गया था। यह प्रणाली तत्काल निधि अंतरण (IMPS) के ढांचे पर आधारित एक रीयल-टाइम भुगतान प्रणाली है।",
+        fact: "NPCI is an initiative of the Reserve Bank of India (RBI) and the Indian Banks' Association (IBA) under the Payment and Settlement Systems Act, 2007."
+      },
+      {
+        id: 16,
+        stemEn: "The Production Linked Incentive (PLI) scheme, an anchor reform under the Atmanirbhar Bharat package, was introduced to achieve which primary objective?",
+        stemHi: "'आत्मनिर्भर भारत' अभियान के तहत प्रारंभ की गई 'उत्पादन संबद्ध प्रोत्साहन' (PLI) योजना का प्राथमिक उद्देश्य क्या है?",
+        options: [
+          "To boost domestic manufacturing capabilities and attract large-scale investments / घरेलू विनिर्माण क्षमता को बढ़ावा देना एवं बड़े पैमाने पर निवेश आकर्षित करना",
+          "To waive off farm loans in drought-affected districts / सूखा प्रभावित जिलों में कृषि ऋण माफ करना",
+          "To offer free internet services in rural primary schools / ग्रामीण प्राथमिक विद्यालयों में मुफ्त इंटरनेट सेवा प्रदान करना",
+          "To directly subsidize household cooking gas cylinders / घरेलू रसोई गैस सिलेंडरों पर प्रत्यक्ष नकद सब्सिडी देना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The PLI scheme was launched in 2020 to scale up domestic manufacturing, enhance export competitiveness, reduce import dependencies, and create global manufacturing champions in strategic sectors.",
+        expHi: "उत्पादन संबद्ध प्रोत्साहन (PLI) योजना का उद्देश्य घरेलू स्तर पर विनिर्माण को वित्तीय प्रोत्साहन देकर बढ़ावा देना, आयात पर निर्भरता घटाना और वैश्विक स्तर पर प्रतिस्पर्धी निर्यात का सृजन करना है।",
+        fact: "Under PLI, incentives are paid on incremental sales of manufactured goods over the base year for up to 5-6 years."
+      },
+      {
+        id: 17,
+        stemEn: "Which prominent public sector enterprise was officially privatized and handed over to Talace Pvt. Ltd. (Tata Sons) in January 2022 as part of the strategic disinvestment policy?",
+        stemHi: "रणनीतिक विनिवेश नीति के तहत जनवरी 2022 में किस प्रमुख सार्वजनिक क्षेत्र के उद्यम का निजीकरण कर उसे 'टैलेस प्राइवेट लिमिटेड' (टाटा संस) को सौंप दिया गया था?",
+        options: [
+          "Bharat Heavy Electricals Limited (BHEL) / भारत हेवी इलेक्ट्रिकल्स लिमिटेड",
+          "Steel Authority of India Limited (SAIL) / स्टील अथॉरिटी ऑफ इंडिया लिमिटेड",
+          "Air India / एयर इंडिया",
+          "Bharat Petroleum Corporation Limited (BPCL) / भारत पेट्रोलियम कॉर्पोरेशन लिमिटेड",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "In January 2022, the Government of India completed the strategic disinvestment and transfer of 100% shares of Air India to Talace Pvt. Ltd., a subsidiary of Tata Sons, marking a milestone in India's disinvestment reforms.",
+        expHi: "भारत सरकार ने अपनी रणनीतिक विनिवेश नीति के तहत जनवरी 2022 में 'एयर इंडिया' की 100% इक्विटी हिस्सेदारी का स्वामित्व टाटा संस की सहायक कंपनी 'टैलेस प्राइवेट लिमिटेड' को विधिवत हस्तांतरित किया।",
+        fact: "Department of Investment and Public Asset Management (DIPAM) under the Ministry of Finance handles disinvestment of central public sector enterprises."
+      },
+      {
+        id: 18,
+        stemEn: "What was the revised limit for Foreign Direct Investment (FDI) permitted under the automatic route in the Defence sector, as amended in 2020?",
+        stemHi: "वर्ष 2020 में किए गए सुधारों के तहत रक्षा क्षेत्र में स्वचालित मार्ग (Automatic Route) से प्रत्यक्ष विदेशी निवेश (FDI) की सीमा बढ़ाकर कितनी कर दी गई थी?",
+        options: [
+          "26%",
+          "49%",
+          "74%",
+          "100%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "In September 2020, the Government of India increased the FDI limit under the automatic route in the defence manufacturing sector from 49% to 74% to foster domestic arms manufacturing and foreign tech inflow.",
+        expHi: "सितंबर 2020 में केंद्र सरकार ने रक्षा क्षेत्र में स्वचालित मार्ग (Automatic Route) से प्रत्यक्ष विदेशी निवेश (FDI) की सीमा 49% से बढ़ाकर 74% कर दी थी।",
+        fact: "FDI beyond 74% in defence continues to be permitted via the Government Approval Route where it results in access to modern technology."
+      },
+      {
+        id: 19,
+        stemEn: "Which regulatory act was enacted in 2016 to protect homebuyers and ensure transparency and accountability in the Indian real estate sector?",
+        stemHi: "घर खरीदारों के हितों की रक्षा करने तथा भारतीय रियल एस्टेट क्षेत्र में पारदर्शिता और जवाबदेही सुनिश्चित करने के लिए 2016 में कौन सा नियामक अधिनियम लागू किया गया था?",
+        options: [
+          "SARFAESI Act / सरफेसी अधिनियम",
+          "FEMA Act / फेमा अधिनियम",
+          "RERA (Real Estate Regulation and Development Act) / रेरा (रियल एस्टेट विनियमन और विकास अधिनियम)",
+          "Companies Act 2013 / कंपनी अधिनियम 2013",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "RERA was enacted in May 2016 to standardize real estate practices, enforce mandatory registration of residential and commercial projects, and mandate that 70% of buyer funds be kept in dedicated escrow accounts.",
+        expHi: "रियल एस्टेट (विनियमन और विकास) अधिनियम, 2016 (RERA) घर खरीदारों के अधिकारों के संरक्षण और रियल एस्टेट क्षेत्र में समय पर प्रोजेक्ट पूरा कराने की जवाबदेही तय करने हेतु पारित किया गया था।",
+        fact: "Under RERA, promoters cannot alter approved plans without the consent of at least two-thirds of the allottees."
+      },
+      {
+        id: 20,
+        stemEn: "What is the upper age limit for joining the Atal Pension Yojana (APY), a flagship social security scheme launched in 2015?",
+        stemHi: "2015 में शुरू की गई प्रमुख सामाजिक सुरक्षा योजना 'अटल पेंशन योजना' (APY) में शामिल होने के लिए अधिकतम आयु सीमा क्या निर्धारित है?",
+        options: [
+          "35 years / 35 वर्ष",
+          "40 years / 40 वर्ष",
+          "50 years / 50 वर्ष",
+          "60 years / 60 वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Atal Pension Yojana (APY) was launched on May 9, 2015. It is open to all Indian citizens aged between 18 and 40 years, providing a guaranteed monthly pension of ₹1,000 to ₹5,000 after attaining 60 years of age.",
+        expHi: "अटल पेंशन योजना (APY) 9 मई 2015 को शुरू की गई थी। इस योजना में प्रवेश की आयु सीमा 18 से 40 वर्ष निर्धारित है। इसके तहत 60 वर्ष की आयु पूरी होने पर ₹1,000 से ₹5,000 तक की न्यूनतम निश्चित मासिक पेंशन मिलती है।",
+        fact: "APY is administered by the Pension Fund Regulatory and Development Authority (PFRDA) through the National Pension System (NPS) architecture."
+      },
+      {
+        id: 21,
+        stemEn: "Under the PM SVANidhi scheme launched during the COVID-19 pandemic in 2020, which group of beneficiaries was provided collateral-free micro working capital loans?",
+        stemHi: "वर्ष 2020 में कोविड-19 महामारी के दौरान शुरू की गई 'पीएम स्वनिधि' (PM SVANidhi) योजना के तहत किस लक्षित वर्ग को संपार्श्विक-मुक्त कार्यशील पूंजी ऋण प्रदान किया गया?",
+        options: [
+          "Large corporate exporters / बड़े कॉर्पोरेट निर्यातक",
+          "Registered MSME factory owners / पंजीकृत एमएसएमई कारखाना मालिक",
+          "Street Vendors / रेहड़ी-पटरी एवं ठेला विक्रेता (स्ट्रीट वेंडर्स)",
+          "Commercial Dairy farmers / व्यावसायिक डेयरी किसान",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "PM SVANidhi (PM Street Vendor’s AtmaNirbhar Nidhi) was launched on June 1, 2020, by the Ministry of Housing and Urban Affairs to empower street vendors with affordable working capital loans of ₹10,000 (subsequently enhanced to ₹20,000 and ₹50,000 on prompt repayment).",
+        expHi: "पीएम स्वनिधि योजना 1 जून 2020 को आवास एवं शहरी कार्य मंत्रालय द्वारा शुरू की गई थी। इसके तहत रेहड़ी-पटरी वालों (स्ट्रीट वेंडर्स) को अपना व्यवसाय पुनः शुरू करने हेतु प्रारंभिक ₹10,000 का संपार्श्विक-मुक्त (कोलेटरल-फ्री) कार्यशील पूंजी ऋण दिया जाता है।",
+        fact: "Regular digital transactions under PM SVANidhi earn monthly cashback incentives, and prompt loan repayments attract a 7% interest subsidy."
+      },
+      {
+        id: 22,
+        stemEn: "In which year was the 'Stand-Up India' scheme launched to support entrepreneurship among Scheduled Castes (SC), Scheduled Tribes (ST), and Women borrowers?",
+        stemHi: "अनुसूचित जाति (SC), अनुसूचित जनजाति (ST) और महिला उद्यमियों के बीच उद्यमशीलता को बढ़ावा देने हेतु 'स्टैंड-अप इंडिया' योजना किस वर्ष शुरू की गई थी?",
+        options: [
+          "2014",
+          "2016",
+          "2018",
+          "2020",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Stand-Up India scheme was launched by the Prime Minister on April 5, 2016, providing bank loans between ₹10 lakh and ₹1 crore to at least one SC or ST borrower and at least one woman borrower per bank branch for setting up greenfield enterprises.",
+        expHi: "स्टैंड-अप इंडिया योजना 5 अप्रैल 2016 को शुरू की गई थी। इसके तहत प्रत्येक बैंक शाखा द्वारा कम से कम एक SC/ST और एक महिला उद्यमी को ग्रीनफील्ड (नए) उद्यम की स्थापना हेतु ₹10 लाख से ₹1 करोड़ के बीच ऋण दिया जाता है।",
+        fact: "Stand-Up India is administered by the Department of Financial Services (DFS), Ministry of Finance."
+      },
+      {
+        id: 23,
+        stemEn: "Which statutory authority was established under the GST Act to curb unjust profiteering by businesses and ensure tax reduction benefits reach consumers?",
+        stemHi: "जीएसटी अधिनियम के तहत यह सुनिश्चित करने के लिए कि कर कटौती का लाभ उपभोक्ताओं तक पहुंचे तथा अनुचित मुनाफाखोरी रोकी जा सके, किस प्राधिकरण का गठन किया गया था?",
+        options: [
+          "National Anti-Profiteering Authority (NAA) / राष्ट्रीय मुनाफाखोरी-रोधी प्राधिकरण",
+          "Competition Commission of India / भारतीय प्रतिस्पर्धा आयोग",
+          "Central Vigilance Commission / केंद्रीय सतर्कता आयोग",
+          "Tariff Advisory Committee / प्रशुल्क सलाहकार समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The National Anti-Profiteering Authority (NAA) was constituted under Section 171 of the Central Goods and Services Tax Act, 2017, to ensure that the reduction in rates of taxes and benefits of input tax credit are passed on to recipients by way of commensurate reduction in prices.",
+        expHi: "केंद्रीय वस्तु एवं सेवा कर अधिनियम, 2017 की धारा 171 के अंतर्गत राष्ट्रीय मुनाफाखोरी-रोधी प्राधिकरण (NAA) की स्थापना की गई थी, ताकि व्यवसायी जीएसटी दरों में कटौती का लाभ सीधे उपभोक्ताओं तक पहुंचाएं।",
+        fact: "The operational remit of anti-profiteering matters has subsequently been handled by the Competition Commission of India (CCI)."
+      },
+      {
+        id: 24,
+        stemEn: "In the Union Budget 2021–22, the National Monetisation Pipeline (NMP) was announced. What is the fundamental mechanism of this reform?",
+        stemHi: "केंद्रीय बजट 2021-22 में 'राष्ट्रीय मुद्रीकरण पाइपलाइन' (NMP) की घोषणा की गई थी। इस सुधार का मूल तंत्र क्या है?",
+        options: [
+          "Outright sale of land ownership rights to private entities / निजी संस्थाओं को सरकारी भूमि का सीधा और स्थायी स्वामित्व बेचना",
+          "Leasing core operational brownfield infrastructure assets to private operators while retaining public ownership / सरकारी स्वामित्व बनाए रखते हुए परिचालनगत 'ब्राउनफील्ड' अवसंरचना परिसंपत्तियों को निजी क्षेत्र को पट्टे (लीज) पर देना",
+          "Nationalization of private commercial banking operations / निजी वाणिज्यिक बैंकिंग परिचालन का राष्ट्रीयकरण",
+          "Closure of loss-making public hospitals / घाटे में चल रहे सरकारी अस्पतालों को बंद करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Unveiled in August 2021 by NITI Aayog, the National Monetisation Pipeline (NMP) aims to monetize core brownfield public infrastructure assets (roads, railways, power grids) through contractual lease agreements for an estimated ₹6 lakh crore, retaining government ownership while unlocking private capital.",
+        expHi: "नीति आयोग द्वारा तैयार राष्ट्रीय मुद्रीकरण पाइपलाइन (NMP) के तहत सरकारी संपत्तियों के स्वामित्व का स्थायी हस्तांतरण किए बिना, केवल उनके परिचालन एवं प्रबंधन अधिकारों को निजी कंपनियों को लीज (पट्टे) पर देकर राजस्व जुटाया जाता है।",
+        fact: "Roads (NHAI), Railways, and Power transmission together constitute more than 65% of the total asset value earmarked under NMP."
+      },
+      {
+        id: 25,
+        stemEn: "Which official committee appointed by the Government of India recommended the structural reforms leading to the Fiscal Responsibility and Budget Management (FRBM) Act review post-2016?",
+        stemHi: "वर्ष 2016 के पश्चात राजकोषीय उत्तरदायित्व और बजट प्रबंधन (FRBM) अधिनियम की समीक्षा और संरचनात्मक सुधारों की सिफारिश करने हेतु भारत सरकार द्वारा किस आधिकारिक समिति का गठन किया गया था?",
+        options: [
+          "Urjit Patel Committee / उर्जित पटेल समिति",
+          "Raghuram Rajan Committee / रघुराम राजन समिति",
+          "Bimal Jalan Committee / बिमल जालान समिति",
+          "N.K. Singh Committee / एन.के. सिंह समिति",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The N.K. Singh Committee (FRBM Review Committee) was appointed in May 2016 and submitted its report in January 2017, recommending a debt-to-GDP ratio of 60% for the general government (40% Central, 20% State) and fiscal deficit of 3% by 2023.",
+        expHi: "एफआरबीएम (FRBM) समीक्षा समिति का गठन मई 2016 में एन.के. सिंह की अध्यक्षता में किया गया था। इस समिति ने सामान्य सरकारी ऋण-जीडीपी अनुपात 60% (केंद्र 40%, राज्य 20%) और राजकोषीय घाटा 3% तक सीमित करने की सिफारिश की थी।",
+        fact: "N.K. Singh was subsequently appointed as the Chairman of the 15th Finance Commission of India."
+      },
+      {
+        id: 26,
+        stemEn: "Which national digital portal was launched by Prime Minister Narendra Modi on April 14, 2016, to connect existing APMC mandis into a unified national market for agricultural commodities?",
+        stemHi: "कृषि जिंसों के लिए मौजूदा एपीएमसी (APMC) मंडियों को एक एकीकृत राष्ट्रीय बाजार से जोड़ने हेतु 14 अप्रैल 2016 को प्रधानमंत्री नरेंद्र मोदी द्वारा किस राष्ट्रीय डिजिटल पोर्टल का शुभारंभ किया गया था?",
+        options: [
+          "e-Kisan / ई-किसान",
+          "AGRIMARKET / एग्रीमार्केट",
+          "e-NAM (National Agriculture Market) / ई-नाम (राष्ट्रीय कृषि बाजार)",
+          "Krishi Kalyan Portal / कृषि कल्याण पोर्टल",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "e-NAM (National Agriculture Market) was launched on April 14, 2016, as an online trading platform for agricultural commodities across India. It integrates physical APMC mandis through a common online portal to facilitate transparent, pan-India trade and better price discovery for farmers.",
+        expHi: "ई-नाम (e-NAM - National Agriculture Market) को 14 अप्रैल 2016 को लॉन्च किया गया था। यह एक अखिल भारतीय इलेक्ट्रॉनिक ट्रेडिंग पोर्टल है जो कृषि उपजों के लिए एक एकीकृत राष्ट्रीय बाजार बनाने हेतु विभिन्न एपीएमसी मंडियों को ऑनलाइन जोड़ता है।",
+        fact: "Small Farmers' Agribusiness Consortium (SFAC) is the lead agency for implementing e-NAM under the Ministry of Agriculture and Farmers Welfare."
+      },
+      {
+        id: 27,
+        stemEn: "In which year was the 'Pradhan Mantri Jan Dhan Yojana' (PMJDY), the world's largest financial inclusion initiative, officially launched?",
+        stemHi: "विश्व की सबसे बड़ी वित्तीय समावेशन पहल 'प्रधानमंत्री जन-धन योजना' (PMJDY) आधिकारिक तौर पर किस वर्ष शुरू की गई थी?",
+        options: [
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "PMJDY was announced by Prime Minister Narendra Modi in his Independence Day speech on August 15, 2014, and formally launched nationwide on August 28, 2014, with the slogan 'Mera Khata, Bhagya Vidhata'.",
+        expHi: "प्रधानमंत्री जन-धन योजना (PMJDY) की घोषणा 15 अगस्त 2014 को हुई थी और इसे औपचारिक रूप से 28 अगस्त 2014 को 'मेरा खाता, भाग्य विधाता' के नारे के साथ देश भर में लॉन्च किया गया था।",
+        fact: "PMJDY provides zero-balance basic savings accounts along with an indigenous RuPay debit card and inbuilt accident insurance coverage."
+      },
+      {
+        id: 28,
+        stemEn: "What is the designated tax slab structure under the Goods and Services Tax (GST) system in India as per the primary four-tier rate framework?",
+        stemHi: "भारत में माल एवं सेवा कर (GST) प्रणाली के तहत निर्धारित प्राथमिक चार-स्तरीय दर संरचना (टैक्स स्लैब) कौन सी है?",
+        options: [
+          "4%, 8%, 16%, and 24% / 4%, 8%, 16% और 24%",
+          "5%, 12%, 18%, and 28% / 5%, 12%, 18% और 28%",
+          "6%, 10%, 15%, and 30% / 6%, 10%, 15% और 30%",
+          "2%, 10%, 20%, and 25% / 2%, 10%, 20% और 25%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The GST Council established a four-tier rate structure comprising 5%, 12%, 18%, and 28%. Essential daily commodities are taxed at 0% (exempt), while luxury and demerit goods fall under the 28% slab plus applicable cess.",
+        expHi: "जीएसटी परिषद द्वारा निर्धारित मानक चार-स्तरीय कर संरचना 5%, 12%, 18% और 28% है। आवश्यक खाद्य वस्तुओं को शून्य (0%) दर पर रखा गया है, जबकि विलासिता और अहितकर वस्तुओं पर 28% कर व उपकर (cess) लगाया जाता है।",
+        fact: "Precious metals like gold and silver are placed in a special lower rate bracket of 3%."
+      },
+      {
+        id: 29,
+        stemEn: "What was the central premise of the 'Indradhanush Plan' announced by the Ministry of Finance in August 2015?",
+        stemHi: "अगस्त 2015 में वित्त मंत्रालय द्वारा घोषित 'इंद्रधनुष योजना' (Indradhanush Plan) का मूल उद्देश्य क्या था?",
+        options: [
+          "Revamping and recapitalizing Public Sector Banks (PSBs) / सार्वजनिक क्षेत्र के बैंकों (PSBs) का पुनरुद्धार एवं पुनर्पूंजीकरण",
+          "Universal childhood immunization against seven diseases / सात बीमारियों के खिलाफ सार्वभौमिक बाल टीकाकरण",
+          "Development of inter-state solar transmission corridors / अंतर-राज्य सौर पारेषण गलियारों का विकास",
+          "Direct procurement of rainfed agricultural commodities / वर्षा सिंचित कृषि जिंसों की सीधी खरीद",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Mission Indradhanush for Public Sector Banks (PSBs) was launched in August 2015 as a 7-pronged reform strategy: Appointments, Banks Board Bureau (BBB), Capitalization, De-stressing, Empowerment, Framework of accountability, and Governance reforms (ABCDEFG).",
+        expHi: "अगस्त 2015 में सार्वजनिक क्षेत्र के बैंकों (PSBs) के संचालन में सुधार, गैर-निष्पादित परिसंपत्तियों (NPA) के समाधान और पुनर्पूंजीकरण हेतु 7-सूत्रीय 'मिशन इंद्रधनुष' ढांचा शुरू किया गया था।",
+        fact: "Do not confuse this with 'Mission Indradhanush' in the health sector, which is targeted at universal childhood and pregnant women immunization."
+      },
+      {
+        id: 30,
+        stemEn: "Under the Foreign Direct Investment (FDI) policy reforms post-2014, what percentage of FDI was permitted under the 100% automatic route for Coal Mining and related commercial activities in 2019?",
+        stemHi: "वर्ष 2014 के बाद के FDI नीति सुधारों के तहत, वर्ष 2019 में कोयला खनन और संबंधित वाणिज्यिक गतिविधियों के लिए 100% स्वचालित मार्ग के तहत कितने प्रतिशत FDI की अनुमति दी गई?",
+        options: [
+          "26%",
+          "49%",
+          "74%",
+          "100%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "In August 2019, the Union Cabinet approved 100% FDI under the automatic route for coal mining, processing, and associated infrastructure activities, ending the historical monopoly and opening the sector to global commercial mining companies.",
+        expHi: "अगस्त 2019 में केंद्रीय मंत्रिमंडल ने कोयला खनन, संबंधित प्रसंस्करण और विपणन गतिविधियों के लिए स्वचालित मार्ग से 100% प्रत्यक्ष विदेशी निवेश (FDI) की अनुमति प्रदान की थी।",
+        fact: "Commercial coal mine auctions for the private sector were formally operationalized under the Mineral Laws (Amendment) Act, 2020."
+      },
+      {
+        id: 31,
+        stemEn: "In what year did the Reserve Bank of India officially initiate the first pilot phase of the Central Bank Digital Currency (CBDC) - Digital Rupee (e₹)?",
+        stemHi: "भारतीय रिज़र्व बैंक द्वारा आधिकारिक तौर पर केंद्रीय बैंक डिजिटल मुद्रा (CBDC) - डिजिटल रुपया (e₹) का पहला पायलट प्रोजेक्ट किस वर्ष शुरू किया गया था?",
+        options: [
+          "2018",
+          "2019",
+          "2020",
+          "2022",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Reserve Bank of India launched the wholesale pilot of the Digital Rupee (e₹-W) on November 1, 2022, followed by the retail pilot (e₹-R) on December 1, 2022, representing a sovereign digital alternative to physical cash.",
+        expHi: "भारतीय रिज़र्व बैंक (RBI) ने थोक खंड (e₹-W) के लिए 1 नवंबर 2022 को तथा खुदरा खंड (e₹-R) के लिए 1 दिसंबर 2022 को 'डिजिटल रुपया' का पहला पायलट परीक्षण शुरू किया था।",
+        fact: "Legal backing for CBDC was provided by amending Section 2 of the Reserve Bank of India Act, 1934, via the Finance Act, 2022."
+      },
+      {
+        id: 32,
+        stemEn: "What is the statutory validity period of the corporate insolvency resolution process (CIRP) mandated under the Insolvency and Bankruptcy Code (IBC) 2016 (including extensions)?",
+        stemHi: "दिवाला और शोधन अक्षमता संहिता (IBC) 2016 के तहत कॉर्पोरेट दिवाला समाधान प्रक्रिया (CIRP) को पूरा करने के लिए कानूनी रूप से निर्धारित अधिकतम समय-सीमा (विस्तार सहित) क्या है?",
+        options: [
+          "90 days / 90 दिन",
+          "180 days / 180 दिन",
+          "330 days / 330 दिन",
+          "500 days / 500 दिन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The IBC originally mandated a 180-day deadline, extendable by 90 days (total 270 days). However, through the 2019 amendment, an outer limit of 330 days was established, which includes the time taken in legal proceedings and litigation.",
+        expHi: "दिवाला और शोधन अक्षमता संहिता (IBC) में 2019 के संशोधन के अनुसार, कानूनी मुकदमों और विस्तार को मिलाकर समाधान प्रक्रिया (CIRP) को पूरा करने की अधिकतम अनिवार्य सीमा 330 दिन तय की गई है।",
+        fact: "National Company Law Tribunal (NCLT) serves as the Adjudicating Authority for corporate insolvency under the IBC."
+      },
+      {
+        id: 33,
+        stemEn: "What is the annual turnover threshold for an entity to qualify as a 'Small Enterprise' under the composite MSME classification effective from July 1, 2020?",
+        stemHi: "1 जुलाई 2020 से प्रभावी समग्र एमएसएमई वर्गीकरण के तहत किसी इकाई को 'लघु उद्यम' (Small Enterprise) के रूप में वर्गीकृत करने हेतु वार्षिक टर्नओवर की सीमा क्या है?",
+        options: [
+          "Up to ₹5 crore / ₹5 करोड़ तक",
+          "Up to ₹25 crore / ₹25 करोड़ तक",
+          "Up to ₹50 crore / ₹50 करोड़ तक",
+          "Up to ₹250 crore / ₹250 करोड़ तक",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Under the MSME notification of June 2020 (effective July 1, 2020), a 'Small Enterprise' is defined as one with investment in plant & machinery not exceeding ₹10 crore and turnover not exceeding ₹50 crore.",
+        expHi: "1 जुलाई 2020 से लागू मानदंडों के अनुसार, 'लघु उद्यम' (Small Enterprise) वह इकाई है जिसमें संयंत्र व मशीनरी में निवेश ₹10 करोड़ तक और वार्षिक कारोबार (टर्नओवर) ₹50 करोड़ तक हो।",
+        fact: "Medium enterprises have thresholds of investment up to ₹50 crore and turnover up to ₹250 crore."
+      },
+      {
+        id: 34,
+        stemEn: "In which year was the Foreign Investment Promotion Board (FIPB) formally abolished by the Union Government to expedite foreign investment approvals?",
+        stemHi: "प्रत्यक्ष विदेशी निवेश की मंजूरी में तेजी लाने के उद्देश्य से केंद्र सरकार द्वारा विदेशी निवेश संवर्धन बोर्ड (FIPB) को औपचारिक रूप से किस वर्ष समाप्त किया गया था?",
+        options: [
+          "2014",
+          "2015",
+          "2017",
+          "2019",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Union Cabinet formally abolished the 25-year-old Foreign Investment Promotion Board (FIPB) in May 2017. Following this, FDI applications are directly processed by the concerned administrative ministries/departments via the Foreign Investment Facilitation Portal (FIFP).",
+        expHi: "केंद्रीय मंत्रिमंडल ने मई 2017 में विदेशी निवेश संवर्धन बोर्ड (FIPB) को आधिकारिक रूप से समाप्त कर दिया। इसके बाद से विदेशी निवेश प्रस्तावों को सीधे संबंधित प्रशासनिक मंत्रालयों द्वारा ऑनलाइन 'विदेशी निवेश सुविधा पोर्टल' (FIFP) के जरिए मंजूरी दी जाती है।",
+        fact: "Department for Promotion of Industry and Internal Trade (DPIIT) oversees standard FDI policy notifications in India."
+      },
+      {
+        id: 35,
+        stemEn: "What is the maximum retail loan amount financed under the 'Kishor' sub-scheme of the Pradhan Mantri MUDRA Yojana (PMMY)?",
+        stemHi: "प्रधानमंत्री मुद्रा योजना (PMMY) के 'किशोर' उप-घटक के तहत अधिकतम कितनी ऋण राशि स्वीकृत की जाती है?",
+        options: [
+          "₹50,000",
+          "₹1,00,000",
+          "₹5,00,000",
+          "₹10,00,000",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The 'Kishor' category under PMMY covers loans above ₹50,000 and up to ₹5,00,000 to assist developing micro and small entrepreneurs expand their ongoing businesses.",
+        expHi: "प्रधानमंत्री मुद्रा योजना (PMMY) में 'किशोर' श्रेणी के अंतर्गत ₹50,000 से अधिक और ₹5 लाख तक का ऋण प्रदान किया जाता है।",
+        fact: "MUDRA loans require no collateral/security from borrowers and are covered under the Credit Guarantee Fund for Micro Units (CGFMU)."
+      },
+      {
+        id: 36,
+        stemEn: "Which institutional mechanism was established by the Reserve Bank of India in 2015 to conduct paperless and transparent online discounting of trade receivables of MSMEs?",
+        stemHi: "सूक्ष्म, लघु एवं मध्यम उद्यमों (MSMEs) के व्यापारिक प्राप्य बिलों की कैशलेस व पारदर्शी ऑनलाइन भुनाई (डिस्काउंटिंग) हेतु आरबीआई द्वारा 2015 में किस संस्थागत प्रणाली की शुरुआत की गई थी?",
+        options: [
+          "UPI",
+          "TReDS (Trade Receivables Discounting System) / टीआरईडीएस",
+          "NACH",
+          "FASTag",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "TReDS (Trade Receivables Discounting System) is an electronic institutional platform introduced by the RBI in 2015 to facilitate the financing and discounting of trade receivables of MSMEs from corporate buyers and government undertakings.",
+        expHi: "टीआरईडीएस (TReDS) एक इलेक्ट्रॉनिक प्लेटफॉर्म है जिसे भारतीय रिज़र्व बैंक ने 2015 में स्थापित किया था ताकि MSME इकाइयां बड़े कॉर्पोरेट खरीदारों से अपने प्राप्य बिलों को बैंकों और वित्तीय संस्थानों के जरिए तुरंत भुना सकें।",
+        fact: "TReDS operates under the regulatory guidelines of the Payment and Settlement Systems Act, 2007."
+      },
+      {
+        id: 37,
+        stemEn: "The historic mega-merger of 10 Public Sector Banks into 4 anchor banks, reducing the total number of Public Sector Banks to 12, took effect on which date?",
+        stemHi: "सार्वजनिक क्षेत्र के 10 बड़े बैंकों का 4 बड़े एंकर बैंकों में ऐतिहासिक विलय, जिससे सार्वजनिक क्षेत्र के बैंकों की कुल संख्या घटकर 12 रह गई, किस तारीख से प्रभावी हुआ था?",
+        options: [
+          "1 July 2017 / 1 जुलाई 2017",
+          "1 April 2019 / 1 अप्रैल 2019",
+          "15 August 2020 / 15 अगस्त 2020",
+          "1 January 2021 / 1 जनवरी 2021",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4,
+        expEn: "The mega amalgamation of 10 public sector banks into 4 took effect on April 1, 2020. Oriental Bank of Commerce and United Bank of India merged into PNB; Syndicate Bank merged into Canara Bank; Andhra Bank and Corporation Bank merged into Union Bank of India; Allahabad Bank merged into Indian Bank. Since April 1, 2020, is not listed in options A through D, Option (E) is the correct answer.",
+        expHi: "10 सार्वजनिक क्षेत्र के बैंकों का विलय 4 बड़े बैंकों में 1 अप्रैल 2020 से प्रभावी हुआ था। विकल्पों (A) से (D) में 1 अप्रैल 2020 सम्मिलित नहीं है, अतः सही उत्तर विकल्प (E) है।",
+        fact: "Earlier on April 1, 2019, Dena Bank and Vijaya Bank were merged into Bank of Baroda."
+      },
+      {
+        id: 38,
+        stemEn: "Under the Pradhan Mantri Awas Yojana - Urban (PMAY-U) launched in June 2015, what was the flagship reform component introduced to provide an upfront interest subsidy on home loans?",
+        stemHi: "जून 2015 में शुरू की गई 'प्रधानमंत्री आवास योजना - शहरी' (PMAY-U) के तहत गृह ऋण पर अग्रिम ब्याज सब्सिडी प्रदान करने वाला प्रमुख सुधार घटक कौन सा था?",
+        options: [
+          "In-situ Slum Redevelopment (ISSR) / इन-सिटू स्लम पुनर्विकास",
+          "Credit Linked Subsidy Scheme (CLSS) / क्रेडिट लिंक्ड सब्सिडी स्कीम",
+          "Affordable Housing in Partnership (AHP) / साझेदारी में किफायती आवास",
+          "Beneficiary-led individual house construction (BLC) / लाभार्थी आधारित व्यक्तिगत गृह निर्माण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Credit Linked Subsidy Scheme (CLSS) was introduced under PMAY-U to provide an interest subsidy (up to 6.5% for EWS/LIG and varying subsidies for MIG) on housing loans, credited upfront directly to the principal loan account of beneficiaries.",
+        expHi: "प्रधानमंत्री आवास योजना - शहरी (PMAY-U) के अंतर्गत क्रेडिट लिंक्ड सब्सिडी स्कीम (CLSS) एक केंद्रीय क्षेत्र घटक था जिसके तहत गृह ऋण पर ब्याज सब्सिडी (EWS/LIG हेतु अधिकतम 6.5%) सीधे ऋण खाते में अग्रिम दी जाती थी।",
+        fact: "The Housing and Urban Development Corporation (HUDCO) and National Housing Bank (NHB) were designated as the Central Nodal Agencies (CNAs) to channelize this subsidy."
+      },
+      {
+        id: 39,
+        stemEn: "What is the upper age limit for an individual subscriber to enroll in the Pradhan Mantri Shram Yogi Maan-dhan (PM-SYM) pension scheme launched in 2019?",
+        stemHi: "वर्ष 2019 में शुरू की गई 'प्रधानमंत्री श्रम योगी मान-धन' (PM-SYM) पेंशन योजना में शामिल होने के लिए एक व्यक्तिगत अभिदाता हेतु अधिकतम आयु सीमा क्या है?",
+        options: [
+          "30 years / 30 वर्ष",
+          "40 years / 40 वर्ष",
+          "50 years / 50 वर्ष",
+          "60 years / 60 वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "PM-SYM was launched in February 2019 as a voluntary, contributory pension scheme for unorganized workers aged 18 to 40 years with a monthly income of ₹15,000 or less, guaranteeing a minimum monthly pension of ₹3,000 after age 60.",
+        expHi: "प्रधानमंत्री श्रम योगी मान-धन (PM-SYM) योजना असंगठित क्षेत्र के कामगारों (जिनकी मासिक आय ₹15,000 या उससे कम है) के लिए 18 से 40 वर्ष की प्रवेश आयु सीमा के साथ शुरू की गई थी। इसके तहत 60 वर्ष बाद ₹3,000 की मासिक न्यूनतम पेंशन सुनिश्चित है।",
+        fact: "The scheme operates on a 50:50 matching contribution basis between the beneficiary and the Central Government, managed by LIC."
+      },
+      {
+        id: 40,
+        stemEn: "In which year was the 'National Logistics Policy' (NLP) unveiled by the Prime Minister to reduce logistics costs in India from double digits to single digits?",
+        stemHi: "भारत में लॉजिस्टिक्स लागत को दोहरे अंकों से घटाकर एकल अंक में लाने के उद्देश्य से प्रधानमंत्री द्वारा 'राष्ट्रीय लॉजिस्टिक्स नीति' (NLP) किस वर्ष जारी की गई थी?",
+        options: [
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The National Logistics Policy (NLP) was officially launched on September 17, 2022. It aims to reduce logistics costs from approximately 13-14% of GDP down to around 8% and place India among the top 25 countries in the World Bank’s Logistics Performance Index by 2030.",
+        expHi: "राष्ट्रीय लॉजिस्टिक्स नीति (NLP) का शुभारंभ 17 सितंबर 2022 को किया गया था। इसका उद्देश्य देश में लॉजिस्टिक्स लागत को जीडीपी के 13-14% से घटाकर 8% के आसपास लाना तथा वैश्विक प्रतिस्पर्धात्मकता को बढ़ावा देना है।",
+        fact: "NLP complements the PM GatiShakti National Master Plan launched in October 2021 for multi-modal connectivity infrastructure."
+      },
+      {
+        id: 41,
+        stemEn: "What is the statutory voting weightage allocated to the Union Government in the Goods and Services Tax (GST) Council as per Article 279A?",
+        stemHi: "संविधान के अनुच्छेद 279A के अनुसार वस्तु एवं सेवा कर (GST) परिषद में केंद्र सरकार को कितना सांविधिक मतदान भार (वेटेज) आवंटित किया गया है?",
+        options: [
+          "One-fourth of total votes cast / कुल पड़े मतों का एक-चौथाई",
+          "One-third of total votes cast / कुल पड़े मतों का एक-तिहाई",
+          "One-half of total votes cast / कुल पड़े मतों का आधा",
+          "Two-thirds of total votes cast / कुल पड़े मतों का दो-तिहाई",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under Article 279A(9), every decision of the GST Council is taken by a majority of not less than three-fourths (75%) of the weighted votes of members present and voting. The Central Government has a weightage of one-third (33.33%) of total votes cast, and all State Governments combined hold two-thirds (66.67%) weightage.",
+        expHi: "अनुच्छेद 279A के तहत, जीएसटी परिषद में केंद्र सरकार का मत भार कुल पड़े मतों का एक-तिहाई (1/3) होता है, जबकि सभी राज्यों की सरकारों का संयुक्त भार दो-तिहाई (2/3) होता है। किसी भी निर्णय के लिए 75% बहुमत अनिवार्य है।",
+        fact: "This distribution ensures that neither the Centre nor the States alone can pass a decision without substantial consensus from the other."
+      },
+      {
+        id: 42,
+        stemEn: "Which dedicated bad bank was incorporated in July 2021 under the economic reforms agenda to aggregate and resolve large stressed bank assets?",
+        stemHi: "बड़े तनावग्रस्त बैंक ऋणों को समेकित व हल करने के लिए आर्थिक सुधारों के तहत जुलाई 2021 में किस समर्पित 'बैड बैंक' (Bad Bank) की स्थापना की गई थी?",
+        options: [
+          "State Bank of India Assets Ltd. / भारतीय स्टेट बैंक एसेट्स लिमिटेड",
+          "National Asset Reconstruction Company Limited (NARCL) / नेशनल एसेट रिकंस्ट्रक्शन कंपनी लिमिटेड",
+          "Industrial Development Bank of India / भारतीय औद्योगिक विकास बैंक",
+          "Insolvency Resolution Trust of India / इंसॉल्वेंसी रेजोल्यूशन ट्रस्ट ऑफ इंडिया",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "National Asset Reconstruction Company Limited (NARCL), known as India's 'Bad Bank', was incorporated in July 2021 to take over stressed debt of banks (primarily non-performing loans above ₹500 crore) and resolve them.",
+        expHi: "बड़े एनपीए (NPA) मामलों के त्वरित समाधान हेतु जुलाई 2021 में 'नेशनल एसेट रिकंस्ट्रक्शन कंपनी लिमिटेड' (NARCL) की स्थापना की गई, जिसे आम बोलचाल में 'बैड बैंक' कहा जाता है।",
+        fact: "NARCL works in tandem with India Debt Resolution Company Ltd. (IDRCL), with the government providing sovereign guarantees on security receipts issued by NARCL."
+      },
+      {
+        id: 43,
+        stemEn: "Under the Pradhan Mantri Ujjwala Yojana (PMUY) launched in May 2016, what specific benefit is directly provided to eligible women from BPL households?",
+        stemHi: "मई 2016 में शुरू की गई 'प्रधानमंत्री उज्ज्वला योजना' (PMUY) के तहत बीपीएल परिवारों की पात्र महिलाओं को कौन सा विशिष्ट लाभ सीधे प्रदान किया जाता है?",
+        options: [
+          "Free electric cooking heaters / मुफ्त बिजली के हीटर",
+          "Subsidized solar cooker units / रियायती सौर कुकर इकाइयां",
+          "Deposit-free LPG connections / बिना धरोहर राशि (डिपॉजिट-फ्री) एलपीजी कनेक्शन",
+          "Free monthly wheat and rice rations / प्रति माह मुफ्त गेहूं और चावल राशन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "PMUY was launched on May 1, 2016, from Ballia, Uttar Pradesh, with the slogan 'Swachh Indhan, Behtar Jeevan' to provide deposit-free LPG cooking gas connections to poor women, replacing unhealthy biomass fuels.",
+        expHi: "1 मई 2016 को उत्तर प्रदेश के बलिया से शुरू की गई प्रधानमंत्री उज्ज्वला योजना का मुख्य उद्देश्य गरीब परिवारों की महिलाओं को निःशुल्क (डिपॉजिट-फ्री) एलपीजी गैस कनेक्शन उपलब्ध कराकर स्वच्छ ईंधन को बढ़ावा देना है।",
+        fact: "Ujjwala 2.0 was subsequently rolled out in August 2021 from Mahoba, Uttar Pradesh, offering additional benefits to migrant workers."
+      },
+      {
+        id: 44,
+        stemEn: "Which statutory body was constituted in October 2016 to enforce institutional insolvency rules and register Insolvency Professional Agencies under the IBC?",
+        stemHi: "दिवाला और शोधन अक्षमता संहिता (IBC) के तहत नियमों को लागू करने तथा दिवाला पेशेवर एजेंसियों को पंजीकृत करने हेतु अक्टूबर 2016 में किस सांविधिक निकाय का गठन किया गया था?",
+        options: [
+          "Insolvency and Bankruptcy Board of India (IBBI) / भारतीय दिवाला और शोधन अक्षमता बोर्ड",
+          "National Financial Reporting Authority (NFRA) / राष्ट्रीय वित्तीय रिपोर्टिंग प्राधिकरण",
+          "Telecom Regulatory Authority of India (TRAI) / भारतीय दूरसंचार विनियामक प्राधिकरण",
+          "Securities and Exchange Board of India (SEBI) / भारतीय प्रतिभूति और विनिमय बोर्ड",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Insolvency and Bankruptcy Board of India (IBBI) was established on October 1, 2016, under the Insolvency and Bankruptcy Code, 2016. It regulates insolvency professionals, insolvency professional agencies, and information utilities.",
+        expHi: "भारतीय दिवाला और शोधन अक्षमता बोर्ड (IBBI) की स्थापना 1 अक्टूबर 2016 को IBC अधिनियम के तहत की गई थी। यह दिवाला समाधान प्रक्रिया में शामिल पेशेवरों, एजेंसियों और सूचना उपयोगिताओं का नियमन करता है।",
+        fact: "M.S. Sahoo was appointed as the inaugural Chairperson of IBBI."
+      },
+      {
+        id: 45,
+        stemEn: "What was the base year selected for the Consumer Price Index (CPI-Combined) utilized by the Monetary Policy Committee (MPC) for inflation targeting instituted in 2016?",
+        stemHi: "2016 में संस्थागत मुद्रास्फीति लक्ष्यीकरण के लिए मौद्रिक नीति समिति (MPC) द्वारा उपयोग किए जाने वाले उपभोक्ता मूल्य सूचकांक (CPI-Combined) का आधार वर्ष (Base Year) क्या चुना गया था?",
+        options: [
+          "2004–05",
+          "2011–12",
+          "2012",
+          "2015",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Monetary Policy Framework Agreement signed between the RBI and the Government of India in 2015/2016 anchors monetary policy to the headline CPI (Combined) with 2012 as the base year (Base: 2012 = 100), compiled monthly by the National Statistical Office (NSO).",
+        expHi: "वर्ष 2016 में लागू लचीले मुद्रास्फीति लक्ष्यीकरण ढांचे के लिए आरबीआई द्वारा उपयोग किए जाने वाले उपभोक्ता मूल्य सूचकांक (संयुक्त) का आधार वर्ष 2012 (= 100) है, जिसे राष्ट्रीय सांख्यिकी कार्यालय (NSO) द्वारा जारी किया जाता है।",
+        fact: "The inflation target is officially fixed at 4% with an upper tolerance limit of 6% and a lower tolerance limit of 2%."
+      },
+      {
+        id: 46,
+        stemEn: "In which year was the PM GatiShakti - National Master Plan for Multi-modal Connectivity launched by the Government of India?",
+        stemHi: "भारत सरकार द्वारा मल्टी-मॉडल कनेक्टिविटी के लिए 'पीएम गतिशक्ति - राष्ट्रीय मास्टर प्लान' किस वर्ष शुरू किया गया था?",
+        options: [
+          "2018",
+          "2019",
+          "2020",
+          "2021",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "PM GatiShakti was launched on October 13, 2021, by Prime Minister Narendra Modi. It is a ₹100 lakh crore digital GIS platform unifying 16 ministries to coordinate infrastructure project planning, remove departmental silos, and ensure synchronized project execution.",
+        expHi: "13 अक्टूबर 2021 को प्रधानमंत्री नरेंद्र मोदी द्वारा 'पीएम गतिशक्ति - राष्ट्रीय मास्टर प्लान' का शुभारंभ किया गया। यह विभिन्न मंत्रालयों की बुनियादी ढांचा परियोजनाओं के समन्वित नियोजन हेतु एक डिजिटल प्लेटफॉर्म है।",
+        fact: "PM GatiShakti is built around seven engines: Roads, Railways, Airports, Ports, Mass Transport, Waterways, and Logistics Infrastructure."
+      },
+      {
+        id: 47,
+        stemEn: "What is the standard corporate tax rate fixed in September 2019 for new domestic manufacturing companies incorporated on or after October 1, 2019 (excluding surcharges and cess)?",
+        stemHi: "1 अक्टूबर 2019 को या उसके बाद गठित नई घरेलू विनिर्माण कंपनियों के लिए सितंबर 2019 में निर्धारित मानक कॉर्पोरेट आयकर दर (अधिभार और उपकर को छोड़कर) क्या है?",
+        options: [
+          "10%",
+          "15%",
+          "22%",
+          "25%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Through the Taxation Laws (Amendment) Act, 2019 (Section 115BAB), base corporate tax for newly set up domestic manufacturing companies was slashed to 15% (effective rate ~17.16% including surcharge and cess), aimed at attracting global investments.",
+        expHi: "सितंबर 2019 के ऐतिहासिक कर सुधार के तहत आयकर अधिनियम की धारा 115BAB जोड़कर नई घरेलू विनिर्माण कंपनियों के लिए आधार कॉर्पोरेट टैक्स दर घटाकर 15% (अधिभार व सेस सहित प्रभावी दर लगभग 17.16%) कर दी गई थी।",
+        fact: "For existing domestic companies not availing any incentives, the corporate tax rate was slashed to 22% under Section 115BAA."
+      },
+      {
+        id: 48,
+        stemEn: "Which among the following items has been kept strictly outside the purview of the Goods and Services Tax (GST) since its inception in 2017?",
+        stemHi: "2017 में अपनी शुरुआत से ही निम्नलिखित में से किस वस्तु को वस्तु एवं सेवा कर (GST) के दायरे से पूरी तरह बाहर रखा गया है?",
+        options: [
+          "Packaged edible oils / डिब्बाबंद खाद्य तेल",
+          "Footwear and textiles / जूते और वस्त्र",
+          "Petroleum crude, natural gas, and petrol/diesel / कच्चा पेट्रोलियम, प्राकृतिक गैस और पेट्रोल/डीजल",
+          "Consumer electronic appliances / उपभोक्ता इलेक्ट्रॉनिक उपकरण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Under Article 279A(5) of the Constitution, five petroleum products—petroleum crude, high-speed diesel, motor spirit (petrol), natural gas, and aviation turbine fuel (ATF)—along with alcoholic liquor for human consumption, are currently kept out of GST. State VAT and Central Excise Duty continue to apply to them.",
+        expHi: "संविधान के अनुच्छेद 279A(5) के अनुसार पांच पेट्रोलियम उत्पाद (कच्चा तेल, पेट्रोल, डीजल, प्राकृतिक गैस, एटीएफ) और मानव उपभोग के लिए मादक शराब को जीएसटी से बाहर रखा गया है। इन पर अभी भी वैट (VAT) और केंद्रीय उत्पाद शुल्क लगता है।",
+        fact: "The GST Council retains the constitutional authority to recommend the inclusion of these petroleum products under GST at a future date."
+      },
+      {
+        id: 49,
+        stemEn: "Under the Kisan Credit Card (KCC) saturation drive undertaken post-2019, which allied agricultural activities were officially included for short-term working capital credit?",
+        stemHi: "2019 के बाद चलाए गए किसान क्रेडिट कार्ड (KCC) संतृप्ति अभियान के तहत अल्पकालिक कार्यशील पूंजी ऋण हेतु किन संबद्ध कृषि गतिविधियों को आधिकारिक रूप से शामिल किया गया?",
+        options: [
+          "Animal Husbandry, Dairying, and Fisheries / पशुपालन, डेयरी और मत्स्य पालन",
+          "Satellite imagery development / उपग्रह इमेजरी विकास",
+          "Heavy tractor manufacturing / भारी ट्रैक्टर निर्माण",
+          "Overseas farm export shipping / विदेशी कृषि निर्यात नौवहन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "In the 2018–19 Budget, the Government of India extended the benefits of the Kisan Credit Card (KCC) to Animal Husbandry and Fisheries farmers to meet their working capital requirements, extending concessional interest subvention loans up to ₹2 lakh.",
+        expHi: "2018-19 के बजट में किसान क्रेडिट कार्ड (KCC) की सुविधा को पशुपालकों और मत्स्य पालकों तक विस्तारित किया गया, जिससे वे ₹2 लाख तक का रियायती कार्यशील पूंजी ऋण प्राप्त कर सकें।",
+        fact: "The KCC scheme was originally introduced in 1998 based on the recommendations of the R.V. Gupta Committee."
+      },
+      {
+        id: 50,
+        stemEn: "Under the Foreign Direct Investment (FDI) liberalization announced in the Union Budget 2021, the FDI cap in the Indian Insurance Sector was increased from 49% to what percentage?",
+        stemHi: "केंद्रीय बजट 2021 में घोषित प्रत्यक्ष विदेशी निवेश (FDI) उदारीकरण के तहत, भारतीय बीमा क्षेत्र में FDI की सीमा को 49% से बढ़ाकर कितने प्रतिशत कर दिया गया?",
+        options: [
+          "51%",
+          "60%",
+          "70%",
+          "85%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4,
+        expEn: "The Insurance Act, 1938 was amended via the Insurance (Amendment) Act, 2021, to increase the maximum permissible FDI limit in Indian insurance companies from 49% to 74% under the automatic route with specific safeguards. Since 74% is not present in options A through D, Option (E) is the correct answer.",
+        expHi: "बीमा (संशोधन) अधिनियम, 2021 के माध्यम से भारतीय बीमा कंपनियों में प्रत्यक्ष विदेशी निवेश (FDI) की सीमा को 49% से बढ़ाकर 74% कर दिया गया था। चूंकि 74% विकल्प (A) से (D) में नहीं है, अतः सही उत्तर विकल्प (E) है।",
+        fact: "Under the revised guidelines, a majority of directors and key management persons in the insurance firm must be resident Indian citizens."
+      },
+      {
+        id: 51,
+        stemEn: "What is the statutory validity of an e-Way Bill generated under the GST regime for regular cargo per every 200 km of distance traveled (as amended in January 2021)?",
+        stemHi: "जनवरी 2021 में संशोधित नियमों के अनुसार, जीएसटी व्यवस्था के तहत सामान्य कार्गो के लिए प्रत्येक 200 किमी की यात्रा दूरी पर ई-वे बिल (e-Way Bill) की कानूनी वैधता अवधि क्या है?",
+        options: [
+          "One day (24 hours) / एक दिन (24 घंटे)",
+          "Two days (48 hours) / दो दिन (48 घंटे)",
+          "Three days (72 hours) / तीन दिन (72 घंटे)",
+          "Five days / पाँच दिन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "With effect from January 1, 2021, the Government amended the CGST Rules, increasing the distance required for one day of e-Way Bill validity from 100 km to 200 km for regular cargo (other than Over Dimensional Cargo).",
+        expHi: "1 जनवरी 2021 से प्रभावी संशोधन के अनुसार सामान्य कार्गो के मामले में ई-वे बिल की वैधता अवधि प्रति 200 किमी दूरी के लिए 1 दिन (24 घंटे) निर्धारित की गई है (पहले यह प्रति 100 किमी पर 1 दिन थी)।",
+        fact: "An e-Way Bill is mandatory under Rule 138 of the CGST Rules for inter-state movement of goods valued above ₹50,000."
+      },
+      {
+        id: 52,
+        stemEn: "Which portal was launched by the Ministry of Labour and Employment in August 2021 to create a comprehensive national database of unorganized workers?",
+        stemHi: "असंगठित क्षेत्र के श्रमिकों का एक व्यापक राष्ट्रीय डेटाबेस तैयार करने हेतु श्रम एवं रोजगार मंत्रालय द्वारा अगस्त 2021 में कौन सा पोर्टल शुरू किया गया था?",
+        options: [
+          "Shram Suvidha Portal / श्रम सुविधा पोर्टल",
+          "SAMADHAN Portal / समाधान पोर्टल",
+          "e-Shram Portal / ई-श्रम पोर्टल",
+          "PENCIL Portal / पेंसिल पोर्टल",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The e-Shram portal was officially launched on August 26, 2021. Registered unorganized workers are issued a 12-digit Universal Account Number (UAN) e-Shram card to facilitate targeted social security delivery.",
+        expHi: "ई-श्रम (e-Shram) पोर्टल 26 अगस्त 2021 को शुरू किया गया था। इस पर पंजीकृत होने वाले असंगठित कामगारों को 12 अंकों का यूनिवर्सल अकाउंट नंबर (UAN) युक्त ई-श्रम कार्ड प्रदान किया जाता है।",
+        fact: "Registration on the e-Shram portal provides accidental death/permanent disability cover of ₹2 lakh under PMSBY."
+      },
+      {
+        id: 53,
+        stemEn: "Under the Pradhan Mantri Kisan Maan-Dhan Yojana (PM-KMY) launched in September 2019, what fixed monthly pension is provided to small and marginal farmers upon attaining the age of 60?",
+        stemHi: "सितंबर 2019 में शुरू की गई 'प्रधानमंत्री किसान मान-धन योजना' (PM-KMY) के तहत 60 वर्ष की आयु प्राप्त करने पर छोटे और सीमांत किसानों को कितनी निश्चित मासिक पेंशन प्रदान की जाती है?",
+        options: [
+          "₹1,000 per month / ₹1,000 प्रति माह",
+          "₹2,000 per month / ₹2,000 प्रति माह",
+          "₹3,000 per month / ₹3,000 प्रति माह",
+          "₹5,000 per month / ₹5,000 प्रति माह",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The PM-KMY scheme was launched on September 12, 2019, in Ranchi, Jharkhand. It is an old-age pension scheme for Small and Marginal Farmers (cultivable land up to 2 hectares) aged 18 to 40, guaranteeing an assured monthly pension of ₹3,000 after reaching 60 years.",
+        expHi: "पीएम किसान मान-धन योजना (PM-KMY) छोटे और सीमांत किसानों (2 हेक्टेयर तक भूमि) के लिए एक स्वैच्छिक अंशदायी पेंशन योजना है, जिसके तहत 60 वर्ष पूरे होने पर ₹3,000 की न्यूनतम सुनिश्चित मासिक पेंशन दी जाती है।",
+        fact: "The Life Insurance Corporation of India (LIC) acts as the Pension Fund Manager for the PM-KMY scheme."
+      },
+      {
+        id: 54,
+        stemEn: "What was the central objective of the 'EASE' (Enhanced Access and Service Excellence) reform agenda launched by the Department of Financial Services in 2018?",
+        stemHi: "2018 में वित्तीय सेवा विभाग द्वारा शुरू किए गए 'EASE' (एन्हांस्ड एक्सेस एंड सर्विस एक्सीलेंस) सुधार एजेंडा का मुख्य उद्देश्य क्या था?",
+        options: [
+          "Institutionalizing institutional clean and tech-enabled banking in Public Sector Banks / सार्वजनिक क्षेत्र के बैंकों में स्वच्छ एवं तकनीक-सक्षम बैंकिंग को संस्थागत बनाना",
+          "Disinvesting non-strategic central railway workshops / गैर-रणनीतिक केंद्रीय रेलवे कार्यशालाओं का विनिवेश करना",
+          "Subsidizing commercial electric three-wheelers / वाणिज्यिक इलेक्ट्रिक तिपहिया वाहनों पर सब्सिडी देना",
+          "Establishing digital libraries across district courts / जिला अदालतों में डिजिटल पुस्तकालयों की स्थापना करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The EASE reform agenda was launched in January 2018 jointly by the Government and PSBs. It introduced measurable metrics for clean, responsive, customer-centric, and tech-driven smart banking across state-run banks.",
+        expHi: "EASE (Enhanced Access and Service Excellence) सुधार कार्यक्रम जनवरी 2018 में सार्वजनिक क्षेत्र के बैंकों (PSBs) में पेशेवर कार्यशैली, एनपीए नियंत्रण, डिजिटल वित्तीय सेवाओं और पारदर्शी ऋण प्रक्रियाओं को स्थापित करने हेतु शुरू किया गया था।",
+        fact: "The Indian Banks' Association (IBA) publishes annual independent EASE reform index scores ranking all Public Sector Banks."
+      },
+      {
+        id: 55,
+        stemEn: "In what year was the 'National Infrastructure Pipeline' (NIP) unveiled by the Union Finance Minister with an initial projected capital outlay of over ₹100 lakh crore?",
+        stemHi: "केंद्रीय वित्त मंत्री द्वारा ₹100 लाख करोड़ से अधिक के प्रारंभिक अनुमानित पूंजीगत परिव्यय के साथ 'राष्ट्रीय अवसंरचना पाइपलाइन' (NIP) किस वर्ष जारी की गई थी?",
+        options: [
+          "2017",
+          "2018",
+          "2019",
+          "2021",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The National Infrastructure Pipeline (NIP) was formally unveiled on December 31, 2019, by Finance Minister Nirmala Sitharaman, covering fiscal years 2020 to 2025 across sectors like energy, roads, railways, and urban infrastructure based on the Task Force headed by Atanu Chakraborty.",
+        expHi: "राष्ट्रीय अवसंरचना पाइपलाइन (NIP) का अनावरण 31 दिसंबर 2019 को किया गया था। इसका उद्देश्य 2020-2025 की अवधि में बुनियादी ढांचे में बड़े पैमाने पर पूंजी निवेश कर देश को $5 ट्रिलियन की अर्थव्यवस्था बनने में सहायता करना है।",
+        fact: "In the NIP funding model, the Centre and States each contribute approximately 39%, while the private sector contributes the remaining 22%."
+      },
+      {
+        id: 56,
+        stemEn: "What is the maximum insurance compensation provided for loss of life or permanent total disability under the Pradhan Mantri Suraksha Bima Yojana (PMSBY) launched in 2015?",
+        stemHi: "2015 में शुरू की गई 'प्रधानमंत्री सुरक्षा बीमा योजना' (PMSBY) के तहत दुर्घटना में मृत्यु या पूर्ण स्थायी विकलांगता पर अधिकतम कितनी बीमा क्षतिपूर्ति राशि प्रदान की जाती है?",
+        options: [
+          "₹50,000",
+          "₹1,00,000",
+          "₹2,00,000",
+          "₹5,00,000",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "PMSBY provides accidental death and full disability coverage of ₹2 lakh (and ₹1 lakh for partial permanent disability) for bank account holders aged 18 to 70 years, originally available at an annual premium of ₹12 (revised to ₹20 in 2022).",
+        expHi: "प्रधानमंत्री सुरक्षा बीमा योजना (PMSBY) के अंतर्गत 18 से 70 वर्ष के बैंक खाताधारकों को दुर्घटना में मृत्यु या स्थायी अपंगता की स्थिति में ₹2 लाख का दुर्घटना बीमा कवर दिया जाता है।",
+        fact: "The premium for PMSBY is automatically debited in a single installment from the subscriber's bank account every year."
+      },
+      {
+        id: 57,
+        stemEn: "In which year was the 'Pradhan Mantri Matsya Sampada Yojana' (PMMSY) approved by the Union Cabinet to drive the Blue Revolution in India?",
+        stemHi: "भारत में 'नीली क्रांति' को गति देने के लिए केंद्रीय मंत्रिमंडल द्वारा 'प्रधानमंत्री मत्स्य संपदा योजना' (PMMSY) को किस वर्ष मंजूरी दी गई थी?",
+        options: [
+          "2017",
+          "2018",
+          "2019",
+          "2020",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "PMMSY was approved in May 2020 and launched in September 2020 under the Atmanirbhar Bharat package with an investment of ₹20,050 crore to modernize the fisheries supply chain and boost export earnings.",
+        expHi: "प्रधानमंत्री मत्स्य संपदा योजना (PMMSY) को मई 2020 में आत्मनिर्भर भारत पैकेज के अंतर्गत ₹20,050 करोड़ के परिव्यय के साथ स्वीकृत किया गया था, जिसका उद्देश्य मत्स्य उत्पादन और निर्यात में भारी वृद्धि करना है।",
+        fact: "PMMSY aims to increase fish production to 22 million metric tons and double fishers' incomes."
+      },
+      {
+        id: 58,
+        stemEn: "Under the modified PM MUDRA Yojana scheme guidelines, what is the loan coverage defined for the entry-level 'Shishu' category?",
+        stemHi: "संशोधित पीएम मुद्रा योजना के दिशानिर्देशों के तहत, शुरुआती 'शिशु' श्रेणी के अंतर्गत ऋण कवरेज की सीमा क्या निर्धारित है?",
+        options: [
+          "Loans up to ₹50,000 / ₹50,000 तक के ऋण",
+          "Loans between ₹50,000 and ₹1,00,000 / ₹50,000 से ₹1,00,000 के मध्य ऋण",
+          "Loans between ₹1,00,000 and ₹5,00,000 / ₹1,00,000 से ₹5,00,000 के मध्य ऋण",
+          "Loans from ₹5,00,000 to ₹10,00,000 / ₹5,00,000 से ₹10,00,000 तक के ऋण",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Under the Pradhan Mantri MUDRA Yojana (PMMY), 'Shishu' is the entry category designed for nascent entrepreneurs, covering loans up to ₹50,000 with the lowest processing requirements.",
+        expHi: "प्रधानमंत्री मुद्रा योजना के अंतर्गत 'शिशु' ऋण श्रेणी नए व सूक्ष्म कारोबारियों के लिए प्रारंभिक ऋण सहायता है, जिसके तहत अधिकतम ₹50,000 तक का संपार्श्विक-मुक्त ऋण स्वीकृत किया जाता है।",
+        fact: "Shishu category loans account for the vast majority (over 80%) of the total number of accounts opened under MUDRA."
+      },
+      {
+        id: 59,
+        stemEn: "What was the tenure of the 15th Finance Commission of India, chaired by N.K. Singh, which submitted its final recommendations for tax devolution post-2020?",
+        stemHi: "एन.के. सिंह की अध्यक्षता वाले भारत के 15वें वित्त आयोग का कार्यकाल क्या था, जिसने 2020 के बाद कर हस्तांतरण हेतु अपनी अंतिम सिफारिशें प्रस्तुत कीं?",
+        options: [
+          "2015–2020",
+          "2017–2022",
+          "2020–2025",
+          "2021–2026",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The 15th Finance Commission was constituted in November 2017. Due to structural transitions (reorganization of Jammu & Kashmir and COVID-19), it gave an interim report for 2020–21 and a final report for the five-year period 2021–22 to 2025–26 (2021–26).",
+        expHi: "15वें वित्त आयोग (अध्यक्ष: एन.के. सिंह) का अंतिम 5-वर्षीय सिफारिश कार्यकाल वर्ष 2021-22 से 2025-26 (2021-26) तक निर्धारित किया गया था।",
+        fact: "The 15th Finance Commission recommended maintaining the States' share in the divisible pool of central taxes at 41% (adjusting 1% for Jammu & Kashmir and Ladakh)."
+      },
+      {
+        id: 60,
+        stemEn: "Which among the following public entities holds a 100% equity stake in the National Payments Corporation of India's international subsidiary, NPCI International Payments Limited (NIPL)?",
+        stemHi: "निम्नलिखित में से किस सार्वजनिक निकाय के पास एनपीसीआई की अंतरराष्ट्रीय सहायक कंपनी, 'एनपीसीआई इंटरनेशनल पेमेंट्स लिमिटेड' (NIPL) में 100% इक्विटी हिस्सेदारी है?",
+        options: [
+          "NITI Aayog / नीति आयोग",
+          "Reserve Bank of India alone / केवल भारतीय रिज़र्व बैंक",
+          "National Payments Corporation of India (NPCI) / भारतीय राष्ट्रीय भुगतान निगम (NPCI)",
+          "State Bank of India / भारतीय स्टेट बैंक",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "NPCI International Payments Limited (NIPL) was incorporated in April 2020 as a wholly-owned subsidiary of the National Payments Corporation of India (NPCI) to deploy indigenous payment technologies like UPI and RuPay globally.",
+        expHi: "एनपीसीआई इंटरनेशनल पेमेंट्स लिमिटेड (NIPL) की स्थापना अप्रैल 2020 में भारतीय राष्ट्रीय भुगतान निगम (NPCI) की पूर्ण स्वामित्व वाली सहायक कंपनी के रूप में की गई थी, जिसका मुख्य काम विदेशों में UPI और RuPay का विस्तार करना है।",
+        fact: "UPI rails have been linked bilaterally with cross-border payment platforms such as Singapore's PayNow and the UAE's Jaywan."
+      },
+      {
+        id: 61,
+        stemEn: "What is the maximum age limit for an opening of a 'Sukanya Samriddhi Account' on behalf of a girl child under the scheme revised post-2014?",
+        stemHi: "वर्ष 2014 के बाद संशोधित नियमों के अनुसार, किसी बालिका के नाम पर 'सुकन्या समृद्धि खाता' खोलने के लिए बालिका की अधिकतम आयु सीमा क्या है?",
+        options: [
+          "5 years / 5 वर्ष",
+          "10 years / 10 वर्ष",
+          "12 years / 12 वर्ष",
+          "18 years / 18 वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under the Sukanya Samriddhi Yojana (launched in January 2015 as part of Beti Bachao Beti Padhao), an account can be opened by the natural or legal guardian in the name of a girl child from her birth until she attains the age of 10 years.",
+        expHi: "सुकन्या समृद्धि योजना (जनवरी 2015 में शुरू) के नियमों के अनुसार किसी भी बालिका के जन्म से लेकर उसके 10 वर्ष की आयु पूरी करने तक अभिभावक द्वारा उसके नाम पर यह खाता खोला जा सकता है।",
+        fact: "Sukanya Samriddhi deposits qualify for Triple Tax Exemption (EEE - Exempt at investment, interest accrual, and withdrawal under Section 80C)."
+      },
+      {
+        id: 62,
+        stemEn: "Under the Atmanirbhar Bharat Abhiyan announced in May 2020, what was the total economic relief stimulus value announced by the Prime Minister?",
+        stemHi: "मई 2020 में घोषित 'आत्मनिर्भर भारत अभियान' के तहत प्रधानमंत्री द्वारा घोषित कुल आर्थिक राहत पैकेज का मूल्य कितना था?",
+        options: [
+          "₹5 lakh crore / ₹5 लाख करोड़",
+          "₹10 lakh crore / ₹10 लाख करोड़",
+          "₹20 lakh crore / ₹20 लाख करोड़",
+          "₹50 lakh crore / ₹50 लाख करोड़",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "On May 12, 2020, Prime Minister Narendra Modi announced a special economic and comprehensive stimulus package of ₹20 lakh crore, which was equivalent to approximately 10% of India's Gross Domestic Product (GDP).",
+        expHi: "12 मई 2020 को कोविड-19 महामारी के प्रभाव से निपटने और अर्थव्यवस्था को गति देने हेतु ₹20 लाख करोड़ के विशेष आर्थिक पैकेज (आत्मनिर्भर भारत अभियान) की घोषणा की गई थी, जो भारत की जीडीपी के लगभग 10% के बराबर था।",
+        fact: "The stimulus rested on five key pillars: Economy, Infrastructure, System (tech-driven), Vibrant Demography, and Demand."
+      },
+      {
+        id: 63,
+        stemEn: "In which year did the Government of India enact the Consumer Protection Act, replacing the older 1986 Act to incorporate rules for e-commerce and direct selling?",
+        stemHi: "भारत सरकार ने ई-कॉमर्स और डायरेक्ट सेलिंग के नियमों को शामिल करने हेतु पुराने 1986 के अधिनियम को प्रतिस्थापित करते हुए नया 'उपभोक्ता संरक्षण अधिनियम' किस वर्ष अधिनियमित किया?",
+        options: [
+          "2015",
+          "2017",
+          "2019",
+          "2021",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Consumer Protection Act, 2019 was passed by the Parliament in August 2019 and came into force on July 20, 2020, replacing the Consumer Protection Act, 1986. It introduced class actions, product liability, and established the Central Consumer Protection Authority (CCPA).",
+        expHi: "संसद द्वारा उपभोक्ता संरक्षण अधिनियम, 2019 को अगस्त 2019 में पारित किया गया, जिसने पुराने 1986 के कानून का स्थान लिया। इसके तहत भ्रामक विज्ञापनों और ई-कॉमर्स धोखाधड़ी से निपटने हेतु 'केंद्रीय उपभोक्ता संरक्षण प्राधिकरण' (CCPA) का गठन किया गया।",
+        fact: "The 2019 Act provides for mediation as an Alternate Dispute Resolution (ADR) mechanism to settle consumer disputes amicably."
+      },
+      {
+        id: 64,
+        stemEn: "What is the statutory time limit granted under the Pre-Packaged Insolvency Resolution Process (PPIRP) introduced for MSMEs in 2021?",
+        stemHi: "वर्ष 2021 में एमएसएमई (MSMEs) के लिए शुरू की गई 'प्री-पैकेज्ड इंसॉल्वेंसी रेजोल्यूशन प्रोसेस' (PPIRP) के तहत कानूनी रूप से निर्धारित अधिकतम समय-सीमा क्या है?",
+        options: [
+          "60 days / 60 दिन",
+          "90 days / 90 दिन",
+          "120 days / 120 दिन",
+          "180 days / 180 दिन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Insolvency and Bankruptcy Code (Amendment) Act, 2021 introduced the Pre-Packaged Insolvency Resolution Process (PPIRP) for MSMEs, stipulating a strict total completion period of 120 days (90 days for submitting resolution plan to NCLT and 30 days for NCLT approval).",
+        expHi: "वर्ष 2021 में MSME इकाइयों के लिए लाई गई प्री-पैकेज्ड इंसॉल्वेंसी समाधान प्रक्रिया (PPIRP) को पूरा करने के लिए कुल 120 दिनों की सीमा तय की गई है (90 दिन समाधान योजना जमा करने के लिए + 30 दिन NCLT द्वारा अनुमोदन हेतु)।",
+        fact: "Unlike normal CIRP where creditors take control, PPIRP follows a 'debtor-in-possession' model with management remaining with existing promoters."
+      },
+      {
+        id: 65,
+        stemEn: "What was the primary mandate of the Banks Board Bureau (BBB), which was established in February 2016 following recommendations of the P.J. Nayak Committee?",
+        stemHi: "पी.जे. नायक समिति की सिफारिशों के आधार पर फरवरी 2016 में स्थापित 'बैंक बोर्ड ब्यूरो' (BBB) का मुख्य कार्य क्या था?",
+        options: [
+          "To recommend full-time directors and heads of Public Sector Banks and financial institutions / सार्वजनिक क्षेत्र के बैंकों और वित्तीय संस्थानों के पूर्णकालिक निदेशकों और प्रमुखों के चयन की सिफारिश करना",
+          "To print newly designed ₹2,000 currency notes / ₹2,000 के नए करेंसी नोटों की छपाई करना",
+          "To supervise agricultural mandi cess collection / कृषि मंडी उपकर संग्रह का पर्यवेक्षण करना",
+          "To regulate private mutual fund brokers / निजी म्यूचुअल फंड दलालों का नियमन करना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Banks Board Bureau (BBB) was set up in February 2016 as an autonomous advisory body to improve governance of Public Sector Banks and recommend selections for top executive appointments (MDs, CEOs, EDs).",
+        expHi: "बैंक बोर्ड ब्यूरो (BBB) का गठन 2016 में सार्वजनिक क्षेत्र के बैंकों में शीर्ष प्रबंधकीय पदों (CMD/CEO) की नियुक्ति के लिए योग्य उम्मीदवारों की सिफारिश करने और उनके कॉर्पोरेट गवर्नेंस में सुधार करने हेतु किया गया था।",
+        fact: "In 2022, the Banks Board Bureau (BBB) was reconstituted and replaced by the Financial Services Institutions Bureau (FSIB)."
+      },
+      {
+        id: 66,
+        stemEn: "Which flagship scheme was launched in 2015 to transform traditional streetlights into energy-efficient LED lighting across urban and rural local bodies?",
+        stemHi: "शहरी और ग्रामीण स्थानीय निकायों में पारंपरिक स्ट्रीट लाइटों को ऊर्जा-कुशल एलईडी लाइटों में बदलने हेतु 2015 में कौन सी प्रमुख योजना शुरू की गई थी?",
+        options: [
+          "UJALA Scheme / उजाला योजना",
+          "SLNP (Street Lighting National Programme) / एसएलएनपी (स्ट्रीट लाइटिंग नेशनल प्रोग्राम)",
+          "Saubhagya Yojana / सौभाग्य योजना",
+          "Deen Dayal Upadhyaya Gram Jyoti Yojana / दीनदयाल उपाध्याय ग्राम ज्योति योजना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Street Lighting National Programme (SLNP) was launched on January 5, 2015, alongside the UJALA scheme. Implemented by Energy Efficiency Services Limited (EESL), SLNP aimed to replace conventional street lights with smart and energy-efficient LED lights.",
+        expHi: "5 जनवरी 2015 को शुरू किया गया 'स्ट्रीट लाइटिंग नेशनल प्रोग्राम' (SLNP) देश भर की नगर पालिकाओं में पारंपरिक सोडियम वेपर लाइटों को स्मार्ट एलईडी स्ट्रीट लाइटों से बदलने का सबसे बड़ा सार्वजनिक कार्यक्रम है।",
+        fact: "SLNP is executed by Energy Efficiency Services Limited (EESL), a joint venture of public sector power companies."
+      },
+      {
+        id: 67,
+        stemEn: "In which year was the 'National Clean Energy and Environment Fund' (NCEEF) officially integrated with the GST Compensation Cess pool?",
+        stemHi: "'राष्ट्रीय स्वच्छ ऊर्जा और पर्यावरण कोष' (NCEEF) को आधिकारिक रूप से किस वर्ष जीएसटी क्षतिपूर्ति उपकर (GST Compensation Cess) पूल के साथ एकीकृत किया गया था?",
+        options: [
+          "2014",
+          "2015",
+          "2017",
+          "2020",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "With the rollout of the Goods and Services Tax on July 1, 2017, the Clean Energy Cess (Clean Environment Cess) levied on coal was subsumed into the GST Compensation Cess to compensate states for revenue losses.",
+        expHi: "1 जुलाई 2017 को जीएसटी के लागू होने के साथ ही कोयले पर लगने वाले स्वच्छ पर्यावरण उपकर को 'जीएसटी क्षतिपूर्ति उपकर' (GST Compensation Cess) में समाहित कर दिया गया।",
+        fact: "The Clean Energy Cess was originally created in the 2010–11 Union Budget under the polluter pays principle."
+      },
+      {
+        id: 68,
+        stemEn: "Under the revised Corporate Social Responsibility (CSR) legal amendments under Section 135 of the Companies Act, what minimum proportion of net profit must eligible companies spend?",
+        stemHi: "कंपनी अधिनियम की धारा 135 के तहत कॉर्पोरेट सामाजिक उत्तरदायित्व (CSR) नियमों के अनुसार, पात्र कंपनियों को अपने शुद्ध लाभ का न्यूनतम कितना प्रतिशत खर्च करना अनिवार्य है?",
+        options: [
+          "1% of average net profits of preceding 3 financial years / पूर्ववर्ती 3 वित्तीय वर्षों के औसत शुद्ध लाभ का 1%",
+          "2% of average net profits of preceding 3 financial years / पूर्ववर्ती 3 वित्तीय वर्षों के औसत शुद्ध लाभ का 2%",
+          "3% of average net profits of preceding 3 financial years / पूर्ववर्ती 3 वित्तीय वर्षों के औसत शुद्ध लाभ का 3%",
+          "5% of average net profits of preceding 3 financial years / पूर्ववर्ती 3 वित्तीय वर्षों के औसत शुद्ध लाभ का 5%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under Section 135 of the Companies Act, 2013 (operationalized with strengthened compliance in post-2014 rules), every company meeting specified financial thresholds must spend at least 2% of its average net profits made during the 3 immediately preceding financial years on CSR activities.",
+        expHi: "कंपनी अधिनियम 2013 की धारा 135 के अनुसार, निर्धारित सीमा पार करने वाली प्रत्येक कंपनी को पिछले 3 वित्तीय वर्षों के दौरान अर्जित औसत शुद्ध लाभ का कम से कम 2% CSR गतिविधियों पर खर्च करना अनिवार्य है।",
+        fact: "Unspent CSR amounts related to ongoing projects must be transferred to an 'Unspent CSR Account' within 30 days of the end of the financial year."
+      },
+      {
+        id: 69,
+        stemEn: "Which autonomous institutional body was established in 2018 under Section 132 of the Companies Act to act as an independent oversight authority for auditing standards?",
+        stemHi: "लेखापरीक्षा (ऑडिटिंग) मानकों की स्वतंत्र निगरानी हेतु कंपनी अधिनियम की धारा 132 के तहत 2018 में किस स्वायत्त संस्था का गठन किया गया था?",
+        options: [
+          "Serious Fraud Investigation Office (SFIO) / गंभीर धोखाधड़ी जांच कार्यालय",
+          "National Financial Reporting Authority (NFRA) / राष्ट्रीय वित्तीय रिपोर्टिंग प्राधिकरण",
+          "Central Vigilance Commission / केंद्रीय सतर्कता आयोग",
+          "Comptroller and Auditor General / नियंत्रक एवं महालेखापरीक्षक",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The National Financial Reporting Authority (NFRA) was constituted on October 1, 2018, by the Central Government under Section 132 of the Companies Act, 2013, to establish an independent regulator for enforcing accounting and auditing standards.",
+        expHi: "1 अक्टूबर 2018 को कंपनी अधिनियम की धारा 132 के तहत 'राष्ट्रीय वित्तीय रिपोर्टिंग प्राधिकरण' (NFRA) का गठन किया गया। यह बड़ी सूचीबद्ध कंपनियों के लेखा परीक्षकों (ऑडिटर्स) की निगरानी करने वाली सर्वोच्च स्वतंत्र नियामक संस्था है।",
+        fact: "NFRA has powers equivalent to a Civil Court under the Code of Civil Procedure, 1908, to penalize and debar errant auditors."
+      },
+      {
+        id: 70,
+        stemEn: "In which year was the 'National Single Window System' (NSWS) for business clearances and investment approvals officially unveiled by the Commerce Ministry?",
+        stemHi: "वाणिज्य मंत्रालय द्वारा व्यावसायिक स्वीकृतियों और निवेश अनुमतियों के लिए 'राष्ट्रीय एकल खिड़की प्रणाली' (NSWS) आधिकारिक तौर पर किस वर्ष शुरू की गई थी?",
+        options: [
+          "2015",
+          "2017",
+          "2019",
+          "2021",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The National Single Window System (NSWS) was soft-launched on September 22, 2021, by the Ministry of Commerce and Industry. It serves as a one-stop digital platform enabling investors to apply for and track all necessary central and state clearances.",
+        expHi: "राष्ट्रीय एकल खिड़की प्रणाली (NSWS) का शुभारंभ 22 सितंबर 2021 को किया गया था। इसका उद्देश्य निवेशकों को एक ही मंच से केंद्र और राज्य सरकारों की सभी आवश्यक व्यावसायिक स्वीकृतियां ऑनलाइन उपलब्ध कराना है।",
+        fact: "Invest India hosts and operates the technical and operational infrastructure of NSWS."
+      },
+      {
+        id: 71,
+        stemEn: "What is the statutory threshold of aggregate annual turnover above which a registered supplier of goods was mandated to generate e-Invoices in the initial Phase-I rollout in October 2020?",
+        stemHi: "अक्टूबर 2020 में प्रथम चरण के लागू होने पर, किसी पंजीकृत माल आपूर्तिकर्ता के लिए ई-चालान (e-Invoice) जारी करना किस वार्षिक कुल टर्नओवर सीमा से ऊपर अनिवार्य किया गया था?",
+        options: [
+          "₹50 crore / ₹50 करोड़",
+          "₹100 crore / ₹100 करोड़",
+          "₹250 crore / ₹250 करोड़",
+          "₹500 crore / ₹500 करोड़",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The mandatory electronic invoicing (e-Invoicing) for B2B transactions under GST commenced on October 1, 2020, for all taxpayers having an aggregate turnover exceeding ₹500 crore in any preceding financial year from 2017–18 onward.",
+        expHi: "जीएसटी के तहत B2B लेन-देन के लिए अनिवार्य ई-चालान (e-Invoicing) व्यवस्था का पहला चरण 1 अक्टूबर 2020 को ₹500 करोड़ से अधिक के वार्षिक टर्नओवर वाले व्यवसायों के लिए लागू किया गया था।",
+        fact: "Every e-Invoice uploaded to the Invoice Registration Portal (IRP) receives a unique 64-character Invoice Reference Number (IRN) and QR code."
+      },
+      {
+        id: 72,
+        stemEn: "Which policy was launched in March 2021 to phase out unfit and polluting motor vehicles in India through Registered Vehicle Scrapping Facilities?",
+        stemHi: "पंजीकृत वाहन स्क्रैपिंग सुविधाओं के माध्यम से भारत में अनफिट और प्रदूषण फैलाने वाले मोटर वाहनों को चरणबद्ध तरीके से हटाने हेतु मार्च 2021 में कौन सी नीति शुरू की गई थी?",
+        options: [
+          "National Green Highways Policy / राष्ट्रीय हरित राजमार्ग नीति",
+          "Voluntary Vehicle-Fleet Modernization Programme (Vehicle Scrappage Policy) / वाहन स्क्रैप नीति (वाहन बेड़ा आधुनिकीकरण कार्यक्रम)",
+          "Bharat Stage VII Mandate / भारत स्टेज VII अधिदेश",
+          "FAME-III Clean Mobility Scheme / फेम-III स्वच्छ गतिशीलता योजना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Vehicle Scrappage Policy (Voluntary Vehicle-Fleet Modernization Programme) was announced in the 2021–22 Budget and formally launched in 2021. It mandates commercial vehicles older than 15 years and personal vehicles older than 20 years to undergo automated fitness tests.",
+        expHi: "वाहन स्क्रैप नीति (Vehicle Scrappage Policy) वर्ष 2021 में शुरू की गई थी। इसके तहत 15 वर्ष से पुराने वाणिज्यिक वाहनों और 20 वर्ष से पुराने निजी वाहनों को अनिवार्य स्वचालित फिटनेस परीक्षण पास करना होता है, अन्यथा उन्हें स्क्रैप किया जाता है।",
+        fact: "Scrapping old vehicles provides owners a scrap certificate that entitles them to a concession on motor vehicle tax and discounts on new vehicle purchases."
+      },
+      {
+        id: 73,
+        stemEn: "What is the designated interest subsidy provided to eligible prompt-repaying street vendors under the PM SVANidhi scheme?",
+        stemHi: "पीएम स्वनिधि (PM SVANidhi) योजना के तहत समय पर ऋण चुकाने वाले पात्र रेहड़ी-पटरी विक्रेताओं को कितनी ब्याज सब्सिडी प्रदान की जाती है?",
+        options: [
+          "2% per annum / 2% प्रति वर्ष",
+          "4% per annum / 4% प्रति वर्ष",
+          "5% per annum / 5% प्रति वर्ष",
+          "7% per annum / 7% प्रति वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Under the PM Street Vendor's AtmaNirbhar Nidhi (PM SVANidhi), vendors who repay their working capital loans on time or early receive an interest subsidy of 7% per annum credited quarterly into their bank accounts via DBT.",
+        expHi: "पीएम स्वनिधि योजना के तहत समय पर या उससे पहले ऋण की किस्तों का भुगतान करने वाले स्ट्रीट वेंडरों को 7% प्रति वर्ष की दर से ब्याज सब्सिडी सीधे उनके बैंक खाते में त्रैमासिक आधार पर दी जाती है।",
+        fact: "The Small Industries Development Bank of India (SIDBI) functions as the implementation agency for PM SVANidhi."
+      },
+      {
+        id: 74,
+        stemEn: "Under the Foreign Direct Investment (FDI) reforms post-2014, what is the maximum percentage of FDI permitted under the automatic route for Civil Aviation (non-scheduled air transport and ground handling services)?",
+        stemHi: "2014 के बाद के प्रत्यक्ष विदेशी निवेश (FDI) सुधारों के तहत नागरिक उड्डयन (गैर-अनुसूचित हवाई परिवहन और ग्राउंड हैंडलिंग सेवाओं) में स्वचालित मार्ग से अधिकतम कितने प्रतिशत FDI की अनुमति है?",
+        options: [
+          "49%",
+          "51%",
+          "74%",
+          "100%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "Under the liberalized FDI policy, 100% FDI is allowed under the automatic route for non-scheduled air transport services, maintenance, repair and overhaul (MRO) facilities, flying training institutes, and ground handling services.",
+        expHi: "नागरिक उड्डयन क्षेत्र में उदारीकरण के तहत गैर-अनुसूचित हवाई परिवहन सेवाओं, मेंटेनेंस और रिपेयर (MRO) तथा ग्राउंड हैंडलिंग सेवाओं में स्वचालित मार्ग से 100% प्रत्यक्ष विदेशी निवेश (FDI) की अनुमति है।",
+        fact: "For scheduled passenger air transport (airlines), FDI is permitted up to 100% (49% under automatic route, and beyond 49% through the government route)."
+      },
+      {
+        id: 75,
+        stemEn: "Which official committee recommended the merger of the Central Statistical Organisation (CSO) and National Sample Survey Office (NSSO) into the National Statistical Office (NSO) in 2019?",
+        stemHi: "वर्ष 2019 में केंद्रीय सांख्यिकी संगठन (CSO) और राष्ट्रीय प्रतिदर्श सर्वेक्षण कार्यालय (NSSO) को मिलाकर 'राष्ट्रीय सांख्यिकी कार्यालय' (NSO) बनाने की सिफारिश किस आधिकारिक समिति ने की थी?",
+        options: [
+          "C. Rangarajan Commission / सी. रंगराजन आयोग",
+          "Y.V. Reddy Committee / वाई.वी. रेड्डी समिति",
+          "Vijay Kelkar Committee / विजय केलकर समिति",
+          "Arvind Subramanian Task Force / अरविंद सुब्रमण्यन टास्क फोर्स",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The restructuring and merger of CSO and NSSO into a single entity called the National Statistical Office (NSO) under the Ministry of Statistics and Programme Implementation (MoSPI) in May 2019 was originally recommended by the National Statistical Commission headed by Dr. C. Rangarajan in 2001.",
+        expHi: "मई 2019 में CSO और NSSO का विलय कर राष्ट्रीय सांख्यिकी कार्यालय (NSO) का गठन किया गया। इसकी मूल सिफारिश वर्ष 2001 में डॉ. सी. रंगराजन की अध्यक्षता वाले राष्ट्रीय सांख्यिकी आयोग ने की थी।",
+        fact: "NSO functions under the Ministry of Statistics and Programme Implementation (MoSPI) and releases CPI, IIP, and national income/GDP estimates."
+      },
+      {
+        id: 76,
+        stemEn: "Which state became the first in India to ratify the Constitution (122nd Amendment) Bill, 2014, paving the way for the implementation of the Goods and Services Tax (GST)?",
+        stemHi: "वस्तु एवं सेवा कर (GST) के कार्यान्वयन का मार्ग प्रशस्त करने वाले संविधान (122वां संशोधन) विधेयक, 2014 को अनुमोदित (ratify) करने वाला भारत का पहला राज्य कौन सा बना था?",
+        options: [
+          "Bihar / बिहार",
+          "Assam / असम",
+          "Maharashtra / महाराष्ट्र",
+          "Uttar Pradesh / उत्तर प्रदेश",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Assam was the first state in India whose legislative assembly unanimously ratified the Constitution Amendment Bill on GST on August 12, 2016. Bihar followed shortly after as the second state.",
+        expHi: "12 अगस्त 2016 को असम विधानसभा ने जीएसटी संविधान संशोधन विधेयक को सर्वसम्मति से अनुमोदित किया, जिससे असम इस विधेयक को पारित करने वाला देश का पहला राज्य बना।",
+        fact: "The bill required ratification by the legislatures of at least 50% of the states under Article 368 before receiving presidential assent."
+      },
+      {
+        id: 77,
+        stemEn: "What is the designated maturity period of the Sovereign Gold Bond (SGB) Scheme introduced by the Government of India in November 2015?",
+        stemHi: "नवंबर 2015 में भारत सरकार द्वारा शुरू की गई सॉवरेन गोल्ड बॉन्ड (SGB) योजना की निर्धारित परिपक्वता अवधि (Maturity Period) क्या है?",
+        options: [
+          "3 years / 3 वर्ष",
+          "5 years / 5 वर्ष",
+          "8 years / 8 वर्ष",
+          "10 years / 10 वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Sovereign Gold Bonds (SGBs) have a tenure of 8 years. Investors have an early exit/redemption option starting from the 5th year onwards, exercisable on the interest payment dates.",
+        expHi: "नवंबर 2015 में शुरू किए गए सॉवरेन गोल्ड बॉन्ड (SGB) की परिपक्वता अवधि 8 वर्ष होती है। हालांकि, निवेशक 5वें वर्ष के बाद ब्याज भुगतान की तिथियों पर समयपूर्व निकासी कर सकते हैं।",
+        fact: "SGBs pay a fixed annual interest rate of 2.50% on the initial investment amount, credited semi-annually."
+      },
+      {
+        id: 78,
+        stemEn: "In which year was the 'National Intellectual Property Rights (IPR) Policy' approved by the Union Cabinet to stimulate innovation and creativity across India?",
+        stemHi: "भारत भर में नवाचार और रचनात्मकता को बढ़ावा देने हेतु केंद्रीय मंत्रिमंडल द्वारा 'राष्ट्रीय बौद्धिक संपदा अधिकार (IPR) नीति' को किस वर्ष मंजूरी दी गई थी?",
+        options: [
+          "2014",
+          "2015",
+          "2016",
+          "2018",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The National Intellectual Property Rights (IPR) Policy was approved on May 12, 2016, with the slogan 'Creative India; Innovative India' to establish an institutional framework for IPR awareness, generation, protection, and commercialization.",
+        expHi: "केंद्रीय मंत्रिमंडल ने 12 मई 2016 को राष्ट्रीय आईपीआर (बौद्धिक संपदा अधिकार) नीति को मंजूरी दी। इसका मुख्य नारा 'रचनात्मक भारत, अभिनव भारत' (Creative India; Innovative India) है।",
+        fact: "The Cell for IPR Promotion and Management (CIPAM) was created under DPIIT to implement this policy."
+      },
+      {
+        id: 79,
+        stemEn: "Which financial entity was established in 2021 as a specialized Development Financial Institution (DFI) to finance long-term infrastructure projects in India?",
+        stemHi: "भारत में दीर्घकालिक बुनियादी ढांचा परियोजनाओं को वित्तपोषित करने हेतु एक समर्पित विकास वित्त संस्थान (DFI) के रूप में 2021 में किस वित्तीय संस्था की स्थापना की गई थी?",
+        options: [
+          "National Bank for Financing Infrastructure and Development (NaBFID) / नेशनल बैंक फॉर फाइनेंसिंग इंफ्रास्ट्रक्चर एंड डेवलपमेंट",
+          "Small Industries Development Bank of India (SIDBI) / भारतीय लघु उद्योग विकास बैंक",
+          "National Housing Bank (NHB) / राष्ट्रीय आवास बैंक",
+          "Export-Import Bank of India (EXIM Bank) / भारतीय निर्यात-आयात बैंक",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "NaBFID was established under the National Bank for Financing Infrastructure and Development Act, 2021, as a specialized DFI to bridge the long-term infrastructure debt financing gap in India.",
+        expHi: "संसद द्वारा पारित NaBFID अधिनियम 2021 के तहत नेशनल बैंक फॉर फाइनेंसिंग इंफ्रास्ट्रक्चर एंड डेवलपमेंट की स्थापना की गई थी, ताकि बड़ी ढांचागत परियोजनाओं को दीर्घकालिक ऋण उपलब्ध कराया जा सके।",
+        fact: "K.V. Kamath was appointed as the first Chairperson of NaBFID."
+      },
+      {
+        id: 80,
+        stemEn: "Under the PM Vishwakarma Scheme launched in September 2023, what is the concessional interest rate charged on collateral-free enterprise development loans?",
+        stemHi: "सितंबर 2023 में शुरू की गई 'पीएम विश्वकर्मा योजना' के तहत संपार्श्विक-मुक्त उद्यम विकास ऋण पर कितनी रियायती ब्याज दर ली जाती है?",
+        options: [
+          "3%",
+          "5%",
+          "7%",
+          "9%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under the PM Vishwakarma Scheme launched on September 17, 2023, traditional artisans and craftspeople receive collateral-free enterprise loans up to ₹3 lakh (in two tranches of ₹1 lakh and ₹2 lakh) at a concessional interest rate of 5%, with an interest subvention cap of 8% provided by the Ministry of MSME.",
+        expHi: "17 सितंबर 2023 को शुरू की गई पीएम विश्वकर्मा योजना के अंतर्गत पारंपरिक कारीगरों एवं शिल्पकारों को 5% की रियायती ब्याज दर पर ₹3 लाख तक का संपार्श्विक-मुक्त ऋण (₹1 लाख और ₹2 लाख की दो किस्तों में) प्रदान किया जाता है।",
+        fact: "The scheme covers 18 traditional trades including carpenters, blacksmiths, potters, and sculptors."
+      },
+      {
+        id: 81,
+        stemEn: "In what year did the Government of India launch the 'Standup Enterprise' credit guarantee support along with the Startup India initiative?",
+        stemHi: "भारत सरकार ने 'स्टार्टअप इंडिया' (Startup India) पहल का औपचारिक शुभारंभ किस वर्ष किया था?",
+        options: [
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Startup India initiative was officially launched by the Prime Minister on January 16, 2016, to build a strong ecosystem for nurturing innovation, driving sustainable economic growth, and generating large-scale employment opportunities.",
+        expHi: "स्टार्टअप इंडिया (Startup India) अभियान की शुरुआत औपचारिक रूप से 16 जनवरी 2016 को की गई थी, जिसका उद्देश्य देश में नवाचार, उद्यमिता और रोजगार सृजन के अनुकूल पारिस्थितिकी तंत्र तैयार करना है।",
+        fact: "Eligible startups recognized under this initiative can avail 100% tax exemption on profits for three consecutive years under Section 80-IAC of the Income Tax Act."
+      },
+      {
+        id: 82,
+        stemEn: "What is the enhanced limit for the deposit insurance coverage per depositor per bank provided by the Deposit Insurance and Credit Guarantee Corporation (DICGC) as revised in 2020?",
+        stemHi: "वर्ष 2020 में संशोधित किए गए नियमों के अनुसार, जमा बीमा और ऋण गारंटी निगम (DICGC) द्वारा प्रति बैंक प्रति जमाकर्ता को प्रदान की जाने वाली जमा बीमा कवरेज की सीमा बढ़ाकर कितनी कर दी गई है?",
+        options: [
+          "₹1,00,000",
+          "₹2,00,000",
+          "₹5,00,000",
+          "₹10,00,000",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "In February 2020, the Government of India raised the deposit insurance coverage limit from ₹1 lakh to ₹5 lakh per depositor per insured bank (covering both principal and interest deposits) under the DICGC Act.",
+        expHi: "फरवरी 2020 में केंद्रीय बजट के तहत DICGC द्वारा प्रति जमाकर्ता बैंक जमा बीमा की सुरक्षा सीमा को ₹1 लाख से बढ़ाकर ₹5 लाख कर दिया गया, जिससे बैंक विफल होने की स्थिति में आम जनता के पैसे की सुरक्षा बढ़ गई।",
+        fact: "DICGC is a wholly-owned subsidiary of the Reserve Bank of India (RBI)."
+      },
+      {
+        id: 83,
+        stemEn: "Under the Pradhan Mantri Garib Kalyan Anna Yojana (PMGKAY) initiated during the 2020 COVID-19 pandemic, how much free foodgrain was provided per person per month over and above regular NFSA entitlements?",
+        stemHi: "वर्ष 2020 में कोविड-19 महामारी के दौरान शुरू की गई 'प्रधानमंत्री गरीब कल्याण अन्न योजना' (PMGKAY) के तहत राष्ट्रीय खाद्य सुरक्षा अधिनियम (NFSA) के नियमित कोटे के अतिरिक्त प्रति व्यक्ति प्रति माह कितना मुफ्त खाद्यान्न दिया गया?",
+        options: [
+          "2 kg / 2 किग्रा",
+          "5 kg / 5 किग्रा",
+          "10 kg / 10 किग्रा",
+          "15 kg / 15 किग्रा",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "Under PMGKAY, launched in March 2020 as part of the initial relief package, eligible beneficiaries under Antyodaya Anna Yojana (AAY) and Priority Households (PHH) were provided 5 kg of foodgrains (wheat or rice) per person per month free of cost, in addition to their regular NFSA entitlements.",
+        expHi: "पीएम गरीब कल्याण अन्न योजना (PMGKAY) के तहत राष्ट्रीय खाद्य सुरक्षा अधिनियम (NFSA) के लाभार्थियों को उनके सामान्य मासिक कोटे के अलावा प्रति व्यक्ति प्रति माह 5 किलोग्राम मुफ्त खाद्यान्न (गेहूं या चावल) प्रदान किया गया था।",
+        fact: "From January 1, 2023, the government integrated all free foodgrain provisions directly under the unified NFSA operational framework."
+      },
+      {
+        id: 84,
+        stemEn: "What is the maximum threshold of annual turnover up to which eligible businesses can opt for the GST Composition Scheme for goods (excluding special category states)?",
+        stemHi: "विशेष श्रेणी के राज्यों को छोड़कर, पात्र कारोबारी वस्तु आपूर्ति हेतु अधिकतम कितनी वार्षिक टर्नओवर सीमा तक 'जीएसटी कंपोजिशन योजना' (GST Composition Scheme) का विकल्प चुन सकते हैं?",
+        options: [
+          "₹50 lakh / ₹50 लाख",
+          "₹75 lakh / ₹75 लाख",
+          "₹1.5 crore / ₹1.5 करोड़",
+          "₹2.5 crore / ₹2.5 करोड़",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "Under Section 10 of the CGST Act, the turnover threshold for taxpayers to be eligible for the GST Composition Scheme for manufacturers and traders was enhanced to ₹1.5 crore (and ₹75 lakh for specified Special Category States), allowing them to pay tax at a flat concessional rate with simplified return filing.",
+        expHi: "जीएसटी कानून के तहत छोटे व्यापारियों और निर्माताओं के लिए कंपोजिशन योजना का लाभ लेने हेतु वार्षिक टर्नओवर की अधिकतम सीमा बढ़ाकर ₹1.5 करोड़ (पूर्वोत्तर और पहाड़ी राज्यों के लिए ₹75 लाख) कर दी गई है।",
+        fact: "Composition dealers cannot issue a tax invoice or claim Input Tax Credit (ITC), nor can they collect GST directly from customers."
+      },
+      {
+        id: 85,
+        stemEn: "In which year was the 'National Optical Fibre Network' (NOFN) revamped and expanded under the comprehensive flagship name 'BharatNet'?",
+        stemHi: "'राष्ट्रीय ऑप्टिकल फाइबर नेटवर्क' (NOFN) का पुनर्गठन एवं विस्तार कर इसे किस वर्ष 'भारतनेट' (BharatNet) के नाम से नया रूप दिया गया था?",
+        options: [
+          "2015",
+          "2017",
+          "2019",
+          "2021",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "In 2015, the National Optical Fibre Network (NOFN, originally conceptualized in 2011) was revamped, scaled up, and renamed as 'BharatNet' to provide high-speed broadband connectivity to all 2.5 lakh Gram Panchayats across the country.",
+        expHi: "वर्ष 2015 में देश की सभी 2.5 लाख ग्राम पंचायतों को उच्च गति के ब्रॉडबैंड इंटरनेट से जोड़ने के लिए राष्ट्रीय ऑप्टिकल फाइबर नेटवर्क (NOFN) का नाम बदलकर और इसका विस्तार कर 'भारतनेट' परियोजना कर दिया गया।",
+        fact: "Bharat Broadband Network Limited (BBNL), a special purpose vehicle (SPV), was set up to execute the BharatNet infrastructure, funded through the Universal Service Obligation Fund (USOF)."
+      },
+      {
+        id: 86,
+        stemEn: "What is the statutory retirement age set for the Managing Directors and CEOs of Public Sector Banks as per the revised governance guidelines issued post-2015?",
+        stemHi: "2015 के बाद जारी संशोधित प्रशासनिक दिशानिर्देशों के अनुसार सार्वजनिक क्षेत्र के बैंकों के प्रबंध निदेशकों (MD) और मुख्य कार्यकारी अधिकारियों (CEO) के लिए सांविधिक सेवानिवृत्ति आयु क्या तय की गई है?",
+        options: [
+          "58 years / 58 वर्ष",
+          "60 years / 60 वर्ष",
+          "62 years / 62 वर्ष",
+          "65 years / 65 वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Central Government in November 2022 revised the maximum superannuation age for whole-time directors, MDs, and CEOs of Public Sector Banks (PSBs) from 60 years up to 62 years, subject to performance and extension criteria.",
+        expHi: "केंद्र सरकार द्वारा सार्वजनिक क्षेत्र के बैंकों के प्रबंध निदेशकों (MD) और पूर्णकालिक निदेशकों की सेवानिवृत्ति की अधिकतम आयु सीमा को संशोधित कर 60 वर्ष से बढ़ाकर 62 वर्ष कर दिया गया है।",
+        fact: "The maximum tenure permissible for an MD/CEO in a PSB is capped at 10 years or attaining the age of superannuation, whichever is earlier."
+      },
+      {
+        id: 87,
+        stemEn: "Under the simplified personal income tax regime introduced under Section 115BAC in the Union Budget 2020, what was the basic tax rate originally set for the income slab of ₹5,00,001 to ₹7,50,000?",
+        stemHi: "केंद्रीय बजट 2020 में आयकर अधिनियम की धारा 115BAC के तहत शुरू की गई नई वैकल्पिक व्यक्तिगत आयकर व्यवस्था में ₹5,00,001 से ₹7,50,000 की आय स्लैब पर मूल कर दर क्या निर्धारित की गई थी?",
+        options: [
+          "5%",
+          "10%",
+          "15%",
+          "20%",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "In the new tax regime introduced in Budget 2020 (Section 115BAC), individual incomes between ₹5,00,001 and ₹7,50,000 were taxed at 10% for taxpayers who opted out of specified deductions and exemptions.",
+        expHi: "केंद्रीय बजट 2020 में पेश की गई नई कर व्यवस्था (धारा 115BAC) के अंतर्गत, ₹5,00,001 से ₹7,50,000 तक की आय पर कर की मूल दर 10% निर्धारित की गई थी (शर्त यह थी कि कोई छूट या कटौती न ली गई हो)।",
+        fact: "The new tax regime was designated as the 'default' tax regime starting from the financial year 2023–24 (Assessment Year 2024–25)."
+      },
+      {
+        id: 88,
+        stemEn: "Which national institutional framework was launched by the Union Government in August 2020 to introduce faceless assessment and taxpayer charter rights?",
+        stemHi: "करदाताओं के अधिकारों के चार्टर और फेसलेस (मानव-रहित) आकलन को लागू करने हेतु अगस्त 2020 में केंद्र सरकार द्वारा कौन सा संस्थागत ढांचा शुरू किया गया था?",
+        options: [
+          "Transparent Taxation - Honoring the Honest / पारदर्शी कराधान - ईमानदार का सम्मान",
+          "Samadhan Scheme / समाधान योजना",
+          "Vivaad se Vishwas / विवाद से विश्वास",
+          "Direct Tax Code 2020 / प्रत्यक्ष कर संहिता 2020",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "Prime Minister Narendra Modi launched the platform for 'Transparent Taxation – Honoring the Honest' on August 13, 2020. It introduced Faceless Assessment, Faceless Appeal, and the Taxpayers' Charter to eliminate territorial jurisdictions and curb administrative harassment.",
+        expHi: "13 अगस्त 2020 को प्रधानमंत्री द्वारा 'पारदर्शी कराधान - ईमानदार का सम्मान' मंच की शुरुआत की गई। इसमें फेसलेस असेसमेंट, फेसलेस अपील और करदाता अधिकार पत्र (टैक्सपेयर्स चार्टर) शामिल हैं।",
+        fact: "The Central Board of Direct Taxes (CBDT) is the apex administrative body overseeing the administration of direct taxes in India."
+      },
+      {
+        id: 89,
+        stemEn: "In which year was the 'National Asset Reconstruction Company Limited' (NARCL) formally incorporated as an ARC under the Companies Act?",
+        stemHi: "'नेशनल एसेट रिकंस्ट्रक्शन कंपनी लिमिटेड' (NARCL) को कंपनी अधिनियम के तहत औपचारिक रूप से किस वर्ष एक संपत्ति पुनर्निर्माण कंपनी (ARC) के रूप में निगमित किया गया था?",
+        options: [
+          "2017",
+          "2018",
+          "2019",
+          "2021",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "NARCL was incorporated in Mumbai on July 7, 2021, and licensed by the RBI under the SARFAESI Act, 2002, to operate as an Asset Reconstruction Company to take over stressed debt from commercial banks.",
+        expHi: "नेशनल एसेट रिकंस्ट्रक्शन कंपनी लिमिटेड (NARCL) का औपचारिक निगमन 7 जुलाई 2021 को किया गया था। इसे सार्वजनिक क्षेत्र के बैंकों द्वारा गैर-निष्पादित परिसंपत्तियों (NPA) के निपटारे हेतु स्थापित किया गया है।",
+        fact: "Majority shareholding (51%) in NARCL is held by Public Sector Banks, while private lenders hold the remainder."
+      },
+      {
+        id: 90,
+        stemEn: "What is the exact launch year of the 'Stand Up India' scheme, specifically tailored to support women and SC/ST entrepreneurs?",
+        stemHi: "महिलाओं और अनुसूचित जाति/अनुसूचित जनजाति के उद्यमियों का समर्थन करने हेतु विशेष रूप से तैयार की गई 'स्टैंड अप इंडिया' योजना का सटीक शुभारंभ वर्ष क्या है?",
+        options: [
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The Stand Up India scheme was launched on April 5, 2016, by the Prime Minister to promote entrepreneurship at the grassroots level among SC, ST, and women entrepreneurs.",
+        expHi: "स्टैंड अप इंडिया योजना का शुभारंभ 5 अप्रैल 2016 को किया गया था। इसका उद्देश्य महिला और SC/ST वर्ग के लोगों को विनिर्माण, सेवा, व्यापार या कृषि-संबद्ध क्षेत्रों में नए उद्यम लगाने हेतु सहायता देना है।",
+        fact: "The scheme provides bank loans ranging from ₹10 lakh to ₹1 crore for setting up greenfield (new) projects."
+      },
+      {
+        id: 91,
+        stemEn: "What is the maximum age limit for an individual subscriber to join the Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY) launched in 2015?",
+        stemHi: "2015 में शुरू की गई 'प्रधानमंत्री जीवन ज्योति बीमा योजना' (PMJJBY) में शामिल होने के लिए किसी व्यक्ति की अधिकतम आयु सीमा क्या है?",
+        options: [
+          "40 years / 40 वर्ष",
+          "50 years / 50 वर्ष",
+          "60 years / 60 वर्ष",
+          "65 years / 65 वर्ष",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "PMJJBY is available to individuals aged 18 to 50 years who have a bank account. Life risk cover is available up to age 55, provided annual premium payments are continued.",
+        expHi: "प्रधानमंत्री जीवन ज्योति बीमा योजना (PMJJBY) में प्रवेश की आयु सीमा 18 से 50 वर्ष है। इस योजना के तहत खाताधारक को 55 वर्ष की आयु तक ₹2 लाख का जीवन बीमा कवर प्राप्त होता है (बशर्ते वार्षिक प्रीमियम का निरंतर भुगतान हो)।",
+        fact: "PMJJBY offers a death benefit of ₹2 lakh in case of demise due to any cause, with a revised annual premium of ₹436 (initially ₹330)."
+      },
+      {
+        id: 92,
+        stemEn: "What was the central focus of the 'Deepam' (DIPAM) department when renamed from the Department of Disinvestment in 2016?",
+        stemHi: "2016 में विनिवेश विभाग का नाम बदलकर 'दीपम' (DIPAM) किए जाने पर इसका मुख्य फोकस क्या निर्धारित किया गया?",
+        options: [
+          "Managing Central Government investments in equity and public asset management / इक्विटी में केंद्र सरकार के निवेश एवं सार्वजनिक परिसंपत्ति प्रबंधन का समग्र प्रबंधन",
+          "Directly managing oil refinery retail pricing / तेल रिफाइनरियों के खुदरा मूल्यों का सीधा प्रबंधन",
+          "Printing of sovereign commemorative postal stamps / सॉवरेन स्मारक डाक टिकटों की छपाई",
+          "Administering border security patrol budgets / सीमा सुरक्षा गश्ती बजट का प्रशासन",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "In April 2016, the Department of Disinvestment was renamed as the 'Department of Investment and Public Asset Management' (DIPAM) under the Ministry of Finance. Its mandate was expanded from mere disinvestment to the strategic management of equity investments of the Central Government in CPSEs.",
+        expHi: "अप्रैल 2016 में विनिवेश विभाग का नाम बदलकर 'निवेश और लोक परिसंपत्ति प्रबंधन विभाग' (DIPAM) कर दिया गया। अब इसका दायित्व केवल विनिवेश तक सीमित न रहकर केंद्र सरकार के सभी वित्तीय निवेशों और परिसंपत्तियों का बेहतर प्रबंधन करना है।",
+        fact: "DIPAM is one of the six departments functioning under the Ministry of Finance, Government of India."
+      },
+      {
+        id: 93,
+        stemEn: "Under the Special Liquidity Scheme for Non-Banking Financial Companies (NBFCs) and Housing Finance Companies (HFCs) announced in 2020, which public agency was designated as the SPV managing the scheme?",
+        stemHi: "वर्ष 2020 में गैर-बैंकिंग वित्तीय कंपनियों (NBFCs) और हाउसिंग फाइनेंस कंपनियों (HFCs) के लिए घोषित 'विशेष तरलता योजना' के तहत किस सार्वजनिक एजेंसी को योजना का प्रबंधन करने वाला SPV नामित किया गया था?",
+        options: [
+          "SBI Capital Markets Limited (SBICAP) / एसबीआई कैपिटल मार्केट्स लिमिटेड",
+          "Life Insurance Corporation of India (LIC) / भारतीय जीवन बीमा निगम",
+          "NABARD / नाबार्ड",
+          "SIDBI / सिडबी",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "To address the liquidity crisis post-COVID, the Government launched the ₹30,000 crore Special Liquidity Scheme for NBFCs/HFCs, wherein SLS Trust was set up with SBICAP (a subsidiary of State Bank of India) acting as the SPV.",
+        expHi: "NBFCs और HFCs की तरलता समस्या को दूर करने के लिए केंद्र सरकार की ₹30,000 करोड़ की विशेष तरलता योजना का संचालन करने हेतु एसबीआई कैप (SBICAP) के तहत 'SLS Trust' का गठन किया गया था।",
+        fact: "The Reserve Bank of India subscribed to the short-term commercial papers and debentures issued under this facility, fully guaranteed by the Government of India."
+      },
+      {
+        id: 94,
+        stemEn: "On which exact date did the Goods and Services Tax (GST) come into formal operational effect across the territory of Jammu and Kashmir?",
+        stemHi: "वस्तु एवं सेवा कर (GST) जम्मू और कश्मीर राज्य में औपचारिक रूप से किस निश्चित तिथि से प्रभावी हुआ था?",
+        options: [
+          "1 July 2017 / 1 जुलाई 2017",
+          "8 July 2017 / 8 जुलाई 2017",
+          "15 August 2017 / 15 अगस्त 2017",
+          "1 April 2018 / 1 अप्रैल 2018",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "While GST came into effect in the rest of India on July 1, 2017, the Jammu and Kashmir Legislative Assembly passed the requisite legislation on July 5, and the President issued an ordinance making the CGST and IGST Acts applicable to the state with effect from July 8, 2017.",
+        expHi: "देश के अन्य हिस्सों में जीएसटी 1 जुलाई 2017 से लागू हुआ था, जबकि तत्कालीन जम्मू और कश्मीर राज्य में विधानसभा से प्रस्ताव पारित होने और राष्ट्रपति द्वारा अध्यादेश जारी होने के बाद यह 8 जुलाई 2017 से लागू हुआ।",
+        fact: "Jammu and Kashmir was the last state in the Indian Union to officially implement the Goods and Services Tax regime."
+      },
+      {
+        id: 95,
+        stemEn: "What was the minimum net worth threshold prescribed for non-banking entities to operate as Bharat Bill Payment Operating Units (BBPOUs) under the RBI's simplified norms revised in 2022?",
+        stemHi: "भारतीय रिज़र्व बैंक (RBI) द्वारा 2022 में संशोधित सरल नियमों के तहत गैर-बैंकिंग संस्थाओं को 'भारत बिल पेमेंट ऑपरेटिंग यूनिट' (BBPOU) के रूप में कार्य करने हेतु न्यूनतम नेटवर्थ की सीमा क्या निर्धारित की गई थी?",
+        options: [
+          "₹50 crore / ₹50 करोड़",
+          "₹100 crore / ₹100 करोड़",
+          "₹25 crore / ₹25 करोड़",
+          "₹10 crore / ₹10 करोड़",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "In May 2022, the RBI reduced the minimum net worth requirement for non-bank Bharat Bill Payment Operating Units (BBPOUs) from ₹100 crore to ₹25 crore to encourage greater participation and foster competition in bill payments.",
+        expHi: "भारतीय रिज़र्व बैंक ने मई 2022 में गैर-बैंक BBPOUs के लिए न्यूनतम नेटवर्थ आवश्यकता को ₹100 करोड़ से घटाकर ₹25 करोड़ कर दिया ताकि डिजिटल बिल भुगतान प्रणाली में और अधिक इकाइयां शामिल हो सकें।",
+        fact: "Bharat Bill Payment System (BBPS) is an interoperable bill payment system conceptualized by the RBI and operated by NPCI."
+      },
+      {
+        id: 96,
+        stemEn: "Which public authority was set up in 2015 to administer the District Mineral Foundation (DMF) funds accumulated from mining leases for developmental works in mining-affected areas?",
+        stemHi: "खनन प्रभावित क्षेत्रों में विकास कार्यों हेतु खनन पट्टों से एकत्रित 'जिला खनिज फाउंडेशन' (DMF) निधि के प्रबंधन के लिए 2015 में किस योजना को शुरू किया गया था?",
+        options: [
+          "Pradhan Mantri Khanij Kshetra Kalyan Yojana (PMKKKY) / प्रधानमंत्री खनिज क्षेत्र कल्याण योजना",
+          "Deen Dayal Upadhyaya Gram Jyoti Yojana / दीनदयाल उपाध्याय ग्राम ज्योति योजना",
+          "Pradhan Mantri Matsya Sampada Yojana / प्रधानमंत्री मत्स्य संपदा योजना",
+          "Bharat Mala Pariyojana / भारतमाला परियोजना",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0,
+        expEn: "The Pradhan Mantri Khanij Kshetra Kalyan Yojana (PMKKKY) was launched in September 2015 to ensure the welfare of areas and people affected by mining operations, using funds generated through District Mineral Foundations (DMFs) mandated under the MMDR Amendment Act, 2015.",
+        expHi: "खान और खनिज (विकास और विनियमन) संशोधन अधिनियम, 2015 के तहत गठित जिला खनिज फाउंडेशन (DMF) फंड का उपयोग कर खनन प्रभावित क्षेत्रों के समग्र कल्याण हेतु सितंबर 2015 में 'प्रधानमंत्री खनिज क्षेत्र कल्याण योजना' (PMKKKY) शुरू की गई थी।",
+        fact: "At least 60% of the DMF fund under PMKKKY must be utilized for high-priority areas like drinking water, healthcare, education, and sanitation."
+      },
+      {
+        id: 97,
+        stemEn: "In which year was the 'National Green Hydrogen Mission' formally approved by the Union Cabinet with an initial outlay of ₹19,744 crore?",
+        stemHi: "केंद्रीय मंत्रिमंडल द्वारा ₹19,744 करोड़ के प्रारंभिक परिव्यय के साथ 'राष्ट्रीय हरित हाइड्रोजन मिशन' (National Green Hydrogen Mission) को औपचारिक रूप से किस वर्ष मंजूरी दी गई थी?",
+        options: [
+          "2019",
+          "2020",
+          "2021",
+          "2023",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "The Union Cabinet formally approved the National Green Hydrogen Mission on January 4, 2023. The mission aims to make India a global hub for the production, utilization, and export of green hydrogen and its derivatives, targeting at least 5 MMT annual green hydrogen production by 2030.",
+        expHi: "4 जनवरी 2023 को केंद्रीय मंत्रिमंडल ने ₹19,744 करोड़ के परिव्यय वाले 'राष्ट्रीय हरित हाइड्रोजन मिशन' को मंजूरी दी। इसका मुख्य लक्ष्य वर्ष 2030 तक देश में प्रति वर्ष कम से कम 5 मिलियन मीट्रिक टन हरित हाइड्रोजन उत्पादन क्षमता विकसित करना है।",
+        fact: "The Strategic Interventions for Green Hydrogen Transition (SIGHT) programme is a key financial incentive component under this mission."
+      },
+      {
+        id: 98,
+        stemEn: "What was the exact name of the tax amnesty and dispute resolution scheme announced for indirect taxes under the Union Budget 2019–20?",
+        stemHi: "केंद्रीय बजट 2019-20 में अप्रत्यक्ष करों के लंबित विवादों और मुकदमों के समाधान हेतु घोषित कर विवाद निपटान योजना का सटीक नाम क्या था?",
+        options: [
+          "Vivad se Vishwas / विवाद से विश्वास",
+          "Sabka Vishwas (Legacy Dispute Resolution) Scheme / सबका विश्वास (विरासत विवाद समाधान) योजना",
+          "Kar Vivad Samadhan Scheme / कर विवाद समाधान योजना",
+          "Direct Tax Vivaad Niptan / प्रत्यक्ष कर विवाद निपटान",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1,
+        expEn: "The Sabka Vishwas (Legacy Dispute Resolution) Scheme, 2019 was introduced in Budget 2019–20 to liquidate legacy cases of Central Excise and Service Tax that were subsumed into GST, offering relief of up to 70% of tax dues.",
+        expHi: "बजट 2019-20 में केंद्रीय उत्पाद शुल्क और सेवा कर के पुराने लंबित मुकदमों के निपटारे के लिए 'सबका विश्वास (विरासत विवाद समाधान) योजना, 2019' शुरू की गई थी।",
+        fact: "While 'Sabka Vishwas' was launched for indirect tax disputes, the 'Vivad se Vishwas' scheme was launched in 2020 specifically for direct tax disputes."
+      },
+      {
+        id: 99,
+        stemEn: "Under the revised guidelines for sovereign debt management, what was the established headline fiscal deficit target for the Central Government by FY 2025–26 as articulated in post-pandemic budgets?",
+        stemHi: "संशोधित राजकोषीय समेकन रोडमैप के तहत महामारी के बाद के बजटों में केंद्र सरकार द्वारा वित्तीय वर्ष 2025-26 तक राजकोषीय घाटे को कितने प्रतिशत से नीचे लाने का लक्ष्य रखा गया था?",
+        options: [
+          "Below 3.0% of GDP / जीडीपी के 3.0% से नीचे",
+          "Below 3.5% of GDP / जीडीपी के 3.5% से नीचे",
+          "Below 4.0% of GDP / जीडीपी के 4.0% से नीचे",
+          "Below 4.5% of GDP / जीडीपी के 4.5% से नीचे",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3,
+        expEn: "In the Union Budget 2021–22, Finance Minister Nirmala Sitharaman announced a medium-term fiscal consolidation path aiming to bring down the fiscal deficit of the Central Government to below 4.5% of GDP by the financial year 2025–26.",
+        expHi: "केंद्रीय बजट 2021-22 में वित्त मंत्री ने राजकोषीय समेकन का संशोधित रोडमैप प्रस्तुत किया, जिसके तहत वित्तीय वर्ष 2025-26 तक राजकोषीय घाटे को सकल घरेलू उत्पाद (GDP) के 4.5% से नीचे लाने का लक्ष्य निर्धारित किया गया था।",
+        fact: "Fiscal deficit represents the total borrowing requirements of the government and is defined as total expenditure minus total receipts (excluding borrowings)."
+      },
+      {
+        id: 100,
+        stemEn: "In which year was the 'National Monetisation Pipeline' (NMP) 4-year asset pipeline covering the period from 2021–22 to 2024–25 officially launched by the Minister of Finance?",
+        stemHi: "केंद्रीय वित्त मंत्री द्वारा 2021-22 से 2024-25 तक की 4-वर्षीय संपत्ति पाइपलाइन 'राष्ट्रीय मुद्रीकरण पाइपलाइन' (NMP) आधिकारिक तौर पर किस वर्ष लॉन्च की गई थी?",
+        options: [
+          "2019",
+          "2020",
+          "2021",
+          "2022",
+          "None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2,
+        expEn: "The National Monetisation Pipeline (NMP) was officially unveiled on August 23, 2021, by Union Finance Minister Nirmala Sitharaman. It aims to generate ₹6 lakh crore through brownfield asset monetisation across 14 infrastructure sectors over the 4-year period from FY22 to FY25.",
+        expHi: "राष्ट्रीय मुद्रीकरण पाइपलाइन (NMP) का विमोचन 23 अगस्त 2021 को वित्त मंत्री निर्मला सीतारमण द्वारा किया गया था। इसके तहत वित्तीय वर्ष 2021-22 से 2024-25 के दौरान ₹6 लाख करोड़ की परिचालन परिसंपत्तियों के मुद्रीकरण का लक्ष्य रखा गया।",
+        fact: "The top three sectors targeted under NMP in terms of monetization value are Roads (27%), Railways (25%), and Power (15%)."
+      }
+    ];
+
+    /* Runtime CBT State Management */
+    let currentIdx = 0;
+    const totalQuestions = QUESTIONS_DATA.length;
+
+    // Array tracking state for each of the 100 questions:
+    // status: 'not-visited', 'unanswered', 'correct', 'incorrect', 'skipped'
+    // selectedOption: null or index (0-4)
+    // isReviewed: boolean
+    const questionStates = Array.from({ length: totalQuestions }, () => ({
+      status: 'not-visited',
+      selectedOption: null,
+      isReviewed: false
+    }));
+
+    // Initialize the Examination Application
+    window.addEventListener('DOMContentLoaded', () => {
+      buildPaletteGrid();
+      loadQuestion(0);
+      updateLiveScore();
+    });
+
+    /* Palette Drawer Functions */
+    function openPalette() {
+      const drawer = document.getElementById('palette-drawer');
+      const overlay = document.getElementById('palette-overlay');
+      overlay.style.display = 'block';
+      setTimeout(() => {
+        overlay.style.opacity = '1';
+        drawer.style.right = '0';
+      }, 10);
+    }
+
+    function closePalette() {
+      const drawer = document.getElementById('palette-drawer');
+      const overlay = document.getElementById('palette-overlay');
+      drawer.style.right = '-460px';
+      overlay.style.opacity = '0';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 300);
+    }
+
+    function buildPaletteGrid() {
+      const grid = document.getElementById('palette-grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < totalQuestions; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'palette-btn status-not-visited';
+        btn.id = `palette-btn-${i}`;
+        btn.textContent = i + 1;
+        btn.onclick = () => {
+          jumpToQuestion(i);
+          closePalette();
+        };
+        grid.appendChild(btn);
+      }
+    }
+
+    function syncPaletteItem(idx) {
+      const btn = document.getElementById(`palette-btn-${idx}`);
+      if (!btn) return;
+      const state = questionStates[idx];
+
+      // Remove existing status classes
+      btn.className = 'palette-btn';
+
+      if (idx === currentIdx) {
+        btn.classList.add('current');
+      }
+
+      if (state.isReviewed) {
+        btn.classList.add('status-review');
+      } else if (state.status === 'correct') {
+        btn.classList.add('status-correct');
+      } else if (state.status === 'incorrect') {
+        btn.classList.add('status-incorrect');
+      } else if (state.status === 'skipped') {
+        btn.classList.add('status-skipped');
+      } else if (state.status === 'unanswered') {
+        btn.classList.add('status-unanswered');
+      } else {
+        btn.classList.add('status-not-visited');
+      }
+    }
+
+    function updateAllPaletteButtons() {
+      for (let i = 0; i < totalQuestions; i++) {
+        syncPaletteItem(i);
+      }
+    }
+
+    /* Core Render Engine */
+    function loadQuestion(idx) {
+      currentIdx = idx;
+      const q = QUESTIONS_DATA[idx];
+      const state = questionStates[idx];
+
+      // If not yet visited, set to unanswered
+      if (state.status === 'not-visited') {
+        state.status = 'unanswered';
+      }
+
+      // UI Counter & Headings
+      document.getElementById('q-counter-text').textContent = `Question ${q.id} of ${totalQuestions}`;
+      document.getElementById('q-text-en').textContent = `${q.id}. ${q.stemEn}`;
+      document.getElementById('q-text-hi').textContent = q.stemHi;
+
+      // Render 5 Options
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D', 'E'];
+
+      q.options.forEach((optText, optIdx) => {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        card.id = `opt-card-${optIdx}`;
+
+        const keyBadge = document.createElement('div');
+        keyBadge.className = 'option-key';
+        keyBadge.textContent = letters[optIdx];
+
+        const textDiv = document.createElement('div');
+        textDiv.className = 'option-text';
+        textDiv.textContent = optText;
+
+        card.appendChild(keyBadge);
+        card.appendChild(textDiv);
+
+        if (state.selectedOption !== null) {
+          card.classList.add('locked');
+          if (optIdx === q.correct) {
+            card.classList.add('correct');
+          } else if (optIdx === state.selectedOption) {
+            card.classList.add('incorrect');
+          }
+        } else {
+          card.onclick = () => selectOption(optIdx);
+        }
+
+        optionsContainer.appendChild(card);
+      });
+
+      // Explanation Box
+      const expBox = document.getElementById('explanation-box');
+      if (state.selectedOption !== null) {
+        document.getElementById('exp-text-en').textContent = q.expEn;
+        document.getElementById('exp-text-hi').textContent = q.expHi;
+        document.getElementById('exp-fact-box').innerHTML = `<b>Key Exam Fact:</b> ${q.fact}`;
+        expBox.style.display = 'block';
+      } else {
+        expBox.style.display = 'none';
+      }
+
+      // Review Button State
+      const revBtn = document.getElementById('btn-review');
+      if (state.isReviewed) {
+        revBtn.classList.add('active');
+        revBtn.textContent = '★ Marked for Review';
+      } else {
+        revBtn.classList.remove('active');
+        revBtn.textContent = 'Mark for Review';
+      }
+
+      // Prev / Next / Submit button visibility
+      document.getElementById('btn-prev').disabled = (currentIdx === 0);
+      if (currentIdx === totalQuestions - 1) {
+        document.getElementById('btn-next').style.display = 'none';
+        document.getElementById('btn-submit').style.display = 'inline-flex';
+      } else {
+        document.getElementById('btn-next').style.display = 'inline-flex';
+        document.getElementById('btn-submit').style.display = 'none';
+      }
+
+      updateAllPaletteButtons();
+    }
+
+    /* Selection & Immediate Evaluation */
+    function selectOption(chosenIdx) {
+      const state = questionStates[currentIdx];
+      if (state.selectedOption !== null) return; // Prevent re-selection
+
+      const q = QUESTIONS_DATA[currentIdx];
+      state.selectedOption = chosenIdx;
+
+      if (chosenIdx === q.correct) {
+        state.status = 'correct';
+      } else {
+        state.status = 'incorrect';
+      }
+
+      // Lock options immediately and show feedback
+      const allCards = document.querySelectorAll('.option-card');
+      allCards.forEach((c, idx) => {
+        c.classList.add('locked');
+        if (idx === q.correct) {
+          c.classList.add('correct');
+        } else if (idx === chosenIdx) {
+          c.classList.add('incorrect');
+        }
+      });
+
+      // Reveal Solution and Fact
+      document.getElementById('exp-text-en').textContent = q.expEn;
+      document.getElementById('exp-text-hi').textContent = q.expHi;
+      document.getElementById('exp-fact-box').innerHTML = `<b>Key Exam Fact:</b> ${q.fact}`;
+      document.getElementById('explanation-box').style.display = 'block';
+
+      updateLiveScore();
+      syncPaletteItem(currentIdx);
+    }
+
+    /* Actions */
+    function nextQuestion() {
+      if (currentIdx < totalQuestions - 1) {
+        loadQuestion(currentIdx + 1);
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIdx > 0) {
+        loadQuestion(currentIdx - 1);
+      }
+    }
+
+    function skipQuestion() {
+      const state = questionStates[currentIdx];
+      if (state.selectedOption === null) {
+        state.status = 'skipped';
+        syncPaletteItem(currentIdx);
+      }
+      nextQuestion();
+    }
+
+    function toggleReview() {
+      const state = questionStates[currentIdx];
+      state.isReviewed = !state.isReviewed;
+      const revBtn = document.getElementById('btn-review');
+      if (state.isReviewed) {
+        revBtn.classList.add('active');
+        revBtn.textContent = '★ Marked for Review';
+      } else {
+        revBtn.classList.remove('active');
+        revBtn.textContent = 'Mark for Review';
+      }
+      syncPaletteItem(currentIdx);
+    }
+
+    function jumpToQuestion(idx) {
+      loadQuestion(idx);
+    }
+
+    /* Score Calculation (+1.00 / -0.25) */
+    function calculateScore() {
+      let correct = 0;
+      let incorrect = 0;
+      let skipped = 0;
+
+      questionStates.forEach(st => {
+        if (st.status === 'correct') correct++;
+        else if (st.status === 'incorrect') incorrect++;
+        else skipped++;
+      });
+
+      const netScore = (correct * 1.0) - (incorrect * 0.25);
+      return {
+        correct,
+        incorrect,
+        skipped,
+        netScore: netScore.toFixed(2),
+        accuracy: (correct + incorrect > 0) ? ((correct / (correct + incorrect)) * 100).toFixed(1) : "0.0"
+      };
+    }
+
+    function updateLiveScore() {
+      const res = calculateScore();
+      document.getElementById('top-net-score').textContent = res.netScore;
+    }
+
+    /* Report Generation */
+    function showFinalReport() {
+      const res = calculateScore();
+      document.getElementById('cbt-question-container').style.display = 'none';
+      const report = document.getElementById('final-report-container');
+      report.style.display = 'block';
+
+      document.getElementById('rep-net-score').textContent = res.netScore;
+      document.getElementById('rep-correct').textContent = res.correct;
+      document.getElementById('rep-incorrect').textContent = res.incorrect;
+      document.getElementById('rep-skipped').textContent = res.skipped;
+      document.getElementById('rep-accuracy').textContent = res.accuracy + '%';
+    }
+
+    function restartTest() {
+      for (let i = 0; i < totalQuestions; i++) {
+        questionStates[i] = {
+          status: 'not-visited',
+          selectedOption: null,
+          isReviewed: false
+        };
+      }
+      document.getElementById('final-report-container').style.display = 'none';
+      document.getElementById('cbt-question-container').style.display = 'block';
+      buildPaletteGrid();
+      loadQuestion(0);
+      updateLiveScore();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSSSC PET CBT Simulator - सामान्य हिन्दी: लिंग (100 Questions)</title>
+<style>
+  :root {
+    --bg-main: #121316;
+    --bg-card: #1e2024;
+    --bg-hover: #282b30;
+    --border-color: #2f333a;
+    --text-primary: #f1f3f5;
+    --text-secondary: #adb5bd;
+    --accent-blue: #3b82f6;
+    --status-correct: #10b981;
+    --status-incorrect: #ef4444;
+    --status-unanswered: #f97316;
+    --status-skipped: #64748b;
+    --status-review: #a855f7;
+    --status-notvisited: #374151;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.6;
+  }
+
+  /* Top Navigation Bar */
+  .top-bar {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .brand-section {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .exam-badge {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+  }
+
+  .subject-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .top-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .q-counter-badge {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .score-badge {
+    background-color: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .btn:hover {
+    background-color: #343840;
+  }
+
+  .btn-palette {
+    background-color: var(--accent-blue);
+    border-color: #2563eb;
+    color: #ffffff;
+  }
+
+  .btn-palette:hover {
+    background-color: #2563eb;
+  }
+
+  .btn-finish {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #f87171;
+  }
+
+  .btn-finish:hover {
+    background-color: rgba(239, 68, 68, 0.28);
+  }
+
+  /* Main Container */
+  .main-container {
+    max-width: 900px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 0 1.25rem;
+    flex: 1;
+  }
+
+  .question-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .q-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .q-num-tag {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+  }
+
+  .marking-info {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .mark-pos { color: #34d399; font-weight: 600; }
+  .mark-neg { color: #f87171; font-weight: 600; }
+
+  .q-stem {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.6rem;
+    line-height: 1.55;
+  }
+
+  /* Options List */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .option-card {
+    background-color: var(--bg-main);
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.95rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+
+  .option-card:hover:not(.locked) {
+    border-color: var(--accent-blue);
+    background-color: rgba(59, 130, 246, 0.07);
+  }
+
+  .option-card.locked {
+    cursor: default;
+  }
+
+  .opt-letter {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .opt-text {
+    font-size: 1.05rem;
+    color: var(--text-primary);
+    flex: 1;
+  }
+
+  /* Option Feedback States */
+  .option-card.correct-selected {
+    background-color: rgba(16, 185, 129, 0.18);
+    border-color: var(--status-correct);
+  }
+  .option-card.correct-selected .opt-letter {
+    background-color: var(--status-correct);
+    color: #fff;
+    border-color: var(--status-correct);
+  }
+
+  .option-card.incorrect-selected {
+    background-color: rgba(239, 68, 68, 0.18);
+    border-color: var(--status-incorrect);
+  }
+  .option-card.incorrect-selected .opt-letter {
+    background-color: var(--status-incorrect);
+    color: #fff;
+    border-color: var(--status-incorrect);
+  }
+
+  .option-card.correct-outline {
+    border: 2px solid var(--status-correct);
+    background-color: rgba(16, 185, 129, 0.08);
+  }
+  .option-card.correct-outline .opt-letter {
+    border-color: var(--status-correct);
+    color: #34d399;
+  }
+
+  /* Explanation Box */
+  .explanation-box {
+    display: none;
+    background-color: #16181d;
+    border-left: 4px solid var(--accent-blue);
+    border-radius: 8px;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.75rem;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .explanation-box.visible {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .exp-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #60a5fa;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .exp-hindi {
+    font-size: 1rem;
+    color: #e2e8f0;
+    margin-bottom: 0.85rem;
+  }
+
+  .exp-fact {
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 6px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.92rem;
+    color: #fcd34d;
+  }
+
+  /* Action Bar */
+  .action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  .left-actions, .right-actions {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-review.active {
+    background-color: rgba(168, 85, 247, 0.25);
+    border-color: var(--status-review);
+    color: #d8b4fe;
+  }
+
+  .btn-next {
+    background-color: #2563eb;
+    border-color: #1d4ed8;
+    color: #fff;
+  }
+  .btn-next:hover {
+    background-color: #1d4ed8;
+  }
+
+  /* Slide-Over Question Palette Modal */
+  .palette-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(3px);
+    z-index: 200;
+    display: none;
+    justify-content: flex-end;
+  }
+
+  .palette-backdrop.open {
+    display: flex;
+  }
+
+  .palette-drawer {
+    background-color: var(--bg-card);
+    width: 100%;
+    max-width: 430px;
+    height: 100%;
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    animation: slideLeft 0.22s ease;
+  }
+
+  @keyframes slideLeft {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  .palette-header {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .palette-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .btn-close-palette {
+    background-color: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #f87171;
+    padding: 0.35rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .palette-legend {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .palette-grid {
+    padding: 1.25rem 1.5rem;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.65rem;
+    flex: 1;
+    align-content: start;
+  }
+
+  .pal-btn {
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #fff;
+    transition: transform 0.12s ease;
+  }
+
+  .pal-btn:hover {
+    transform: scale(1.06);
+  }
+
+  .pal-btn.current-q {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  .st-not-visited { background-color: var(--status-notvisited); color: #cbd5e1; }
+  .st-correct { background-color: var(--status-correct); }
+  .st-incorrect { background-color: var(--status-incorrect); }
+  .st-unanswered { background-color: var(--status-unanswered); }
+  .st-skipped { background-color: var(--status-skipped); }
+  .st-review { background-color: var(--status-review); }
+
+  /* Final Report Dashboard */
+  .report-container {
+    display: none;
+    max-width: 1000px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 0 1.25rem 3rem;
+  }
+
+  .report-container.visible {
+    display: block;
+  }
+
+  .report-header-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .stat-box {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .stat-val {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .review-matrix-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1.75rem;
+  }
+
+  .matrix-item {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .matrix-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 600px) {
+    .question-card { padding: 1.25rem; }
+    .q-stem { font-size: 1.1rem; }
+    .palette-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<header class="top-bar">
+  <div class="brand-section">
+    <span class="exam-badge">UPSSSC PET</span>
+    <span class="subject-title">सामान्य हिन्दी — लिंग (Gender)</span>
+  </div>
+  <div class="top-controls">
+    <div class="q-counter-badge" id="topQCounter">Question 1 of 100</div>
+    <div class="score-badge" id="liveScoreBadge">Score: 0.00</div>
+    <button class="btn btn-palette" id="openPaletteTopBtn">📋 Open Palette</button>
+    <button class="btn btn-finish" id="finishExamBtn">📊 Finish & Report</button>
+  </div>
+</header>
+
+<!-- Main Single-Column Question View -->
+<main class="main-container" id="simulatorMain">
+  <div class="question-card">
+    <div class="q-header">
+      <span class="q-num-tag" id="qNumberTag">Question 1 of 100</span>
+      <div class="marking-info">
+        <span class="mark-pos">Correct: +1.00</span>
+        <span class="mark-neg">Incorrect: -0.25</span>
+        <span>Skipped: 0.00</span>
+      </div>
+    </div>
+
+    <div class="q-stem" id="qStemText">Loading question...</div>
+
+    <div class="options-list" id="optionsContainer"></div>
+
+    <!-- Explanation Card -->
+    <div class="explanation-box" id="explanationBox">
+      <div class="exp-title" id="expHeader">✅ प्रमाणित व्याख्या (Verified Explanation)</div>
+      <div class="exp-hindi" id="expHindiText"></div>
+      <div class="exp-fact" id="expKeyFact"></div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="action-bar">
+      <div class="left-actions">
+        <button class="btn" id="prevQBtn">⬅ Previous</button>
+        <button class="btn" id="skipQBtn">⏭ Skip Question</button>
+        <button class="btn btn-review" id="markReviewBtn">🟣 Mark for Review</button>
+        <button class="btn" id="openPaletteBottomBtn">📋 Open Palette</button>
+      </div>
+      <div class="right-actions">
+        <button class="btn btn-next" id="nextQBtn">Next Question ➔</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Slide-Over Question Palette Modal (Hidden by Default) -->
+<div class="palette-backdrop" id="paletteModal">
+  <div class="palette-drawer">
+    <div class="palette-header">
+      <span class="palette-title">📋 Question Palette (1–100)</span>
+      <button class="btn-close-palette" id="closePaletteBtn">✕ Close Palette</button>
+    </div>
+    <div class="palette-legend">
+      <div class="legend-item"><span class="legend-dot st-correct"></span> Correct (<span id="legCorrect">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-incorrect"></span> Incorrect (<span id="legIncorrect">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-unanswered"></span> Unanswered (<span id="legUnanswered">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-skipped"></span> Skipped (<span id="legSkipped">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-review"></span> Review (<span id="legReview">0</span>)</div>
+      <div class="legend-item"><span class="legend-dot st-not-visited"></span> Not Visited (<span id="legNotVisited">100</span>)</div>
+    </div>
+    <div class="palette-grid" id="paletteGrid"></div>
+  </div>
+</div>
+
+<!-- Final Report Dashboard -->
+<section class="report-container" id="reportDashboard">
+  <div class="report-header-card">
+    <h2 style="font-size:1.6rem; margin-bottom:0.4rem;">UPSSSC PET — Final Performance Scorecard</h2>
+    <p style="color:var(--text-secondary);">विषय: सामान्य हिन्दी (लिंग) | कुल प्रश्न: 100</p>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-val" id="repNetScore" style="color:#3b82f6;">0.00</div>
+        <div class="stat-label">Net Score (Out of 100)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="repAccuracy" style="color:#eab308;">0%</div>
+        <div class="stat-label">Accuracy Rate</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="repCorrect" style="color:#10b981;">0</div>
+        <div class="stat-label">Correct (+1.00)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="repIncorrect" style="color:#ef4444;">0</div>
+        <div class="stat-label">Incorrect (-0.25)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="repSkipped" style="color:#94a3b8;">0</div>
+        <div class="stat-label">Unattempted / Skipped</div>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem; display:flex; justify-content:center; gap:1rem;">
+      <button class="btn btn-palette" id="returnSimBtn">⬅ Back to Simulator</button>
+      <button class="btn" id="resetSimBtn">🔄 Reset All 100 Questions</button>
+    </div>
+  </div>
+
+  <div class="review-matrix-card">
+    <h3 style="margin-bottom:1.25rem; font-size:1.25rem;">📚 Complete 100-Question Review Matrix</h3>
+    <div id="reviewMatrixList"></div>
+  </div>
+</section>
+
+<script>
+const questionsData = [
+  {
+    id: 1,
+    q: "निम्नलिखित में से कौन-सा शब्द सदैव 'पुलिंग' (नित्य पुलिंग) के रूप में प्रयुक्त होता है?",
+    options: ["मकड़ी", "गिलहरी", "खटमल", "कोयल", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'खटमल' एक नित्य पुलिंग शब्द है। हिंदी व्याकरण में कुछ प्राणीवाचक शब्द सदैव पुलिंग या स्त्रीलिंग में ही प्रयुक्त होते हैं। 'खटमल' का स्त्रीलिंग रूप बनाने के लिए इसके आगे 'मादा' शब्द जोड़ा जाता है (मादा खटमल), जबकि मकड़ी, गिलहरी और कोयल नित्य स्त्रीलिंग शब्द हैं।",
+    fact: "नित्य पुलिंग प्राणीवाचक शब्दों (जैसे- खटमल, भेड़िया, उल्लू, मच्छर, गरुड़) का स्त्रीलिंग बनाने हेतु उनके पूर्व 'मादा' शब्द जोड़ा जाता है।"
+  },
+  {
+    id: 2,
+    q: "'कवि' शब्द का सही स्त्रीलिंग रूप निम्नलिखित में से क्या है?",
+    options: ["कवयित्री", "कवियत्री", "कवीयित्री", "कवियित्री", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "'कवि' (पुलिंग) का मानक और शुद्ध स्त्रीलिंग रूप 'कवयित्री' होता है। यह प्रश्न UPSSSC की परीक्षाओं में लिंग परिवर्तन और वर्तनी शुद्धि दोनों दृष्टिकोणों से अत्यंत महत्वपूर्ण है।",
+    fact: "'कवयित्री' और 'रचयिता' शब्दों की वर्तनी और लिंग भेद UPSSSC द्वारा सर्वाधिक बार पूछे जाने वाले प्रश्नों में से हैं।"
+  },
+  {
+    id: 3,
+    q: "निम्नलिखित विकल्पों में से कौन-सा शब्द 'स्त्रीलिंग' है?",
+    options: ["दही", "मोती", "पानी", "नकेल", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "'नकेल' शब्द स्त्रीलिंग है (जैसे— ऊँट के नाक में नकेल डाली गई)। दूसरी ओर, ईकारांत होने के बावजूद 'दही', 'मोती', 'पानी', 'घी' और 'जी' अपवाद स्वरूप पुलिंग शब्द हैं।",
+    fact: "सामान्यतः ईकारांत शब्द स्त्रीलिंग होते हैं, किंतु पानी, घी, दही, मोती और जी इसके प्रमुख पुलिंग अपवाद हैं।"
+  },
+  {
+    id: 4,
+    q: "'सम्राट' शब्द का सही स्त्रीलिंग रूप क्या होगा?",
+    options: ["सम्राटी", "साम्राज्ञी", "सम्राटिन", "साम्रागी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "संस्कृत तत्सम परंपरा के अनुसार 'सम्राट' (पुलिंग) का स्त्रीलिंग रूप 'साम्राज्ञी' होता है। इसी प्रकार 'राजा' का स्त्रीलिंग 'रानी' या 'राज्ञी' होता है।",
+    fact: "तत्सम शब्दों में 'सम्राट - साम्राज्ञी' तथा 'विद्वान - विदुषी' युग्म परीक्षा की दृष्टि से अति महत्वपूर्ण हैं।"
+  },
+  {
+    id: 5,
+    q: "शरीर के अंगों के नामों के संदर्भ में निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["आँख", "नाक", "जीभ", "कान", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "'कान' शब्द पुलिंग है (जैसे— कान पकड़े गए)। शरीर के कुछ अंग स्त्रीलिंग होते हैं, जिनमें आँख, नाक, जीभ, पलक, ठोड़ी और कलाई प्रमुख हैं।",
+    fact: "शरीर के अधिकांश अंग (हाथ, पैर, सिर, कान, गाल, दाँत, मुँह) पुलिंग होते हैं, जबकि आँख, नाक, जीभ, नस और अँगुली स्त्रीलिंग हैं।"
+  },
+  {
+    id: 6,
+    q: "निम्नलिखित में से कौन-सा अनाज का नाम 'स्त्रीलिंग' में प्रयुक्त होता है?",
+    options: ["गेहूँ", "बाजरा", "ज्वार", "चावल", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "अनाजों के नाम प्रायः पुलिंग होते हैं (जैसे— गेहूँ, चावल, जौ, बाजरा, चना), परंतु 'ज्वार', 'मक्का' और 'अरहर' (दाल) इसके अपवाद हैं और ये स्त्रीलिंग में प्रयुक्त होते हैं।",
+    fact: "अनाजों के नाम पुलिंग होते हैं, किंतु ज्वार, मक्का, मूँग, अरहर और खेसारी स्त्रीलिंग अपवाद हैं।"
+  },
+  {
+    id: 7,
+    q: "'विद्वान' शब्द का स्त्रीलिंग रूप क्या है?",
+    options: ["विदुषी", "विद्वानी", "विद्यावती", "विद्वता", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "पुरुष के लिए प्रयुक्त होने वाले विशेषण/संज्ञा शब्द 'विद्वान' का स्त्रीलिंग रूप 'विदुषी' होता है। 'विद्वता' एक भाववाचक संज्ञा है, न कि स्त्रीलिंग रूप।",
+    fact: "'विद्वान' का स्त्रीलिंग 'विदुषी' तथा 'भगवान' का स्त्रीलिंग 'भगवती' होता है।"
+  },
+  {
+    id: 8,
+    q: "निम्नलिखित में से कौन-सा शब्द 'उभयलिंगी' (जो दोनों लिंगों में समान रूप से प्रयुक्त हो) का उदाहरण है?",
+    options: ["प्रधानमंत्री", "अभिनेता", "गायक", "अध्यापक", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "पदवाचक शब्द जैसे— प्रधानमंत्री, राष्ट्रपति, राज्यपाल, डॉक्टर, इंजीनियर, मैनेजर आदि 'उभयलिंगी' माने जाते हैं। इनका प्रयोग पुरुष और स्त्री दोनों के लिए बिना किसी रूप परिवर्तन के किया जाता है।",
+    fact: "पदनाम और व्यवसाय सूचक आधुनिक शब्द (राष्ट्रपति, मुख्यमंत्री, राजदूत, प्रोफेसर) हिंदी व्याकरण में उभयलिंगी के अंतर्गत आते हैं।"
+  },
+  {
+    id: 9,
+    q: "'ठठेरा' शब्द का लिंग परिवर्तन करने पर सही स्त्रीलिंग शब्द क्या बनेगा?",
+    options: ["ठठेरी", "ठठेरिन", "ठठेरनी", "ठठारी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "व्यवसाय या जातिबोधक पुलिंग शब्दों के अंत में 'इन' प्रत्यय जोड़कर स्त्रीलिंग बनाया जाता है। अतः 'ठठेरा' में 'इन' प्रत्यय जुड़ने से 'ठठेरिन' शब्द बनता है।",
+    fact: "'इन' प्रत्यय से बनने वाले प्रमुख स्त्रीलिंग शब्द: लुहार-लुहारिन, सुनार-सुनारिन, जुलाहा-जुलाहिन, कहार-कहारिन, ठठेरा-ठठेरिन।"
+  },
+  {
+    id: 10,
+    q: "नदियों के नाम प्रायः स्त्रीलिंग होते हैं, किंतु निम्नलिखित में से कौन-सी नदी का नाम 'पुलिंग' है?",
+    options: ["गंगा", "यमुना", "कावेरी", "ब्रह्मपुत्र", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "हिंदी व्याकरण के नियमानुसार नदियों के नाम स्त्रीलिंग होते हैं (जैसे— गंगा, यमुना, गोदावरी, कृष्णा), परंतु 'ब्रह्मपुत्र', 'सोन' और 'सिंधु' नदियाँ इसके अपवाद हैं और इन्हें पुलिंग माना जाता है।",
+    fact: "ब्रह्मपुत्र, सोन और सिंधु नदी को छोड़कर लगभग सभी नदियों के नाम स्त्रीलिंग होते हैं।"
+  },
+  {
+    id: 11,
+    q: "'गीदड़' शब्द का शुद्ध स्त्रीलिंग रूप क्या है?",
+    options: ["गीदड़िन", "गीदड़नी", "गीदड़ी", "मादा गीदड़", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "अकारांत प्राणीवाचक पुलिंग शब्दों में 'ई' प्रत्यय लगाकर स्त्रीलिंग बनाया जाता है। इस नियम के अनुसार 'गीदड़' का सही स्त्रीलिंग रूप 'गीदड़ी' होता है।",
+    fact: "'ई' प्रत्यय से बनने वाले पशुवाचक स्त्रीलिंग: गीदड़-गीदड़ी, बंदर-बंदरी (या बंदरिया), हिरन-हिरनी, गधा-गधी।"
+  },
+  {
+    id: 12,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["आय", "व्यय", "नहर", "लहर", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'व्यय' (खर्च) पुलिंग शब्द है (जैसे— अधिक व्यय हुआ), जबकि इसका विलोम शब्द 'आय' (आमदनी) स्त्रीलिंग है (जैसे— उसकी आय अच्छी है)। नहर और लहर भी स्त्रीलिंग शब्द हैं।",
+    fact: "वाक्य में विशेषण या क्रिया का प्रयोग करके लिंग की पहचान करना सबसे सटीक विधि है (जैसे— मेरा व्यय / मेरी आय)।"
+  },
+  {
+    id: 13,
+    q: "'नेता' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["नेतिन", "नेत्री", "नेतानी", "नेतत्री", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "जिन तत्सम पुलिंग शब्दों के अंत में 'ता' आता है, उनका स्त्रीलिंग बनाते समय 'ता' के स्थान पर 'त्री' हो जाता है। अतः 'नेता' का स्त्रीलिंग 'नेत्री' होता है।",
+    fact: "'ता' को 'त्री' में बदलने वाले प्रमुख शब्द: नेता-नेत्री, दाता-दात्री, अभिनेता-अभिनेत्री, कर्ता-कर्त्री, विधाता-विधात्री।"
+  },
+  {
+    id: 14,
+    q: "निम्नलिखित में से कौन-सा रत्न या धातु का नाम 'स्त्रीलिंग' है?",
+    options: ["सोना", "ताँबा", "चाँदी", "हीरा", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "धातुओं और रत्नों के नाम प्रायः पुलिंग होते हैं (जैसे— सोना, लोहा, ताँबा, पीतल, हीरा, पन्ना, मूँगा), परंतु 'चाँदी' और 'मणि' इसके अपवाद हैं और ये सदैव स्त्रीलिंग में प्रयुक्त होते हैं।",
+    fact: "सभी धातुओं के नाम पुलिंग होते हैं, केवल 'चाँदी' स्त्रीलिंग अपवाद है।"
+  },
+  {
+    id: 15,
+    q: "'आयुष्मान' का स्त्रीलिंग रूप निम्नलिखित में से क्या है?",
+    options: ["आयुष्मयी", "आयुष्मती", "आयुषी", "आयुष्मानिनी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'मान' प्रत्ययांत तत्सम विशेषण शब्दों का स्त्रीलिंग बनाते समय 'मान' को 'मती' में और 'वान' को 'वती' में परिवर्तित किया जाता है। इसलिए 'आयुष्मान' का स्त्रीलिंग 'आयुष्मती' होता है।",
+    fact: "मान/मती और वान/वती नियम: श्रीमान-श्रीमती, बुद्धिमान-बुद्धिमती, आयुष्मान-आयुष्मती, गुणवान-गुणवती, बलवान-बलवती।"
+  },
+  {
+    id: 16,
+    q: "निम्नलिखित में से कौन-सा शब्द 'नित्य स्त्रीलिंग' (सदैव स्त्रीलिंग) है?",
+    options: ["तोता", "कौआ", "गिलहरी", "भेड़िया", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'गिलहरी' सदैव स्त्रीलिंग (नित्य स्त्रीलिंग) में प्रयुक्त होने वाला शब्द है। इसका पुलिंग बनाने के लिए इसके पूर्व 'नर' शब्द जोड़ा जाता है (नर गिलहरी)। तोता, कौआ और भेड़िया नित्य पुलिंग हैं।",
+    fact: "प्रमुख नित्य स्त्रीलिंग प्राणी: गिलहरी, कोयल, मैना, मक्खी, मछली, छिपकली, चील, जूँ, तितली।"
+  },
+  {
+    id: 17,
+    q: "ग्रहों के नामों के संदर्भ में कौन-सा ग्रह 'स्त्रीलिंग' है?",
+    options: ["मंगल", "बुध", "पृथ्वी", "बृहस्पति", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "सौरमंडल के सभी ग्रहों के नाम (सूर्य, चंद्र, मंगल, बुध, बृहस्पति, शुक्र, शनि, राहु, केतु, अरुण, वरुण) पुलिंग होते हैं, केवल 'पृथ्वी' ही एकमात्र ऐसा ग्रह है जिसका नाम स्त्रीलिंग है।",
+    fact: "ग्रहों और महीनों (चैत्र, वैशाख, मार्च, अप्रैल—अपवाद: जनवरी, फरवरी, मई, जुलाई) के नाम प्रायः पुलिंग होते हैं, किंतु ग्रहों में 'पृथ्वी' स्त्रीलिंग है।"
+  },
+  {
+    id: 18,
+    q: "'जेठ' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["जेठिन", "जेठानी", "जेठी", "जेठराइन", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "संबंधवाचक या जातिवाचक शब्दों में 'आनी' प्रत्यय जोड़कर स्त्रीलिंग बनाया जाता है। 'जेठ' में 'आनी' प्रत्यय लगाने से 'जेठानी' बनता है।",
+    fact: "'आनी' प्रत्यय से निर्मित प्रमुख स्त्रीलिंग: देवर-देवरानी, जेठ-जेठानी, सेठ-सेठानी, नौकर-नौकरानी, मेहतर-मेहतरानी।"
+  },
+  {
+    id: 19,
+    q: "निम्नलिखित में से कौन-सा शब्द 'स्त्रीलिंग' नहीं है?",
+    options: ["सुबह", "दोपहर", "साँझ", "दिन", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "'दिन' शब्द पुलिंग है (जैसे— आज का दिन अच्छा रहा)। इसके विपरीत सुबह, दोपहर, साँझ (शाम) और रात—ये चारों समय सूचक शब्द स्त्रीलिंग हैं।",
+    fact: "कालखंड के नामों में 'सेकंड, मिनट, घंटा, दिन, सप्ताह, पक्ष, माह, वर्ष, युग' पुलिंग हैं, जबकि 'सुबह, दोपहर, शाम, रात, घड़ी' स्त्रीलिंग हैं।"
+  },
+  {
+    id: 20,
+    q: "'तपस्वी' शब्द का सही स्त्रीलिंग रूप क्या होगा?",
+    options: ["तपस्विनी", "तपसी", "तापसी", "तपस्या", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "ईकारांत तत्सम शब्दों के अंत में 'इनी' जोड़कर (दीर्घ 'ई' को ह्रस्व 'इ' करके) स्त्रीलिंग बनाया जाता है। अतः 'तपस्वी' का स्त्रीलिंग 'तपस्विनी' होता है।",
+    fact: "'इनी' प्रत्यय वाले प्रमुख तत्सम स्त्रीलिंग: तपस्वी-तपस्विनी, यशस्वी-यशस्विनी, तेजस्वी-तेजस्विनी, स्वामी-स्वामिनी, हाथी-हथिनी।"
+  },
+  {
+    id: 21,
+    q: "वृक्षों के नाम प्रायः पुलिंग होते हैं, किंतु निम्नलिखित में से कौन-से वृक्ष का नाम 'स्त्रीलिंग' है?",
+    options: ["पीपल", "बरगद", "इमली", "शीशम", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "वृक्षों और फलों के नाम सामान्यतः पुलिंग होते हैं (जैसे— आम, पीपल, बरगद, शीशम, सागौन, नीम), परंतु 'इमली', 'लीची', 'नारंगी', 'नाशपाती' और 'चिरौंजी' स्त्रीलिंग अपवाद हैं।",
+    fact: "इमली, लीची, नाशपाती, नारंगी और खिरनी स्त्रीलिंग हैं; शेष अधिकांश वृक्षों के नाम पुलिंग होते हैं।"
+  },
+  {
+    id: 22,
+    q: "'ठाकुर' शब्द का सही स्त्रीलिंग रूप निम्नलिखित में से कौन-सा है?",
+    options: ["ठकुरी", "ठकुराइन", "ठाकुरनी", "ठकुरानी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "उपाधि या जाति सूचक पुलिंग शब्दों में 'आइन' प्रत्यय लगाकर स्त्रीलिंग बनाया जाता है। 'ठाकुर' में 'आइन' प्रत्यय जुड़ने पर प्रथम स्वर 'आ' का ह्रस्व 'अ' हो जाता है और शुद्ध शब्द 'ठकुराइन' बनता है।",
+    fact: "'आइन' प्रत्यय से बनने वाले प्रमुख शब्द: पंडित-पंडिताइन, ठाकुर-ठकुराइन, बाबू-बबुआइन, लाला-ललाइन, चौबे-चौबाइन।"
+  },
+  {
+    id: 23,
+    q: "निम्नलिखित शब्दों में से 'पुलिंग' शब्द की पहचान कीजिए:",
+    options: ["दया", "माया", "कृपा", "बुढ़ापा", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "जिन भाववाचक संज्ञाओं के अंत में 'आ', 'पन', 'पा', या 'आव' प्रत्यय होता है, वे सदैव पुलिंग होती हैं। अतः 'बुढ़ापा' (बूढ़ा + पा) पुलिंग शब्द है। दया, माया और कृपा आकारांत तत्सम शब्द हैं जो स्त्रीलिंग होते हैं।",
+    fact: "'पा', 'पन', 'आव', 'त्व' प्रत्यय से बनी भाववाचक संज्ञाएँ (बुढ़ापा, बचपन, घुमाव, महत्त्व) सदैव पुलिंग होती हैं।"
+  },
+  {
+    id: 24,
+    q: "'वीर' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["वीरांगना", "वीरवती", "वीराना", "वीरनी", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "'वीर' (पुलिंग) का स्त्रीलिंग रूप 'वीरांगना' (वीर + अंगना = वीर स्त्री) होता है। यह एक विशेष यौगिक तत्सम स्त्रीलिंग रूप है।",
+    fact: "विशेष परिवर्तन वाले शब्द युग्म: वीर-वीरांगना, साधु-साध्वी, ससुर-सास, फूफा-बुआ, बिलाव-बिल्ली।"
+  },
+  {
+    id: 25,
+    q: "भाषाओं और लिपियों के नाम सदैव किस लिंग में प्रयुक्त होते हैं?",
+    options: ["पुलिंग", "स्त्रीलिंग", "उभयलिंग", "नपुंसकलिंग", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "हिंदी व्याकरण में सभी भाषाओं (हिंदी, संस्कृत, अंग्रेजी, उर्दू), बोलियों (ब्रज, अवधी, भोजपुरी) और लिपियों (देवनागरी, रोमन, गुरुमुखी, ब्राह्मी) के नाम बिना किसी अपवाद के सदैव 'स्त्रीलिंग' होते हैं।",
+    fact: "भाषा, बोली, लिपि और तिथियों (प्रथमा, पूर्णिमा, अमावस्या) के नाम सदैव स्त्रीलिंग होते हैं।"
+  },
+  {
+    id: 26,
+    q: "'साधु' शब्द का शुद्ध स्त्रीलिंग रूप क्या है?",
+    options: ["साधुनी", "साध्वी", "साधुआइन", "सधवा", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "तत्सम उकारांत शब्द 'साधु' का मानक स्त्रीलिंग रूप 'साध्वी' होता है। विकल्प (D) में दिया गया शब्द 'सधवा' (जिसका पति जीवित हो) 'विधवा' का विलोम शब्द है, न कि साधु का स्त्रीलिंग।",
+    fact: "'साधु - साध्वी' और 'संन्यासी - संन्यासिनी' तत्सम लिंग परिवर्तन के अंतर्गत परीक्षाओं में बार-बार पूछे जाते हैं।"
+  },
+  {
+    id: 27,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["कपट", "सुंदरता", "मूर्खता", "निद्रा", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "'कपट' शब्द पुलिंग है (जैसे— उसके मन में कपट है / उसने कपट किया)। सुंदरता और मूर्खता 'ता' प्रत्ययांत भाववाचक संज्ञाएँ हैं जो सदैव स्त्रीलिंग होती हैं, तथा 'निद्रा' आकारांत तत्सम स्त्रीलिंग शब्द है।",
+    fact: "जिन तत्सम भाववाचक संज्ञाओं के अंत में 'ता' (सुंदरता, मूर्खता, लघुता) या 'आ' (निद्रा, कृपा, दया) होता है, वे सदैव स्त्रीलिंग होती हैं।"
+  },
+  {
+    id: 28,
+    q: "'बिलाव' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["बिलावी", "बिलौटी", "बिल्ली", "बिलाइन", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "कुछ प्राणीवाचक शब्दों का लिंग परिवर्तन प्रत्यय लगाकर न होकर पूर्णतः भिन्न शब्द द्वारा होता है। 'बिल्ली' (स्त्रीलिंग) का नर रूप (पुलिंग) 'बिलाव' या 'बिलौटा' होता है।",
+    fact: "पूर्णतः भिन्न रूप वाले प्रमुख लिंग युग्म: बिलाव-बिल्ली, बैल-गाय, साँड-गाय, वर-वधू, फूफा-बुआ, ससुर-सास।"
+  },
+  {
+    id: 29,
+    q: "पर्वतों के नाम किस लिंग के अंतर्गत आते हैं?",
+    options: ["स्त्रीलिंग", "पुलिंग", "उभयलिंग", "नपुंसकलिंग", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "हिंदी व्याकरण में सभी पर्वतों और पहाड़ों के नाम (जैसे— हिमालय, विंध्याचल, सतपुड़ा, अरावली, कैलाश, आल्प्स) सदैव 'पुलिंग' में प्रयुक्त होते हैं।",
+    fact: "पर्वतों, समुद्रों (हिंद महासागर, प्रशांत महासागर), देशों (भारत, चीन, रूस—अपवाद: श्रीलंका) और द्वीपों के नाम सदैव पुलिंग होते हैं।"
+  },
+  {
+    id: 30,
+    q: "'अभिनेता' शब्द का स्त्रीलिंग रूप निम्नलिखित में से क्या है?",
+    options: ["अभिनेती", "अभिनेत्री", "अभिनयत्री", "अभिनेत्रि", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'ता' शब्दांत वाले तत्सम कर्तृवाचक पुलिंग शब्दों का स्त्रीलिंग बनाने के लिए 'ता' को 'त्री' में बदल दिया जाता है। अतः 'अभिनेता' का शुद्ध स्त्रीलिंग रूप 'अभिनेत्री' है।",
+    fact: "वर्तनी की दृष्टि से 'अभिनेत्री' और 'कवयित्री' में अंतिम 'त्र' और 'य' पर दीर्घ 'ई' की मात्रा लगती है।"
+  },
+  {
+    id: 31,
+    q: "निम्नलिखित में से कौन-सा शब्द 'स्त्रीलिंग' है?",
+    options: ["पहिया", "पखवाड़ा", "लिखावट", "मोजा", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "जिन कृदंत भाववाचक संज्ञाओं के अंत में 'आवट' या 'आहट' प्रत्यय जुड़ा होता है, वे प्रायः स्त्रीलिंग होती हैं। अतः 'लिखावट' (लिख + आवट) स्त्रीलिंग शब्द है। पहिया, पखवाड़ा और मोजा पुलिंग शब्द हैं।",
+    fact: "'आवट' और 'आहट' प्रत्ययांत स्त्रीलिंग शब्द: लिखावट, बनावट, सजावट, थकावट, घबराहट, चिल्लाहट, मुस्कुराहट।"
+  },
+  {
+    id: 32,
+    q: "'डिब्बा' शब्द का स्त्रीलिंग रूप क्या होगा?",
+    options: ["डिब्बी", "डिबिया", "डिब्बिया", "डिबनी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "कुछ आकारांत अप्राणीवाचक या प्राणीवाचक पुलिंग शब्दों में लघुता (छोटापन) दर्शाने और स्त्रीलिंग बनाने के लिए 'इया' प्रत्यय जोड़ा जाता है। इस प्रक्रिया में द्वित्व व्यंजन का लोप होता है; अतः 'डिब्बा' से 'डिबिया' बनता है।",
+    fact: "'इया' प्रत्यय से निर्मित प्रमुख स्त्रीलिंग: डिब्बा-डिबिया, लोटा-लुटिया, खाट-खटिया, चूहा-चुहिया, बंदर-बंदरिया, बूढ़ा-बुढ़िया, कुत्ता-कुतिया।"
+  },
+  {
+    id: 33,
+    q: "निम्नलिखित विकल्पों में से कौन-सा वर्णमाला का वर्ण 'स्त्रीलिंग' है?",
+    options: ["अ", "क", "ई", "प", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "देवनागरी वर्णमाला के सभी स्वर और व्यंजन वर्ण पुलिंग माने जाते हैं, किंतु 'इ', 'ई' और 'ऋ'—ये तीन स्वर वर्ण अपवाद हैं और सदैव 'स्त्रीलिंग' में प्रयुक्त होते हैं।",
+    fact: "वर्णमाला के वर्णों में केवल 'इ, ई, ऋ' स्त्रीलिंग हैं; शेष सभी स्वर (अ, आ, उ, ऊ, ए, ऐ, ओ, औ) और समस्त व्यंजन पुलिंग होते हैं।"
+  },
+  {
+    id: 34,
+    q: "'भगवान' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["भगवानी", "भगवती", "भाग्यवती", "भगतिन", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "संस्कृत के 'वान' प्रत्ययांत शब्दों में स्त्रीलिंग बनाते समय 'वान' के स्थान पर 'वती' हो जाता है। इसी नियम के अंतर्गत 'भगवान' का स्त्रीलिंग 'भगवती' होता है।",
+    fact: "'भगवान - भगवती', 'भाग्यवान - भाग्यवती' और 'बलवान - बलवती' में अंतर ध्यान रखना आवश्यक है।"
+  },
+  {
+    id: 35,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["अमावस्या", "पूर्णिमा", "एकादशी", "सोमवार", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "सप्ताह के सभी दिनों (वारों) के नाम—सोमवार, मंगलवार, बुधवार आदि—सदैव पुलिंग होते हैं। इसके विपरीत चंद्रमास की तिथियों (प्रथमा, द्वितीया, एकादशी, पूर्णिमा, अमावस्या) के नाम सदैव स्त्रीलिंग होते हैं।",
+    fact: "दिनों (वारों) के नाम सदैव पुलिंग होते हैं, जबकि तिथियों (पड़वा, दूज, तीज, चौथ, एकादशी, पूर्णिमा) के नाम सदैव स्त्रीलिंग होते हैं।"
+  },
+  {
+    id: 36,
+    q: "'हलवाई' शब्द का स्त्रीलिंग रूप क्या है?",
+    options: ["हलवाइनी", "हलवाइन", "हलवानी", "हलवाईन", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "व्यवसाय सूचक शब्द 'हलवाई' में 'इन' प्रत्यय जोड़कर स्त्रीलिंग रूप 'हलवाइन' बनाया जाता है। प्रत्यय जुड़ने पर अंतिम दीर्घ 'ई' का ह्रस्व 'इ' में परिवर्तन हो जाता है।",
+    fact: "ईकारांत जाति/व्यवसाय शब्दों में 'इन' प्रत्यय लगने पर दीर्घ 'ई' ह्रस्व 'इ' हो जाती है: नाई-नाइन, तेली-तेलिन, माली-मालिन, धोबी-धोबिन, हलवाई-हलवाइन।"
+  },
+  {
+    id: 37,
+    q: "द्रव्यवाचक संज्ञाओं के संदर्भ में निम्नलिखित में से कौन-सा शब्द 'स्त्रीलिंग' है?",
+    options: ["पेट्रोल", "डीजल", "लस्सी", "शरबत", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "तरल पदार्थों (द्रव्यों) के नाम प्रायः पुलिंग होते हैं (जैसे— पानी, तेल, घी, दूध, दही, शरबत, काढ़ा, पेट्रोल), किंतु 'लस्सी', 'चाय', 'कॉफी', 'स्याही', 'शराब' और 'छाछ' इसके अपवाद हैं और ये स्त्रीलिंग में प्रयुक्त होते हैं।",
+    fact: "चाय, कॉफी, लस्सी, छाछ, स्याही और शराब स्त्रीलिंग हैं; शेष मुख्य तरल पदार्थ (दूध, दही, घी, तेल, पानी, शरबत) पुलिंग हैं।"
+  },
+  {
+    id: 38,
+    q: "'क्षत्रिय' शब्द का शुद्ध स्त्रीलिंग रूप क्या है?",
+    options: ["क्षत्रियानी", "क्षत्राणी", "क्षत्रियी", "क्षेत्राणी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'क्षत्रिय' शब्द में 'आनी' प्रत्यय जुड़ने और 'र' के प्रभाव से 'न' का 'ण' (णत्व विधान) होने पर शुद्ध तत्सम स्त्रीलिंग रूप 'क्षत्राणी' बनता है।",
+    fact: "'आणी' प्रत्यय (णत्व नियम) वाले प्रमुख शब्द: क्षत्रिय-क्षत्राणी, रुद्र-रुद्राणी, इंद्र-इंद्राणी, भव-भवानी (यहाँ 'न' रहता है)।"
+  },
+  {
+    id: 39,
+    q: "निम्नलिखित में से कौन-सा शब्द 'स्त्रीलिंग' नहीं है?",
+    options: ["झुरमुट", "अंत्येष्टि", "इच्छा", "निराशा", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "'झुरमुट' (झाड़ियों का समूह) एक पुलिंग शब्द है (जैसे— पेड़ों के झुरमुट में)। अंत्येष्टि (इकारांत तत्सम), इच्छा और निराशा (आकारांत तत्सम) स्त्रीलिंग शब्द हैं।",
+    fact: "UPSSSC की पूर्व परीक्षाओं में 'झुरमुट' और 'कपट' को कठिन पुलिंग शब्दों के रूप में सीधा पूछा जा चुका है।"
+  },
+  {
+    id: 40,
+    q: "'मोर' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["मोरी", "मोरनी", "मोराइन", "मोरिन", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "कुछ प्राणीवाचक पुलिंग शब्दों के अंत में 'नी' प्रत्यय लगाकर स्त्रीलिंग बनाया जाता है। अतः 'मोर' का स्त्रीलिंग 'मोरनी' होता है।",
+    fact: "'नी' प्रत्यय से बनने वाले प्रमुख स्त्रीलिंग: मोर-मोरनी, शेर-शेरनी, ऊँट-ऊँटनी, सिंह-सिंहनी, भील-भीलनी, राजपूत-राजपूतनी, जाट-जाटनी।"
+  },
+  {
+    id: 41,
+    q: "निम्नलिखित में से किस विकल्प के सभी शब्द 'पुलिंग' हैं?",
+    options: ["कौआ, खरगोश, मंडल", "हीरा, मोती, मणि", "नथ, मूँगा, पन्ना", "पायल, कंगन, हार", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "विकल्प (A) में कौआ (नित्य पुलिंग), खरगोश (नित्य पुलिंग) और मंडल (समूहवाचक पुलिंग)—तीनों शब्द पुलिंग हैं। विकल्प (B) में 'मणि', विकल्प (C) में 'नथ' और विकल्प (D) में 'पायल' स्त्रीलिंग शब्द हैं।",
+    fact: "आभूषणों में हार, कंगन, झुमका, कुंडल, बाजूबंद पुलिंग हैं, जबकि पायल, नथ, माला, अँगूठी, चूड़ी, बिंदी स्त्रीलिंग हैं।"
+  },
+  {
+    id: 42,
+    q: "'दाता' शब्द का सही स्त्रीलिंग रूप क्या होगा?",
+    options: ["दानी", "दात्री", "दातिन", "दातृ", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "तत्सम शब्द 'दाता' (देने वाला) का स्त्रीलिंग रूप 'दात्री' होता है। यहाँ 'ता' का 'त्री' में रूपांतरण नियम लागू होता है।",
+    fact: "दाता-दात्री, कर्ता-कर्त्री, भर्ता-भर्त्री, वक्ता-वक्त्री, श्रोता-श्रोत्री।"
+  },
+  {
+    id: 43,
+    q: "समूहवाचक संज्ञाओं के संदर्भ में निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["भीड़", "सेना", "दल", "सभा", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "समूहवाचक संज्ञाएँ प्रयोग के आधार पर पुलिंग या स्त्रीलिंग होती हैं। 'दल' शब्द पुलिंग है (जैसे— राजनीतिक दल का गठन हुआ)। इसके विपरीत भीड़, सेना, सभा, कक्षा, कमेटी, पुलिस, फौज और सरकार स्त्रीलिंग हैं।",
+    fact: "पुलिंग समूहवाचक संज्ञाएँ: दल, समूह, झुंड, कुटुंब, संघ, मंडल, गिरोह। स्त्रीलिंग समूहवाचक संज्ञाएँ: भीड़, सेना, फौज, पुलिस, सभा, पंचायत, टोली, सरकार, संसद।"
+  },
+  {
+    id: 44,
+    q: "'विद्वान' की भाँति 'महान' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["महानी", "महती", "महानता", "महाना", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "तत्सम विशेषण शब्द 'महान' (पुलिंग) का शुद्ध स्त्रीलिंग रूप 'महती' होता है (जैसे— महती आवश्यकता, महती कृपा)। 'महानता' भाववाचक संज्ञा है, स्त्रीलिंग विशेषण नहीं।",
+    fact: "'महान' का स्त्रीलिंग 'महती' होता है—यह हिंदी व्याकरण के सबसे महत्वपूर्ण और अक्सर गलत किए जाने वाले प्रश्नों में से एक है।"
+  },
+  {
+    id: 45,
+    q: "निम्नलिखित में से कौन-सा शब्द 'स्त्रीलिंग' है?",
+    options: ["ग्रंथ", "वेद", "पुराण", "रामायण", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "'ग्रंथ', 'वेद', 'पुराण' और 'महाभारत' शब्द पुलिंग में प्रयुक्त होते हैं, परंतु 'रामायण', 'गीता', 'रामचरितमानस', 'कामायनी' और 'साकेत' पुस्तक/काव्य के नाम के रूप में 'स्त्रीलिंग' में प्रयुक्त होते हैं (जैसे— रामायण पढ़ी जाती है)।",
+    fact: "धार्मिक पुस्तकों में वेद, पुराण, महाभारत पुलिंग हैं, जबकि रामायण, गीता, कुरान और बाइबिल स्त्रीलिंग में प्रयुक्त होती हैं।"
+  },
+  {
+    id: 46,
+    q: "'लाला' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["लाली", "ललाइन", "ललानी", "लालाइन", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'लाला' शब्द में 'आइन' प्रत्यय जोड़ने पर प्रथम स्वर 'आ' का ह्रस्व 'अ' हो जाता है, जिससे शुद्ध स्त्रीलिंग शब्द 'ललाइन' बनता है।",
+    fact: "'आइन' प्रत्यय जुड़ते समय पूर्ववर्ती दीर्घ स्वर ह्रस्व हो जाता है: लाला-ललाइन, बाबू-बबुआइन, ठाकुर-ठकुराइन, ओझा-ओझाइन।"
+  },
+  {
+    id: 47,
+    q: "निम्नलिखित में से कौन-सा शब्द 'नित्य पुलिंग' नहीं है?",
+    options: ["कछुआ", "बिच्छू", "मच्छर", "तितली", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "'तितली' एक नित्य स्त्रीलिंग शब्द है (इसका पुलिंग 'नर तितली' होता है)। कछुआ, बिच्छू और मच्छर—ये तीनों नित्य पुलिंग शब्द हैं, जिनका स्त्रीलिंग बनाने के लिए इनके पूर्व 'मादा' शब्द लगाया जाता है।",
+    fact: "कछुआ, खटमल, बिच्छू, मच्छर, केकड़ा, गिरगिट और मगरमच्छ 'नित्य पुलिंग' प्राणी हैं।"
+  },
+  {
+    id: 48,
+    q: "'सूत' (तत्सम: सुत) शब्द का स्त्रीलिंग रूप क्या है?",
+    options: ["सूती", "सुता", "सुतिन", "सुतनी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "अकारांत तत्सम शब्दों में 'आ' प्रत्यय लगाकर स्त्रीलिंग बनाया जाता है। 'सुत' (पुत्र) में 'आ' प्रत्यय लगने से 'सुता' (पुत्री) बनता है।",
+    fact: "'आ' प्रत्यय से बनने वाले तत्सम स्त्रीलिंग: सुत-सुता, तनय-तनया, आत्मज-आत्मजा, अनुज-अनुजा, अग्रज-अग्रजा, प्रिय-प्रिया, शिष्य-शिष्या, आचार्य-आचार्या।"
+  },
+  {
+    id: 49,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' और 'स्त्रीलिंग' दोनों में अलग-अलग अर्थों में प्रयुक्त हो सकता है?",
+    options: ["कलम", "विधि", "चाल-चलन", "सहाय", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "'कलम' शब्द लेखनी (पेन) के अर्थ में स्त्रीलिंग होता है (मेरी कलम टूट गई), किंतु पौधे की टहनी (ग्राफ्टिंग) या सिर के बालों की कनपटी (कल्मे) अथवा चित्रकारी की शैली के अर्थ में पुलिंग भी प्रयुक्त होता है।",
+    fact: "कुछ शब्द अर्थ-भेद से लिंग बदल लेते हैं, जैसे— 'कलम' (लेखनी = स्त्रीलिंग, पौधे की डाली = पुलिंग) और 'टीका' (तिलक/व्याख्या = पुलिंग)।"
+  },
+  {
+    id: 50,
+    q: "'साम्राज्ञी' और 'ठकुराइन' में क्रमशः कौन-से प्रत्यय या रूपांतरण प्रयुक्त हुए हैं?",
+    options: ["ई और इन", "आनी और आइन", "तत्सम रूपांतरण और आइन", "इनी और नी", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'साम्राज्ञी' शब्द 'सम्राट' का संस्कृत (तत्सम) व्याकरणिक रूपांतरण है (सम्राज् + ङीप्), जबकि 'ठकुराइन' शब्द 'ठाकुर' में तद्भव/देशज 'आइन' प्रत्यय जोड़कर बना है।",
+    fact: "हिंदी में स्त्रीलिंग निर्माण के लिए मुख्य रूप से तीन कोटियों के प्रत्यय प्रयुक्त होते हैं: तत्सम प्रत्यय (आ, ई, इनी, त्री, मती, वती), तद्भव प्रत्यय (ई, इया, इन, आनी, आइन, नी) और उर्दू प्रत्यय।"
+  },
+  {
+    id: 51,
+    q: "'अध्यापक' शब्द का सही स्त्रीलिंग रूप निम्नलिखित में से क्या है?",
+    options: ["अध्यापकी", "अध्यापिका", "अध्यापिक", "अध्यापनी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "जिन तत्सम कर्तृवाचक पुलिंग शब्दों के अंत में 'अक' प्रत्यय होता है, उनका स्त्रीलिंग बनाते समय 'अक' के स्थान पर 'इका' हो जाता है। अतः 'अध्यापक' का शुद्ध स्त्रीलिंग रूप 'अध्यापिका' होता है।",
+    fact: "'अक' को 'इका' में बदलने वाले प्रमुख शब्द: लेखक-लेखिका, गायक-गायिका, नायक-नायिका, सेवक-सेविका, पाठक-पाठिका, संपादक-संपादिका।"
+  },
+  {
+    id: 52,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["अँगुली", "एड़ी", "हथेली", "अँगूठा", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "'अँगूठा' आकारांत शब्द है और शरीर के अंगों में यह पुलिंग के अंतर्गत आता है (जैसे— अँगूठा लगाया गया)। इसके विपरीत अँगुली, एड़ी, हथेली, कलाई और पिंडली ईकारांत स्त्रीलिंग शब्द हैं।",
+    fact: "शरीर के ईकारांत अंग (हथेली, कलाई, एड़ी, अँगुली, ठोड़ी, नाभि) प्रायः स्त्रीलिंग होते हैं, जबकि आकारांत अंग (अँगूठा, गला, माथा, घुटना, कंधा) पुलिंग होते हैं।"
+  },
+  {
+    id: 53,
+    q: "'रचयिता' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["रचयित्री", "रचियत्री", "रचयिताइन", "रचयीत्री", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "'कवि - कवयित्री' के समान ही 'रचयिता' (पुलिंग) का शुद्ध तत्सम स्त्रीलिंग रूप 'रचयित्री' होता है। इसमें 'ता' का 'त्री' में रूपांतरण नियम लागू होता है।",
+    fact: "वर्तनी शुद्धि और लिंग परिवर्तन दोनों में 'रचयिता' (पुलिंग) और 'रचयित्री' (स्त्रीलिंग) अत्यंत उच्च आवृत्ति वाले प्रश्न हैं।"
+  },
+  {
+    id: 54,
+    q: "निम्नलिखित विकल्पों में से कौन-सा शब्द 'स्त्रीलिंग' है?",
+    options: ["आचरण", "अनुसरण", "संतान", "भरण-पोषण", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'संतान' और 'औलाद' शब्द सदैव स्त्रीलिंग में प्रयुक्त होते हैं, चाहे वे पुत्र के लिए प्रयुक्त हों या पुत्री के लिए (जैसे— उसकी संतान आज्ञाकारी है)। आचरण, अनुसरण और पोषण पुलिंग होते हैं।",
+    fact: "'संतान', 'सवारी', 'सौत' और 'धाय' शब्द व्याकरणिक दृष्टि से सदैव स्त्रीलिंग में प्रयुक्त होते हैं।"
+  },
+  {
+    id: 55,
+    q: "'हाथी' शब्द का शुद्ध स्त्रीलिंग रूप क्या है?",
+    options: ["हाथिन", "हथिनी", "हाथिनी", "हथिआइन", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'हाथी' शब्द में 'इनी' प्रत्यय जुड़ने पर प्रथम स्वर 'हा' का ह्रस्व 'ह' हो जाता है और शुद्ध स्त्रीलिंग शब्द 'हथिनी' बनता है। विकल्प (C) 'हाथिनी' वर्तनी की दृष्टि से अशुद्ध है।",
+    fact: "UPSSSC परीक्षाओं में 'हथिनी' की शुद्ध वर्तनी (ह + थि + नी) विशेष रूप से पूछी जाती है।"
+  },
+  {
+    id: 56,
+    q: "महीनों के नामों के संदर्भ में निम्नलिखित में से कौन-सा महीना 'स्त्रीलिंग' है?",
+    options: ["चैत्र", "वैशाख", "मार्च", "जुलाई", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "हिंदी पंचांग के सभी महीनों और अंग्रेजी के अधिकांश महीनों के नाम पुलिंग होते हैं। किंतु 'जनवरी', 'फरवरी', 'मई' और 'जुलाई' स्त्रीलिंग अपवाद हैं।",
+    fact: "महीनों के नामों में केवल जनवरी, फरवरी, मई और जुलाई स्त्रीलिंग हैं; शेष सभी देशी व अंग्रेजी महीने पुलिंग हैं।"
+  },
+  {
+    id: 57,
+    q: "'सूर्य' शब्द का तत्सम स्त्रीलिंग रूप क्या है?",
+    options: ["सूर्याणी", "सूर्या", "सूर्यी", "सूरा", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "संस्कृत व्याकरण और मानक हिंदी के अनुसार 'सूर्य' का सामान्य तत्सम स्त्रीलिंग रूप 'सूर्या' (आकारांत) होता है।",
+    fact: "अकारांत तत्सम शब्दों में 'आ' प्रत्यय से स्त्रीलिंग: सूर्य-सूर्या, भवदीय-भवदीया, महोदय-महोदया, पूज्य-पूज्या, वृद्ध-वृद्धा।"
+  },
+  {
+    id: 58,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["कचौड़ी", "पूड़ी", "खीर", "रायता", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "भोजन सामग्री में 'रायता', 'हलवा', 'पराठा', 'भात', 'समोसा', 'लड्डू', 'पापड़' पुलिंग शब्द हैं। इसके विपरीत कचौड़ी, पूड़ी, खीर, रोटी, जलेबी, बर्फी, खिचड़ी और सब्जी स्त्रीलिंग शब्द हैं।",
+    fact: "भोज्य पदार्थों में ईकारांत शब्द (रोटी, पूड़ी, कचौड़ी, जलेबी, खिचड़ी) तथा 'खीर' और 'दाल' स्त्रीलिंग हैं; जबकि आकारांत शब्द (रायता, हलवा, पराठा) पुलिंग हैं।"
+  },
+  {
+    id: 59,
+    q: "'विद्वान' का स्त्रीलिंग 'विदुषी' होता है; इसी प्रकार 'सम्राट' के अतिरिक्त 'राजा' का तत्सम स्त्रीलिंग रूप क्या है?",
+    options: ["रानी", "राज्ञी", "राजानी", "राजमती", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'राजा' का सामान्य तद्भव स्त्रीलिंग 'रानी' है, किंतु प्रश्न में 'तत्सम स्त्रीलिंग' पूछा गया है। संस्कृत (तत्सम) में 'राजन्' (राजा) का शुद्ध स्त्रीलिंग रूप 'राज्ञी' होता है।",
+    fact: "तत्सम-तद्भव लिंग युग्म: राजा-राज्ञी (तत्सम) / रानी (तद्भव); सम्राट-साम्राज्ञी।"
+  },
+  {
+    id: 60,
+    q: "निम्नलिखित में से कौन-सा शब्द 'नित्य स्त्रीलिंग' है?",
+    options: ["उल्लू", "केंचुआ", "कोयल", "तोता", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'कोयल' सदैव स्त्रीलिंग (नित्य स्त्रीलिंग) शब्द है। इसका पुलिंग रूप बनाने के लिए इसके आगे 'नर' शब्द जोड़ा जाता है (नर कोयल)। उल्लू, केंचुआ और तोता नित्य पुलिंग शब्द हैं।",
+    fact: "पक्षियों में कोयल, मैना, चील, गौरैया, बटेर और बुलबुल नित्य स्त्रीलिंग हैं; जबकि तोता, कौआ, उल्लू, बाज, गरुड़, सारस और हंस पुलिंग हैं।"
+  },
+  {
+    id: 61,
+    q: "'पंडित' शब्द का सही स्त्रीलिंग रूप क्या होगा?",
+    options: ["पंडितानी", "पंडिताइन", "पंडिती", "पंडिता", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "जाति या उपाधि वाचक पुलिंग शब्द 'पंडित' में 'आइन' प्रत्यय जोड़कर स्त्रीलिंग रूप 'पंडिताइन' बनाया जाता है।",
+    fact: "'आइन' प्रत्यय वाले प्रमुख शब्द: पंडित-पंडिताइन, ठाकुर-ठकुराइन, गुरु-गुरुआइन, चौधरी-चौधराइन, मुंशी-मुंशियाइन।"
+  },
+  {
+    id: 62,
+    q: "निम्नलिखित में से कौन-सा देश का नाम 'स्त्रीलिंग' अपवाद है?",
+    options: ["भारत", "जापान", "श्रीलंका", "अमेरिका", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "देशों के नाम प्रायः पुलिंग होते हैं (जैसे— भारत, चीन, जापान, रूस, अमेरिका, फ्रांस), किंतु 'श्रीलंका' इसका प्रमुख अपवाद है जिसे हिंदी व्याकरण में स्त्रीलिंग माना जाता है।",
+    fact: "देशों के नाम सदैव पुलिंग होते हैं, केवल 'श्रीलंका' को स्त्रीलिंग अपवाद की श्रेणी में रखा जाता है।"
+  },
+  {
+    id: 63,
+    q: "'वर' शब्द का सही स्त्रीलिंग रूप निम्नलिखित में से क्या है?",
+    options: ["वरी", "वधू", "दूलहिन", "वरांगना", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "तत्सम शब्द 'वर' (दूल्हा) का सही तत्सम स्त्रीलिंग रूप 'वधू' (दुल्हन) होता है। तद्भव शब्द 'दूल्हा' का स्त्रीलिंग 'दुलहिन' या 'दुल्हन' होता है।",
+    fact: "तत्सम-तद्भव संगति: 'वर' का स्त्रीलिंग 'वधू' (तत्सम) और 'दूल्हा' का स्त्रीलिंग 'दुलहिन' (तद्भव) होता है।"
+  },
+  {
+    id: 64,
+    q: "निम्नलिखित विकल्पों में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["मणि", "छवि", "रवि", "रात्रि", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'रवि' (सूर्य) इकारांत तत्सम शब्द होते हुए भी पुलिंग है। इकारांत तत्सम शब्द (जैसे— मणि, छवि, रात्रि, अग्नि, रीति, तिथि) प्रायः स्त्रीलिंग होते हैं, किंतु रवि, कवि, मुनि, ऋषि, हरि, गिरि और कपि इसके पुलिंग अपवाद हैं।",
+    fact: "प्रमुख इकारांत पुलिंग तत्सम शब्द: कवि, रवि, मुनि, ऋषि, कपि, हरि, गिरि, शशि, अतिथि, निधि, विधि, राशि।"
+  },
+  {
+    id: 65,
+    q: "'भवानी' शब्द का सही पुलिंग रूप क्या है?",
+    options: ["भवा", "भव", "भवन", "भदेव", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'भव' (भगवान शिव का एक नाम) में 'आनी' प्रत्यय जुड़ने से स्त्रीलिंग शब्द 'भवानी' (पार्वती) बनता है। अतः 'भवानी' का सही पुलिंग रूप 'भव' है।",
+    fact: "देवताओं के नामों में 'आनी'/'आणी' प्रत्यय से स्त्रीलिंग: भव-भवानी, रुद्र-रुद्राणी, इंद्र-इंद्राणी, शर्व-शर्वाणी, वरुण-वरुणानी।"
+  },
+  {
+    id: 66,
+    q: "निम्नलिखित में से कौन-सा शब्द 'स्त्रीलिंग' है?",
+    options: ["अश्रु", "मृत्यु", "तालु", "सेतु", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "उकारांत तत्सम शब्द प्रायः पुलिंग होते हैं (जैसे— अश्रु, तालु, सेतु, भानु, गुरु, साधु, शत्रु, तरु), किंतु 'मृत्यु', 'आयु', 'वायु', 'रेणु', 'रज्जु' और 'वस्तु' इसके स्त्रीलिंग अपवाद हैं।",
+    fact: "उकारांत शब्दों में मृत्यु, आयु, वायु, वस्तु और धातु सदैव स्त्रीलिंग होते हैं, जबकि अश्रु (आँसू) और प्राण पुलिंग (बहुवचन) हैं।"
+  },
+  {
+    id: 67,
+    q: "'युवक' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["युवकी", "युवती", "युविका", "युवा", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'युवक' (या 'युवा') पुलिंग शब्द का मानक स्त्रीलिंग रूप 'युवती' होता है। यहाँ सामान्य 'अक-इका' नियम (युविका) लागू नहीं होता, अपितु संस्कृत के 'युवन् + ति' से 'युवती' शब्द सिद्ध होता है।",
+    fact: "अपवादजनक रूपांतरण: 'युवक' का स्त्रीलिंग 'युविका' न होकर सदैव 'युवती' होता है।"
+  },
+  {
+    id: 68,
+    q: "निम्नलिखित में से किस विकल्प में पुलिंग और स्त्रीलिंग का युग्म 'अशुद्ध' है?",
+    options: ["कांत - कांता", "अनुज - अनुजा", "चंचल - चंचला", "विद्वान - विदुषिका", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "विकल्प (D) अशुद्ध है क्योंकि 'विद्वान' का स्त्रीलिंग रूप 'विदुषी' होता है, 'विदुषिका' नाम का कोई मानक शब्द हिंदी व्याकरण में नहीं है।",
+    fact: "अकारांत विशेषण शब्दों में 'आ' लगाकर स्त्रीलिंग बनाया जाता है: चंचल-चंचला, श्यामल-श्यामला, कृश-कृशा, चतुर-चतुरा।"
+  },
+  {
+    id: 69,
+    q: "निम्नलिखित में से कौन-सा शब्द सदैव 'पुलिंग' में प्रयुक्त होता है?",
+    options: ["तलाश", "भीड़", "होश", "हरकत", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'होश' शब्द सदैव पुलिंग (और बहुवचन) में प्रयुक्त होता है (जैसे— उसके होश उड़ गए / होश ठिकाने आ गए)। तलाश, भीड़ और हरकत स्त्रीलिंग शब्द हैं।",
+    fact: "सदैव पुलिंग (नित्य बहुवचन) शब्द: प्राण, दर्शन, आँसू, होश, बाल, हस्ताक्षर, लोग, अक्षत।"
+  },
+  {
+    id: 70,
+    q: "'ग्वाला' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["ग्वालिन", "ग्वाली", "ग्वालनी", "ग्वालाइन", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "जाति या व्यवसाय वाचक आकारांत शब्द 'ग्वाला' में 'इन' प्रत्यय जोड़कर शुद्ध स्त्रीलिंग शब्द 'ग्वालिन' बनाया जाता है।",
+    fact: "'इन' प्रत्यय वाले प्रमुख शब्द: ग्वाला-ग्वालिन, चमार-चमारिन, कुम्हार-कुम्हारिन, अहीर-अहीरिन, बंजारा-बंजारिन।"
+  },
+  {
+    id: 71,
+    q: "जिन भाववाचक संज्ञाओं के अंत में 'त्व', 'व' या 'य' होता है, वे प्रायः किस लिंग में होती हैं?",
+    options: ["स्त्रीलिंग", "पुलिंग", "उभयलिंग", "अनिश्चित लिंग", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "हिंदी व्याकरण के नियमानुसार जिन तत्सम भाववाचक संज्ञाओं के अंत में 'त्व' (महत्त्व, पुरुषत्व), 'व' (लाघव, गौरव) या 'य' (सौंदर्य, माधुर्य, धैर्य) प्रत्यय जुड़ा होता है, वे सदैव 'पुलिंग' होती हैं।",
+    fact: "तुलनात्मक नियम—'सुंदरता' और 'मधुरता' ('ता' प्रत्ययांत) स्त्रीलिंग हैं, किंतु 'सौंदर्य' और 'माधुर्य' ('य' प्रत्ययांत) पुलिंग हैं!"
+  },
+  {
+    id: 72,
+    q: "'ननदोई' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["ननदिया", "ननद", "ननदाइन", "ननदानी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "पति की बहन को 'ननद' (स्त्रीलिंग) कहा जाता है और ननद के पति को 'ननदोई' या 'नंदोई' (पुलिंग) कहा जाता है। अतः 'ननदोई' का स्त्रीलिंग रूप 'ननद' है।",
+    fact: "संबंधवाचक विशिष्ट युग्म: ननद-ननदोई, बहन-बहनोई, फूफा-बुआ, मौसा-मौसी, जीजा-जीजी (बहन)।"
+  },
+  {
+    id: 73,
+    q: "निम्नलिखित में से कौन-सा शब्द 'स्त्रीलिंग' है?",
+    options: ["अध्याय", "उपहार", "परिषद", "ग्रंथ", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'परिषद' और 'संसद' शब्द सदैव स्त्रीलिंग में प्रयुक्त होते हैं (जैसे— विधान परिषद की बैठक हुई)। अध्याय, उपहार और ग्रंथ पुलिंग हैं।",
+    fact: "संस्थागत नामों में संसद, परिषद, सभा, समिति, सरकार, पुलिस, सेना और न्यायपालिका स्त्रीलिंग हैं, जबकि आयोग, मंडल, विभाग और मंत्रालय पुलिंग हैं।"
+  },
+  {
+    id: 74,
+    q: "'हंस' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["हंसी", "हंसिनी", "हँसिनी", "हंसनी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "तत्सम शब्द 'हंस' में 'इनी' प्रत्यय जोड़कर शुद्ध स्त्रीलिंग शब्द 'हंसिनी' बनाया जाता है। विकल्प (C) 'हँसिनी' में चंद्रबिंदु लगा है जिसका संबंध 'हँसना' क्रिया से है, न कि 'हंस' पक्षी से।",
+    fact: "अनुस्वार और चंद्रबिंदु का भेद: 'हंस' (पक्षी) का स्त्रीलिंग 'हंसिनी' होता है।"
+  },
+  {
+    id: 75,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' नहीं है?",
+    options: ["बचपन", "लड़कपन", "बनावट", "पागलपन", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'बनावट' (बन + आवट) स्त्रीलिंग शब्द है (जैसे— इस भवन की बनावट सुंदर है)। बचपन, लड़कपन और पागलपन में 'पन' प्रत्यय जुड़ा है, और 'पन' प्रत्ययांत भाववाचक संज्ञाएँ सदैव पुलिंग होती हैं।",
+    fact: "'पन' प्रत्यय (बचपन, लड़कपन, अपनापन, भोलापन) = सदैव पुलिंग; 'आवट' प्रत्यय (बनावट, लिखावट, सजावट) = सदैव स्त्रीलिंग।"
+  },
+  {
+    id: 76,
+    q: "'कहार' शब्द का सही स्त्रीलिंग रूप निम्नलिखित में से क्या है?",
+    options: ["कहारी", "कहारिन", "कहराइन", "कहारनी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "व्यवसाय या जातिबोधक अकारांत पुलिंग शब्दों के अंत में 'इन' प्रत्यय जोड़कर स्त्रीलिंग बनाया जाता है। अतः 'कहार' में 'इन' प्रत्यय जोड़ने पर शुद्ध स्त्रीलिंग रूप 'कहारिन' बनता है।",
+    fact: "'इन' प्रत्यय से निर्मित प्रमुख जाति/व्यवसाय बोधक स्त्रीलिंग: कहार-कहारिन, लुहार-लुहारिन, सुनार-सुनारिन, कुम्हार-कुम्हारिन, चमार-चमारिन।"
+  },
+  {
+    id: 77,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["अक्ल", "आदत", "अदालत", "इलाज", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "अरबी-फारसी मूल का शब्द 'इलाज' हिंदी में पुलिंग के रूप में प्रयुक्त होता है (जैसे— उसका इलाज चल रहा है)। इसके विपरीत अक्ल, आदत और अदालत स्त्रीलिंग शब्द हैं।",
+    fact: "अरबी-फारसी के 'त' अंत वाले शब्द (आदत, अदालत, इजाजत, शिकायत, नफरत, मोहब्बत, हिम्मत) प्रायः स्त्रीलिंग होते हैं, किंतु 'खत', 'वक्त', 'तख्त' और 'शर्बत' पुलिंग अपवाद हैं।"
+  },
+  {
+    id: 78,
+    q: "'अतिथि' शब्द का वाक्य में प्रयोग किस लिंग के अंतर्गत होता है?",
+    options: ["स्त्रीलिंग", "पुलिंग", "नपुंसकलिंग", "अनिश्चित लिंग", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'अतिथि' इकारांत तत्सम शब्द होते हुए भी व्याकरणिक रूप से सदैव 'पुलिंग' में प्रयुक्त होता है (जैसे— अतिथि पधारे / अतिथि का स्वागत किया गया)।",
+    fact: "इकारांत तत्सम पुलिंग अपवाद: अतिथि, कवि, रवि, मुनि, ऋषि, कपि, गिरि, हरि, वारि, उदधि।"
+  },
+  {
+    id: 79,
+    q: "'चूहा' शब्द का शुद्ध स्त्रीलिंग रूप क्या है?",
+    options: ["चूही", "चुहिया", "चूहिया", "चुहानी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "आकारांत प्राणीवाचक शब्द 'चूहा' में 'इया' प्रत्यय लगाने से स्त्रीलिंग रूप बनता है। नियमानुसार 'इया' प्रत्यय जुड़ते समय प्रथम दीर्घ स्वर 'चू' (ऊ) ह्रस्व होकर 'चु' (उ) हो जाता है, जिससे शुद्ध शब्द 'चुहिया' बनता है।",
+    fact: "'इया' प्रत्यय लगने पर दीर्घ 'ऊ' का ह्रस्व 'उ' होना: चूहा-चुहिया, बूढ़ा-बुढ़िया; तथा 'ओ' का 'उ' होना: लोटा-लुटिया।"
+  },
+  {
+    id: 80,
+    q: "निम्नलिखित में से कौन-सा शब्द 'स्त्रीलिंग' है?",
+    options: ["कोयला", "सीसा", "अभ्रक", "मिट्टी", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "खनिज पदार्थों के नाम प्रायः पुलिंग होते हैं (जैसे— कोयला, सीसा, अभ्रक, लोहा, ताँबा, जस्ता, संगमरमर), परंतु 'मिट्टी' (मृत्तिका), 'चाँदी' और 'बालू' (रेत) स्त्रीलिंग में प्रयुक्त होते हैं।",
+    fact: "खनिज व धातु नामों में कोयला, लोहा, सोना, पीतल, ताँबा और अभ्रक पुलिंग हैं, जबकि मिट्टी, चाँदी और गेरू/राख स्त्रीलिंग हैं।"
+  },
+  {
+    id: 81,
+    q: "'ससुर' (तत्सम: श्वसुर) शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["ससुरानी", "सास", "ससुराइन", "सरहज", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "संबंधवाचक शब्द 'ससुर' का स्त्रीलिंग रूप 'सास' (तत्सम: श्वश्रू) होता है। विकल्प (D) में दिया गया शब्द 'सरहज' साले की पत्नी के लिए प्रयुक्त होता है।",
+    fact: "संबंधवाचक विशिष्ट लिंग परिवर्तन: ससुर-सास (तत्सम: श्वसुर-श्वश्रू), साला-सरहज (पत्नी के अर्थ में) या साली (बहन के अर्थ में), देवर-देवरानी।"
+  },
+  {
+    id: 82,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["शपथ", "बैठक", "मर्यादा", "न्याय", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "'न्याय' शब्द पुलिंग है (जैसे— उसे न्याय मिला / न्याय किया गया)। इसके विपरीत शपथ (शपथ ली गई), बैठक (बैठक संपन्न हुई) और मर्यादा (मर्यादा रखी गई) स्त्रीलिंग शब्द हैं।",
+    fact: "वाक्य रचना द्वारा लिंग परीक्षण: क्रिया या विशेषण (मेरा/मेरी, अच्छा/अच्छी, हुआ/हुई) जोड़कर अमूर्त संज्ञाओं का लिंग तुरंत पहचाना जा सकता है।"
+  },
+  {
+    id: 83,
+    q: "'विधाता' शब्द का शुद्ध स्त्रीलिंग रूप क्या होगा?",
+    options: ["विधाती", "विधात्री", "विधातिन", "विधि", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'ता' शब्दांत वाले तत्सम कर्तृवाचक शब्दों के नियमानुसार 'विधाता' का शुद्ध स्त्रीलिंग रूप 'विधात्री' होता है। इसी प्रकार 'निर्माता' का 'निर्मात्री' और 'नेता' का 'नेत्री' बनता है।",
+    fact: "'ता' का 'त्री' में परिवर्तन: विधाता-विधात्री, निर्माता-निर्मात्री, वक्ता-वक्त्री, कर्ता-कर्त्री, दाता-दात्री।"
+  },
+  {
+    id: 84,
+    q: "निम्नलिखित में से कौन-सा प्राणीवाचक शब्द 'नित्य पुलिंग' है?",
+    options: ["मक्खी", "छिपकली", "भेड़िया", "चील", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'भेड़िया' एक नित्य पुलिंग शब्द है। इसका स्त्रीलिंग रूप बनाने के लिए इसके पूर्व 'मादा' शब्द का प्रयोग किया जाता है (मादा भेड़िया)। मक्खी, छिपकली और चील नित्य स्त्रीलिंग शब्द हैं।",
+    fact: "'भेड़िया', 'खटमल', 'खरगोश', 'गैंडा', 'भालू' और 'तेंदुआ' नित्य पुलिंग पशु/कीट हैं।"
+  },
+  {
+    id: 85,
+    q: "'प्रियतम' शब्द का शुद्ध स्त्रीलिंग रूप क्या है?",
+    options: ["प्रियतमी", "प्रियतमा", "प्रिया", "प्रेयसी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "अकारांत तत्सम विशेषण/संज्ञा शब्द 'प्रियतम' के अंत में 'आ' प्रत्यय लगाने से शुद्ध स्त्रीलिंग रूप 'प्रियतमा' बनता है। ('प्रिय' का स्त्रीलिंग 'प्रिया' और 'प्रेमी' का तत्सम स्त्रीलिंग 'प्रेयसी' होता है)।",
+    fact: "सूक्ष्म अंतर वाले युग्म: प्रिय-प्रिया, प्रियतम-प्रियतमा, प्रेमी-प्रेमिका (या प्रेयसी)।"
+  },
+  {
+    id: 86,
+    q: "निम्नलिखित विकल्पों में से कौन-सा शब्द 'स्त्रीलिंग' है?",
+    options: ["पहर", "संवत्", "शताब्दी", "पाक्षिक", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "कालमान सूचक शब्दों में 'शताब्दी' (सदी) ईकारांत शब्द होने के कारण स्त्रीलिंग है (जैसे— इक्कीसवीं शताब्दी चल रही है)। पहर (प्रहर), संवत्, वर्ष, मास और युग पुलिंग शब्द हैं।",
+    fact: "समय सूचक शब्दों में 'शताब्दी' (सदी), 'घड़ी', 'तिथि', 'सुबह', 'शाम', 'रात' स्त्रीलिंग हैं; जबकि 'क्षण', 'पल', 'मिनट', 'घंटा', 'प्रहर', 'दिन', 'मास', 'वर्ष' पुलिंग हैं।"
+  },
+  {
+    id: 87,
+    q: "'चौधरी' शब्द का सही स्त्रीलिंग रूप निम्नलिखित में से क्या है?",
+    options: ["चौधरानी", "चौधराइन", "चौधरिन", "चौधारी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "उपाधि या पद सूचक शब्द 'चौधरी' में 'आइन' प्रत्यय लगाने से 'चौधराइन' बनता है। UPSSSC और मानक हिंदी व्याकरण की परीक्षाओं में 'आइन' प्रत्यय युक्त 'चौधराइन' को प्राथमिक मानक उत्तर माना जाता है।",
+    fact: "'आइन' प्रत्यय से बनने वाले प्रमुख उपाधि सूचक स्त्रीलिंग: चौधरी-चौधराइन, ठाकुर-ठकुराइन, पंडित-पंडिताइन, बाबू-बबुआइन।"
+  },
+  {
+    id: 88,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["नकल", "अकल", "शकल", "अकाल", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "'अकाल' (दुर्भिक्ष) शब्द पुलिंग है (जैसे— भीषण अकाल पड़ा)। इसके विपरीत नकल (नकल की गई), अकल (अकल आई) और शकल/शक्ल (शक्ल देखी) स्त्रीलिंग शब्द हैं।",
+    fact: "प्राकृतिक आपदाओं में 'अकाल', 'भूकंप', 'तूफान' और 'बवंडर' पुलिंग हैं, जबकि 'बाढ़', 'सुनामी' और 'महामारी' स्त्रीलिंग हैं।"
+  },
+  {
+    id: 89,
+    q: "'गुणवान' शब्द का शुद्ध स्त्रीलिंग रूप क्या है?",
+    options: ["गुणवंती", "गुणवती", "गुणमान", "गुणी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "तत्सम विशेषण शब्दों के अंत में आने वाले 'वान' प्रत्यय को स्त्रीलिंग में परिवर्तित करते समय 'वती' कर दिया जाता है। अतः 'गुणवान' का शुद्ध तत्सम स्त्रीलिंग 'गुणवती' होता है।",
+    fact: "'वान' से 'वती' नियम: गुणवान-गुणवती, रूपवान-रूपवती, धनवान-धनवती, पुत्रवान-पुत्रवती, सत्यवान-सत्यवती।"
+  },
+  {
+    id: 90,
+    q: "निम्नलिखित में से कौन-सा शब्द 'नित्य स्त्रीलिंग' है?",
+    options: ["सारस", "तोता", "मैना", "कबूतर", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'मैना' सदैव स्त्रीलिंग (नित्य स्त्रीलिंग) में प्रयुक्त होने वाला पक्षी का नाम है। इसका पुलिंग रूप बनाने के लिए 'नर मैना' लिखा जाता है। सारस, तोता और कबूतर पुलिंग शब्द हैं।",
+    fact: "'तोता' (पुलिंग) और 'मैना' (स्त्रीलिंग) लोककथाओं में युग्म के रूप में प्रचलित हैं, किंतु व्याकरणिक रूप से दोनों क्रमशः नित्य पुलिंग व नित्य स्त्रीलिंग हैं।"
+  },
+  {
+    id: 91,
+    q: "'अग्रज' शब्द का सही स्त्रीलिंग रूप क्या होगा?",
+    options: ["अग्रजी", "अग्रजा", "अनुजा", "अग्रजानी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'अग्रज' (बड़ा भाई) अकारांत तत्सम शब्द है, जिसमें 'आ' प्रत्यय लगाने से स्त्रीलिंग शब्द 'अग्रजा' (बड़ी बहन) बनता है। विकल्प (C) 'अनुजा' शब्द 'अनुज' (छोटा भाई) का स्त्रीलिंग रूप है।",
+    fact: "सहोदर संबंध युग्म: अग्रज (बड़ा भाई) - अग्रजा (बड़ी बहन); अनुज (छोटा भाई) - अनुजा (छोटी बहन); तनय (पुत्र) - तनया (पुत्री)।"
+  },
+  {
+    id: 92,
+    q: "निम्नलिखित में से किस विकल्प के सभी शब्द 'स्त्रीलिंग' हैं?",
+    options: ["चमक, दमक, पुकार", "नाच, खेल, मेल", "उतार, चढ़ाव, बहाव", "लेन-देन, खान-पान, रहन-सहन", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "विकल्प (A) में दिए गए तीनों अकारांत कृदंत भाववाचक शब्द—'चमक', 'दमक' और 'पुकार'—स्त्रीलिंग हैं (जैसे— बिजली की चमक, चेहरे की दमक, उसकी पुकार सुनी गई)। शेष विकल्पों के शब्द पुलिंग हैं।",
+    fact: "अकारांत कृदंत संज्ञाएँ प्रायः पुलिंग होती हैं (नाच, खेल, मेल, उतार, चढ़ाव), किंतु चमक, दमक, पुकार, फटकार, मार, हार, लूट, छूट और दौड़ इसके प्रमुख स्त्रीलिंग अपवाद हैं।"
+  },
+  {
+    id: 93,
+    q: "'ब्राह्मण' शब्द का शुद्ध स्त्रीलिंग रूप क्या है?",
+    options: ["ब्राह्मणी", "बाम्हनी", "ब्राह्मणानी", "ब्राह्मणा", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "जातिसूचक तत्सम शब्द 'ब्राह्मण' में दीर्घ 'ई' प्रत्यय जोड़कर शुद्ध स्त्रीलिंग शब्द 'ब्राह्मणी' बनाया जाता है।",
+    fact: "तत्सम जाति/वर्ण सूचक शब्दों में 'ई' या 'आणी' प्रत्यय लगता है: ब्राह्मण-ब्राह्मणी, क्षत्रिय-क्षत्राणी, वैश्य-वैश्या, शूद्र-शूद्रा।"
+  },
+  {
+    id: 94,
+    q: "निम्नलिखित में से कौन-सा शब्द 'पुलिंग' है?",
+    options: ["गर्दन", "जीभ", "नस", "मस्तक", "इनमें से कोई नहीं"],
+    ans: 3,
+    exp: "'मस्तक' (माथा/ललाट/सिर) शब्द पुलिंग है (जैसे— उसका मस्तक ऊँचा है)। इसके विपरीत शरीर के अंगों में गर्दन, जीभ और नस स्त्रीलिंग शब्द हैं।",
+    fact: "सिर के भागों में 'सिर', 'मस्तक', 'माथा', 'ललाट', 'भाल' और 'मस्तिष्क' सभी पुलिंग हैं, जबकि 'खोपड़ी' और 'गर्दन' स्त्रीलिंग हैं।"
+  },
+  {
+    id: 95,
+    q: "'संन्यासी' शब्द का शुद्ध स्त्रीलिंग रूप क्या है?",
+    options: ["संन्यासिनी", "संन्यासनी", "संन्यासीनी", "संन्यासीन", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "ईकारांत तत्सम शब्द 'संन्यासी' के अंत में 'इनी' प्रत्यय जोड़ने से शुद्ध स्त्रीलिंग रूप 'संन्यासिनी' बनता है। शुद्ध वर्तनी में 'सं' के ऊपर अनुस्वार (बिंदी) और आधा 'न' दोनों रहते हैं।",
+    fact: "'इनी' प्रत्ययांत प्रमुख शब्द: संन्यासी-संन्यासिनी, एकाकी-एकाकिनी, अभिमानी-अभिमानिनी, आज्ञाकारी-आज्ञाकारिणी।"
+  },
+  {
+    id: 96,
+    q: "निम्नलिखित में से कौन-सा शब्द 'स्त्रीलिंग' नहीं है?",
+    options: ["दाल", "मिर्च", "जीरा", "लौंग", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "किराने और मसालों के नाम प्रायः स्त्रीलिंग होते हैं (जैसे— दाल, मिर्च, लौंग, इलायची, हल्दी, सुपारी, हींग, सौंफ), परंतु 'जीरा', 'धनिया', 'तेजपत्ता', 'नमक' और 'कपूर' इसके अपवाद हैं और ये पुलिंग में प्रयुक्त होते हैं।",
+    fact: "मसालों में हल्दी, मिर्च, लौंग, इलायची, दालचीनी और हींग स्त्रीलिंग हैं; जबकि जीरा, धनिया, नमक और कपूर पुलिंग हैं।"
+  },
+  {
+    id: 97,
+    q: "'अध्यापक' से 'अध्यापिका' बनने के नियम के अनुसार 'संपादक' का सही स्त्रीलिंग रूप क्या होगा?",
+    options: ["संपादकी", "संपादिका", "संपादत्री", "संपादिनी", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "'अक' प्रत्ययांत तत्सम शब्दों में 'अक' के स्थान पर 'इका' हो जाने के नियम के अनुसार 'संपादक' का शुद्ध स्त्रीलिंग रूप 'संपादिका' होता है।",
+    fact: "'अक-इका' नियम के अन्य महत्वपूर्ण उदाहरण: संयोजक-संयोजिका, संचालक-संचालिका, परिचायक-परिचायिका, धावक-धाविका।"
+  },
+  {
+    id: 98,
+    q: "निम्नलिखित में से कौन-सा शब्द 'उभयलिंगी' (स्त्री और पुरुष दोनों के लिए समान) नहीं है?",
+    options: ["राष्ट्रपति", "राज्यपाल", "विद्वान", "राजदूत", "इनमें से कोई नहीं"],
+    ans: 2,
+    exp: "'विद्वान' शब्द उभयलिंगी नहीं है; यह केवल पुलिंग के लिए प्रयुक्त होता है और स्त्री के लिए इसका रूप परिवर्तित होकर 'विदुषी' हो जाता है। राष्ट्रपति, राज्यपाल और राजदूत पदवाचक शब्द हैं जो उभयलिंगी हैं।",
+    fact: "परीक्षा में अक्सर वाक्य शुद्धि में दिया जाता है—'वह एक विद्वान महिला है', जो अशुद्ध है; शुद्ध वाक्य होगा—'वह एक विदुषी महिला है'।"
+  },
+  {
+    id: 99,
+    q: "'भील' शब्द का सही स्त्रीलिंग रूप क्या है?",
+    options: ["भीलनी", "भिलनी", "भीलाइन", "भीलानी", "इनमें से कोई नहीं"],
+    ans: 0,
+    exp: "जातिसूचक शब्द 'भील' में 'नी' प्रत्यय जोड़ने पर मानक हिंदी व्याकरण के अनुसार शुद्ध स्त्रीलिंग शब्द 'भीलनी' बनता है।",
+    fact: "'नी' प्रत्यय से बनने वाले जातिसूचक स्त्रीलिंग: भील-भीलनी, जाट-जाटनी, राजपूत-राजपूतनी, सिख-सिखनी।"
+  },
+  {
+    id: 100,
+    q: "हिंदी व्याकरण में 'लिंग' (Gender) के मुख्य रूप से कितने भेद माने गए हैं?",
+    options: ["तीन (पुलिंग, स्त्रीलिंग, नपुंसकलिंग)", "दो (पुलिंग और स्त्रीलिंग)", "चार (पुलिंग, स्त्रीलिंग, उभयलिंग, नपुंसकलिंग)", "केवल एक", "इनमें से कोई नहीं"],
+    ans: 1,
+    exp: "संस्कृत में लिंग के तीन भेद (पुलिंग, स्त्रीलिंग और नपुंसकलिंग) तथा अंग्रेजी में चार भेद होते हैं, किंतु मानक हिंदी व्याकरण में लिंग के केवल 'दो' ही मुख्य भेद माने गए हैं—1. पुलिंग और 2. स्त्रीलिंग।",
+    fact: "संस्कृत = 3 लिंग; हिंदी = केवल 2 लिंग (पुलिंग और स्त्रीलिंग)। 'लिंग' शब्द संस्कृत भाषा का शब्द है जिसका शाब्दिक अर्थ 'चिह्न' या 'निशान' होता है।"
+  }
+];
+
+// State Management
+let currentIndex = 0;
+const letters = ["A", "B", "C", "D", "E"];
+
+// Status codes: 'not-visited', 'unanswered', 'skipped', 'review', 'correct', 'incorrect'
+let userState = questionsData.map(() => ({
+  visited: false,
+  selected: null,
+  skipped: false,
+  review: false
+}));
+
+// DOM References
+const topQCounter = document.getElementById("topQCounter");
+const qNumberTag = document.getElementById("qNumberTag");
+const liveScoreBadge = document.getElementById("liveScoreBadge");
+const qStemText = document.getElementById("qStemText");
+const optionsContainer = document.getElementById("optionsContainer");
+const explanationBox = document.getElementById("explanationBox");
+const expHeader = document.getElementById("expHeader");
+const expHindiText = document.getElementById("expHindiText");
+const expKeyFact = document.getElementById("expKeyFact");
+
+const prevQBtn = document.getElementById("prevQBtn");
+const skipQBtn = document.getElementById("skipQBtn");
+const markReviewBtn = document.getElementById("markReviewBtn");
+const nextQBtn = document.getElementById("nextQBtn");
+
+const paletteModal = document.getElementById("paletteModal");
+const paletteGrid = document.getElementById("paletteGrid");
+const openPaletteTopBtn = document.getElementById("openPaletteTopBtn");
+const openPaletteBottomBtn = document.getElementById("openPaletteBottomBtn");
+const closePaletteBtn = document.getElementById("closePaletteBtn");
+
+const finishExamBtn = document.getElementById("finishExamBtn");
+const simulatorMain = document.getElementById("simulatorMain");
+const reportDashboard = document.getElementById("reportDashboard");
+const returnSimBtn = document.getElementById("returnSimBtn");
+const resetSimBtn = document.getElementById("resetSimBtn");
+
+function getQuestionStatus(idx) {
+  const st = userState[idx];
+  const qObj = questionsData[idx];
+  if (st.selected !== null) {
+    return st.selected === qObj.ans ? "correct" : "incorrect";
+  }
+  if (st.review) return "review";
+  if (st.skipped) return "skipped";
+  if (st.visited) return "unanswered";
+  return "not-visited";
+}
+
+function calculateScore() {
+  let correctCount = 0;
+  let incorrectCount = 0;
+  let unansweredCount = 0;
+  let skippedCount = 0;
+  let reviewCount = 0;
+  let notVisitedCount = 0;
+
+  questionsData.forEach((q, idx) => {
+    const status = getQuestionStatus(idx);
+    if (status === "correct") correctCount++;
+    else if (status === "incorrect") incorrectCount++;
+    else if (status === "unanswered") unansweredCount++;
+    else if (status === "skipped") skippedCount++;
+    else if (status === "review") reviewCount++;
+    else notVisitedCount++;
+  });
+
+  const netScore = (correctCount * 1.0) - (incorrectCount * 0.25);
+  liveScoreBadge.textContent = `Score: ${netScore.toFixed(2)}`;
+
+  // Update palette legend counts
+  document.getElementById("legCorrect").textContent = correctCount;
+  document.getElementById("legIncorrect").textContent = incorrectCount;
+  document.getElementById("legUnanswered").textContent = unansweredCount;
+  document.getElementById("legSkipped").textContent = skippedCount;
+  document.getElementById("legReview").textContent = reviewCount;
+  document.getElementById("legNotVisited").textContent = notVisitedCount;
+
+  return { netScore, correctCount, incorrectCount, unansweredCount, skippedCount, reviewCount, notVisitedCount };
+}
+
+function renderQuestion(index) {
+  currentIndex = index;
+  userState[index].visited = true;
+
+  const qObj = questionsData[index];
+  const st = userState[index];
+
+  topQCounter.textContent = `Question ${qObj.id} of 100`;
+  qNumberTag.textContent = `Question ${qObj.id} of 100`;
+  qStemText.textContent = `Q${qObj.id}. ${qObj.q}`;
+
+  // Update Review Button UI
+  if (st.review) {
+    markReviewBtn.classList.add("active");
+    markReviewBtn.textContent = "🟣 Marked for Review";
+  } else {
+    markReviewBtn.classList.remove("active");
+    markReviewBtn.textContent = "🟣 Mark for Review";
+  }
+
+  // Render 5 Options
+  optionsContainer.innerHTML = "";
+  const isLocked = st.selected !== null;
+
+  qObj.options.forEach((optText, optIdx) => {
+    const card = document.createElement("div");
+    card.className = "option-card";
+    if (isLocked) card.classList.add("locked");
+
+    if (isLocked) {
+      if (st.selected === optIdx && optIdx === qObj.ans) {
+        card.classList.add("correct-selected");
+      } else if (st.selected === optIdx && optIdx !== qObj.ans) {
+        card.classList.add("incorrect-selected");
+      } else if (optIdx === qObj.ans) {
+        card.classList.add("correct-outline");
+      }
+    }
+
+    card.innerHTML = `
+      <div class="opt-letter">${letters[optIdx]}</div>
+      <div class="opt-text">${optText}</div>
+    `;
+
+    if (!isLocked) {
+      card.addEventListener("click", () => handleSelectOption(optIdx));
+    }
+
+    optionsContainer.appendChild(card);
+  });
+
+  // Render Explanation if answered
+  if (isLocked) {
+    const isCorrect = st.selected === qObj.ans;
+    expHeader.innerHTML = isCorrect
+      ? `✅ सही उत्तर! Correct Option: (${letters[qObj.ans]}) — [+1.00 Mark]`
+      : `❌ गलत उत्तर! Your Choice: (${letters[st.selected]}) | Correct Option: (${letters[qObj.ans]}) — [-0.25 Mark]`;
+    expHeader.style.color = isCorrect ? "#34d399" : "#f87171";
+    expHindiText.innerHTML = `<strong>व्याख्या (Hindi):</strong> ${qObj.exp}`;
+    expKeyFact.innerHTML = `<strong>🎯 Key Exam Fact:</strong> ${qObj.fact}`;
+    explanationBox.classList.add("visible");
+  } else {
+    explanationBox.classList.remove("visible");
+  }
+
+  prevQBtn.disabled = index === 0;
+  prevQBtn.style.opacity = index === 0 ? "0.45" : "1";
+  nextQBtn.textContent = index === 99 ? "Finish & View Report ➔" : "Next Question ➔";
+
+  calculateScore();
+  renderPaletteGrid();
+}
+
+function handleSelectOption(optIdx) {
+  if (userState[currentIndex].selected !== null) return; // One-tap lock
+  userState[currentIndex].selected = optIdx;
+  userState[currentIndex].skipped = false;
+  renderQuestion(currentIndex);
+}
+
+function renderPaletteGrid() {
+  paletteGrid.innerHTML = "";
+  questionsData.forEach((q, idx) => {
+    const btn = document.createElement("button");
+    const status = getQuestionStatus(idx);
+    btn.className = `pal-btn st-${status}`;
+    if (idx === currentIndex) btn.classList.add("current-q");
+    btn.textContent = q.id;
+    btn.addEventListener("click", () => {
+      renderQuestion(idx);
+      closePalette();
+    });
+    paletteGrid.appendChild(btn);
+  });
+}
+
+function openPalette() {
+  calculateScore();
+  renderPaletteGrid();
+  paletteModal.classList.add("open");
+}
+
+function closePalette() {
+  paletteModal.classList.remove("open");
+}
+
+// Button Event Listeners
+openPaletteTopBtn.addEventListener("click", openPalette);
+openPaletteBottomBtn.addEventListener("click", openPalette);
+closePaletteBtn.addEventListener("click", closePalette);
+paletteModal.addEventListener("click", (e) => {
+  if (e.target === paletteModal) closePalette();
+});
+
+prevQBtn.addEventListener("click", () => {
+  if (currentIndex > 0) renderQuestion(currentIndex - 1);
+});
+
+nextQBtn.addEventListener("click", () => {
+  if (currentIndex < 99) {
+    renderQuestion(currentIndex + 1);
+  } else {
+    showFinalReport();
+  }
+});
+
+skipQBtn.addEventListener("click", () => {
+  if (userState[currentIndex].selected === null) {
+    userState[currentIndex].skipped = true;
+  }
+  if (currentIndex < 99) {
+    renderQuestion(currentIndex + 1);
+  } else {
+    calculateScore();
+    renderPaletteGrid();
+  }
+});
+
+markReviewBtn.addEventListener("click", () => {
+  userState[currentIndex].review = !userState[currentIndex].review;
+  renderQuestion(currentIndex);
+});
+
+finishExamBtn.addEventListener("click", showFinalReport);
+
+returnSimBtn.addEventListener("click", () => {
+  reportDashboard.classList.remove("visible");
+  simulatorMain.style.display = "block";
+});
+
+resetSimBtn.addEventListener("click", () => {
+  if (confirm("Are you sure you want to reset all 100 responses and start fresh?")) {
+    userState = questionsData.map(() => ({
+      visited: false,
+      selected: null,
+      skipped: false,
+      review: false
+    }));
+    reportDashboard.classList.remove("visible");
+    simulatorMain.style.display = "block";
+    renderQuestion(0);
+  }
+});
+
+function showFinalReport() {
+  const stats = calculateScore();
+  simulatorMain.style.display = "none";
+  reportDashboard.classList.add("visible");
+
+  const attempted = stats.correctCount + stats.incorrectCount;
+  const accuracy = attempted > 0 ? ((stats.correctCount / attempted) * 100).toFixed(1) : "0.0";
+  const unattemptedTotal = 100 - attempted;
+
+  document.getElementById("repNetScore").textContent = stats.netScore.toFixed(2);
+  document.getElementById("repAccuracy").textContent = `${accuracy}%`;
+  document.getElementById("repCorrect").textContent = stats.correctCount;
+  document.getElementById("repIncorrect").textContent = stats.incorrectCount;
+  document.getElementById("repSkipped").textContent = unattemptedTotal;
+
+  const matrixList = document.getElementById("reviewMatrixList");
+  matrixList.innerHTML = "";
+
+  questionsData.forEach((q, idx) => {
+    const st = userState[idx];
+    const status = getQuestionStatus(idx);
+    let badgeText = "Not Attempted (0.00)";
+    let badgeColor = "#94a3b8";
+
+    if (status === "correct") {
+      badgeText = "✅ Correct (+1.00)";
+      badgeColor = "#34d399";
+    } else if (status === "incorrect") {
+      badgeText = "❌ Incorrect (-0.25)";
+      badgeColor = "#f87171";
+    }
+
+    const userAnsStr = st.selected !== null ? `(${letters[st.selected]}) ${q.options[st.selected]}` : "Skipped / Not Answered";
+    const correctAnsStr = `(${letters[q.ans]}) ${q.options[q.ans]}`;
+
+    const item = document.createElement("div");
+    item.className = "matrix-item";
+    item.innerHTML = `
+      <div class="matrix-top">
+        <span style="color:var(--accent-blue);">Question ${q.id}</span>
+        <span style="color:${badgeColor};">${badgeText}</span>
+      </div>
+      <div style="font-weight:600; margin-bottom:0.65rem;">${q.q}</div>
+      <div style="font-size:0.92rem; margin-bottom:0.65rem; color:var(--text-secondary);">
+        <div><strong>Your Answer:</strong> <span style="color:${status === 'incorrect' ? '#f87171' : '#e2e8f0'}">${userAnsStr}</span></div>
+        <div><strong>Correct Answer:</strong> <span style="color:#34d399">${correctAnsStr}</span></div>
+      </div>
+      <div style="font-size:0.92rem; color:#cbd5e1; border-top:1px solid var(--border-color); padding-top:0.6rem;">
+        <div><strong>व्याख्या:</strong> ${q.exp}</div>
+        <div style="color:#fcd34d; margin-top:0.3rem;"><strong>Key Exam Fact:</strong> ${q.fact}</div>
+      </div>
+    `;
+    matrixList.appendChild(item);
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Initialize Simulator at Question 1
+renderQuestion(0);
+</script>
+</body>
+</html>

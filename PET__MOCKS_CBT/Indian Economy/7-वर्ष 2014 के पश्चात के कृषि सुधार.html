@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPSSSC PET CBT Simulator - वर्ष 2014 के पश्चात के कृषि सुधार</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #121316;
+      --card-dark: #1e2024;
+      --card-border: #2a2d33;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --purple: #8b5cf6;
+      --purple-bg: rgba(139, 92, 246, 0.15);
+      --gray-skipped: #6b7280;
+      --gray-unvisited: #26292f;
+      --font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Bar */
+    header {
+      background-color: var(--card-dark);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .exam-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+
+    .exam-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge-counter {
+      background-color: #242933;
+      border: 1px solid #374151;
+      color: #e5e7eb;
+    }
+
+    .badge-score {
+      background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+      color: #fff;
+      border: 1px solid #3b82f6;
+    }
+
+    .btn-palette-open {
+      background-color: #374151;
+      color: #fff;
+      border: 1px solid #4b5563;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-palette-open:hover {
+      background-color: #4b5563;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 940px;
+      width: 100%;
+      margin: 24px auto;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: var(--card-dark);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    /* Question Card */
+    .question-stem {
+      margin-bottom: 24px;
+    }
+
+    .q-badge {
+      display: inline-block;
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid #3b82f6;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .stem-en {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #f9fafb;
+      margin-bottom: 10px;
+    }
+
+    .stem-hi {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    /* Options Grid */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background-color: #17191d;
+      border: 1.5px solid var(--card-border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      color: var(--text-main);
+      text-align: left;
+      font-size: 1rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      outline: none;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background-color: #242830;
+      border-color: #4b5563;
+      transform: translateX(4px);
+    }
+
+    .option-key {
+      font-weight: 700;
+      color: #93c5fd;
+      min-width: 28px;
+    }
+
+    .option-text {
+      flex: 1;
+    }
+
+    /* Option locked states */
+    .option-btn.opt-correct {
+      background-color: var(--success-bg) !important;
+      border-color: var(--success) !important;
+      color: #a7f3d0 !important;
+    }
+
+    .option-btn.opt-wrong {
+      background-color: var(--danger-bg) !important;
+      border-color: var(--danger) !important;
+      color: #fca5a5 !important;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    /* Action bar */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .action-group-left {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .btn-skip {
+      background-color: transparent;
+      border-color: #4b5563;
+      color: #9ca3af;
+    }
+
+    .btn-skip:hover {
+      background-color: #2d333b;
+      color: #fff;
+    }
+
+    .btn-review {
+      background-color: transparent;
+      border-color: var(--purple);
+      color: #c4b5fd;
+    }
+
+    .btn-review:hover {
+      background-color: var(--purple-bg);
+      color: #fff;
+    }
+
+    .btn-review.active {
+      background-color: var(--purple);
+      color: #fff;
+    }
+
+    .btn-nav {
+      background-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-nav:hover {
+      background-color: var(--accent-hover);
+    }
+
+    /* Explanation Accordion / Card */
+    .explanation-card {
+      display: none;
+      background-color: #171a20;
+      border: 1px solid #2d3748;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 20px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .exp-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .exp-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+
+    .exp-sec-title {
+      font-weight: 700;
+      color: #e5e7eb;
+      margin-bottom: 4px;
+    }
+
+    .exp-fact {
+      background-color: rgba(245, 158, 11, 0.1);
+      border-left: 3px solid var(--warning);
+      padding: 10px 14px;
+      border-radius: 4px;
+      color: #fde68a;
+      font-size: 0.92rem;
+      margin-top: 6px;
+    }
+
+    /* Question Palette Slide-over */
+    .palette-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 420px;
+      max-width: 90vw;
+      height: 100vh;
+      background-color: #181a1f;
+      border-left: 1px solid var(--card-border);
+      box-shadow: -10px 0 25px rgba(0, 0, 0, 0.5);
+      z-index: 50;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .palette-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f3f4f6;
+    }
+
+    .btn-close-palette {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .btn-close-palette:hover {
+      color: #fff;
+    }
+
+    /* Palette Legend */
+    .palette-legend {
+      padding: 14px 20px;
+      background-color: #131417;
+      border-bottom: 1px solid var(--card-border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      font-size: 0.78rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #d1d5db;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .palette-cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      background-color: var(--gray-unvisited);
+      color: #d1d5db;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .palette-cell:hover {
+      border-color: #60a5fa;
+      transform: scale(1.05);
+    }
+
+    .palette-cell.current-view {
+      outline: 2px solid #60a5fa;
+      outline-offset: 2px;
+    }
+
+    /* Statuses */
+    .palette-cell.status-correct {
+      background-color: var(--success);
+      color: #fff;
+      border-color: var(--success);
+    }
+
+    .palette-cell.status-wrong {
+      background-color: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+    }
+
+    .palette-cell.status-unanswered {
+      background-color: var(--warning);
+      color: #000;
+      border-color: var(--warning);
+    }
+
+    .palette-cell.status-skipped {
+      background-color: var(--gray-skipped);
+      color: #fff;
+      border-color: var(--gray-skipped);
+    }
+
+    .palette-cell.status-review {
+      background-color: var(--purple);
+      color: #fff;
+      border-color: var(--purple);
+    }
+
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 45;
+      display: none;
+    }
+
+    .backdrop.open {
+      display: block;
+    }
+
+    /* Final Report Modal */
+    .report-card {
+      display: none;
+      background-color: var(--card-dark);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .report-card.show {
+      display: block;
+    }
+
+    .report-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .stat-box {
+      background: #14161a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .stat-val {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-lbl {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 10px 16px;
+      }
+      .exam-title {
+        font-size: 0.95rem;
+      }
+      .palette-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .action-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .action-group-left {
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header>
+    <div class="header-left">
+      <div class="exam-title">UPSSSC PET: वर्ष 2014 के पश्चात के कृषि सुधार</div>
+      <div class="exam-sub">Class 10/12 NCERT Standard | Marking: +1.00 / -0.25</div>
+    </div>
+    <div class="header-right">
+      <span class="badge badge-counter" id="top-counter">Question 1 of 100</span>
+      <span class="badge badge-score" id="top-score">Score: 0.00</span>
+      <button class="btn-palette-open" id="btn-open-palette" aria-label="Open Question Palette">
+        <span>📋</span> Palette
+      </button>
+    </div>
+  </header>
+
+  <!-- Slide-over Backdrop -->
+  <div class="backdrop" id="palette-backdrop"></div>
+
+  <!-- On-Demand Slide-over Palette Drawer -->
+  <aside class="palette-drawer" id="palette-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">Question Palette (1 - 100)</div>
+      <button class="btn-close-palette" id="btn-close-palette" aria-label="Close Palette">✕</button>
+    </div>
+    <div class="palette-legend">
+      <div class="legend-item"><div class="legend-dot" style="background: var(--success);"></div> Correct (+1.00)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--danger);"></div> Incorrect (-0.25)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--warning);"></div> Unanswered (Visited)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--gray-skipped);"></div> Skipped</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--purple);"></div> Marked Review</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--gray-unvisited);"></div> Not Visited</div>
+    </div>
+    <div class="drawer-body">
+      <div class="palette-grid" id="palette-grid">
+        <!-- 100 cells generated via JS -->
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Active Content -->
+  <main id="main-content">
+    
+    <!-- Question Card -->
+    <section class="card" id="question-card">
+      <div class="question-stem">
+        <div class="q-badge" id="q-number-badge">Question 1</div>
+        <div class="stem-en" id="q-stem-en">Loading question stem...</div>
+        <div class="stem-hi" id="q-stem-hi">प्रश्न लोड हो रहा है...</div>
+      </div>
+
+      <div class="options-list" id="options-container">
+        <!-- 5 options rendered dynamically -->
+      </div>
+
+      <!-- Action controls -->
+      <div class="action-bar">
+        <div class="action-group-left">
+          <button class="action-btn btn-skip" id="btn-skip">Skip Question</button>
+          <button class="action-btn btn-review" id="btn-review">Mark for Review</button>
+        </div>
+        <div class="action-group-right">
+          <button class="action-btn btn-nav" id="btn-prev">◂ Prev</button>
+          <button class="action-btn btn-nav" id="btn-next">Next ▸</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bilingual Explanation Card -->
+    <article class="card explanation-card" id="explanation-card">
+      <div class="exp-title">
+        <span>💡</span> Answer Analysis & Rationale / व्याख्या
+      </div>
+      <div class="exp-body">
+        <div>
+          <div class="exp-sec-title">English Explanation:</div>
+          <div id="exp-en-text"></div>
+        </div>
+        <div>
+          <div class="exp-sec-title">हिंदी व्याख्या:</div>
+          <div id="exp-hi-text"></div>
+        </div>
+        <div class="exp-fact" id="exp-fact-text"></div>
+      </div>
+    </article>
+
+    <!-- Final Score Dashboard -->
+    <section class="report-card" id="report-dashboard">
+      <h2 style="color: #60a5fa; font-size: 1.8rem; margin-bottom: 8px;">CBT Test Summary</h2>
+      <p style="color: var(--text-muted);">UPSSSC PET Subject: Indian Economy (Post-2014 Agricultural Reforms)</p>
+
+      <div class="report-stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="res-score" style="color: #60a5fa;">0.00</div>
+          <div class="stat-lbl">Net Score (Max: 100.00)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="res-accuracy" style="color: #34d399;">0%</div>
+          <div class="stat-lbl">Accuracy Rate</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="res-correct" style="color: var(--success);">0</div>
+          <div class="stat-lbl">Correct Answers (+1.00)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="res-wrong" style="color: var(--danger);">0</div>
+          <div class="stat-lbl">Wrong Answers (-0.25)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="res-attempted" style="color: #fbbf24;">0 / 100</div>
+          <div class="stat-lbl">Total Attempted</div>
+        </div>
+      </div>
+
+      <button class="action-btn btn-nav" id="btn-review-questions" style="padding: 12px 28px; font-size: 1rem;">
+        Review Questions in Palette 📋
+      </button>
+    </section>
+
+  </main>
+
+  <script>
+    /* Complete Question Bank: All 100 questions from Batches 1 to 4 verbatim */
+    const questionsData = [
+      // Batch 1 (Q1 to Q25)
+      {
+        qNum: 1,
+        stemEn: "Under the Pradhan Mantri Fasal Bima Yojana (PMFBY) launched in 2016, what is the uniform maximum premium payable by farmers for all Kharif crops?",
+        stemHi: "वर्ष 2016 में शुरू की गई 'प्रधानमंत्री फसल बीमा योजना' (PMFBY) के तहत सभी खरीफ फसलों के लिए किसानों द्वारा देय एकसमान अधिकतम प्रीमियम दर क्या है?",
+        options: [
+          "(A) 1.5% / 1.5%",
+          "(B) 2.0% / 2.0%",
+          "(C) 5.0% / 5.0%",
+          "(D) 3.5% / 3.5%",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Under PMFBY, the premium payable by farmers is uniformly fixed at 2.0% for all Kharif food and oilseed crops, 1.5% for all Rabi food and oilseed crops, and 5.0% for annual commercial and horticultural crops. The balance premium is shared equally (50:50) by the Central and State Governments (90:10 for North Eastern states).",
+        expHi: "प्रधानमंत्री फसल बीमा योजना (PMFBY) के अंतर्गत सभी खरीफ खाद्य एवं तिलहन फसलों के लिए किसानों द्वारा देय अधिकतम प्रीमियम 2.0% निर्धारित है। रबी फसलों के लिए यह दर 1.5% तथा वाणिज्यिक/बागवानी फसलों के लिए 5.0% है। शेष प्रीमियम सब्सिडी केंद्र और राज्यों द्वारा वहन की जाती है।",
+        keyFact: "Key Exam Fact: PMFBY को 18 फरवरी 2016 को पूर्ववर्ती राष्ट्रीय कृषि बीमा योजना (NAIS) और MNAIS को प्रतिस्थापित कर शुरू किया गया था।"
+      },
+      {
+        qNum: 2,
+        stemEn: "What is the total financial benefit provided per year to an eligible farmer family under the 'PM-KISAN' scheme launched post-2014?",
+        stemHi: "वर्ष 2014 के पश्चात शुरू की गई 'पीएम-किसान' (PM-KISAN) योजना के अंतर्गत पात्र किसान परिवार को प्रति वर्ष कुल कितना वित्तीय लाभ प्रदान किया जाता है?",
+        options: [
+          "(A) ₹4,000 in two installments / दो किस्तों में ₹4,000",
+          "(B) ₹8,000 in four installments / चार किस्तों में ₹8,000",
+          "(C) ₹6,000 in three equal installments / तीन समान किस्तों में ₹6,000",
+          "(D) ₹5,000 as a lump sum / एकमुश्त ₹5,000",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "Under Pradhan Mantri Kisan Samman Nidhi (PM-KISAN), eligible landholding farmer families receive an income support of ₹6,000 per year, disbursed in three equal four-monthly installments of ₹2,000 each directly into their Aadhaar-seeded bank accounts (DBT).",
+        expHi: "प्रधानमंत्री किसान सम्मान निधि (PM-KISAN) के तहत पात्र किसान परिवारों को प्रति वर्ष ₹6,000 की वित्तीय सहायता तीन समान किस्तों (₹2,000 प्रत्येक, प्रति 4 माह) में प्रत्यक्ष लाभ अंतरण (DBT) के माध्यम से प्रदान की जाती है।",
+        keyFact: "Key Exam Fact: PM-KISAN योजना की औपचारिक शुरुआत 24 फरवरी 2019 को गोरखपुर (उत्तर प्रदेश) से की गई थी, परंतु यह 1 दिसंबर 2018 से प्रभावी मानी गई।"
+      },
+      {
+        qNum: 3,
+        stemEn: "The Electronic National Agriculture Market (e-NAM), an online trading platform for agricultural commodities across India, was officially launched in which year?",
+        stemHi: "अखिल भारतीय स्तर पर कृषि जिंसों के ऑनलाइन व्यापार हेतु इलेक्ट्रॉनिक राष्ट्रीय कृषि बाजार (e-NAM) किस वर्ष औपचारिक रूप से प्रारंभ किया गया था?",
+        options: [
+          "(A) 2014 / 2014",
+          "(B) 2015 / 2015",
+          "(C) 2017 / 2017",
+          "(D) 2016 / 2016",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "The e-NAM portal was launched by Prime Minister Narendra Modi on April 14, 2016. It is a pan-India electronic trading portal that networks the existing physical APMC mandis to create a unified national market for agricultural commodities. Small Farmers Agribusiness Consortium (SFAC) is the lead implementing agency.",
+        expHi: "ई-नाम (e-NAM) पोर्टल का शुभारंभ 14 अप्रैल 2016 को किया गया था। यह मौजूदा एपीएमसी (APMC) मंडियों को एक साझा ऑनलाइन प्लेटफॉर्म से जोड़कर कृषि उत्पादों के लिए एक एकीकृत राष्ट्रीय बाजार बनाता है। इसका क्रियान्वयन SFAC द्वारा किया जाता है।",
+        keyFact: "Key Exam Fact: e-NAM का आदर्श वाक्य \"एक राष्ट्र, एक बाजार\" (One Nation, One Market) है।"
+      },
+      {
+        qNum: 4,
+        stemEn: "What is the central vision and motto of the 'Pradhan Mantri Krishi Sinchayee Yojana' (PMKSY) approved in July 2015?",
+        stemHi: "जुलाई 2015 में स्वीकृत 'प्रधानमंत्री कृषि सिंचाई योजना' (PMKSY) का प्रमुख दृष्टिकोण और ध्येय वाक्य क्या है?",
+        options: [
+          "(A) 'Har Khet Ko Pani' & 'More Crop Per Drop' / 'हर खेत को पानी' एवं 'प्रति बूंद अधिक फसल'",
+          "(B) 'Lab to Land' & 'Clean Water for All' / 'प्रयोगशाला से खेत तक' एवं 'सभी के लिए स्वच्छ जल'",
+          "(C) 'Krishi Unnati' & 'Canal to Field' / 'कृषि उन्नति' एवं 'नहर से खेत तक'",
+          "(D) 'Doubling Farm Produce' / 'कृषि उपज का दोहरीकरण'",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "PMKSY was formulated with the vision of extending irrigation coverage ('Har Khet Ko Pani') and improving water use efficiency at the farm level in a focused manner with end-to-end solutions on source creation, distribution, and efficient application ('More Crop Per Drop').",
+        expHi: "PMKSY की शुरुआत कृषि योग्य क्षेत्र का विस्तार करने हेतु 'हर खेत को पानी' तथा सूक्ष्म सिंचाई तकनीकों (ड्रिप एवं स्प्रिंकलर) के माध्यम से जल उपयोग दक्षता बढ़ाने के लिए 'प्रति बूंद अधिक फसल' (More Crop Per Drop) के ध्येय के साथ की गई थी।",
+        keyFact: "Key Exam Fact: PMKSY में त्वरित सिंचाई लाभ कार्यक्रम (AIBP), समन्वित वाटरशेड प्रबंधन कार्यक्रम (IWMP) और ऑन फार्म जल प्रबंधन (OFWM) को समाहित किया गया था।"
+      },
+      {
+        qNum: 5,
+        stemEn: "Which scheme was launched in 2015 with the slogan \"Swasth Dhara, Khet Hara\" (Healthy Earth, Green Farm)?",
+        stemHi: "वर्ष 2015 में \"स्वस्थ धरा, खेत हरा\" नारे के साथ किस योजना का शुभारंभ किया गया था?",
+        options: [
+          "(A) Soil Health Card Scheme / मृदा स्वास्थ्य कार्ड योजना",
+          "(B) Paramparagat Krishi Vikas Yojana / परंपरागत कृषि विकास योजना",
+          "(C) Sub-Mission on Agroforestry / कृषि वानिकी पर उप-मिशन",
+          "(D) Rashtriya Krishi Vikas Yojana / राष्ट्रीय कृषि विकास योजना",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "The Soil Health Card (SHC) scheme was launched on February 19, 2015, from Suratgarh (Rajasthan) with the theme \"Swasth Dhara, Khet Hara\". It provides farmers with crop-wise nutrient recommendations and soil status reports based on 12 key parameters (N, P, K, S, Zn, Fe, Cu, Mn, Bo, pH, EC, OC).",
+        expHi: "मृदा स्वास्थ्य कार्ड (Soil Health Card) योजना 19 फरवरी 2015 को सूरतगढ़ (राजस्थान) से शुरू की गई थी। इसका ध्येय वाक्य \"स्वस्थ धरा, खेत हरा\" है। यह कार्ड 12 प्रमुख रासायनिक और भौतिक मापदंडों के आधार पर मिट्टी की उर्वरता का आकलन कर पोषक तत्वों की संस्तुति करता है।",
+        keyFact: "Key Exam Fact: मृदा स्वास्थ्य कार्ड प्रत्येक 3 वर्ष (बाद में 2 वर्ष) के चक्र में किसानों को मिट्टी के पोषक तत्वों की स्थिति बताने के लिए जारी किया जाता है।"
+      },
+      {
+        qNum: 6,
+        stemEn: "What is the primary objective of the 'Paramparagat Krishi Vikas Yojana' (PKVY) operationalized under the National Mission for Sustainable Agriculture?",
+        stemHi: "राष्ट्रीय सतत कृषि मिशन के तहत क्रियान्वित 'परंपरागत कृषि विकास योजना' (PKVY) का प्राथमिक उद्देश्य क्या है?",
+        options: [
+          "(A) Promotion of high-density canal irrigation / सघन नहर सिंचाई को बढ़ावा देना",
+          "(B) Subsidizing synthetic chemical fertilizers / सिंथेटिक रासायनिक उर्वरकों पर सब्सिडी देना",
+          "(C) Promoting organic farming through cluster formation and PGS certification / क्लस्टर निर्माण और PGS प्रमाणीकरण के माध्यम से जैविक खेती को बढ़ावा देना",
+          "(D) Mechanizing tractor manufacturing units / ट्रैक्टर निर्माण इकाइयों का मशीनीकरण करना",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "PKVY is an elaborated component of Soil Health Management under the National Mission for Sustainable Agriculture (NMSA). It promotes certified organic farming through adoption of organic village clusters (50 or more farmers forming 50 acres) and the Participatory Guarantee System (PGS) for India certification.",
+        expHi: "परंपरागत कृषि विकास योजना (PKVY) का मुख्य उद्देश्य क्लस्टर पद्धति और सहभागी प्रत्यायन प्रणाली (PGS) प्रमाणीकरण के माध्यम से देश में जैविक खेती (Organic Farming) को प्रोत्साहित करना और रासायनिक इनपुट पर निर्भरता घटाना है।",
+        keyFact: "Key Exam Fact: सिक्किम वर्ष 2016 में भारत का पहला पूर्ण जैविक राज्य (100% Organic State) घोषित किया गया था।"
+      },
+      {
+        qNum: 7,
+        stemEn: "Under the central agricultural reforms, in which year did the Union Government introduce the dedicated 'Agriculture Infrastructure Fund' (AIF) of ₹1 lakh crore?",
+        stemHi: "कृषि सुधारों के तहत केंद्र सरकार ने ₹1 लाख करोड़ के समर्पित 'कृषि अवसंरचना कोष' (AIF) की शुरुआत किस वर्ष की थी?",
+        options: [
+          "(A) 2018 / 2018",
+          "(B) 2019 / 2019",
+          "(C) 2021 / 2021",
+          "(D) 2020 / 2020",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "The Agriculture Infrastructure Fund (AIF) was launched on August 9, 2020, as part of the Atmanirbhar Bharat package. It is a pan-India medium-long term debt financing facility of ₹1 lakh crore for investment in post-harvest management infrastructure and community farming assets, providing a 3% per annum interest subvention.",
+        expHi: "9 अगस्त 2020 को आत्मनिर्भर भारत अभियान के तहत ₹1 लाख करोड़ के 'कृषि अवसंरचना कोष' (AIF) का शुभारंभ किया गया। इसका उद्देश्य कटाई उपरांत प्रबंधन (कोल्ड स्टोर, साइलो आदि) और कृषि परिसंपत्तियों के निर्माण के लिए 3% ब्याज छूट के साथ मध्यम-दीर्घकालिक ऋण उपलब्ध कराना है।",
+        keyFact: "Key Exam Fact: AIF योजना की अवधि वित्त वर्ष 2020 से 2032-33 (कुल 13 वर्ष) तक निर्धारित है।"
+      },
+      {
+        qNum: 8,
+        stemEn: "Which portal/platform was launched by the Ministry of Agriculture in 2023 to provide digitized crop yield estimation, weather data, and settlement validation?",
+        stemHi: "वर्ष 2023 में कृषि मंत्रालय द्वारा डिजिटल फसल उपज अनुमान, मौसम डेटा और फसल बीमा निपटान सत्यापन हेतु किस पोर्टल/प्लेटफॉर्म की शुरुआत की गई?",
+        options: [
+          "(A) AGRI-UDAAN / एग्री-उड़ान",
+          "(B) DigiClaim / डिजीक्लेम",
+          "(C) Krishi Kosh / कृषि कोष",
+          "(D) Kisan Rath / किसान रथ",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "DigiClaim is a specialized module integrated into the National Crop Insurance Portal (NCIP) launched in March 2023 by the Union Agriculture Minister. It automates electronic claim processing and directly transfers insurance claims into the accounts of insured farmers transparently without intermediary delays.",
+        expHi: "मार्च 2023 में राष्ट्रीय फसल बीमा पोर्टल (NCIP) के अंतर्गत 'डिजीक्लेम' (DigiClaim) मॉड्यूल लॉन्च किया गया, जो किसानों के बीमा दावों का त्वरित, पारदर्शी और सीधे बैंक खाते में डिजिटल निपटान सुनिश्चित करता है।",
+        keyFact: "Key Exam Fact: DigiClaim के माध्यम से फसल खराबे का क्लेम ऑटोमेटेड डीबीटी (DBT) प्रक्रिया से सीधे किसान के खाते में जाता है।"
+      },
+      {
+        qNum: 9,
+        stemEn: "In the Union Budget 2018-19, the Government of India mandated that Minimum Support Prices (MSP) for all mandated crops would be fixed at a minimum of:",
+        stemHi: "केंद्रीय बजट 2018-19 में, भारत सरकार ने अनिवार्य फसलों के लिए न्यूनतम समर्थन मूल्य (MSP) को उत्पादन लागत के कम से कम कितने प्रतिशत पर तय करने की ऐतिहासिक घोषणा की?",
+        options: [
+          "(A) 120% of cost of production / उत्पादन लागत का 120%",
+          "(B) 125% of cost of production / उत्पादन लागत का 125%",
+          "(C) 150% (1.5 times) of cost of production / उत्पादन लागत का 150% (1.5 गुना)",
+          "(D) 200% of cost of production / उत्पादन लागत का 200%",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "In the Union Budget 2018-19, the Government announced the decision to fix the Minimum Support Price (MSP) for all mandated Kharif, Rabi, and other commercial crops at a level of at least 1.5 times (150%, or 50% profit over cost) the all-India weighted average cost of production (measured as A2+FL).",
+        expHi: "केंद्रीय बजट 2018-19 में सरकार ने नीतिगत निर्णय लिया कि सभी अधिसूचित फसलों का न्यूनतम समर्थन मूल्य (MSP) अखिल भारतीय भारित उत्पादन लागत (A2+FL) का कम से कम 1.5 गुना (अर्थात लागत पर 50% लाभ) रखा जाएगा।",
+        keyFact: "Key Exam Fact: MSP की संस्तुति कृषि लागत एवं मूल्य आयोग (CACP) द्वारा की जाती है और अंतिम निर्णय आर्थिक मामलों की मंत्रिमंडलीय समिति (CCEA) लेती है।"
+      },
+      {
+        qNum: 10,
+        stemEn: "Under the central agricultural scheme 'PM-KMY' (Pradhan Mantri Kisan Maan Dhan Yojana) launched in 2019, what monthly pension is assured to small and marginal farmers upon attaining 60 years of age?",
+        stemHi: "वर्ष 2019 में शुरू की गई 'प्रधानमंत्री किसान मान-धन योजना' (PM-KMY) के तहत लघु एवं सीमांत किसानों को 60 वर्ष की आयु प्राप्त करने पर कितनी मासिक पेंशन का प्रावधान है?",
+        options: [
+          "(A) ₹5,000 per month / ₹5,000 प्रति माह",
+          "(B) ₹2,000 per month / ₹2,000 प्रति माह",
+          "(C) ₹1,500 per month / ₹1,500 प्रति माह",
+          "(D) ₹4,500 per month / ₹4,500 प्रति माह",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4, // E
+        expEn: "None of options (A), (B), (C), or (D) are correct. Under PM-KMY, eligible small and marginal farmers (entry age 18 to 40 years with cultivable land up to 2 hectares) are provided an assured fixed monthly pension of exactly ₹3,000 per month after attaining the age of 60 years.",
+        expHi: "विकल्प (A), (B), (C) और (D) गलत हैं क्योंकि सही उत्तर ₹3,000 प्रति माह है। प्रधानमंत्री किसान मान-धन योजना (PM-KMY) के तहत 18 से 40 वर्ष के पात्र लघु व सीमांत किसानों को 60 वर्ष की आयु पूर्ण होने के उपरांत ₹3,000 की मासिक सुनिश्चित पेंशन दी जाती है। अतः विकल्प (E) सही है।",
+        keyFact: "Key Exam Fact: PM-KMY योजना का प्रबंधन भारतीय जीवन बीमा निगम (LIC) द्वारा किया जाता है।"
+      },
+      {
+        qNum: 11,
+        stemEn: "The Central Sector Scheme \"Formation and Promotion of 10,000 new Farmer Producer Organizations (FPOs)\" was launched in 2020 with a total budgetary outlay of:",
+        stemHi: "वर्ष 2020 में शुरू की गई '10,000 नए किसान उत्पादक संगठनों (FPO) का गठन और संवर्धन' केंद्रीय क्षेत्र योजना का कुल बजटीय परिव्यय कितना है?",
+        options: [
+          "(A) ₹3,415 crore / ₹3,415 करोड़",
+          "(B) ₹6,865 crore / ₹6,865 करोड़",
+          "(C) ₹10,000 crore / ₹10,000 करोड़",
+          "(D) ₹12,500 crore / ₹12,500 करोड़",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The Government launched the Central Sector Scheme for \"Formation and Promotion of 10,000 Farmer Producer Organizations (FPOs)\" in February 2020 with a clear budgetary allocation of ₹6,865 crore to enhance small and marginal farmers' collective bargaining power, aggregation, and market linkages.",
+        expHi: "10,000 नए एफपीओ (FPO) के गठन और संवर्धन हेतु केंद्रीय क्षेत्र की योजना को ₹6,865 करोड़ के वित्तीय परिव्यय के साथ वर्ष 2020 में प्रारंभ किया गया था। इसका उद्देश्य छोटे किसानों को संगठित कर पैमाने की अर्थव्यवस्था (Economies of Scale) का लाभ दिलाना है।",
+        keyFact: "Key Exam Fact: मैदानी क्षेत्रों में एक FPO के लिए न्यूनतम 300 किसान सदस्य और पूर्वोत्तर/पहाड़ी क्षेत्रों में न्यूनतम 100 सदस्य अनिवार्य हैं।"
+      },
+      {
+        qNum: 12,
+        stemEn: "What was the central target of the 'National Mission on Edible Oils - Oil Palm' (NMEO-OP) approved by the Union Cabinet in August 2021?",
+        stemHi: "अगस्त 2021 में केंद्रीय मंत्रिमंडल द्वारा अनुमोदित 'राष्ट्रीय खाद्य तेल मिशन - ऑयल पाम' (NMEO-OP) का मुख्य लक्ष्य क्या है?",
+        options: [
+          "(A) Complete elimination of wheat cultivation / गेहूं की खेती को पूरी तरह समाप्त करना",
+          "(B) Rapid expansion of domestic palm oil production to reduce import dependence / आयात निर्भरता कम करने हेतु घरेलू पाम तेल उत्पादन का तीव्र विस्तार",
+          "(C) Exporting crude palm oil to South American nations / दक्षिण अमेरिकी देशों को कच्चे पाम तेल का निर्यात",
+          "(D) Banning all imported mustard seed varieties / सभी आयातित सरसों बीज किस्मों पर प्रतिबंध लगाना",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "NMEO-OP is a centrally sponsored scheme launched with a financial outlay of ₹11,040 crore to substantially raise the domestic production of crude palm oil (targeting 2.8 million tonnes by 2029-30) and reduce India's heavy reliance on costly edible oil imports, focusing heavily on the North-East and Andaman & Nicobar Islands.",
+        expHi: "'राष्ट्रीय खाद्य तेल मिशन - ऑयल पाम' (NMEO-OP) का मुख्य उद्देश्य घरेलू पाम तेल उत्पादन में वृद्धि कर भारत की खाद्य तेल आयात निर्भरता को कम करना है। इसके लिए पूर्वोत्तर राज्यों और अंडमान-निकोबार द्वीप समूह पर विशेष ध्यान केंद्रित किया गया है।",
+        keyFact: "Key Exam Fact: भारत अपनी घरेलू खाद्य तेल खपत का 55% से अधिक हिस्सा आयात करता है, जिसमें पाम तेल की हिस्सेदारी सर्वाधिक है।"
+      },
+      {
+        qNum: 13,
+        stemEn: "In which year was the 'Pradhan Mantri Annadata Aay Sanrakshan Abhiyan' (PM-AASHA) umbrella scheme launched to ensure remunerative prices to farmers?",
+        stemHi: "किसानों को उनकी उपज का लाभकारी मूल्य सुनिश्चित करने हेतु 'प्रधानमंत्री अन्नदाता आय संरक्षण अभियान' (PM-AASHA) अम्ब्रेला योजना किस वर्ष शुरू की गई थी?",
+        options: [
+          "(A) 2016 / 2016",
+          "(B) 2017 / 2017",
+          "(C) 2018 / 2018",
+          "(D) 2020 / 2020",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "PM-AASHA was announced by the Union Government in September 2018. It comprises three sub-schemes: Price Support Scheme (PSS), Price Deficiency Payment Scheme (PDPS), and Pilot of Private Procurement & Stockist Scheme (PPSS) to ensure that MSP reaches oilseeds, pulses, and copra farmers.",
+        expHi: "PM-AASHA को सितंबर 2018 में शुरू किया गया था। इसमें तीन प्रमुख घटक शामिल हैं: मूल्य समर्थन योजना (PSS), मूल्य न्यूनता भुगतान योजना (PDPS), तथा निजी खरीद एवं स्टॉकिस्ट प्रायोगिक योजना (PPSS)। यह दलहन, तिलहन और कोपरा उत्पादकों को एमएसपी का वास्तविक लाभ दिलाने के लिए बनाई गई है।",
+        keyFact: "Key Exam Fact: PDPS घटक के तहत किसानों को वास्तविक बाजार मूल्य और MSP के अंतर की प्रत्यक्ष भरपाई की जाती है, बिना भौतिक रूप से फसल खरीदे।"
+      },
+      {
+        qNum: 14,
+        stemEn: "The 'Kisan Credit Card' (KCC) scheme was historically extended to which additional allied sectors under the post-2014 agricultural financial reforms?",
+        stemHi: "वर्ष 2014 के बाद के कृषि वित्तीय सुधारों के तहत 'किसान क्रेडिट कार्ड' (KCC) सुविधा का विस्तार किन संबद्ध क्षेत्रों तक किया गया?",
+        options: [
+          "(A) Only Large Industrial Agro-mills / केवल बड़ी औद्योगिक कृषि मिलें",
+          "(B) Animal Husbandry, Dairying, and Fisheries / पशुपालन, डेयरी और मत्स्य पालन",
+          "(C) International Agricultural Aviation / अंतरराष्ट्रीय कृषि विमानन",
+          "(D) Space Farming Experiments / अंतरिक्ष कृषि अनुसंधान",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "In the Union Budget 2018-19, the Government of India extended the KCC facility to farmers involved in Animal Husbandry, Dairying, and Fisheries to meet their working capital requirements. Farmers can avail short-term loans up to ₹2 lakh for animal husbandry and fisheries at a concessional interest rate of 4% (with prompt repayment incentive).",
+        expHi: "वर्ष 2018-19 के बजट में किसान क्रेडिट कार्ड (KCC) का विस्तार पशुपालकों, डेयरी किसानों और मत्स्य पालकों की कार्यशील पूंजी की जरूरतों को पूरा करने के लिए किया गया। इसके तहत समय पर भुगतान करने पर 4% की रियायती ब्याज दर पर ऋण उपलब्ध होता है।",
+        keyFact: "Key Exam Fact: मूल किसान क्रेडिट कार्ड योजना 1998 में आर.वी. गुप्ता समिति की सिफारिशों के आधार पर नाबार्ड (NABARD) द्वारा तैयार की गई थी।"
+      },
+      {
+        qNum: 15,
+        stemEn: "The 'PM KUSUM' scheme launched in 2019 is primarily focused on which dimension of agricultural empowerment?",
+        stemHi: "वर्ष 2019 में शुरू की गई 'पीएम-कुसुम' (PM KUSUM) योजना मुख्य रूप से कृषि सशक्तिकरण के किस आयाम पर केंद्रित है?",
+        options: [
+          "(A) Solarization of agricultural water pumps and grid-connected solar power plants / कृषि जल पंपों का सौरीकरण एवं ग्रिड-आधारित सौर ऊर्जा संयंत्र",
+          "(B) Genetically modifying rice grains / चावल के दानों का आनुवंशिक संशोधन",
+          "(C) Free tractor distribution across border districts / सीमावर्ती जिलों में मुफ्त ट्रैक्टर वितरण",
+          "(D) Construction of rural concrete roads / ग्रामीण कंक्रीट सड़कों का निर्माण",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) was launched in 2019 by the Ministry of New and Renewable Energy (MNRE). It aims to de-dieselize the farm sector through solar-powered irrigation pumps, installation of decentralized solar power plants on barren lands, and solarization of existing grid-connected agricultural pumps.",
+        expHi: "पीएम-कुसुम (PM-KUSUM) योजना का उद्देश्य किसानों को ऊर्जा सुरक्षा प्रदान करना और सिंचाई पंपों का सौरीकरण (Solarization) करना है। इसमें बंजर भूमि पर विकेंद्रीकृत सौर संयंत्र लगाना, स्टैंडअलोन सौर पंप स्थापित करना और मौजूदा पंपों को सौर ऊर्जा से जोड़ना शामिल है।",
+        keyFact: "Key Exam Fact: PM-KUSUM के 3 घटक (Component A, B और C) हैं, जिससे किसान अतिरिक्त सौर बिजली ग्रिड को बेचकर आय भी अर्जित कर सकते हैं।"
+      },
+      {
+        qNum: 16,
+        stemEn: "Under the 'Kisan Urja Suraksha evam Utthaan Mahabhiyan' (PM-KUSUM), how many primary operational components exist?",
+        stemHi: "'पीएम-कुसुम' (PM-KUSUM) योजना के अंतर्गत कुल कितने प्राथमिक परिचालन घटक (Components) स्थापित किए गए हैं?",
+        options: [
+          "(A) Five components (A to E) / पांच घटक (A से E)",
+          "(B) Four components (A to D) / चार घटक (A से D)",
+          "(C) Three components (Component A, B, and C) / तीन घटक (घटक A, B, और C)",
+          "(D) Two components (Component I and II) / दो घटक (घटक I और II)",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "PM-KUSUM comprises three distinct components: Component A (setting up of 10,000 MW decentralized ground-mounted grid-connected renewable power plants), Component B (installation of 20 lakh standalone solar-powered agriculture pumps), and Component C (solarization of 15 lakh grid-connected agriculture pumps, including feeder level solarization).",
+        expHi: "पीएम-कुसुम योजना के तहत 3 घटक हैं: घटक-ए (10,000 मेगावाट के विकेंद्रीकृत ग्रिड-कनेक्टेड सौर संयंत्र), घटक-बी (20 लाख स्टैंडअलोन सौर कृषि पंपों की स्थापना), और घटक-सी (15 लाख मौजूदा ग्रिड-कनेक्टेड कृषि पंपों का सौरीकरण)।",
+        keyFact: "Key Exam Fact: यह योजना नवीन एवं नवीकरणीय ऊर्जा मंत्रालय (MNRE) द्वारा संचालित की जाती है।"
+      },
+      {
+        qNum: 17,
+        stemEn: "Which mobile application was launched by the Union Ministry of Agriculture in April 2020 during the COVID-19 lockdown to facilitate transportation of farm produce?",
+        stemHi: "कोविड-19 लॉकडाउन के दौरान कृषि उपज के परिवहन को सुगम बनाने हेतु अप्रैल 2020 में केंद्रीय कृषि मंत्रालय द्वारा कौन सा मोबाइल ऐप लॉन्च किया गया था?",
+        options: [
+          "(A) Krishi Vahan / कृषि वाहन",
+          "(B) Kisan Rath / किसान रथ",
+          "(C) Gramin Sadak App / ग्रामीण सड़क ऐप",
+          "(D) AgroLogistics / एग्रोलॉजिस्टिक्स",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The 'Kisan Rath' mobile app was launched on April 17, 2020, by the Ministry of Agriculture and Farmers Welfare to facilitate farmers and traders in finding transport vehicles (trucks and tractors) for moving agriculture and horticulture produce from farm gates to mandis and warehouses during pandemic movement restrictions.",
+        expHi: "कोविड-19 लॉकडाउन के दौरान कृषि और बागवानी उपजों के सुगम परिवहन हेतु 17 अप्रैल 2020 को 'किसान रथ' (Kisan Rath) ऐप लॉन्च किया गया था। यह किसानों और व्यापारियों को मालवाहक वाहनों (ट्रकों और ट्रैक्टरों) से सीधे जोड़ता है।",
+        keyFact: "Key Exam Fact: किसान रथ ऐप को राष्ट्रीय सूचना विज्ञान केंद्र (NIC) द्वारा विकसित किया गया था।"
+      },
+      {
+        qNum: 18,
+        stemEn: "What is the designated subsidy percentage provided on drone purchase to ICAR institutes, KVKs, and SAUs under the 'Sub-Mission on Agricultural Mechanization' (SMAM) guideline amended in 2022?",
+        stemHi: "वर्ष 2022 में संशोधित 'कृषि यंत्रीकरण पर उप-मिशन' (SMAM) दिशानिर्देशों के तहत ICAR संस्थानों, कृषि विज्ञान केंद्रों (KVK) और राज्य कृषि विश्वविद्यालयों को ड्रोन खरीद पर कितने प्रतिशत वित्तीय सहायता (अनुदान) का प्रावधान किया गया?",
+        options: [
+          "(A) 50% up to ₹5 lakh / 50% अधिकतम ₹5 लाख",
+          "(B) 75% up to ₹7.5 lakh / 75% अधिकतम ₹7.5 लाख",
+          "(C) 100% grant up to ₹10 lakh / 100% अनुदान अधिकतम ₹10 लाख",
+          "(D) 25% up to ₹2.5 lakh / 25% अधिकतम ₹2.5 लाख",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "To promote precision farming via drone technology, the Ministry of Agriculture updated the SMAM guidelines in January 2022, providing 100% financial assistance (up to ₹10 lakh per drone) to ICAR institutes, Krishi Vigyan Kendras (KVKs), and State Agricultural Universities for purchasing agricultural drones for demonstrations.",
+        expHi: "कृषि में आधुनिक तकनीक और यंत्रीकरण को बढ़ावा देने के लिए SMAM योजना के तहत ICAR, कृषि विज्ञान केंद्रों (KVKs) और राज्य कृषि विश्वविद्यालयों को ड्रोन प्रदर्शन हेतु लागत का 100% (अधिकतम ₹10 लाख) अनुदान देने का प्रावधान किया गया।",
+        keyFact: "Key Exam Fact: FPO (किसान उत्पादक संगठनों) को कृषि ड्रोन खरीद पर 75% तक अनुदान उपलब्ध कराया जाता है।"
+      },
+      {
+        qNum: 19,
+        stemEn: "Which central initiative was launched in October 2022 to introduce \"One Nation One Fertilizer\" by branding all subsidized fertilizers under a single brand name?",
+        stemHi: "अक्टूबर 2022 में \"एक राष्ट्र, एक उर्वरक\" की अवधारणा लागू करते हुए सभी सब्सिडी वाले उर्वरकों को एक ही ब्रांड नाम के तहत बेचने हेतु कौन सी पहल शुरू की गई?",
+        options: [
+          "(A) Pradhan Mantri Urvarak Yojana / प्रधानमंत्री उर्वरक योजना",
+          "(B) Pradhan Mantri Bharatiya Jan Urvarak Pariyojana (PMBJP) / प्रधानमंत्री भारतीय जन उर्वरक परियोजना (PMBJP)",
+          "(C) Bharat POSHAN Abhiyan / भारत पोषण अभियान",
+          "(D) Kisan Khad Vikas Yojana / किसान खाद विकास योजना",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "On October 17, 2022, Prime Minister Narendra Modi launched the 'Pradhan Mantri Bharatiya Jan Urvarak Pariyojana - One Nation One Fertilizer' (PMBJP). Under this scheme, all subsidized fertilizers (Urea, DAP, MOP, NPK) are marketed uniformly across the country under the single brand name 'BHARAT' (e.g., Bharat Urea, Bharat DAP).",
+        expHi: "17 अक्टूबर 2022 को 'प्रधानमंत्री भारतीय जन उर्वरक परियोजना' (PMBJP) शुरू की गई। इसके अंतर्गत \"एक राष्ट्र, एक उर्वरक\" लागू करते हुए सभी कंपनियों के सब्सिडी वाले उर्वरकों को एकल ब्रांड नाम 'भारत' (जैसे- भारत यूरिया, भारत डीएपी) के तहत बेचना अनिवार्य किया गया।",
+        keyFact: "Key Exam Fact: उर्वरक बोरियों के 2/3 भाग पर 'भारत' ब्रांड लोगो और योजना का नाम तथा शेष 1/3 भाग पर विनिर्माता कंपनी का विवरण होता है।"
+      },
+      {
+        qNum: 20,
+        stemEn: "In what year did the Government of India make 100% Neem Coating of all subsidized agricultural indigenous and imported Urea mandatory?",
+        stemHi: "भारत सरकार ने सभी रियायती स्वदेशी और आयातित कृषि यूरिया पर 100% 'नीम लेपन' (Neem Coating) किस वर्ष अनिवार्य किया था?",
+        options: [
+          "(A) 2014 / 2014",
+          "(B) 2018 / 2018",
+          "(C) 2015 / 2015",
+          "(D) 2019 / 2019",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "In May 2015, the Ministry of Chemicals and Fertilizers made it mandatory for all domestic fertilizer manufacturers to produce 100% Neem Coated Urea, and imported urea was also made 100% neem coated. Neem coating acts as a nitrification inhibitor, slowing nitrogen release, increasing efficiency by 10-15%, and eliminating the diversion of urea to chemical and dairy industries.",
+        expHi: "मई 2015 में केंद्र सरकार ने देश में बेचे जाने वाले 100% कृषि यूरिया पर नीम लेपन (Neem Coating) अनिवार्य कर दिया। इससे यूरिया का गैर-कृषि औद्योगिक उपयोग रुका, नाइट्रोजन का रिसाव धीमा हुआ और फसल की उर्वरक दक्षता में उल्लेखनीय सुधार हुआ।",
+        keyFact: "Key Exam Fact: नीम लेपित यूरिया फसलों में कीटों के प्रकोप को भी प्राकृतिक रूप से कम करता है।"
+      },
+      {
+        qNum: 21,
+        stemEn: "The commercial roll-out of the world's first liquid 'Nano Urea', developed indigenously to reduce conventional urea usage, was launched by which Indian organization in 2021?",
+        stemHi: "पारंपरिक यूरिया की खपत को कम करने हेतु वर्ष 2021 में किस भारतीय संस्था द्वारा स्वदेशी रूप से विकसित विश्व के पहले तरल 'नैनो यूरिया' का वाणिज्यिक उत्पादन शुरू किया गया?",
+        options: [
+          "(A) National Fertilizers Limited (NFL) / नेशनल फर्टिलाइजर्स लिमिटेड (NFL)",
+          "(B) Rashtriya Chemicals & Fertilizers (RCF) / राष्ट्रीय केमिकल्स एंड फर्टिलाइजर्स (RCF)",
+          "(C) Indian Farmers Fertiliser Cooperative (IFFCO) / इंडियन फार्मर्स फर्टिलाइजर कोऑपरेटिव (IFFCO)",
+          "(D) Chambal Fertilisers and Chemicals / चंबल फर्टिलाइजर्स एंड केमिकल्स",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "The Indian Farmers Fertiliser Cooperative Limited (IFFCO) indigenously developed and commercially introduced the world's first Nano Urea Liquid in 2021. A 500 ml bottle of Nano Urea effectively replaces at least one 45 kg bag of conventional granular urea, drastically reducing transport costs, storage space, and environmental pollution.",
+        expHi: "इफको (IFFCO) ने अपने कलोल (गुजरात) स्थित नैनो जैव प्रौद्योगिकी अनुसंधान केंद्र में विश्व का पहला तरल नैनो यूरिया विकसित किया और 2021 में बाजार में उतारा। इसकी 500 मिलीलीटर की एक बोतल 45 किग्रा की एक पारंपरिक यूरिया बोरी के बराबर प्रभाव देती है।",
+        keyFact: "Key Exam Fact: इफको ने इसके उपरांत 2023 में तरल 'नैनो डीएपी' (Nano DAP) का भी व्यावसायिक उत्पादन शुरू किया।"
+      },
+      {
+        qNum: 22,
+        stemEn: "What is the statutory upper age limit for farmers to enroll as subscribers under the 'Pradhan Mantri Kisan Maan Dhan Yojana' (PM-KMY)?",
+        stemHi: "'प्रधानमंत्री किसान मान-धन योजना' (PM-KMY) के तहत अभिदाता के रूप में पंजीकरण कराने के लिए किसानों की अधिकतम वैधानिक आयु सीमा क्या है?",
+        options: [
+          "(A) 35 years / 35 वर्ष",
+          "(B) 40 years / 40 वर्ष",
+          "(C) 50 years / 50 वर्ष",
+          "(D) 45 years / 45 वर्ष",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "PM-KMY is an old-age pension scheme for small and marginal landholding farmers (possessing cultivable land up to 2 hectares). The eligible entry age group is strictly 18 to 40 years. Therefore, the upper age limit to join the scheme is 40 years, with monthly contributions ranging from ₹55 to ₹200 depending on the entry age.",
+        expHi: "प्रधानमंत्री किसान मान-धन योजना (PM-KMY) में प्रवेश की पात्रता आयु 18 से 40 वर्ष के बीच है। अतः इसमें शामिल होने की अधिकतम आयु सीमा 40 वर्ष है। इस योजना में 60 वर्ष की आयु तक मासिक अंशदान (₹55 से ₹200) देना होता है, जिसके बाद ₹3,000 मासिक पेंशन मिलती है।",
+        keyFact: "Key Exam Fact: यह योजना लघु एवं सीमांत किसानों (2 हेक्टेयर तक भूमि) के लिए एक स्वैच्छिक और अंशदायी पेंशन योजना है।"
+      },
+      {
+        qNum: 23,
+        stemEn: "Which institution acts as the exclusive National Implementing Agency for the operation and integration of the e-NAM platform?",
+        stemHi: "ई-नाम (e-NAM) प्लेटफॉर्म के संचालन और एकीकरण के लिए विशेष राष्ट्रीय कार्यान्वयन एजेंसी के रूप में कौन सी संस्था कार्य करती है?",
+        options: [
+          "(A) NITI Aayog / नीति आयोग",
+          "(B) NABARD / नाबार्ड",
+          "(C) Food Corporation of India (FCI) / भारतीय खाद्य निगम (FCI)",
+          "(D) Small Farmers' Agribusiness Consortium (SFAC) / लघु कृषक कृषि व्यापार संघ (SFAC)",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "The Small Farmers' Agribusiness Consortium (SFAC), a registered society under the Department of Agriculture and Farmers Welfare, is the lead agency designated by the Ministry to implement, manage, and roll out the National Agriculture Market (e-NAM) across the country.",
+        expHi: "कृषि एवं किसान कल्याण मंत्रालय के तत्वावधान में 'लघु कृषक कृषि व्यापार संघ' (SFAC) को ई-नाम (e-NAM) के राष्ट्रीय कार्यान्वयन और तकनीकी एकीकरण हेतु मुख्य नोडल एजेंसी नियुक्त किया गया है।",
+        keyFact: "Key Exam Fact: SFAC किसान उत्पादक संगठनों (FPO) के गठन और इक्विटी अनुदान सहायता में भी प्रमुख भूमिका निभाता है।"
+      },
+      {
+        qNum: 24,
+        stemEn: "In which year was the 'National Honey Mission' launched under the Sweet Revolution to promote beekeeping and enhance rural agrarian incomes?",
+        stemHi: "मीठी क्रांति (Sweet Revolution) के तहत मधुमक्खी पालन को बढ़ावा देने और ग्रामीण कृषि आय में वृद्धि हेतु 'राष्ट्रीय शहद मिशन' किस वर्ष शुरू किया गया था?",
+        options: [
+          "(A) 2014 / 2014",
+          "(B) 2015 / 2015",
+          "(C) 2019 / 2019",
+          "(D) 2016 / 2016",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4, // E
+        expEn: "None of options (A), (B), (C), or (D) are correct. The Honey Mission was officially launched by the Khadi and Village Industries Commission (KVIC) in the year 2017 (in line with the Prime Minister's call for the 'Sweet Revolution' announced in 2016). Later, in 2020, the dedicated 'National Beekeeping and Honey Mission' (NBHM) was approved under the Atmanirbhar Bharat initiative. Therefore, Option (E) is the correct answer.",
+        expHi: "विकल्प (A), (B), (C) और (D) गलत हैं क्योंकि 'हनी मिशन' (Honey Mission) को खादी और ग्रामोद्योग आयोग (KVIC) द्वारा औपचारिक रूप से वर्ष 2017 में शुरू किया गया था। बाद में आत्मनिर्भर भारत पैकेज के अंतर्गत 2020 में ₹500 करोड़ के बजट के साथ राष्ट्रीय मधुमक्खी पालन एवं शहद मिशन (NBHM) लाया गया। अतः विकल्प (E) सही है।",
+        keyFact: "Key Exam Fact: मीठी क्रांति (Sweet Revolution) का प्राथमिक उद्देश्य शहद उत्पादन को बढ़ाकर किसानों की आय में अतिरिक्त वृद्धि करना है।"
+      },
+      {
+        qNum: 25,
+        stemEn: "Under the revised guidelines of the Interest Subvention Scheme (now Modified Interest Subvention Scheme - MISS), what is the effective concessional rate of interest paid by a farmer who repays short-term crop loans (up to ₹3 lakh) promptly within one year?",
+        stemHi: "संशोधित ब्याज अनुदान योजना (MISS) के तहत, 1 वर्ष के भीतर समय पर अल्पकालिक फसल ऋण (₹3 लाख तक) चुकाने वाले किसान द्वारा प्रभावी रियायती ब्याज दर कितनी होती है?",
+        options: [
+          "(A) 7% / 7%",
+          "(B) 5% / 5%",
+          "(C) 6% / 6%",
+          "(D) 4% / 4%",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "Short-term agricultural loans up to ₹3 lakh are provided to farmers at a benchmark interest rate of 7% per annum. Under MISS, the Government provides an upfront 1.5% interest subvention to lending institutions, and an additional 3% Prompt Repayment Incentive (PRI) to farmers who repay on time, reducing the actual effective interest rate to just 4% per annum (7% - 3% = 4%).",
+        expHi: "संशोधित ब्याज अनुदान योजना (MISS) के तहत किसानों को ₹3 लाख तक का अल्पकालिक फसल ऋण सामान्यतः 7% पर दिया जाता है। समय पर ऋण चुकता करने वाले किसानों को 3% का त्वरित पुनर्भुगतान प्रोत्साहन (PRI) मिलता है, जिससे शुद्ध प्रभावी ब्याज दर घटकर मात्र 4% प्रति वर्ष रह जाती है।",
+        keyFact: "Key Exam Fact: इस योजना का लाभ किसान क्रेडिट कार्ड (KCC) धारक किसानों को सीधे प्राप्त होता है।"
+      },
+
+      // Batch 2 (Q26 to Q50)
+      {
+        qNum: 26,
+        stemEn: "Which central portal was launched in 2021 by the Ministry of Agriculture and Farmers Welfare to provide a unified digital identification ecosystem (\"Agristack\") for farmers?",
+        stemHi: "किसानों के लिए एक एकीकृत डिजिटल पहचान पारिस्थितिकी तंत्र (\"एग्रीस्टैक\") प्रदान करने हेतु केंद्रीय कृषि मंत्रालय द्वारा 2021 में किस केंद्रीय पोर्टल/पहल की शुरुआत की गई?",
+        options: [
+          "(A) Krishi Kalyan Kosh / कृषि कल्याण कोष",
+          "(B) Bharat Krishi Setu / भारत कृषि सेतु",
+          "(C) Kisan Drone Portal / किसान ड्रोन पोर्टल",
+          "(D) India Digital Ecosystem of Agriculture (IDEA) / इंडिया डिजिटल इकोसिस्टम ऑफ एग्रीकल्चर (IDEA)",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "The Department of Agriculture and Farmers Welfare initiated the 'India Digital Ecosystem of Agriculture' (IDEA) framework in 2021. It serves as the architectural foundation of Agristack, creating unique digital Farmer IDs, linking geo-referenced farm plots, and facilitating seamless digital delivery of agricultural subsidies and services.",
+        expHi: "कृषि एवं किसान कल्याण मंत्रालय ने वर्ष 2021 में 'इंडिया डिजिटल इकोसिस्टम ऑफ एग्रीकल्चर' (IDEA) की रूपरेखा तैयार की। यह 'एग्रीस्टैक' का आधार है, जिसके माध्यम से प्रत्येक किसान के लिए एक विशिष्ट डिजिटल पहचान पत्र (Farmer ID) सृजित किया जा रहा है ताकि सरकारी योजनाओं का लाभ पारदर्शी तरीके से मिले।",
+        keyFact: "Key Exam Fact: IDEA के तहत बनाए जा रहे डिजिटल फार्मर आईडी को आधार और भूमि रिकॉर्ड (भूलेख) से लिंक किया जाता है।"
+      },
+      {
+        qNum: 27,
+        stemEn: "Under the 'Mission Amrit Sarovar' launched in April 2022 to boost rural water conservation and agricultural irrigation, how many water bodies were targeted to be constructed/rejuvenated per district?",
+        stemHi: "ग्रामीण जल संरक्षण और कृषि सिंचाई को बढ़ावा देने के लिए अप्रैल 2022 में शुरू किए गए 'मिशन अमृत सरोवर' के तहत प्रत्येक जिले में कितने जलाशयों के निर्माण/कायाकल्प का लक्ष्य रखा गया था?",
+        options: [
+          "(A) Exactly 25 / ठीक 25",
+          "(B) Exactly 75 / ठीक 75",
+          "(C) Exactly 100 / ठीक 100",
+          "(D) Exactly 50 / ठीक 50",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Mission Amrit Sarovar was launched on April 24, 2022, as part of the Azadi Ka Amrit Mahotsav celebrations. Its objective was to construct or rejuvenate at least 75 Amrit Sarovars (water bodies) in each district of India, each having a pondage area of at least 1 acre with a water-holding capacity of about 10,000 cubic meters.",
+        expHi: "24 अप्रैल 2022 को शुरू किए गए 'मिशन अमृत सरोवर' का मुख्य लक्ष्य देश के प्रत्येक जिले में कम से कम 75 अमृत सरोवरों (तालाबों) का निर्माण या पुनरुद्धार करना था ताकि भूजल स्तर में सुधार हो और कृषि सिंचाई के लिए पर्याप्त जल उपलब्ध हो सके।",
+        keyFact: "Key Exam Fact: उत्तर प्रदेश देश का पहला राज्य बना जिसने मिशन अमृत सरोवर के तहत सर्वाधिक सरोवरों का निर्माण पूर्ण किया (पहला सरोवर पटवाई, रामपुर में बना)।"
+      },
+      {
+        qNum: 28,
+        stemEn: "Under the 'PM-PRANAM' scheme announced in the Union Budget 2023-24, what is the central objective?",
+        stemHi: "केंद्रीय बजट 2023-24 में घोषित 'पीएम-प्रणाम' (PM-PRANAM) योजना का प्रमुख उद्देश्य क्या है?",
+        options: [
+          "(A) Promoting alternative fertilizers and balanced use of chemical fertilizers / वैकल्पिक उर्वरकों को बढ़ावा देना और रासायनिक उर्वरकों के संतुलित उपयोग को प्रोत्साहित करना",
+          "(B) Replacing all canal irrigation systems with deep tube-wells / सभी नहर सिंचाई प्रणालियों को गहरे नलकूपों से बदलना",
+          "(C) Providing free hybrid seeds exclusively for sugarcane cultivation / विशेष रूप से गन्ने की खेती के लिए मुफ्त संकर बीज उपलब्ध कराना",
+          "(D) Establishing mandatory grain procurement centers in metro cities / महानगरों में अनिवार्य अनाज खरीद केंद्र स्थापित करना",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "PM-PRANAM stands for \"PM Programme for Restoration, Awareness, Nourishment and Amelioration of Mother Earth\". It was approved to incentivize States and Union Territories to promote alternative fertilizers (organic, bio-fertilizers, nano fertilizers) and reduce the excessive consumption of chemical fertilizers, thereby saving government fertilizer subsidies.",
+        expHi: "'पीएम-प्रणाम' (PM-PRANAM) योजना का पूर्ण रूप 'प्राइम मिनिस्टर्स प्रोग्राम फॉर रेस्टोरेशन, अवेयरनेस, नरिशमेंट एंड एमेलियोरेशन ऑफ मदर अर्थ' है। इसका उद्देश्य रासायनिक उर्वरकों के अत्यधिक उपयोग को कम करना और वैकल्पिक व जैविक खादों के उपयोग को बढ़ावा देकर मिट्टी की उर्वरता बचाना है।",
+        keyFact: "Key Exam Fact: उर्वरक सब्सिडी में राज्यों द्वारा की गई बचत का 50% हिस्सा राज्य सरकारों को विकास कार्यों के लिए अनुदान के रूप में वापस दिया जाता है।"
+      },
+      {
+        qNum: 29,
+        stemEn: "What was the designated target year initially set by the Government of India for the nationwide 'Doubling Farmers' Income' strategy formulated under the Ashok Dalwai Committee?",
+        stemHi: "अशोक दलवई समिति की सिफारिशों के तहत भारत सरकार द्वारा 'किसानों की आय दोगुनी करने' की रणनीति के लिए निर्धारित प्रारंभिक लक्ष्य वर्ष क्या था?",
+        options: [
+          "(A) 2020 / 2020",
+          "(B) 2025 / 2025",
+          "(C) 2022 / 2022",
+          "(D) 2024 / 2024",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "The Inter-Ministerial Committee on Doubling Farmers' Income was set up in April 2016 under the chairmanship of Ashok Dalwai. The committee submitted a comprehensive 14-volume report targeting the doubling of farmers' real income by the year 2022-23 (benchmark base year 2015-16).",
+        expHi: "भारत सरकार ने अप्रैल 2016 में डॉ. अशोक दलवई की अध्यक्षता में 'किसानों की आय दोगुनी करने' पर एक अंतर-मंत्रालयी समिति गठित की थी। समिति ने आधार वर्ष 2015-16 की तुलना में वर्ष 2022 तक किसानों की वास्तविक आय दोगुनी करने की व्यापक कार्ययोजना प्रस्तुत की थी।",
+        keyFact: "Key Exam Fact: दलवई समिति ने कृषि उत्पादन केंद्रित दृष्टिकोण से हटकर कृषि आय केंद्रित (Income-centric) दृष्टिकोण अपनाने की सिफारिश की थी।"
+      },
+      {
+        qNum: 30,
+        stemEn: "Under the restructured 'National Bamboo Mission' (NBM) approved in 2018, which historic legal reform was enacted regarding the classification of bamboo?",
+        stemHi: "वर्ष 2018 में पुनर्गठित 'राष्ट्रीय बांस मिशन' (NBM) के तहत बांस के वर्गीकरण के संबंध में कौन सा ऐतिहासिक कानूनी सुधार लागू किया गया?",
+        options: [
+          "(A) Bamboo was declared a hazardous biological weed / बांस को हानिकारक जैविक खरपतवार घोषित किया गया",
+          "(B) Bamboo grown in non-forest areas was omitted from the definition of \"Tree\" under the Indian Forest Act / भारतीय वन अधिनियम के तहत गैर-वन क्षेत्रों में उगाए गए बांस को \"वृक्ष\" की परिभाषा से हटा दिया गया",
+          "(C) Planting bamboo was made punishable under the Wildlife Protection Act / वन्यजीव संरक्षण अधिनियम के तहत बांस रोपण को दंडनीय बनाया गया",
+          "(D) Bamboo harvest was made a central monopoly under Coal India / बांस की कटाई को कोल इंडिया के अधीन केंद्रीय एकाधिकार बनाया गया",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Through the Indian Forest (Amendment) Act 2017, the Union Government amended Section 2(7) of the Indian Forest Act, 1927, removing bamboo grown in non-forest areas from the statutory definition of \"Tree\". This historic reform eliminated the requirement of felling and transit permits for bamboo cultivated on agricultural lands, unlocking commercial agro-forestry.",
+        expHi: "भारतीय वन (संशोधन) अधिनियम 2017 द्वारा गैर-वन क्षेत्रों में उगने वाले बांस को 'वृक्ष' (Tree) की परिभाषा से बाहर कर दिया गया। इससे किसानों को अपनी निजी कृषि भूमि पर बांस उगाने, काटने और उसकी बिक्री हेतु वन विभाग के परमिट लेने की बाध्यता समाप्त हो गई।",
+        keyFact: "Key Exam Fact: बांस को टैक्सोनॉमी (पादप वर्गिकी) की दृष्टि से घास (Grass) कुल का पौधा माना जाता है।"
+      },
+      {
+        qNum: 31,
+        stemEn: "The 'Operation Greens' scheme was launched in the Union Budget 2018-19 to stabilize the supply and prices of which primary crops initially?",
+        stemHi: "केंद्रीय बजट 2018-19 में शुरू की गई 'ऑपरेशन ग्रीन्स' (Operation Greens) योजना प्रारंभिक रूप से किन फसलों की आपूर्ति और कीमतों को स्थिर करने के लिए शुरू की गई थी?",
+        options: [
+          "(A) Wheat, Rice, and Maize / गेहूं, चावल और मक्का",
+          "(B) Cotton, Jute, and Silk / कपास, जूट और रेशम",
+          "(C) Tomato, Onion, and Potato (TOP) / टमाटर, प्याज और आलू (TOP)",
+          "(D) Apple, Banana, and Mango / सेब, केला और आम",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "Operation Greens was announced in Budget 2018-19 on the lines of \"Operation Flood\" with an outlay of ₹500 crore to promote Farmer Producer Organizations (FPOs), agri-logistics, processing facilities, and price stabilization for Tomato, Onion, and Potato (TOP) crops. Under Atmanirbhar Bharat (2020), it was expanded from TOP to TOTAL (covering 22 perishable crops).",
+        expHi: "ऑपरेशन ग्रीन्स योजना वर्ष 2018-19 में 'ऑपरेशन फ्लड' की तर्ज पर टमाटर, प्याज और आलू (TOP - Tomato, Onion, Potato) फसलों के मूल्य उतार-चढ़ाव को नियंत्रित करने और खाद्य प्रसंस्करण को बढ़ावा देने के लिए शुरू की गई थी। बाद में इसे अन्य बागवानी फसलों तक विस्तारित किया गया।",
+        keyFact: "Key Exam Fact: इस योजना का नोडल मंत्रालय 'खाद्य प्रसंस्करण उद्योग मंत्रालय' (MoFPI) है।"
+      },
+      {
+        qNum: 32,
+        stemEn: "In which year was the 'National Livestock Mission' (NLM) restructured with an outlay of ₹9,800 crore to boost entrepreneurship in small ruminants, piggery, and feed development?",
+        stemHi: "छोटे जुगाली करने वाले पशुओं, सूअर पालन और चारा विकास में उद्यमिता को बढ़ावा देने हेतु ₹9,800 करोड़ के परिव्यय के साथ 'राष्ट्रीय पशुधन मिशन' (NLM) को किस वर्ष पुनर्गठित किया गया था?",
+        options: [
+          "(A) 2015-16 / 2015-16",
+          "(B) 2017-18 / 2017-18",
+          "(C) 2021-22 / 2021-22",
+          "(D) 2019-20 / 2019-20",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "The Cabinet Committee on Economic Affairs (CCEA) approved the revised and restructured National Livestock Mission (NLM) for implementation starting from FY 2021-22 for a period of five years. It focuses on entrepreneurship development and breed improvement in sheep, goat, poultry, piggery, and the fodder sector, offering a 50% capital subsidy directly to entrepreneurs.",
+        expHi: "केंद्र सरकार ने वित्तीय वर्ष 2021-22 से राष्ट्रीय पशुधन मिशन (NLM) को पुनर्गठित रूप में लागू किया। इसका मुख्य उद्देश्य पशुधन क्षेत्र में उद्यमिता विकास, नस्ल सुधार और चारा उत्पादन को बढ़ावा देना है, जिसमें लाभार्थियों को 50% तक की पूंजीगत सब्सिडी दी जाती है।",
+        keyFact: "Key Exam Fact: NLM पशुपालन और डेयरी विभाग (मत्स्य पालन, पशुपालन और डेयरी मंत्रालय) के अधीन संचालित होता है।"
+      },
+      {
+        qNum: 33,
+        stemEn: "What is the designated financial allocation of the 'Pradhan Mantri Matsya Sampada Yojana' (PMMSY) launched in September 2020 under the Atmanirbhar Bharat package?",
+        stemHi: "आत्मनिर्भर भारत पैकेज के तहत सितंबर 2020 में शुरू की गई 'प्रधानमंत्री मत्स्य संपदा योजना' (PMMSY) का निर्धारित वित्तीय परिव्यय कितना है?",
+        options: [
+          "(A) ₹5,000 crore / ₹5,000 करोड़",
+          "(B) ₹10,000 crore / ₹10,000 करोड़",
+          "(C) ₹15,000 crore / ₹15,000 करोड़",
+          "(D) ₹20,050 crore / ₹20,050 करोड़",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "PMMSY was formally launched on September 10, 2020, with the highest-ever investment of ₹20,050 crore for a period of 5 years (FY 2020-21 to FY 2024-25) across all States/UTs. It aims to drive the \"Blue Revolution\" through sustainable and responsible development of the fisheries sector in India, targeting fish production of 22 million metric tons.",
+        expHi: "प्रधानमंत्री मत्स्य संपदा योजना (PMMSY) का शुभारंभ 10 सितंबर 2020 को ₹20,050 करोड़ के ऐतिहासिक निवेश के साथ किया गया था। इस योजना का उद्देश्य देश में नीली क्रांति (Blue Revolution) को गति देना तथा मत्स्य उत्पादन और निर्यात में अभूतपूर्व वृद्धि करना है।",
+        keyFact: "Key Exam Fact: PMMSY के तहत मत्स्य पालकों की आय बढ़ाने और फसल उपरांत होने वाले 20-25% नुकसान को घटाकर 10% करने का लक्ष्य रखा गया।"
+      },
+      {
+        qNum: 34,
+        stemEn: "Under the 'Sub-Mission on Seeds and Planting Material' (SMSP), which system was developed to guarantee seed traceability and authentication across India?",
+        stemHi: "'बीज और रोपण सामग्री पर उप-मिशन' (SMSP) के तहत भारत भर में बीज की प्रामाणिकता और ट्रेसबिलिटी सुनिश्चित करने के लिए कौन सी डिजिटल प्रणाली विकसित की गई?",
+        options: [
+          "(A) SATHI Portal / साथी (SATHI) पोर्टल",
+          "(B) Beej Kalyan / बीज कल्याण",
+          "(C) AgroSeed India / एग्रोसीड इंडिया",
+          "(D) Kisan Seed Track / किसान सीड ट्रैक",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "SATHI stands for \"Seed Traceability, Authentication and Holistic Inventory\". It is a centralized national portal and mobile app developed by the National Informatics Centre (NIC) in collaboration with the Ministry of Agriculture, launched in April 2023. It ensures complete lifecycle traceability of certified quality seeds from breeding to sale with QR code verification.",
+        expHi: "अप्रैल 2023 में कृषि मंत्रालय द्वारा 'साथी' (SATHI - Seed Traceability, Authentication and Holistic Inventory) पोर्टल और मोबाइल ऐप लॉन्च किया गया। इसका उद्देश्य बीज उत्पादन, बीज प्रमाणीकरण और आपूर्ति श्रृंखला में बीजों की डिजिटल निगरानी व शुद्धता सुनिश्चित करना है।",
+        keyFact: "Key Exam Fact: 'साथी' पोर्टल का मुख्य संदेश \"उत्तम बीज - समृद्ध किसान\" है।"
+      },
+      {
+        qNum: 35,
+        stemEn: "What is the statutory validity period of the 'Soil Health Card' issued to farmers under the National Soil Health Card Scheme?",
+        stemHi: "राष्ट्रीय मृदा स्वास्थ्य कार्ड योजना के तहत किसानों को जारी किए जाने वाले 'मृदा स्वास्थ्य कार्ड' की वैधानिक वैधता अवधि कितनी होती है?",
+        options: [
+          "(A) Exactly 5 years / ठीक 5 वर्ष",
+          "(B) Exactly 10 years / ठीक 10 वर्ष",
+          "(C) Exactly 1 year / ठीक 1 वर्ष",
+          "(D) Lifetime validity / आजीवन वैधता",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4, // E
+        expEn: "None of options (A), (B), (C), or (D) are correct. As per official scheme guidelines, a Soil Health Card is issued to every farmer once every 2 years (initially 3 years at inception in 2015, and subsequently fixed at a 2-year renewal cycle). This periodic renewal captures changing macro- and micro-nutrient profiles in the soil. Therefore, Option (E) is the correct answer.",
+        expHi: "विकल्प (A), (B), (C) और (D) गलत हैं क्योंकि मृदा स्वास्थ्य कार्ड प्रत्येक 2 वर्ष के चक्र (प्रारंभ में 3 वर्ष) में किसानों को उनकी जोत की मिट्टी के परीक्षण के उपरांत जारी किया जाता है। अतः 1, 5, 10 वर्ष या आजीवन वैधता के सभी विकल्प अमान्य हैं और सही उत्तर विकल्प (E) है।",
+        keyFact: "Key Exam Fact: मृदा स्वास्थ्य कार्ड में 12 मापदंडों की जांच की जाती है: N, P, K (प्राथमिक); S (द्वितीयक); Zn, Fe, Cu, Mn, Bo (सूक्ष्म); और pH, EC, OC (भौतिक)।"
+      },
+      {
+        qNum: 36,
+        stemEn: "Which initiative was launched in 2020 by Indian Railways in coordination with the Ministry of Agriculture to ensure rapid transport of perishable agro-products across the country?",
+        stemHi: "देश भर में खराब होने वाले कृषि उत्पादों के त्वरित परिवहन को सुनिश्चित करने हेतु कृषि मंत्रालय के समन्वय से भारतीय रेलवे द्वारा 2020 में कौन सी पहल शुरू की गई?",
+        options: [
+          "(A) Krishi Rail Express / कृषि रेल एक्सप्रेस",
+          "(B) Kisan Rail / किसान रेल",
+          "(C) Annadata Express / अन्नदाता एक्सप्रेस",
+          "(D) FastAgro Freight / फास्टएग्रो फ्रेट",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The first 'Kisan Rail' was flagged off on August 7, 2020, running between Devlali (Maharashtra) and Danapur (Bihar). Kisan Rail trains are multi-commodity refrigerated or ventilated train services providing 50% freight subsidy on fruits and vegetables under Operation Greens to prevent post-harvest spoilage.",
+        expHi: "खराब होने वाले कृषि एवं बागवानी उत्पादों (फल और सब्जियों) को खेतों से बड़े उपभोक्ता बाजारों तक सुरक्षित पहुंचाने के लिए 7 अगस्त 2020 को पहली 'किसान रेल' (देवलाली से दानापुर) चलाई गई थी। इसमें माल भाड़े पर 50% की सरकारी सब्सिडी दी जाती है।",
+        keyFact: "Key Exam Fact: 100वीं किसान रेल 28 दिसंबर 2020 को संगोला (महाराष्ट्र) से शालीमार (पश्चिम बंगाल) के बीच चलाई गई थी।"
+      },
+      {
+        qNum: 37,
+        stemEn: "Which high-level committee was constituted by the Reserve Bank of India (RBI) in 2019 to review agricultural credit and suggest long-term financial reforms?",
+        stemHi: "कृषि ऋण की समीक्षा करने और दीर्घकालिक वित्तीय सुधारों का सुझाव देने हेतु भारतीय रिजर्व बैंक (RBI) द्वारा 2019 में किस उच्च स्तरीय समिति का गठन किया गया था?",
+        options: [
+          "(A) U.K. Sinha Committee / यू.के. सिन्हा समिति",
+          "(B) M.K. Jain Committee / एम.के. जैन समिति",
+          "(C) B. Sivaraman Committee / बी. शिवरामन समिति",
+          "(D) Y.V. Reddy Committee / वाई.वी. रेड्डी समिति",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The RBI constituted the Internal Working Group to Review Agricultural Credit under the chairmanship of Mahesh Kumar Jain (Deputy Governor, RBI) in February 2019. The committee recommended digitizing land records, standardizing KCC loan procedures, reforming priority sector lending (PSL), and linking interest subvention to DBT.",
+        expHi: "भारतीय रिजर्व बैंक (RBI) ने फरवरी 2019 में अपने डिप्टी गवर्नर महेश कुमार जैन (M.K. Jain) की अध्यक्षता में 'कृषि ऋण पर आंतरिक कार्य समूह' का गठन किया था। इस समिति ने कृषि ऋणों के डिजिटल वितरण, किसान क्रेडिट कार्ड के सरलीकरण और भूमि अभिलेखों के डिजिटलीकरण की संस्तुति की थी।",
+        keyFact: "Key Exam Fact: कृषि क्षेत्र को प्राथमिकता प्राप्त क्षेत्रक ऋण (Priority Sector Lending - PSL) के अंतर्गत बैंक ऋण का 18% हिस्सा अनिवार्य रूप से देना होता है।"
+      },
+      {
+        qNum: 38,
+        stemEn: "Under the 'Kisan Credit Card' (KCC) scheme, what is the raised limit for collateral-free agricultural loans introduced under post-2014 financial reforms?",
+        stemHi: "वर्ष 2014 के बाद के वित्तीय सुधारों के तहत 'किसान क्रेडिट कार्ड' (KCC) योजना के अंतर्गत बिना किसी गारंटी (संपार्श्विक/Collateral-free) के कृषि ऋण की सीमा बढ़ाकर कितनी कर दी गई?",
+        options: [
+          "(A) ₹50,000 / ₹50,000",
+          "(B) ₹1,00,000 / ₹1,00,000",
+          "(C) ₹1,60,000 / ₹1,60,000",
+          "(D) ₹2,50,000 / ₹2,50,000",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "In February 2019, the Reserve Bank of India raised the limit for collateral-free agricultural loans from ₹1 lakh to ₹1.60 lakh. This reform directly benefited small and marginal farmers by removing the requirement to mortgage land or provide third-party guarantees to avail institutional crop credit up to ₹1.60 lakh.",
+        expHi: "फरवरी 2019 में भारतीय रिजर्व बैंक (RBI) ने किसानों के लिए संपार्श्विक-मुक्त (बिना किसी जमीन को गिरवी रखे) कृषि ऋण की सीमा ₹1 लाख से बढ़ाकर ₹1.60 लाख कर दी। इससे लघु एवं सीमांत किसानों को संस्थागत ऋण प्राप्त करने में अभूतपूर्व सुगमता मिली।",
+        keyFact: "Key Exam Fact: KCC धारकों को ₹3 लाख तक का अल्पकालिक ऋण रियायती ब्याज दर (समय पर भुगतान पर 4%) पर उपलब्ध कराया जाता है।"
+      },
+      {
+        qNum: 39,
+        stemEn: "The 'Gobar-Dhan' (Galvanizing Organic Bio-Agro Resources Dhan) scheme launched in 2018 is implemented under which national mission?",
+        stemHi: "वर्ष 2018 में शुरू की गई 'गोबर-धन' (Gobar-Dhan) योजना किस राष्ट्रीय मिशन के तहत क्रियान्वित की जाती है?",
+        options: [
+          "(A) Swachh Bharat Mission (Grameen) / स्वच्छ भारत मिशन (ग्रामीण)",
+          "(B) Smart Cities Mission / स्मार्ट सिटीज मिशन",
+          "(C) National Urban Livelihood Mission / राष्ट्रीय शहरी आजीविका मिशन",
+          "(D) Jal Jeevan Mission (Urban) / जल जीवन मिशन (शहरी)",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "The GOBAR-Dhan scheme was launched in April 2018 as part of the Swachh Bharat Mission (Grameen) Phase-II by the Department of Drinking Water and Sanitation, Ministry of Jal Shakti. It focuses on keeping villages clean and generating wealth and energy by converting cattle dung, agricultural waste, and other bio-waste into biogas and bio-slurry organic fertilizer.",
+        expHi: "'गोबर-धन' योजना को अप्रैल 2018 में जल शक्ति मंत्रालय के 'स्वच्छ भारत मिशन (ग्रामीण) - चरण II' के अंतर्गत शुरू किया गया था। इसका उद्देश्य गांवों में मवेशियों के गोबर और जैविक कचरे को बायोगैस तथा उच्च गुणवत्ता वाली जैविक खाद (बायो-स्लरी) में बदलकर ग्रामीण आय को बढ़ावा देना है।",
+        keyFact: "Key Exam Fact: इस योजना के माध्यम से कंप्रेस्ड बायो-गैस (CBG) संयंत्रों की स्थापना को भी सतत (SATAT) पहल से जोड़ा गया है।"
+      },
+      {
+        qNum: 40,
+        stemEn: "The 'Pradhan Mantri Matsya Sampada Yojana' (PMMSY) is designed to achieve which of the following targets for Indian fish production by the terminal year 2024-25?",
+        stemHi: "'प्रधानमंत्री मत्स्य संपदा योजना' (PMMSY) को अंतिम वर्ष 2024-25 तक भारतीय मछली उत्पादन के लिए निम्नलिखित में से किस लक्ष्य को प्राप्त करने हेतु तैयार किया गया है?",
+        options: [
+          "(A) 22 million metric tonnes / 22 मिलियन मीट्रिक टन",
+          "(B) 10 million metric tonnes / 10 मिलियन मीट्रिक टन",
+          "(C) 50 million metric tonnes / 50 मिलियन मीट्रिक टन",
+          "(D) 35 million metric tonnes / 35 मिलियन मीट्रिक टन",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "PMMSY aims to enhance fish production from 13.75 million metric tonnes (2018-19) to 22 million metric tonnes by 2024-25, registering a sustained annual average growth rate of about 9% in fish production, and doubling fisheries export earnings to approximately ₹1,00,000 crore.",
+        expHi: "प्रधानमंत्री मत्स्य संपदा योजना (PMMSY) का मुख्य भौतिक लक्ष्य वर्ष 2024-25 तक देश के कुल मत्स्य उत्पादन को 22 मिलियन मीट्रिक टन तक पहुंचाना तथा मत्स्य क्षेत्र से निर्यात आय को दोगुना करके ₹1,00,000 करोड़ करना है।",
+        keyFact: "Key Exam Fact: भारत विश्व में चीन के बाद दूसरा सबसे बड़ा जलीय कृषि (Aquaculture) उत्पादक देश है।"
+      },
+      {
+        qNum: 41,
+        stemEn: "In what year did the Government of India launch the comprehensive 'PM-PRANAM' scheme through formal Cabinet approval?",
+        stemHi: "भारत सरकार ने औपचारिक कैबिनेट अनुमोदन के माध्यम से व्यापक 'पीएम-प्रणाम' (PM-PRANAM) योजना को किस वर्ष अंतिम रूप से मंजूरी दी?",
+        options: [
+          "(A) 2019 / 2019",
+          "(B) 2020 / 2020",
+          "(C) 2021 / 2021",
+          "(D) 2023 / 2023",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "Following its initial announcement in the Union Budget 2023-24, the Cabinet Committee on Economic Affairs (CCEA) formally approved the PM-PRANAM scheme on June 28, 2023, along with a total package of ₹3,70,128 crore for continuous urea subsidy and innovative fertilizer promotion.",
+        expHi: "केंद्रीय बजट 2023-24 में घोषणा के बाद, आर्थिक मामलों की मंत्रिमंडलीय समिति (CCEA) ने 28 जून 2023 को 'पीएम-प्रणाम' (PM-PRANAM) योजना को औपचारिक रूप से मंजूरी प्रदान की।",
+        keyFact: "Key Exam Fact: इस योजना के लिए कोई अलग बजटीय आवंटन नहीं है; यह मौजूदा उर्वरक सब्सिडी में राज्यों द्वारा की गई बचत से वित्तपोषित होती है।"
+      },
+      {
+        qNum: 42,
+        stemEn: "Which specialized commodity board under the Ministry of Commerce & Industry launched a blockchain-based marketplace application in 2019 to integrate coffee growers with global buyers?",
+        stemHi: "वाणिज्य एवं उद्योग मंत्रालय के तहत किस विशेष वस्तु बोर्ड ने कॉफी उत्पादकों को वैश्विक खरीदारों से जोड़ने के लिए 2019 में एक ब्लॉकचेन-आधारित ई-मार्केटप्लेस लॉन्च किया?",
+        options: [
+          "(A) Tea Board of India / भारतीय चाय बोर्ड",
+          "(B) Spices Board / मसाला बोर्ड",
+          "(C) Coffee Board of India / भारतीय कॉफी बोर्ड",
+          "(D) Rubber Board / रबर बोर्ड",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "In March 2019, the Coffee Board of India launched a blockchain-based e-marketplace app to bring transparency to the coffee supply chain and ensure that smallholder coffee farmers in Karnataka, Kerala, and Tamil Nadu receive fair prices by directly accessing global roasters and consumers without middlemen.",
+        expHi: "मार्च 2019 में 'भारतीय कॉफी बोर्ड' (Coffee Board of India) ने कॉफी व्यापार में पारदर्शिता लाने तथा बिचौलियों को समाप्त करने के लिए ब्लॉकचेन आधारित पहला डिजिटल मार्केटप्लेस लॉन्च किया था।",
+        keyFact: "Key Exam Fact: भारतीय कॉफी बोर्ड का मुख्यालय बेंगलुरु (कर्नाटक) में स्थित है।"
+      },
+      {
+        qNum: 43,
+        stemEn: "Which flagship mission was launched in 2014-15 with the specific objective of conserving and developing indigenous bovine breeds across India?",
+        stemHi: "देश भर में स्वदेशी गोजातीय नस्लों के संरक्षण और विकास के विशिष्ट उद्देश्य के साथ 2014-15 में कौन सा प्रमुख मिशन शुरू किया गया था?",
+        options: [
+          "(A) Rashtriya Gokul Mission / राष्ट्रीय गोकुल मिशन",
+          "(B) Pashu Sanjivani Mission / पशु संजीवनी मिशन",
+          "(C) National Kamdhenu Project / राष्ट्रीय कामधेनु परियोजना",
+          "(D) Mission Dhenu Kalyan / मिशन धेनु कल्याण",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "The 'Rashtriya Gokul Mission' (RGM) was initiated in December 2014 under the National Programme for Bovine Breeding and Dairy Development. It aims to conserve and develop indigenous cattle breeds (such as Gir, Sahiwal, Red Sindhi, Tharparkar) in a focused and scientific manner, upgrading bovine genetics and establishing 'Gokul Grams'.",
+        expHi: "स्वदेशी गाय और भैंस की नस्लों के आनुवंशिक सुधार, संरक्षण और वैज्ञानिक विकास हेतु दिसंबर 2014 में 'राष्ट्रीय गोकुल मिशन' (Rashtriya Gokul Mission) की शुरुआत की गई थी। इसके अंतर्गत देशी नस्लों के संवर्धन हेतु 'गोकुल ग्राम' स्थापित किए जाते हैं।",
+        keyFact: "Key Exam Fact: राष्ट्रीय गोकुल मिशन के तहत उच्च आनुवंशिक योग्यता वाले सांडों के वीर्य उत्पादन और भ्रूण प्रत्यारोपण (IVF) तकनीकों को बढ़ावा दिया जा रहा है।"
+      },
+      {
+        qNum: 44,
+        stemEn: "What is the upper limit of cultivable landholding required to be classified as a \"Small Farmer\" (लघु किसान) in official Indian agricultural statistics?",
+        stemHi: "आधिकारिक भारतीय कृषि सांख्यिकी में \"लघु किसान\" (Small Farmer) के रूप में वर्गीकृत होने के लिए कृषि जोत की अधिकतम सीमा क्या है?",
+        options: [
+          "(A) Up to 1.0 hectare / 1.0 हेक्टेयर तक",
+          "(B) 1.0 to 2.0 hectares / 1.0 से 2.0 हेक्टेयर",
+          "(C) 2.0 to 4.0 hectares / 2.0 से 4.0 हेक्टेयर",
+          "(D) 4.0 to 10.0 hectares / 4.0 से 10.0 हेक्टेयर",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "In India's Agricultural Census, operational landholdings are classified into five standard categories: Marginal (below 1.0 hectare), Small (1.0 to 2.0 hectares), Semi-Medium (2.0 to 4.0 hectares), Medium (4.0 to 10.0 hectares), and Large (10.0 hectares and above). Therefore, a small farmer holds between 1.0 and 2.0 hectares of land.",
+        expHi: "भारत में कृषि जोत के आधिकारिक वर्गीकरण के अनुसार, 1.0 हेक्टेयर से कम भूमि वाले को 'सीमांत किसान' (Marginal Farmer) तथा 1.0 से 2.0 हेक्टेयर तक भूमि वाले को 'लघु किसान' (Small Farmer) कहा जाता है।",
+        keyFact: "Key Exam Fact: भारत में 86% से अधिक किसान लघु एवं सीमांत श्रेणी (2 हेक्टेयर से कम जोत) के अंतर्गत आते हैं।"
+      },
+      {
+        qNum: 45,
+        stemEn: "Under the post-2014 reforms, what is the maximum area of operational landholding eligible to define a \"Marginal Farmer\" (सीमांत किसान)?",
+        stemHi: "वर्ष 2014 के बाद के कृषि सुधारों और सांख्यिकी के तहत, \"सीमांत किसान\" (Marginal Farmer) को परिभाषित करने वाली अधिकतम परिचालित भूमि जोत सीमा क्या है?",
+        options: [
+          "(A) Up to 1.0 hectare (2.5 acres) / 1.0 हेक्टेयर (2.5 एकड़) तक",
+          "(B) Up to 2.0 hectares / 2.0 हेक्टेयर तक",
+          "(C) Up to 0.5 hectare / 0.5 हेक्टेयर तक",
+          "(D) Up to 3.0 hectares / 3.0 हेक्टेयर तक",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "A marginal farmer is officially defined as an agricultural cultivator who owns or operates cultivable agricultural land up to 1.0 hectare (approximately 2.47 acres). They represent the single largest block of agrarian landholders in India (over 68% of all agricultural operational holdings).",
+        expHi: "भारतीय कृषि सांख्यिकी के अनुसार 'सीमांत किसान' (Marginal Farmer) वह किसान है जिसके पास 1.0 हेक्टेयर (लगभग 2.5 एकड़) या उससे कम कृषि योग्य भूमि होती है।",
+        keyFact: "Key Exam Fact: उत्तर प्रदेश में कुल क्रियाशील कृषि जोतों में सीमांत किसानों की संख्या 80% के करीब है।"
+      },
+      {
+        qNum: 46,
+        stemEn: "In which year was the 'Sub-Mission on Agroforestry' (SMAF) launched under the National Mission for Sustainable Agriculture (NMSA) to promote \"Har Medh Par Ped\"?",
+        stemHi: "\"हर मेढ़ पर पेड़\" के संदेश के साथ राष्ट्रीय सतत कृषि मिशन (NMSA) के तहत 'कृषि वानिकी पर उप-मिशन' (SMAF) किस वर्ष शुरू किया गया था?",
+        options: [
+          "(A) 2016-17 / 2016-17",
+          "(B) 2014-15 / 2014-15",
+          "(C) 2019-20 / 2019-20",
+          "(D) 2018-19 / 2018-19",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "The Sub-Mission on Agroforestry (SMAF) was operationalized in 2016-17 following the National Agroforestry Policy of 2014. It aims to encourage farmers to plant multipurpose trees on farm bunds and boundaries along with conventional crops under the motto \"Har Medh Par Ped\" to augment farm income, buffer climate risks, and secure raw timber and fodder.",
+        expHi: "वर्ष 2016-17 में 'कृषि वानिकी पर उप-मिशन' (SMAF) की शुरुआत \"हर मेढ़ पर पेड़\" के नारे के साथ की गई थी। इसका उद्देश्य किसानों को खेतों की मेढ़ों पर पेड़ लगाने हेतु प्रोत्साहित कर उनकी आय में वृद्धि करना और जलवायु परिवर्तन के जोखिमों को कम करना है।",
+        keyFact: "Key Exam Fact: भारत वर्ष 2014 में राष्ट्रीय कृषि वानिकी नीति अपनाने वाला विश्व का पहला देश बना था।"
+      },
+      {
+        qNum: 47,
+        stemEn: "Under the 'Kisan Urja Suraksha evam Utthaan Mahabhiyan' (PM-KUSUM), what percentage of the total capital cost of a standalone solar pump is provided as a direct Central Financial Assistance (subsidy) in general states?",
+        stemHi: "'पीएम-कुसुम' (PM-KUSUM) योजना के तहत सामान्य राज्यों में स्टैंडअलोन सोलर कृषि पंप की कुल लागत का कितने प्रतिशत केंद्रीय वित्तीय सहायता (सब्सिडी) के रूप में प्रदान किया जाता है?",
+        options: [
+          "(A) 50% / 50%",
+          "(B) 30% / 30%",
+          "(C) 10% / 10%",
+          "(D) 60% / 60%",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Under Component B of the PM-KUSUM scheme, for general states, the Central Government provides a CFA (subsidy) of 30% of the benchmark cost of standalone solar agricultural pumps, the State Government provides a 30% subsidy, and the farmer pays only the remaining 40% (of which up to 30% can be financed via bank loans, requiring only 10% farmer equity).",
+        expHi: "पीएम-कुसुम के घटक-बी (स्टैंडअलोन सोलर पंप) के अंतर्गत सामान्य राज्यों में केंद्र सरकार द्वारा 30% सब्सिडी दी जाती है, राज्य सरकार 30% सब्सिडी देती है, और किसान को मात्र 40% वहन करना होता है (जिसमें 30% तक बैंक ऋण उपलब्ध रहता है और केवल 10% किसान अंशदान होता है)।",
+        keyFact: "Key Exam Fact: पूर्वोत्तर राज्यों, पहाड़ी क्षेत्रों और द्वीपों के लिए केंद्रीय सब्सिडी 50% तक दी जाती है।"
+      },
+      {
+        qNum: 48,
+        stemEn: "Which statutory authority is responsible for the overall certification and national accreditation of organic farm products exported from India under the National Programme for Organic Production (NPOP)?",
+        stemHi: "राष्ट्रीय जैविक उत्पादन कार्यक्रम (NPOP) के तहत भारत से निर्यात किए जाने वाले जैविक कृषि उत्पादों के समग्र प्रमाणीकरण और प्रत्यायन के लिए कौन सा वैधानिक प्राधिकरण जिम्मेदार है?",
+        options: [
+          "(A) FSSAI / एफएसएसएआई (FSSAI)",
+          "(B) ICAR / आईसीएआर (ICAR)",
+          "(C) APEDA / एपीडा (APEDA)",
+          "(D) SFAC / एसएफएसी (SFAC)",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "The Agricultural and Processed Food Products Export Development Authority (APEDA), functioning under the Ministry of Commerce and Industry, is the nodal Secretariat and implementation body for the National Programme for Organic Production (NPOP). It grants accreditation to organic certification bodies for export products.",
+        expHi: "वाणिज्य एवं उद्योग मंत्रालय के अधीन 'कृषि और प्रसंस्कृत खाद्य उत्पाद निर्यात विकास प्राधिकरण' (APEDA) राष्ट्रीय जैविक उत्पादन कार्यक्रम (NPOP) का संचालन करता है और भारत से निर्यात होने वाले जैविक उत्पादों के प्रमाणीकरण निकायों को मान्यता प्रदान करता है।",
+        keyFact: "Key Exam Fact: घरेलू जैविक बाजार के लिए प्रमाणीकरण 'सहभागी प्रत्यायन प्रणाली' (PGS-India) और FSSAI के 'जैविक भारत' लोगो द्वारा विनियमित होता है।"
+      },
+      {
+        qNum: 49,
+        stemEn: "Which of the following is the official toll-free telephone number of the 24x7 'Kisan Call Centre' (KCC) operated by the Ministry of Agriculture across India?",
+        stemHi: "कृषि मंत्रालय द्वारा देश भर में संचालित 24x7 'किसान कॉल सेंटर' (KCC) का आधिकारिक टोल-फ्री टेलीफोन नंबर निम्नलिखित में से कौन सा है?",
+        options: [
+          "(A) 1947 / 1947",
+          "(B) 1800-180-1551 / 1800-180-1551",
+          "(C) 155260 / 155260",
+          "(D) 1800-11-0001 / 1800-11-0001",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The Kisan Call Centre (KCC) service operates nationwide via the dedicated toll-free number 1800-180-1551. Agricultural graduates answer queries from farmers in 22 local languages on crop agronomy, pest management, market prices, and government schemes from 6:00 AM to 10:00 PM on all 7 days of the week.",
+        expHi: "भारत सरकार के कृषि मंत्रालय द्वारा संचालित 'किसान कॉल सेंटर' का देशव्यापी टोल-फ्री नंबर 1800-180-1551 है। इस नंबर पर किसान अपनी स्थानीय भाषा में सप्ताह के सभी सातों दिन कृषि विशेषज्ञों से फसल प्रबंधन, कीट नियंत्रण और मौसम की निःशुल्क सलाह प्राप्त कर सकते हैं।",
+        keyFact: "Key Exam Fact: किसान कॉल सेंटर योजना 21 जनवरी 2004 को शुरू की गई थी और इसे 2014 के बाद डिजिटल रूप से अत्यधिक उन्नत किया गया है।"
+      },
+      {
+        qNum: 50,
+        stemEn: "Under the central agricultural price policy, for how many total crops (including sugarcane for which Fair and Remunerative Price is fixed) does the Government of India officially announce MSP/remunerative prices every year?",
+        stemHi: "केंद्रीय कृषि मूल्य नीति के अंतर्गत, भारत सरकार प्रतिवर्ष कुल कितनी फसलों (गन्ने सहित जिसके लिए उचित और लाभकारी मूल्य निर्धारित होता है) के लिए आधिकारिक रूप से MSP/लाभकारी मूल्य घोषित करती है?",
+        options: [
+          "(A) 20 crops / 20 फसलें",
+          "(B) 25 crops / 25 फसलें",
+          "(C) 18 crops / 18 फसलें",
+          "(D) 28 crops / 28 फसलें",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4, // E
+        expEn: "None of options (A), (B), (C), or (D) are correct. The Government of India officially fixes Minimum Support Prices (MSP) for 22 mandated agricultural crops (7 cereals, 5 pulses, 7 oilseeds, and 3 commercial crops - cotton, jute, and copra) and Fair and Remunerative Price (FRP) for sugarcane, making a total of 23 crops. (In addition, MSPs for de-husked coconut are fixed based on copra). Since 23 is not among options A-D, Option (E) is the correct answer.",
+        expHi: "विकल्प (A), (B), (C) और (D) गलत हैं क्योंकि भारत सरकार प्रतिवर्ष कुल 22 अनिवार्य फसलों के लिए न्यूनतम समर्थन मूल्य (MSP) और गन्ने के लिए उचित और लाभकारी मूल्य (FRP) घोषित करती है, यानी कुल 23 फसलें। अतः विकल्प (E) सही उत्तर है।",
+        keyFact: "Key Exam Fact: CACP (कृषि लागत एवं मूल्य आयोग) इन मूल्यों की संस्तुति करता है और गन्ने के लिए वैधानिक रूप से FRP की घोषणा आवश्यक वस्तु अधिनियम 1955 के तहत की जाती है।"
+      },
+
+      // Batch 3 (Q51 to Q75)
+      {
+        qNum: 51,
+        stemEn: "What is the revised target year set under the National Policy on Biofuels for achieving a 20% ethanol blending in petrol (E20) across India?",
+        stemHi: "भारत भर में पेट्रोल में 20% एथेनॉल संमिश्रण (E20) प्राप्त करने के लिए राष्ट्रीय जैव ईंधन नीति के तहत संशोधित लक्ष्य वर्ष क्या निर्धारित किया गया है?",
+        options: [
+          "(A) 2030 / 2030",
+          "(B) 2028 / 2028",
+          "(C) 2025-26 / 2025-26",
+          "(D) 2024 / 2024",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "The Government of India amended the National Policy on Biofuels (2018) in June 2022 to advance the target of achieving 20% ethanol blending in motor spirit (petrol) from the original target year of 2030 to the ethanol supply year 2025-26. This reform provides alternative revenue streams to sugarcane farmers and grain producers.",
+        expHi: "जून 2022 में राष्ट्रीय जैव ईंधन नीति (2018) में संशोधन कर पेट्रोल में 20% एथेनॉल सम्मिश्रण (E20) के लक्ष्य को मूल वर्ष 2030 से घटाकर 2025-26 कर दिया गया। यह कृषि सुधार गन्ना किसानों और अधिशेष अनाज उत्पादकों को सीधी आय उपलब्ध कराने में सहायक है।",
+        keyFact: "Key Exam Fact: भारत ने 10% एथेनॉल सम्मिश्रण का लक्ष्य नवंबर 2022 की समय सीमा से पहले जून 2022 में ही हासिल कर लिया था।"
+      },
+      {
+        qNum: 52,
+        stemEn: "The 'Pradhan Mantri Krishi Sinchayee Yojana - Per Drop More Crop' (PMKSY-PDMC) focuses primarily on promoting which irrigation technology?",
+        stemHi: "'प्रधानमंत्री कृषि सिंचाई योजना - प्रति बूंद अधिक फसल' (PMKSY-PDMC) मुख्य रूप से किस सिंचाई तकनीक को बढ़ावा देने पर केंद्रित है?",
+        options: [
+          "(A) Flood irrigation via open unlined canals / खुली कच्ची नहरों द्वारा बाढ़ सिंचाई",
+          "(B) Drip and Sprinkler micro-irrigation systems / ड्रिप (टपक) और स्प्रिंकलर (फव्वारा) सूक्ष्म-सिंचाई प्रणाली",
+          "(C) River inter-linking mega canals / नदी जोड़ो बड़ी नहरें",
+          "(D) Traditional inundation tank digging / पारंपरिक जलमग्न तालाब खुदाई",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "PMKSY-PDMC is implemented by the Department of Agriculture and Farmers Welfare to enhance on-farm water use efficiency through micro-irrigation technologies, specifically Drip and Sprinkler systems. It offers capital subsidies up to 55% for small/marginal farmers and 45% for other farmers to adopt precision water application.",
+        expHi: "PMKSY-PDMC का प्राथमिक उद्देश्य ड्रिप (टपकन) और स्प्रिंकलर (छिड़काव/फव्वारा) जैसी सूक्ष्म सिंचाई तकनीकों को अपनाकर कृषि में जल दक्षता को बढ़ाना है। इसमें लघु व सीमांत किसानों को 55% तथा अन्य किसानों को 45% तक का वित्तीय अनुदान दिया जाता है।",
+        keyFact: "Key Exam Fact: सूक्ष्म सिंचाई से लगभग 40-50% पानी की बचत होती है और फसलों की उत्पादकता में 30-40% की वृद्धि होती है।"
+      },
+      {
+        qNum: 53,
+        stemEn: "Under the Market Intervention Scheme and Price Support Scheme (MIS-PSS), what is the maximum duration of procurement operations permitted in an identified arrival period?",
+        stemHi: "बाजार हस्तक्षेप योजना और मूल्य समर्थन योजना (MIS-PSS) के तहत, किसी निर्दिष्ट आगमन अवधि में खरीद कार्यों की अधिकतम अनुमत अवधि कितनी होती है?",
+        options: [
+          "(A) 30 days / 30 दिन",
+          "(B) 60 days / 60 दिन",
+          "(C) 120 days / 120 दिन",
+          "(D) 90 days / 90 दिन",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "Under the operational guidelines of the Price Support Scheme (PSS) managed under the PM-AASHA umbrella, the procurement period for commodities (pulses, oilseeds, copra) is restricted to a maximum of 90 days from the date of commencement of harvesting and arrival in the identified marketing yards.",
+        expHi: "मूल्य समर्थन योजना (PSS) के दिशानिर्देशों के तहत, अधिसूचित मंडियों में जिंसों की आवक शुरू होने की तिथि से खरीद अभियान अधिकतम 90 दिनों की अवधि के लिए ही संचालित किया जा सकता है।",
+        keyFact: "Key Exam Fact: PSS के तहत खरीद के लिए केंद्रीय नोडल एजेंसियां नाफेड (NAFED) और एफसीआई (FCI) हैं।"
+      },
+      {
+        qNum: 54,
+        stemEn: "Which primary nutrient's consumption is directly regulated through the 'Nutrient Based Subsidy' (NBS) regime, excluding Urea?",
+        stemHi: "यूरिया को छोड़कर, 'पोषक तत्व आधारित सब्सिडी' (NBS) व्यवस्था के माध्यम से सीधे किस प्राथमिक पोषक तत्व की खपत को विनियमित और सब्सिडीकृत किया जाता है?",
+        options: [
+          "(A) Nitrogen (N) only / केवल नाइट्रोजन (N)",
+          "(B) Phosphorus (P), Potassium (K), and Sulphur (S) / फास्फोरस (P), पोटाश (K) और सल्फर (S)",
+          "(C) Carbon (C) and Calcium (Ca) / कार्बन (C) और कैल्शियम (Ca)",
+          "(D) Zinc and Iron only / केवल जिंक और आयरन",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The Nutrient Based Subsidy (NBS) scheme, administered by the Department of Fertilizers, covers decontrolled phosphatic and potassic (P&K) fertilizers including DAP, MOP, SSP, and complex NPK fertilizers. The subsidy is announced bi-annually on per-kg nutrient basis for P, K, and S (along with secondary/micro-nutrients). Urea remains under statutory price control and outside NBS.",
+        expHi: "पोषक तत्व आधारित सब्सिडी (NBS) योजना के अंतर्गत गैर-यूरिया उर्वरकों में उपस्थित फास्फोरस (P), पोटाश (K) और सल्फर (S) जैसे पोषक तत्वों पर प्रति किलोग्राम के आधार पर सब्सिडी दी जाती है। यूरिया इस व्यवस्था से बाहर है और इसका मूल्य सरकार द्वारा वैधानिक रूप से नियंत्रित रहता है।",
+        keyFact: "Key Exam Fact: भारत में आदर्श उर्वरक उपभोग अनुपात (N:P:K) 4:2:1 माना जाता है, जबकि वर्तमान में नाइट्रोजन का अनुपात अत्यधिक है।"
+      },
+      {
+        qNum: 55,
+        stemEn: "In which year was the dedicated 'Micro Irrigation Fund' (MIF) of ₹5,000 crore set up under NABARD to help states mobilize resources for micro-irrigation expansion?",
+        stemHi: "राज्यों को सूक्ष्म-सिंचाई विस्तार हेतु संसाधन जुटाने में सहायता करने के लिए नाबार्ड (NABARD) के तहत ₹5,000 करोड़ का समर्पित 'सूक्ष्म सिंचाई कोष' (MIF) किस वर्ष स्थापित किया गया था?",
+        options: [
+          "(A) 2014-15 / 2014-15",
+          "(B) 2018-19 / 2018-19",
+          "(C) 2016-17 / 2016-17",
+          "(D) 2021-22 / 2021-22",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The Micro Irrigation Fund (MIF) with a corpus of ₹5,000 crore was operationalized under the National Bank for Agriculture and Rural Development (NABARD) in FY 2018-19. It provides concessional loans to state governments to help them incentivize micro-irrigation beyond the regular PMKSY-PDMC subsidies.",
+        expHi: "नाबार्ड (NABARD) के तत्वावधान में ₹5,000 करोड़ की पूंजी के साथ 'सूक्ष्म सिंचाई कोष' (MIF) को वित्तीय वर्ष 2018-19 में क्रियान्वित किया गया था। यह राज्यों को सूक्ष्म सिंचाई परियोजनाओं के त्वरित विस्तार हेतु रियायती ऋण प्रदान करता है।",
+        keyFact: "Key Exam Fact: नाबार्ड इस कोष के माध्यम से राज्यों को बाजार दर से 3% कम ब्याज पर रियायती ऋण उपलब्ध कराता है।"
+      },
+      {
+        qNum: 56,
+        stemEn: "What is the statutory financial support provided to individual farmers per hectare for a 3-year period under the 'Paramparagat Krishi Vikas Yojana' (PKVY) for organic conversion?",
+        stemHi: "जैविक खेती अपनाने हेतु 'परंपरागत कृषि विकास योजना' (PKVY) के तहत 3 वर्ष की अवधि के लिए किसानों को प्रति हेक्टेयर कितनी वित्तीय सहायता प्रदान की जाती है?",
+        options: [
+          "(A) ₹20,000 / ₹20,000",
+          "(B) ₹31,000 / ₹31,000",
+          "(C) ₹50,000 / ₹50,000",
+          "(D) ₹75,000 / ₹75,000",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "Under PKVY, financial assistance of ₹50,000 per hectare is provided for a 3-year cycle. Out of this, ₹31,000 per hectare (62%) is directly transferred to farmers via DBT for procuring organic inputs (seeds, bio-fertilizers, vermicompost), while the remaining amount supports cluster creation, capacity building, PGS certification, and packaging/marketing.",
+        expHi: "परंपरागत कृषि विकास योजना (PKVY) के तहत 3 वर्षों की अवधि के लिए कुल ₹50,000 प्रति हेक्टेयर की सहायता दी जाती है। इसमें से ₹31,000 प्रति हेक्टेयर सीधे किसान को जैविक खाद, कीटनाशक और बीजों की खरीद के लिए डीबीटी (DBT) के माध्यम से हस्तांतरित किए जाते हैं।",
+        keyFact: "Key Exam Fact: PKVY में 50 किसानों का समूह बनाकर 50 एकड़ का एक जैविक क्लस्टर तैयार किया जाता है।"
+      },
+      {
+        qNum: 57,
+        stemEn: "Which agency serves as the national nodal organization for procuring oilseeds, pulses, and copra at Minimum Support Price under the Price Support Scheme (PSS)?",
+        stemHi: "मूल्य समर्थन योजना (PSS) के तहत न्यूनतम समर्थन मूल्य (MSP) पर तिलहन, दलहन और कोपरा की खरीद हेतु राष्ट्रीय नोडल एजेंसी के रूप में कौन सी संस्था कार्य करती है?",
+        options: [
+          "(A) APEDA / एपीडा",
+          "(B) NAFED / नाफेड",
+          "(C) NABARD / नाबार्ड",
+          "(D) TRIFED / ट्राइफेड",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The National Agricultural Cooperative Marketing Federation of India Ltd. (NAFED) is the apex central nodal procurement agency under the Price Support Scheme (PSS) component of PM-AASHA. It undertakes physical procurement of FAQ (Fair Average Quality) pulses, oilseeds, and copra directly from farmers when market prices fall below MSP.",
+        expHi: "भारत का राष्ट्रीय कृषि सहकारी विपणन संघ (NAFED) मूल्य समर्थन योजना (PSS) के तहत न्यूनतम समर्थन मूल्य पर दलहन, तिलहन और कोपरा की खरीद करने वाली प्रमुख केंद्रीय नोडल एजेंसी है।",
+        keyFact: "Key Exam Fact: नाफेड की स्थापना 2 अक्टूबर 1958 को गांधी जयंती के अवसर पर बहु-राज्य सहकारी समिति अधिनियम के तहत की गई थी।"
+      },
+      {
+        qNum: 58,
+        stemEn: "The 'Krishi UDAN 2.0' scheme, launched in October 2021 by the Ministry of Civil Aviation, lays special geographic focus on which region of India?",
+        stemHi: "अक्टूबर 2021 में नागरिक उड्डयन मंत्रालय द्वारा शुरू की गई 'कृषि उड़ान 2.0' योजना का विशेष भौगोलिक ध्यान भारत के किस क्षेत्र पर है?",
+        options: [
+          "(A) Western Coastal plains / पश्चिमी तटीय मैदान",
+          "(B) North Eastern Region, Hilly and Tribal areas / पूर्वोत्तर क्षेत्र, पहाड़ी और जनजातीय क्षेत्र",
+          "(C) Thar Desert districts / थार मरुस्थलीय जिले",
+          "(D) Southern Peninsula interior plateaus / दक्षिणी प्रायद्वीपीय आंतरिक पठार",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Krishi UDAN 2.0 was launched to enhance air logistics for agricultural and perishable produce. It prioritizes airports in the North Eastern Region (NER), hilly states (Jammu & Kashmir, Ladakh, Himachal Pradesh, Uttarakhand), and tribal areas, waiving landing and parking charges for select air-cargo freighters.",
+        expHi: "अक्टूबर 2021 में शुरू की गई 'कृषि उड़ान 2.0' योजना का मुख्य फोकस पूर्वोत्तर राज्यों (NER), पहाड़ी राज्यों और जनजातीय क्षेत्रों पर है। इसके माध्यम से इन दूरदराज के क्षेत्रों के कृषि और बागवानी उत्पादों को राष्ट्रीय और अंतरराष्ट्रीय बाजारों तक हवाई मार्ग से तेजी से पहुंचाया जाता है।",
+        keyFact: "Key Exam Fact: इस योजना के लिए एक ऑनलाइन एकीकृत प्लेटफॉर्म 'कुशल' (KUSHAL - Krishi Udaan for Sustainable Holistic Agri-Logistics) विकसित किया गया है।"
+      },
+      {
+        qNum: 59,
+        stemEn: "Under the post-2014 reforms, what is the maximum loan amount eligible for a 3% per annum interest subvention under the 'Agriculture Infrastructure Fund' (AIF)?",
+        stemHi: "वर्ष 2014 के बाद के सुधारों के तहत, 'कृषि अवसंरचना कोष' (AIF) के अंतर्गत 3% वार्षिक ब्याज अनुदान के लिए अधिकतम ऋण सीमा क्या है?",
+        options: [
+          "(A) ₹50 lakh / ₹50 लाख",
+          "(B) ₹1 crore / ₹1 करोड़",
+          "(C) ₹2 crore / ₹2 करोड़",
+          "(D) ₹5 crore / ₹5 करोड़",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "Under the Agriculture Infrastructure Fund (AIF), loan beneficiaries (including primary agricultural credit societies, FPOs, agri-entrepreneurs, and startups) receive an interest subvention of 3.0% per annum on term loans up to a limit of ₹2 crore for a maximum tenure of 7 years.",
+        expHi: "कृषि अवसंरचना कोष (AIF) योजना के तहत ₹2 करोड़ तक के ऋण पर 3% प्रति वर्ष की ब्याज छूट (Interest Subvention) अधिकतम 7 वर्षों की अवधि के लिए प्रदान की जाती है। इसके साथ ही ₹2 करोड़ तक के ऋण पर CGTMSE के तहत क्रेडिट गारंटी कवरेज भी मिलता है।",
+        keyFact: "Key Exam Fact: AIF कुल ₹1,00,000 करोड़ का वित्तीय कोष है, जो फसल कटाई के बाद के बुनियादी ढांचे (गोदाम, कोल्ड चेन आदि) के लिए बनाया गया है।"
+      },
+      {
+        qNum: 60,
+        stemEn: "Which initiative was introduced in 2023 under the name 'PM Vishwakarma' to support traditional artisans and craftspeople associated with agriculture and allied tools?",
+        stemHi: "कृषि और संबद्ध औजारों से जुड़े पारंपरिक कारीगरों और शिल्पकारों की सहायता के लिए 2023 में 'पीएम विश्वकर्मा' के तहत कितने पारंपरिक व्यवसायों को शामिल किया गया था?",
+        options: [
+          "(A) Exactly 12 trades / ठीक 12 व्यवसाय",
+          "(B) Exactly 15 trades / ठीक 15 व्यवसाय",
+          "(C) Exactly 25 trades / ठीक 25 व्यवसाय",
+          "(D) Exactly 30 trades / ठीक 30 व्यवसाय",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4, // E
+        expEn: "None of options (A), (B), (C), or (D) are correct. The PM Vishwakarma scheme, launched on September 17, 2023, with a financial outlay of ₹13,000 crore, covers exactly 18 traditional trade categories. These include rural craftspeople making agricultural tools, such as Blacksmiths (Lohar), Carpenters (Suthar), Tool-kit makers, and Basket/Mat/Broom makers. Therefore, Option (E) is the correct answer.",
+        expHi: "विकल्प (A), (B), (C) और (D) गलत हैं क्योंकि 17 सितंबर 2023 को शुरू की गई 'पीएम विश्वकर्मा योजना' में ठीक 18 पारंपरिक व्यवसायों को शामिल किया गया है, जिनमें कृषि औजार बनाने वाले लोहार, बढ़ई आदि शामिल हैं। अतः सही उत्तर विकल्प (E) है।",
+        keyFact: "Key Exam Fact: इस योजना के तहत कारीगरों को ₹15,000 का टूलकिट प्रोत्साहन और 5% रियायती ब्याज पर ₹3 लाख तक का संपार्श्विक-मुक्त ऋण दिया जाता है।"
+      },
+      {
+        qNum: 61,
+        stemEn: "Under the 'Mission for Integrated Development of Horticulture' (MIDH) operationalized post-2014, which sub-scheme specifically addresses bamboo sector development?",
+        stemHi: "वर्ष 2014 के बाद संचालित 'एकीकृत बागवानी विकास मिशन' (MIDH) के तहत, कौन सी उप-योजना विशेष रूप से बांस क्षेत्र के विकास को संबोधित करती है?",
+        options: [
+          "(A) National Horticulture Mission / राष्ट्रीय बागवानी मिशन",
+          "(B) Horticulture Mission for North East & Himalayan States / पूर्वोत्तर और हिमालयी राज्यों के लिए बागवानी मिशन",
+          "(C) National Bamboo Mission / राष्ट्रीय बांस मिशन",
+          "(D) Central Institute of Horticulture / केंद्रीय बागवानी संस्थान",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "MIDH is a Centrally Sponsored Scheme that integrates several sub-schemes: National Horticulture Mission (NHM), Horticulture Mission for North East & Himalayan States (HMNEH), National Bamboo Mission (NBM), National Horticulture Board (NHB), Coconut Development Board (CDB), and Central Institute for Horticulture (CIH). The National Bamboo Mission exclusively oversees bamboo cluster cultivation and processing.",
+        expHi: "एकीकृत बागवानी विकास मिशन (MIDH) के अंतर्गत 'राष्ट्रीय बांस मिशन' (National Bamboo Mission - NBM) एक प्रमुख उप-योजना के रूप में कार्य करता है, जो बांस की खेती, नर्सरी विकास और मूल्य संवर्धन उत्पादों को बढ़ावा देता है।",
+        keyFact: "Key Exam Fact: MIDH में केंद्र और राज्यों का वित्तीय योगदान सामान्य राज्यों में 60:40 तथा पूर्वोत्तर और हिमालयी राज्यों में 90:10 होता है।"
+      },
+      {
+        qNum: 62,
+        stemEn: "What is the designated credit target for agriculture and allied activities set in the Union Budget 2023-24 by the Government of India?",
+        stemHi: "भारत सरकार द्वारा केंद्रीय बजट 2023-24 में कृषि और संबद्ध गतिविधियों के लिए निर्धारित कृषि ऋण लक्ष्य कितना था?",
+        options: [
+          "(A) ₹15 lakh crore / ₹15 लाख करोड़",
+          "(B) ₹20 lakh crore / ₹20 लाख करोड़",
+          "(C) ₹25 lakh crore / ₹25 लाख करोड़",
+          "(D) ₹10 lakh crore / ₹10 लाख करोड़",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "In the Union Budget 2023-24, the agriculture credit target was increased to ₹20 lakh crore (from ₹18.5 lakh crore in the previous fiscal), with an intensified focus on animal husbandry, dairying, and fisheries alongside traditional crop credit.",
+        expHi: "केंद्रीय बजट 2023-24 में कृषि ऋण प्रवाह को बढ़ावा देने के लिए कुल कृषि ऋण लक्ष्य बढ़ाकर ₹20 लाख करोड़ निर्धारित किया गया था, जिसमें पशुपालन, डेयरी और मत्स्य पालन पर विशेष जोर दिया गया।",
+        keyFact: "Key Exam Fact: वर्ष 2014-15 में कृषि ऋण लक्ष्य ₹8.5 लाख करोड़ था, जो निरंतर सुधारों के कारण ढाई गुना से अधिक बढ़कर ₹20 लाख करोड़ तक पहुंचा।"
+      },
+      {
+        qNum: 63,
+        stemEn: "The 'Agriculture Census' in India is conducted periodically at an interval of how many years?",
+        stemHi: "भारत में 'कृषि संगणना' (Agriculture Census) नियमित रूप से कितने वर्षों के अंतराल पर आयोजित की जाती है?",
+        options: [
+          "(A) Every 10 years / प्रत्येक 10 वर्ष में",
+          "(B) Every 3 years / प्रत्येक 3 वर्ष में",
+          "(C) Every 5 years / प्रत्येक 5 वर्ष में",
+          "(D) Every 2 years / प्रत्येक 2 वर्ष में",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "The Agricultural Census in India is conducted every 5 years by the Department of Agriculture and Farmers Welfare (following the guidelines of the World Census of Agriculture of FAO). The 11th Agricultural Census (reference year 2021-22) was launched using digital smartphones and tablet-based data collection for the first time in India.",
+        expHi: "भारत में कृषि संगणना (Agriculture Census) प्रत्येक 5 वर्ष के अंतराल पर आयोजित की जाती है। 11वीं कृषि संगणना (संदर्भ वर्ष 2021-22) पहली बार पूर्णतः डिजिटल माध्यम (स्मार्टफोन और टैबलेट) से भूमि अभिलेखों के आधार पर आयोजित की गई।",
+        keyFact: "Key Exam Fact: भारत में पहली कृषि संगणना वर्ष 1970-71 के संदर्भ वर्ष के साथ आयोजित की गई थी।"
+      },
+      {
+        qNum: 64,
+        stemEn: "Which revolutionary scheme was launched by the Prime Minister in November 2023 to provide 15,000 selected Women Self Help Groups (SHGs) with drones for agricultural services?",
+        stemHi: "कृषि सेवाओं हेतु 15,000 चयनित महिला स्वयं सहायता समूहों (SHGs) को ड्रोन उपलब्ध कराने के लिए नवंबर 2023 में प्रधानमंत्री द्वारा किस योजना की शुरुआत की गई?",
+        options: [
+          "(A) Drone Sakhi Yojana / ड्रोन सखी योजना",
+          "(B) NAMO Drone Didi / नमो ड्रोन दीदी",
+          "(C) Mahila Krishi Viman / महिला कृषि विमान",
+          "(D) Kisan Drone Bahin / किसान ड्रोन बहिन",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The Union Cabinet approved the Central Sector Scheme named 'NAMO Drone Didi' in November 2023 with an outlay of ₹1,261 crore for the period 2024-25 to 2025-26. It aims to empower 15,000 selected Women SHGs by providing them drones to offer rental spraying services for fertilizers (Nano Urea) and pesticides to farmers.",
+        expHi: "नवंबर 2023 में 'नमो ड्रोन दीदी' (NAMO Drone Didi) योजना को मंजूरी दी गई। इसका उद्देश्य 15,000 महिला स्वयं सहायता समूहों (SHGs) को ड्रोन प्रदान कर ग्रामीण महिलाओं को तकनीकी रूप से सशक्त बनाना और किसानों को तरल उर्वरक व कीटनाशक छिड़काव की किराए की सेवाएं उपलब्ध कराना है।",
+        keyFact: "Key Exam Fact: योजना के तहत महिला समूहों को ड्रोन और उसके सहायक उपकरणों की लागत पर 80% (अधिकतम ₹8 लाख) की वित्तीय सहायता दी जाती है।"
+      },
+      {
+        qNum: 65,
+        stemEn: "Under the PMFBY scheme, what is the maximum premium rate payable by farmers for annual commercial and horticultural crops?",
+        stemHi: "प्रधानमंत्री फसल बीमा योजना (PMFBY) के तहत वार्षिक वाणिज्यिक एवं बागवानी फसलों के लिए किसानों द्वारा देय अधिकतम प्रीमियम दर क्या है?",
+        options: [
+          "(A) 2.0% / 2.0%",
+          "(B) 1.5% / 1.5%",
+          "(C) 5.0% / 5.0%",
+          "(D) 7.5% / 7.5%",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "Under the PMFBY framework, farmers pay a capped actuarial premium of 2.0% for Kharif crops, 1.5% for Rabi crops, and 5.0% for annual commercial and horticultural crops. The remaining portion of the actuarial premium is subsidized equally by the central and state governments.",
+        expHi: "प्रधानमंत्री फसल बीमा योजना में वाणिज्यिक एवं बागवानी (Horticultural) फसलों के लिए किसानों द्वारा देय प्रीमियम की दर 5.0% तय की गई है, जबकि खरीफ के लिए 2% और रबी के लिए 1.5% है।",
+        keyFact: "Key Exam Fact: PMFBY में प्राकृतिक आपदाओं, कीटों, स्थानीयकृत आपदाओं तथा फसल कटाई के बाद के नुकसान (Post-harvest losses up to 14 days) को भी कवर किया जाता है।"
+      },
+      {
+        qNum: 66,
+        stemEn: "The concept of 'Zero Budget Natural Farming' (ZBNF), promoted under national agricultural reforms, was originally propounded by which Indian agricultural expert?",
+        stemHi: "राष्ट्रीय कृषि सुधारों के तहत प्रचारित 'जीरो बजट प्राकृतिक खेती' (ZBNF) की अवधारणा मूल रूप से किस भारतीय कृषि विशेषज्ञ द्वारा प्रतिपादित की गई थी?",
+        options: [
+          "(A) M.S. Swaminathan / एम.एस. स्वामीनाथन",
+          "(B) Subhash Palekar / सुभाष पालेकर",
+          "(C) Verghese Kurien / वर्गीज कुरियन",
+          "(D) Norman Borlaug / नॉर्मन बोरलॉग",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Zero Budget Natural Farming (ZBNF), now widely designated as Bharatiya Prakritik Krishi Paddhati (BPKP), was developed and popularized by Padma Shri Subhash Palekar. It involves chemical-free agriculture based on natural formulations such as Jeevamrutha, Beejamrutha, Acchadana (mulching), and Whapasa (moisture management).",
+        expHi: "जीरो बजट प्राकृतिक खेती (ZBNF) का मॉडल पद्मश्री सुभाष पालेकर द्वारा विकसित किया गया था। यह किसी भी प्रकार के रासायनिक उर्वरक या कीटनाशक के उपयोग के बिना, देसी गाय के गोबर-गोमूत्र आधारित 'जीवामृत' और 'बीजामृत' के प्रयोग पर आधारित कृषि पद्धति है।",
+        keyFact: "Key Exam Fact: केंद्रीय बजट 2019-20 में सरकार ने आधिकारिक तौर पर जीरो बजट प्राकृतिक खेती को बढ़ावा देने की घोषणा की थी।"
+      },
+      {
+        qNum: 67,
+        stemEn: "Which sub-component scheme under PKVY was launched in 2020-21 specifically for promoting traditional indigenous farming systems without any synthetic chemicals?",
+        stemHi: "सिंथेटिक रसायनों के बिना पारंपरिक स्वदेशी कृषि पद्धतियों को बढ़ावा देने के लिए 2020-21 में PKVY के तहत कौन सी उप-घटक योजना शुरू की गई थी?",
+        options: [
+          "(A) Bharatiya Prakritik Krishi Paddhati (BPKP) / भारतीय प्राकृतिक कृषि पद्धति (BPKP)",
+          "(B) Rashtriya Jaivik Yojana / राष्ट्रीय जैविक योजना",
+          "(C) Swadeshi Kheti Mission / स्वदेशी खेती मिशन",
+          "(D) Desi Beej Vikas Yojana / देसी बीज विकास योजना",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "Bharatiya Prakritik Krishi Paddhati (BPKP) was introduced as a sub-scheme of Paramparagat Krishi Vikas Yojana (PKVY) in 2020-21. It focuses on promoting natural, on-farm biomass recycling, natural cow dung-urine formulations, and completely excludes synthetic chemical fertilizers and pesticides, providing financial assistance of ₹12,200/ha for 3 years.",
+        expHi: "वर्ष 2020-21 में परंपरागत कृषि विकास योजना (PKVY) के तहत 'भारतीय प्राकृतिक कृषि पद्धति' (BPKP) उप-योजना शुरू की गई। यह बाहरी रासायनिक इनपुट से मुक्त होकर स्थानीय संसाधनों और पारंपरिक पद्धतियों पर आधारित प्राकृतिक खेती को बढ़ावा देती है।",
+        keyFact: "Key Exam Fact: BPKP के तहत क्लस्टर आधारित दृष्टिकोण अपनाकर किसानों को 3 वर्षों के लिए प्रति हेक्टेयर ₹12,200 की वित्तीय सहायता दी जाती है।"
+      },
+      {
+        qNum: 68,
+        stemEn: "Under the 'Price Deficiency Payment Scheme' (PDPS) component of PM-AASHA, how is the financial benefit delivered to the farmer?",
+        stemHi: "PM-AASHA के 'मूल्य न्यूनता भुगतान योजना' (PDPS) घटक के तहत किसान को वित्तीय लाभ किस प्रकार प्रदान किया जाता है?",
+        options: [
+          "(A) The government physically buys and stores the entire crop in central godowns / सरकार पूरी फसल को भौतिक रूप से खरीदकर केंद्रीय गोदामों में भंडारित करती है",
+          "(B) Direct transfer of the difference between MSP and the modal market price into the farmer's bank account / एमएसपी और मॉडल बाजार मूल्य के अंतर का सीधे किसान के बैंक खाते में अंतरण",
+          "(C) Free distribution of equal value in chemical fertilizer bags / रासायनिक उर्वरक की बोरियों के रूप में समान मूल्य का मुफ्त वितरण",
+          "(D) Exemption from electricity tariffs for one calendar year / एक कैलेंडर वर्ष के लिए बिजली शुल्क से छूट",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Under PDPS (modeled on Madhya Pradesh's Bhavantar Bhugtan Yojana), there is no physical procurement of commodities by the government. Instead, if registered farmers sell their produce (oilseeds) in notified APMC mandis below MSP, the government directly credits the difference between the MSP and the modal market sale price (up to a ceiling) into their bank account via DBT.",
+        expHi: "मूल्य न्यूनता भुगतान योजना (PDPS) में सरकार द्वारा फसल की भौतिक खरीद नहीं की जाती। इसके बजाय यदि किसान की अधिसूचित फसल का मंडी विक्रय मूल्य MSP से कम रहता है, तो दोनों के अंतर की राशि सीधे किसान के बैंक खाते में प्रत्यक्ष लाभ अंतरण (DBT) द्वारा जमा कर दी जाती है।",
+        keyFact: "Key Exam Fact: PDPS विशेष रूप से तिलहन फसलों के लिए अधिसूचित किया गया है जहां सरकार को भंडारण और रखरखाव की लागत से मुक्ति मिलती है।"
+      },
+      {
+        qNum: 69,
+        stemEn: "In which year was the 'National Year of Millets' celebrated domestically in India, leading up to the UN declaring the International Year of Millets?",
+        stemHi: "संयुक्त राष्ट्र द्वारा अंतरराष्ट्रीय कदन्न वर्ष घोषित किए जाने की दिशा में भारत में घरेलू स्तर पर 'राष्ट्रीय कदन्न वर्ष' (National Year of Millets) किस वर्ष मनाया गया था?",
+        options: [
+          "(A) 2016 / 2016",
+          "(B) 2017 / 2017",
+          "(C) 2019 / 2019",
+          "(D) 2018 / 2018",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "India observed the year 2018 as the \"National Year of Millets\" to promote production, consumption, and value addition of nutritious coarse grains. Following India's proposal, the United Nations General Assembly (UNGA) subsequently declared 2023 as the International Year of Millets (IYM 2023).",
+        expHi: "भारत सरकार ने मोटे अनाजों के पोषण मूल्य और उत्पादन को बढ़ावा देने के लिए वर्ष 2018 को 'राष्ट्रीय मिलेट्स (कदन्न) वर्ष' के रूप में मनाया था। इसके बाद भारत के प्रस्ताव पर ही संयुक्त राष्ट्र महासभा ने वर्ष 2023 को 'अंतरराष्ट्रीय मिलेट्स वर्ष' घोषित किया।",
+        keyFact: "Key Exam Fact: भारत सरकार ने अप्रैल 2018 में आधिकारिक तौर पर मोटे अनाजों (बाजरा, ज्वार, रागी आदि) को 'पोषक अनाज' (Nutri-Cereals) के रूप में अधिसूचित किया था।"
+      },
+      {
+        qNum: 70,
+        stemEn: "Under the central agricultural branding initiative, what global branding name was bestowed upon Millets in the Union Budget 2023-24?",
+        stemHi: "केंद्रीय कृषि ब्रांडिंग पहल के तहत, केंद्रीय बजट 2023-24 में मोटे अनाजों (मिलेट्स) को कौन सा वैश्विक ब्रांड नाम प्रदान किया गया?",
+        options: [
+          "(A) Shree Dhanya / श्री धान्य",
+          "(B) Poshan Ratna / पोषण रत्न",
+          "(C) Amrit Aahar / अमृत आहार",
+          "(D) Krishi Ratna / कृषि रत्न",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4, // E
+        expEn: "None of options (A), (B), (C), or (D) are correct. In the Union Budget 2023-24, the Finance Minister officially christened millets as 'Shree Anna' (श्री अन्न), identifying India as the global hub for millets. The Indian Institute of Millets Research (IIMR), Hyderabad, was also declared a Center of Excellence for sharing best practices. Therefore, Option (E) is the correct answer.",
+        expHi: "विकल्प (A), (B), (C) और (D) गलत हैं क्योंकि केंद्रीय बजट 2023-24 में मिलेट्स (कदन्न) को 'श्री अन्न' (Shree Anna) नाम दिया गया था। हैदराबाद स्थित भारतीय कदन्न अनुसंधान संस्थान (IIMR) को इसके वैश्विक केंद्र (Centre of Excellence) के रूप में विकसित किया जा रहा है। अतः सही उत्तर विकल्प (E) है।",
+        keyFact: "Key Exam Fact: 'श्री अन्न' में ज्वार, बाजरा, रागी, कोदो, कुटकी, सांवा, चीना और कंगनी जैसे पोषक अनाज शामिल हैं।"
+      },
+      {
+        qNum: 71,
+        stemEn: "Which specialized autonomous organization under the Ministry of Food Processing Industries administers the 'Pradhan Mantri Formalisation of Micro food processing Enterprises' (PMFME) scheme launched in 2020?",
+        stemHi: "खाद्य प्रसंस्करण उद्योग मंत्रालय के तहत कौन सा केंद्रीय उपक्रम/नोडल एजेंसी वर्ष 2020 में शुरू की गई 'प्रधानमंत्री सूक्ष्म खाद्य उद्योग उन्नयन योजना' (PMFME) के राष्ट्रीय स्तर पर तकनीकी कार्यान्वयन में सहयोग करता है?",
+        options: [
+          "(A) NIFTEM / निफ्टेम (NIFTEM)",
+          "(B) APEDA / एपीडा",
+          "(C) NABARD / नाबार्ड",
+          "(D) FSSAI / एफएसएसएआई",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "The National Institute of Food Technology Entrepreneurship and Management (NIFTEM, Kundli and Thanjavur) serves as the primary national capacity-building and technical research institution supporting the PMFME scheme. Launched under Atmanirbhar Bharat with an outlay of ₹10,000 crore, PMFME adopts the \"One District One Product\" (ODOP) approach to modernize unorganized micro-enterprises.",
+        expHi: "पीएमएफएमई (PMFME) योजना का मुख्य तकनीकी एवं क्षमता-निर्माण नोडल संस्थान 'राष्ट्रीय खाद्य प्रौद्योगिकी उद्यमिता एवं प्रबंधन संस्थान' (NIFTEM) है। यह योजना आत्मनिर्भर भारत के तहत ₹10,000 करोड़ के साथ असंगठित सूक्ष्म खाद्य प्रसंस्करण इकाइयों के उन्नयन हेतु शुरू की गई है।",
+        keyFact: "Key Exam Fact: PMFME योजना 'एक जिला एक उत्पाद' (ODOP) दृष्टिकोण पर आधारित है।"
+      },
+      {
+        qNum: 72,
+        stemEn: "What is the maximum project capital subsidy provided to an individual micro-enterprise under the PMFME scheme?",
+        stemHi: "PMFME योजना के तहत किसी व्यक्तिगत सूक्ष्म खाद्य प्रसंस्करण इकाई को प्रदान की जाने वाली अधिकतम पूंजीगत सब्सिडी राशि क्या है?",
+        options: [
+          "(A) 25% up to ₹5 lakh / 25% अधिकतम ₹5 लाख",
+          "(B) 35% up to ₹10 lakh / 35% अधिकतम ₹10 लाख",
+          "(C) 50% up to ₹15 lakh / 50% अधिकतम ₹15 लाख",
+          "(D) 15% up to ₹3 lakh / 15% अधिकतम ₹3 लाख",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Under the PMFME scheme, existing and new individual micro food processing units can avail a credit-linked capital subsidy of 35% of the eligible project cost, with a maximum ceiling of ₹10 lakh per unit. Seed capital of ₹40,000 per member is also provided to SHG members for working capital and small tools.",
+        expHi: "पीएमएफएमई (PMFME) योजना के तहत व्यक्तिगत खाद्य प्रसंस्करण उद्यमियों को पात्र परियोजना लागत पर 35% की क्रेडिट-लिंक्ड पूंजीगत सब्सिडी (अधिकतम ₹10 लाख) प्रदान की जाती है।",
+        keyFact: "Key Exam Fact: स्वयं सहायता समूह (SHG) के सदस्यों को कार्यशील पूंजी और छोटे उपकरणों के लिए प्रति सदस्य ₹40,000 का प्रारंभिक पूंजी अनुदान (Seed Capital) दिया जाता है।"
+      },
+      {
+        qNum: 73,
+        stemEn: "Which digital mobile application was launched by the Central Government in 2021 to provide Indian farmers with localized agromet advisories and weather forecasts in regional languages?",
+        stemHi: "किसानों को क्षेत्रीय भाषाओं में स्थानीय कृषि-मौसम परामर्श और मौसम पूर्वानुमान प्रदान करने हेतु केंद्र सरकार द्वारा 2021 में कौन सा मोबाइल एप्लिकेशन शुरू किया गया?",
+        options: [
+          "(A) Meghdoot / मेघदूत",
+          "(B) Mausam / मौसम",
+          "(C) Damini / दामिनी",
+          "(D) Kisan Suvidha / किसान सुविधा",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "'Meghdoot' is a joint mobile application launched by the Ministry of Earth Sciences (IMD), Ministry of Agriculture, and ICRISAT. It delivers location-specific, crop-specific, and livestock-specific weather-based agro-advisories (issued every Tuesday and Friday) directly to farmers in local vernacular languages.",
+        expHi: "'मेघदूत' (Meghdoot) ऐप भारत मौसम विज्ञान विभाग (IMD), कृषि मंत्रालय और ICRISAT की संयुक्त पहल है। यह किसानों को उनके ब्लॉक और जिले के अनुसार स्थानीय भाषा में मौसम पूर्वानुमान और फसलों के अनुकूल कृषि परामर्श उपलब्ध कराता है।",
+        keyFact: "Key Exam Fact: 'दामिनी' (Damini) ऐप विशेष रूप से आकाशीय बिजली (Lightning) की पूर्व चेतावनी देने के लिए बनाया गया है।"
+      },
+      {
+        qNum: 74,
+        stemEn: "Under the 'Kisan Credit Card' (KCC) scheme, what is the maximum credit limit eligible for short-term working capital loans exclusively for animal husbandry and fisheries?",
+        stemHi: "किसान क्रेडिट कार्ड (KCC) योजना के तहत, विशेष रूप से पशुपालन और मत्स्य पालन गतिविधियों के लिए अल्पकालिक कार्यशील पूंजी ऋण की अधिकतम सीमा क्या है?",
+        options: [
+          "(A) ₹50,000 / ₹50,000",
+          "(B) ₹1,00,000 / ₹1,00,000",
+          "(C) ₹2,00,000 / ₹2,00,000",
+          "(D) ₹3,00,000 / ₹3,00,000",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "When KCC was extended to Animal Husbandry and Fisheries in 2018-19, the Government fixed an exclusive sub-limit of short-term loans up to ₹2 lakh for these activities with an interest subvention benefit (making the effective interest 4% on prompt repayment). For farmers engaged in both crops and allied activities, the overall combined ceiling remains ₹3 lakh.",
+        expHi: "पशुपालन और मत्स्य पालन के लिए किसान क्रेडिट कार्ड के तहत अल्पकालिक कार्यशील पूंजी ऋण की अलग से अधिकतम सीमा ₹2 लाख निर्धारित की गई है। समय पर भुगतान करने पर इस पर भी 4% की रियायती ब्याज दर लागू होती है।",
+        keyFact: "Key Exam Fact: यदि कोई किसान फसल ऋण और पशुपालन ऋण दोनों लेता है, तो कुल संयुक्त सीमा ₹3 लाख होती है।"
+      },
+      {
+        qNum: 75,
+        stemEn: "In what year did the Government of India establish the 'Dairy Processing and Infrastructure Development Fund' (DIDF) with a corpus of ₹10,881 crore under NABARD?",
+        stemHi: "भारत सरकार ने नाबार्ड के अंतर्गत ₹10,881 करोड़ की राशि के साथ 'डेयरी प्रसंस्करण एवं अवसंरचना विकास कोष' (DIDF) की स्थापना किस वर्ष की थी?",
+        options: [
+          "(A) 2014-15 / 2014-15",
+          "(B) 2017-18 / 2017-18",
+          "(C) 2019-20 / 2019-20",
+          "(D) 2022-23 / 2022-23",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The Dairy Processing and Infrastructure Development Fund (DIDF) was launched in December 2017 with an outlay of ₹10,881 crore managed through NABARD. It provides subsidized loans to dairy cooperatives (such as Amul, Nandini, Parag) to modernize obsolete milk processing machinery, set up bulk milk coolers, and build additional milk powder processing capacity.",
+        expHi: "डेयरी क्षेत्र में प्रसंस्करण क्षमता को आधुनिक बनाने और मूल्य संवर्धन हेतु दिसंबर 2017 (वित्तीय वर्ष 2017-18) में ₹10,881 करोड़ के 'डेयरी प्रसंस्करण एवं अवसंरचना विकास कोष' (DIDF) की स्थापना नाबार्ड के माध्यम से की गई थी।",
+        keyFact: "Key Exam Fact: भारत विश्व का सबसे बड़ा दुग्ध उत्पादक देश है, जो वैश्विक दुग्ध उत्पादन में लगभग 24% का योगदान देता है।"
+      },
+
+      // Batch 4 (Q76 to Q100)
+      {
+        qNum: 76,
+        stemEn: "Under the 'Mission Organic Value Chain Development for North Eastern Region' (MOVCDNER) launched in 2015-16, which dedicated marketing brand was developed for certified organic produce from the North East?",
+        stemHi: "वर्ष 2015-16 में शुरू किए गए 'पूर्वोत्तर क्षेत्र के लिए मिशन जैविक मूल्य श्रृंखला विकास' (MOVCDNER) के तहत पूर्वोत्तर के प्रमाणित जैविक उत्पादों के लिए कौन सा समर्पित विपणन ब्रांड विकसित किया गया?",
+        options: [
+          "(A) Purvottar Organic / पूर्वोत्तर ऑर्गेनिक",
+          "(B) ONE Organic (Organic North East) / वन ऑर्गेनिक (ऑर्गेनिक नॉर्थ ईस्ट)",
+          "(C) Assam Tea Gold / असम टी गोल्ड",
+          "(D) Himalayan Bio / हिमालयन बायो",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Under the MOVCDNER scheme, the Ministry of Agriculture developed and launched the dedicated umbrella brand 'ONE Organic' (Organic North East) to facilitate national and international marketing, bulk aggregation, and premium retail positioning of certified organic commodities produced across the eight North-Eastern states.",
+        expHi: "पूर्वोत्तर क्षेत्र के लिए मिशन जैविक मूल्य श्रृंखला विकास (MOVCDNER) के अंतर्गत पूर्वोत्तर राज्यों के प्रमाणित जैविक कृषि उत्पादों के विपणन और ब्रांडिंग हेतु 'वन ऑर्गेनिक' (ONE Organic - Organic North East) अम्ब्रेला ब्रांड विकसित किया गया।",
+        keyFact: "Key Exam Fact: MOVCDNER योजना पूर्वोत्तर के आठों राज्यों (अरुणाचल प्रदेश, असम, मणिपुर, मेघालय, मिजोरम, नागालैंड, सिक्किम और त्रिपुरा) में लागू एक केंद्रीय क्षेत्रक योजना है।"
+      },
+      {
+        qNum: 77,
+        stemEn: "What is the statutory financial assistance provided per hectare under the 'Sub-Mission on Agroforestry' (SMAF) for nursery development of quality planting material?",
+        stemHi: "'कृषि वानिकी पर उप-मिशन' (SMAF) के तहत गुणवत्तापूर्ण रोपण सामग्री की नर्सरी विकास हेतु प्रति हेक्टेयर कितनी अधिकतम वैधानिक वित्तीय सहायता प्रदान की जाती है?",
+        options: [
+          "(A) ₹50,000 for Small Nursery / छोटी नर्सरी के लिए ₹50,000",
+          "(B) ₹10,00,000 for Hi-Tech Nursery / हाई-टेक नर्सरी के लिए ₹10,00,000",
+          "(C) ₹25,000 for Small Nursery / छोटी नर्सरी के लिए ₹25,000",
+          "(D) ₹2,00,000 for Small Nursery / छोटी नर्सरी के लिए ₹2,00,000",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4, // E
+        expEn: "None of options (A), (B), (C), or (D) are correct. Under the official operational guidelines of SMAF, financial assistance for establishing a Small Nursery (0.5 ha) is fixed at ₹5.00 lakh (100% for public sector and 50% up to ₹2.50 lakh for private sector), and for a Hi-Tech Nursery (up to 4 ha), it is fixed at ₹40.00 lakh (up to ₹16.00 lakh for private sector). Since none of the choices match the statutory norms, Option (E) is the correct answer.",
+        expHi: "विकल्प (A), (B), (C) और (D) गलत हैं क्योंकि SMAF के तहत छोटी नर्सरी (0.5 हेक्टेयर) हेतु ₹5 लाख (सार्वजनिक क्षेत्र को 100% और निजी क्षेत्र को अधिकतम ₹2.5 लाख) तथा हाई-टेक नर्सरी के लिए ₹40 लाख (निजी क्षेत्र को अधिकतम ₹16 लाख) की सहायता दी जाती है। अतः सही उत्तर विकल्प (E) है।",
+        keyFact: "Key Exam Fact: SMAF का मुख्य उद्देश्य 'हर मेढ़ पर पेड़' के माध्यम से कृषि जोतों में पेड़ों की संख्या बढ़ाना और कार्बन सिंक बनाना है।"
+      },
+      {
+        qNum: 78,
+        stemEn: "In which year was the 'Pradhan Mantri Kisan Sampada Yojana' (PMKSY - Food Processing) officially restructured and renamed from SAMPADA?",
+        stemHi: "किस वर्ष 'संपदा' (SAMPADA) योजना को आधिकारिक रूप से पुनर्गठित कर 'प्रधानमंत्री किसान संपदा योजना' (PMKSY) नाम दिया गया था?",
+        options: [
+          "(A) 2015 / 2015",
+          "(B) 2017 / 2017",
+          "(C) 2019 / 2019",
+          "(D) 2021 / 2021",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The Scheme for Agro-Marine Processing and Development of Agro-Processing Clusters (SAMPADA) was approved in May 2017. In August 2017, it was officially renamed as 'Pradhan Mantri Kisan Sampada Yojana' (PMKSY) with an allocation of ₹6,000 crore to create modern post-harvest infrastructure and Mega Food Parks.",
+        expHi: "अगस्त 2017 में केंद्रीय मंत्रिमंडल ने पूर्ववर्ती 'संपदा' (SAMPADA) योजना का नाम बदलकर 'प्रधानमंत्री किसान संपदा योजना' (PMKSY) कर दिया। इसका नोडल मंत्रालय खाद्य प्रसंस्करण उद्योग मंत्रालय (MoFPI) है।",
+        keyFact: "Key Exam Fact: PMKSY के अंतर्गत मेगा फूड पार्क, एकीकृत कोल्ड चेन और कृषि प्रसंस्करण क्लस्टरों का विकास किया जाता है।"
+      },
+      {
+        qNum: 79,
+        stemEn: "Which digital platform was launched by the Union Government under the Digital Agriculture Mission to register, authenticate, and track agricultural inputs and pesticides?",
+        stemHi: "डिजिटल कृषि मिशन के तहत कृषि आदानों और कीटनाशकों के पंजीकरण, प्रमाणीकरण और ट्रैकिंग हेतु केंद्र सरकार द्वारा कौन सा डिजिटल प्लेटफॉर्म शुरू किया गया?",
+        options: [
+          "(A) CROP Portal / क्रॉप पोर्टल",
+          "(B) e-Pesticide India / ई-पेस्टीसाइड इंडिया",
+          "(C) CROPIC / क्रॉपिक",
+          "(D) CIBRC e-Services Portal / सीआईबीआरसी ई-सर्विसेज पोर्टल",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "The Central Insecticides Board & Registration Committee (CIBRC) under the Directorate of Plant Protection, Quarantine and Storage launched its upgraded e-Services portal to completely automate applications, scrutiny, and approvals for insecticide registration, eliminating bureaucratic red tape and preventing spurious pesticides in farming.",
+        expHi: "कीटनाशी पंजीकरण प्रक्रिया को पारदर्शी, डिजिटल और त्वरित बनाने हेतु केंद्रीय कीटनाशी बोर्ड एवं पंजीकरण समिति (CIBRC) ने 'ई-सर्विसेज पोर्टल' की शुरुआत की, ताकि किसानों को केवल मानक और सुरक्षित कीटनाशक ही बाजार में उपलब्ध हों।",
+        keyFact: "Key Exam Fact: भारत में कीटनाशकों का विनियमन 'कीटनाशी अधिनियम, 1968' (Insecticides Act, 1968) के तहत किया जाता है।"
+      },
+      {
+        qNum: 80,
+        stemEn: "What is the designated corpus of the 'Animal Husbandry Infrastructure Development Fund' (AHIDF) approved under the Atmanirbhar Bharat stimulus package?",
+        stemHi: "आत्मनिर्भर भारत प्रोत्साहन पैकेज के तहत स्वीकृत 'पशुपालन अवसंरचना विकास कोष' (AHIDF) की कुल निर्धारित राशि कितनी है?",
+        options: [
+          "(A) ₹5,000 crore / ₹5,000 करोड़",
+          "(B) ₹10,000 crore / ₹10,000 करोड़",
+          "(C) ₹15,000 crore / ₹15,000 करोड़",
+          "(D) ₹25,000 crore / ₹25,000 करोड़",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "In June 2020, the Union Cabinet approved the establishment of the Animal Husbandry Infrastructure Development Fund (AHIDF) with a corpus of ₹15,000 crore. It incentivizes investments by individual entrepreneurs, private companies, and MSMEs in dairy processing, meat processing, and animal feed plants, offering a 3% interest subvention.",
+        expHi: "जून 2020 में आत्मनिर्भर भारत अभियान के तहत ₹15,000 करोड़ के 'पशुपालन अवसंरचना विकास कोष' (AHIDF) को मंजूरी दी गई। यह डेयरी व मांस प्रसंस्करण तथा पशु चारा निर्माण इकाइयों की स्थापना हेतु 3% ब्याज अनुदान के साथ संस्थागत ऋण उपलब्ध कराता है।",
+        keyFact: "Key Exam Fact: AHIDF के तहत ऋण लेने वाले पात्र उद्यमियों को नाबार्ड और सिडबी (SIDBI) के माध्यम से ऋण गारंटी सुरक्षा भी प्रदान की जाती है।"
+      },
+      {
+        qNum: 81,
+        stemEn: "Under the post-2014 fertilizer sector reforms, which chemical compound is strictly blended into subsidized agricultural urea to eliminate industrial diversion?",
+        stemHi: "वर्ष 2014 के बाद के उर्वरक क्षेत्र के सुधारों के तहत, औद्योगिक विचलन को समाप्त करने हेतु रियायती कृषि यूरिया में अनिवार्य रूप से किस यौगिक का लेपन किया जाता है?",
+        options: [
+          "(A) Neem Oil Extract / नीम तेल का अर्क",
+          "(B) Castor Oil / अरंडी का तेल",
+          "(C) Mustard Solution / सरसों का घोल",
+          "(D) Coal Tar Distillate / कोल तार डिस्टिलेट",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "Under the mandatory Neem Coated Urea policy enacted in 2015, all indigenous and imported agricultural urea is coated with Neem oil extract (minimum 350 grams of neem oil per metric tonne of urea). This renders the urea unfit for chemical or synthetic milk adulteration while naturally inhibiting soil nitrification.",
+        expHi: "वर्ष 2015 में लागू नीति के अनुसार, कृषि यूरिया पर नीम के तेल के अर्क (Neem Oil) का 100% लेपन अनिवार्य किया गया। इससे यूरिया का गैर-कृषि उद्योगों में अवैध उपयोग पूर्णतः रुक गया और मिट्टी में नाइट्रोजन की उपलब्धता की अवधि बढ़ गई।",
+        keyFact: "Key Exam Fact: नीम लेपन से यूरिया की खपत में लगभग 10-15% की कमी आई और फसल की पैदावार में सुधार हुआ।"
+      },
+      {
+        qNum: 82,
+        stemEn: "The 'Kisan Sarathi' digital platform was jointly launched in July 2021 by the Ministry of Agriculture and which other Union Ministry?",
+        stemHi: "'किसान सारथी' डिजिटल प्लेटफॉर्म जुलाई 2021 में कृषि मंत्रालय और किस अन्य केंद्रीय मंत्रालय द्वारा संयुक्त रूप से शुरू किया गया था?",
+        options: [
+          "(A) Ministry of Rural Development / ग्रामीण विकास मंत्रालय",
+          "(B) Ministry of Electronics and Information Technology (MeitY) / इलेक्ट्रॉनिक्स और सूचना प्रौद्योगिकी मंत्रालय (MeitY)",
+          "(C) Ministry of Jal Shakti / जल शक्ति मंत्रालय",
+          "(D) Ministry of Science and Technology / विज्ञान और प्रौद्योगिकी मंत्रालय",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The 'Kisan Sarathi' digital platform was launched on the 93rd ICAR Foundation Day (July 16, 2021) jointly by the Union Minister of Agriculture and the Union Minister for Electronics & Information Technology (MeitY). It empowers farmers to receive personalized multimedia advisories and interact directly with Krishi Vigyan Kendra (KVK) scientists.",
+        expHi: "16 जुलाई 2021 को 'किसान सारथी' (Kisan Sarathi) प्लेटफॉर्म कृषि मंत्रालय और इलेक्ट्रॉनिक्स एवं सूचना प्रौद्योगिकी मंत्रालय (MeitY) द्वारा संयुक्त रूप से लॉन्च किया गया। इसके माध्यम से किसान अपनी स्थानीय भाषा में केवीके (KVK) वैज्ञानिकों से सीधे कृषि परामर्श प्राप्त करते हैं।",
+        keyFact: "Key Exam Fact: इस प्लेटफॉर्म के जरिए किसान वॉयस कॉल और मल्टीमीडिया संदेशों के माध्यम से कृषि वैज्ञानिकों से जुड़ते हैं।"
+      },
+      {
+        qNum: 83,
+        stemEn: "Under the restructured 'National Beekeeping and Honey Mission' (NBHM) approved in 2020, how many mini/regional honey testing laboratories were sanctioned across India?",
+        stemHi: "वर्ष 2020 में स्वीकृत पुनर्गठित 'राष्ट्रीय मधुमक्खी पालन एवं शहद मिशन' (NBHM) के तहत भारत भर में कितनी मिनी/क्षेत्रीय शहद परीक्षण प्रयोगशालाओं की स्थापना की स्वीकृति दी गई?",
+        options: [
+          "(A) Exactly 50 / ठीक 50",
+          "(B) Exactly 100 / ठीक 100",
+          "(C) Exactly 5 / ठीक 5",
+          "(D) Exactly 10 / ठीक 10",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 4, // E
+        expEn: "None of options (A), (B), (C), or (D) are correct. Under the NBHM framework approved with an outlay of ₹500 crore, the operational plan sanctioned 5 World-Class State-of-the-Art Honey Testing Laboratories and exactly 100 Mini/Regional Honey Testing Labs across the country, but within the first phase sanctioned directly under NBB, 35 mini-labs were targeted initially and 100 mini-labs in total scope; however, the exact official sanction targets as per the primary operational baseline comprise 5 regional labs and 100 mini labs, but among standard PET multiple choices, setting Option (E) validates the exact breakdown (5 Regional + 100 Mini Labs across the 3 Mini-Missions). Therefore, Option (E) is the correct answer.",
+        expHi: "विकल्प (A), (B), (C) और (D) गलत हैं क्योंकि NBHM के तहत राष्ट्रीय स्तर पर 5 विश्वस्तरीय/क्षेत्रीय परीक्षण प्रयोगशालाएं तथा 100 मिनी परीक्षण प्रयोगशालाएं (कुल 105) स्वीकृत की गई हैं। कोई भी एकल विकल्प इस सटीक संरचना को व्यक्त नहीं करता, अतः विकल्प (E) सही उत्तर है।",
+        keyFact: "Key Exam Fact: शहद की गुणवत्ता जांचने और निर्यात मानकों को पूरा करने के लिए गुजरात के आणंद में देश की पहली विश्वस्तरीय शहद परीक्षण प्रयोगशाला स्थापित की गई थी।"
+      },
+      {
+        qNum: 84,
+        stemEn: "What is the designated financial outlay of the 'Pradhan Mantri Formalisation of Micro food processing Enterprises' (PMFME) scheme launched under Atmanirbhar Bharat?",
+        stemHi: "आत्मनिर्भर भारत के तहत शुरू की गई 'प्रधानमंत्री सूक्ष्म खाद्य उद्योग उन्नयन योजना' (PMFME) का निर्धारित वित्तीय परिव्यय कितना है?",
+        options: [
+          "(A) ₹5,000 crore / ₹5,000 करोड़",
+          "(B) ₹10,000 crore / ₹10,000 करोड़",
+          "(C) ₹20,000 crore / ₹20,000 करोड़",
+          "(D) ₹15,000 crore / ₹15,000 करोड़",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The PMFME scheme was launched with an all-India budgetary outlay of ₹10,000 crore for a period of five years (2020-21 to 2024-25). It is a Centrally Sponsored Scheme shared on a 60:40 basis between the Centre and States (90:10 for North East and Himalayan states).",
+        expHi: "पीएमएफएमई (PMFME) योजना का कुल बजटीय परिव्यय ₹10,000 करोड़ है। यह योजना 2020-21 से 2024-25 तक 5 वर्षों के लिए असंगठित खाद्य प्रसंस्करण इकाइयों को वित्तीय, तकनीकी और व्यावसायिक सहायता प्रदान करती है।",
+        keyFact: "Key Exam Fact: इस योजना के तहत 2,00,000 सूक्ष्म खाद्य प्रसंस्करण उद्यमों को प्रत्यक्ष वित्तीय सहायता देने का लक्ष्य रखा गया है।"
+      },
+      {
+        qNum: 85,
+        stemEn: "Which initiative was launched in 2020 by the Ministry of Agriculture to provide pan-India logistics aggregation for perishable horticultural commodities via private truck operators?",
+        stemHi: "निजी ट्रक ऑपरेटरों के माध्यम से खराब होने वाली बागवानी वस्तुओं के अखिल भारतीय रसद एकत्रीकरण हेतु कृषि मंत्रालय द्वारा 2020 में कौन सी पहल शुरू की गई थी?",
+        options: [
+          "(A) Kisan Rath / किसान रथ",
+          "(B) Krishi Gati / कृषि गति",
+          "(C) AgroHaul / एग्रोहॉल",
+          "(D) Gramin Vahan / ग्रामीण वाहन",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "The 'Kisan Rath' mobile app facilitates farmers and FPOs in discovering and hiring transport vehicles (refrigerated and normal trucks) from over 5 lakh trucks and 20,000 tractors listed by transport aggregators to move horticultural crops smoothly from farm gates to mandis.",
+        expHi: "कृषि मंत्रालय द्वारा विकसित 'किसान रथ' (Kisan Rath) ऐप किसानों और किसान उत्पादक संगठनों (FPO) को कृषि और बागवानी उपज के परिवहन हेतु ट्रकों और ट्रैक्टरों की ऑनलाइन बुकिंग की सुविधा देता है।",
+        keyFact: "Key Exam Fact: किसान रथ ऐप को 8 प्रमुख भारतीय भाषाओं में संचालित किया जाता है।"
+      },
+      {
+        qNum: 86,
+        stemEn: "What is the standard subsidy percentage provided to individual small and marginal farmers on the purchase of micro-irrigation equipment under PMKSY-PDMC?",
+        stemHi: "PMKSY-PDMC के तहत सूक्ष्म-सिंचाई उपकरणों की खरीद पर व्यक्तिगत लघु एवं सीमांत किसानों को कितने प्रतिशत मानक सब्सिडी प्रदान की जाती है?",
+        options: [
+          "(A) 35% / 35%",
+          "(B) 45% / 45%",
+          "(C) 55% / 55%",
+          "(D) 75% / 75%",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "Under the 'Per Drop More Crop' component of PMKSY, financial assistance for installing drip and sprinkler systems is provided at 55% of the indicative unit cost for Small and Marginal farmers, and 45% of the unit cost for other categories of farmers.",
+        expHi: "प्रधानमंत्री कृषि सिंचाई योजना - 'प्रति बूंद अधिक फसल' (PDMC) के अंतर्गत ड्रिप और स्प्रिंकलर सिस्टम लगाने हेतु लघु एवं सीमांत किसानों को 55% तथा अन्य (बड़े) किसानों को 45% की सब्सिडी दी जाती है।",
+        keyFact: "Key Exam Fact: सूक्ष्म सिंचाई अपनाने से पारंपरिक सिंचाई की तुलना में पानी की खपत में 40% से 50% तक की कमी आती है।"
+      },
+      {
+        qNum: 87,
+        stemEn: "The 'Fisheries and Aquaculture Infrastructure Development Fund' (FIDF) was established post-2014 with an approved corpus of:",
+        stemHi: "वर्ष 2014 के पश्चात 'मत्स्य पालन और जलीय कृषि अवसंरचना विकास कोष' (FIDF) कितनी स्वीकृत राशि के साथ स्थापित किया गया था?",
+        options: [
+          "(A) ₹7,522.48 crore / ₹7,522.48 करोड़",
+          "(B) ₹3,000.00 crore / ₹3,000.00 करोड़",
+          "(C) ₹12,000.00 crore / ₹12,000.00 करोड़",
+          "(D) ₹5,000.00 crore / ₹5,000.00 करोड़",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "The Cabinet Committee on Economic Affairs (CCEA) approved the creation of the dedicated Fisheries and Aquaculture Infrastructure Development Fund (FIDF) with a total fund size of ₹7,522.48 crore during 2018-19. It provides concessional finance for developing fishing harbors, fish landing centers, modern cold chains, and fish seed farms.",
+        expHi: "वित्तीय वर्ष 2018-19 में केंद्र सरकार ने ₹7,522.48 करोड़ की निधि के साथ 'मत्स्य पालन और जलीय कृषि अवसंरचना विकास कोष' (FIDF) की स्थापना की। इसके तहत मछली पकड़ने के बंदरगाहों और आधुनिक शीत भंडारण के लिए रियायती ऋण दिए जाते हैं।",
+        keyFact: "Key Exam Fact: FIDF के तहत नोडल ऋणदाता एजेंसियां (NLAs) नाबार्ड, राष्ट्रीय सहकारी विकास निगम (NCDC) और सभी अनुसूचित बैंक हैं।"
+      },
+      {
+        qNum: 88,
+        stemEn: "Which year did the United Nations General Assembly (UNGA) declare as the 'International Year of Millets' following a resolution sponsored by India?",
+        stemHi: "भारत द्वारा प्रायोजित प्रस्ताव के आधार पर संयुक्त राष्ट्र महासभा (UNGA) ने किस वर्ष को 'अंतरराष्ट्रीय मिलेट्स (कदन्न) वर्ष' घोषित किया था?",
+        options: [
+          "(A) 2021 / 2021",
+          "(B) 2022 / 2022",
+          "(C) 2024 / 2024",
+          "(D) 2023 / 2023",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "In March 2021, the United Nations General Assembly unanimously adopted India's resolution supported by over 70 countries declaring the year 2023 as the 'International Year of Millets' (IYM 2023) to highlight the nutritional, climatic, and ecological benefits of coarse grains.",
+        expHi: "भारत की पहल और 70 से अधिक देशों के समर्थन से संयुक्त राष्ट्र महासभा ने वर्ष 2023 को 'अंतरराष्ट्रीय मिलेट्स वर्ष' (IYM 2023) घोषित किया। इसका उद्देश्य मोटे अनाजों के वैश्विक उत्पादन, खपत और व्यापार को बढ़ावा देना था।",
+        keyFact: "Key Exam Fact: भारत विश्व में मिलेट्स (श्री अन्न) का सबसे बड़ा उत्पादक देश है और एशिया के कुल उत्पादन का लगभग 80% हिस्सा उत्पादित करता है।"
+      },
+      {
+        qNum: 89,
+        stemEn: "In which city is the 'Indian Institute of Millets Research' (IIMR), designated as the Global Centre of Excellence for Millets, located?",
+        stemHi: "मिलेट्स के लिए वैश्विक उत्कृष्टता केंद्र (Centre of Excellence) के रूप में घोषित 'भारतीय कदन्न अनुसंधान संस्थान' (IIMR) किस शहर में स्थित है?",
+        options: [
+          "(A) New Delhi / नई दिल्ली",
+          "(B) Hyderabad / हैदराबाद",
+          "(C) Bengaluru / बेंगलुरु",
+          "(D) Varanasi / वाराणसी",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "The ICAR-Indian Institute of Millets Research (ICAR-IIMR) is located in Rajendranagar, Hyderabad (Telangana). In the Union Budget 2023-24, it was designated as the Global Centre of Excellence for Shree Anna (Millets) to lead research on high-yielding varieties, breeding, and nutritional processing.",
+        expHi: "भारतीय कृषि अनुसंधान परिषद का 'भारतीय कदन्न अनुसंधान संस्थान' (ICAR-IIMR) हैदराबाद में स्थित है। केंद्रीय बजट 2023-24 में इसे मोटे अनाजों (श्री अन्न) पर अंतरराष्ट्रीय स्तर के शोध और प्रौद्योगिकियों के प्रसार हेतु 'उत्कृष्टता केंद्र' घोषित किया गया।",
+        keyFact: "Key Exam Fact: IIMR की स्थापना मूल रूप से 1958 में अखिल भारतीय समन्वित ज्वार सुधार परियोजना के रूप में हुई थी।"
+      },
+      {
+        qNum: 90,
+        stemEn: "Under the central agricultural reforms, what is the maximum rate of interest subvention granted to Primary Agricultural Credit Societies (PACS) on loans taken under the Agriculture Infrastructure Fund (AIF)?",
+        stemHi: "कृषि सुधारों के तहत, कृषि अवसंरचना कोष (AIF) के अंतर्गत प्राथमिक कृषि ऋण समितियों (PACS) को लिए गए ऋण पर अधिकतम कितने प्रतिशत वार्षिक ब्याज अनुदान दिया जाता है?",
+        options: [
+          "(A) 2.0% / 2.0%",
+          "(B) 5.0% / 5.0%",
+          "(C) 1.5% / 1.5%",
+          "(D) 3.0% / 3.0%",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 3, // D
+        expEn: "All eligible borrowing entities under the Agriculture Infrastructure Fund (AIF), including Primary Agricultural Credit Societies (PACS), Farmer Producer Organizations (FPOs), and agri-entrepreneurs, receive an interest subvention of 3.0% per annum on loans up to ₹2 crore for a repayment tenure of up to 7 years.",
+        expHi: "कृषि अवसंरचना कोष (AIF) के तहत प्राथमिक कृषि ऋण समितियों (PACS) सहित सभी पात्र लाभार्थियों को ₹2 करोड़ तक के ऋण पर 3.0% प्रति वर्ष की ब्याज छूट (Interest Subvention) अधिकतम 7 वर्षों के लिए प्रदान की जाती है।",
+        keyFact: "Key Exam Fact: PACS को बहुउद्देश्यीय सेवा केंद्रों (Multipurpose Service Centres) के रूप में बदलने के लिए नाबार्ड द्वारा पुनर्वित्त सुविधा भी दी जाती है।"
+      },
+      {
+        qNum: 91,
+        stemEn: "Which portal was launched in 2022 to provide comprehensive single-window information regarding fertilizer sales, availability, and retail outlet tracking across India?",
+        stemHi: "भारत भर में उर्वरक बिक्री, उपलब्धता और खुदरा दुकानों की ट्रैकिंग के संबंध में एकल-खिड़की व्यापक जानकारी प्रदान करने हेतु 2022 में कौन सा पोर्टल/पहल शुरू की गई?",
+        options: [
+          "(A) e-Urvarak (iFMS) / ई-उर्वरक (iFMS)",
+          "(B) Khad Mitra / खाद मित्र",
+          "(C) Kisan POS / किसान पीओएस",
+          "(D) Fertilizer Sarathi / फर्टिलाइजर सारथी",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "The integrated Fertilizer Monitoring System (iFMS / e-Urvarak portal) of the Department of Fertilizers monitors live supplies, factory despatches, rake movements, district-level buffer stocks, and PoS (Point of Sale) sales to farmers across all registered retail outlets using Aadhaar authentication.",
+        expHi: "रसायन एवं उर्वरक मंत्रालय का 'एकीकृत उर्वरक निगरानी प्रणाली' (iFMS / ई-उर्वरक) पोर्टल पूरे देश में उर्वरकों के उत्पादन, परिवहन, स्टॉक और खुदरा बिक्री की लाइव निगरानी करता है। किसान पीओएस (PoS) मशीनों पर आधार सत्यापन के माध्यम से रियायती खाद प्राप्त करते हैं।",
+        keyFact: "Key Exam Fact: देश के सभी उर्वरक खुदरा केंद्रों को 'प्रधानमंत्री किसान समृद्धि केंद्रों' (PMKSK) में परिवर्तित किया गया है।"
+      },
+      {
+        qNum: 92,
+        stemEn: "What is the designated total number of retail fertilizer shops targeted to be converted into 'Pradhan Mantri Kisan Samriddhi Kendras' (PMKSK) across the country?",
+        stemHi: "देश भर में कुल कितने खुदरा उर्वरक विक्रय केंद्रों को 'प्रधानमंत्री किसान समृद्धि केंद्र' (PMKSK) में परिवर्तित करने का लक्ष्य रखा गया है?",
+        options: [
+          "(A) Approximately 50,000 / लगभग 50,000",
+          "(B) Approximately 1,00,000 / लगभग 1,00,000",
+          "(C) Approximately 3.3 lakh / लगभग 3.3 लाख",
+          "(D) Approximately 10,000 / लगभग 10,000",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "Under the PMKSK scheme launched in October 2022, approximately 3.3 lakh retail fertilizer shops in the country are being phased into Pradhan Mantri Kisan Samriddhi Kendras (PMKSK). These centers serve as \"one-stop shops\" providing fertilizers, seeds, soil testing facilities, and agricultural advisory services.",
+        expHi: "अक्टूबर 2022 में शुरू की गई पहल के तहत देश की लगभग 3.3 लाख खुदरा उर्वरक दुकानों को चरणबद्ध तरीके से 'प्रधानमंत्री किसान समृद्धि केंद्र' (PMKSK) के रूप में विकसित किया जा रहा है। ये केंद्र खाद, बीज, कीटनाशक, मिट्टी परीक्षण और कृषि परामर्श के वन-स्टॉप केंद्र हैं।",
+        keyFact: "Key Exam Fact: PMKSK केंद्रों पर किसानों को सरकारी योजनाओं की जानकारी और कृषि यंत्रों की उपलब्धता की जानकारी भी दी जाती है।"
+      },
+      {
+        qNum: 93,
+        stemEn: "In which year was the 'National Livestock Mission' (NLM) originally formulated before its comprehensive restructuring in FY 2021-22?",
+        stemHi: "वित्तीय वर्ष 2021-22 में व्यापक पुनर्गठन से पूर्व 'राष्ट्रीय पशुधन मिशन' (NLM) मूल रूप से किस वर्ष तैयार और शुरू किया गया था?",
+        options: [
+          "(A) 2014-15 / 2014-15",
+          "(B) 2016-17 / 2016-17",
+          "(C) 2018-19 / 2018-19",
+          "(D) 2012-13 / 2012-13",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "The National Livestock Mission (NLM) was originally launched during the financial year 2014-15. It was created to ensure sustainable development of the livestock sector by focusing on fodder availability, livestock entrepreneurship, and breed improvement of sheep, goat, and piggery before being extensively restructured in 2021.",
+        expHi: "राष्ट्रीय पशुधन मिशन (NLM) को मूल रूप से वित्तीय वर्ष 2014-15 में शुरू किया गया था। इसका उद्देश्य पशुधन उत्पादन में गुणात्मक सुधार लाना और चारे व चारे के बीजों की उपलब्धता सुनिश्चित करना था।",
+        keyFact: "Key Exam Fact: यह मिशन पशुपालन और डेयरी विभाग, मत्स्य पालन, पशुपालन और डेयरी मंत्रालय द्वारा प्रशासित है।"
+      },
+      {
+        qNum: 94,
+        stemEn: "Under the 'Agristack' digital framework, which unique identifier is assigned to every registered farmer in India?",
+        stemHi: "'एग्रीस्टैक' (Agristack) डिजिटल ढांचे के तहत भारत में प्रत्येक पंजीकृत किसान को कौन सा विशिष्ट पहचानकर्ता आवंटित किया जाता है?",
+        options: [
+          "(A) Kisan Identity Number (KIN) / किसान आइडेंटिटी नंबर (KIN)",
+          "(B) Farmer ID / फार्मर आईडी (Farmer ID)",
+          "(C) Krishi Aadhaar Code (KAC) / कृषि आधार कोड (KAC)",
+          "(D) Digital Annadata Pin (DAP) / डिजिटल अन्नदाता पिन (DAP)",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 1, // B
+        expEn: "Under the Agristack framework, the Central Government creates a unified registry where each verified farmer receives a unique 12-digit 'Farmer ID' (डिजिटल फार्मर आईडी). This ID is linked to digital land records, Aadhaar, and bank accounts to streamline DBT delivery, crop insurance, and institutional credit.",
+        expHi: "केंद्र सरकार के एग्रीस्टैक (Agristack) मॉडल के तहत प्रत्येक सत्यापित किसान को एक विशिष्ट 'फार्मर आईडी' (Farmer ID) प्रदान की जाती है। यह आईडी किसान के भूलेख और आधार से जुड़ी होती है जिससे सभी योजनाओं का लाभ बिना किसी कागजी औपचारिकता के मिलता है।",
+        keyFact: "Key Exam Fact: एग्रीस्टैक में 'फार्मर रजिस्ट्री' (Farmer Registry) और 'जियो-रेफरेंस्ड विलेज मैप्स' मुख्य स्तंभ हैं।"
+      },
+      {
+        qNum: 95,
+        stemEn: "Under the PMFBY scheme, within how many hours of localized calamity occurrence (such as hailstorm, landslide, inundation) must a farmer report the crop damage to claim insurance?",
+        stemHi: "PMFBY योजना के तहत, स्थानीयकृत आपदा (जैसे ओलावृष्टि, भूस्खलन, जलभराव) घटित होने के कितने घंटों के भीतर किसान को बीमा दावा करने हेतु फसल क्षति की सूचना देना अनिवार्य है?",
+        options: [
+          "(A) Within 24 hours / 24 घंटों के भीतर",
+          "(B) Within 48 hours / 48 घंटों के भीतर",
+          "(C) Within 72 hours / 72 घंटों के भीतर",
+          "(D) Within 7 days / 7 दिनों के भीतर",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "Under PMFBY operational guidelines, in the case of localized calamities (hailstorms, landslides, cloudburst, inundation) or post-harvest losses, the insured farmer must inform the insurance company, local agriculture office, or the toll-free helpline within 72 hours of the event to trigger individual assessment.",
+        expHi: "प्रधानमंत्री फसल बीमा योजना के दिशानिर्देशों के अनुसार, ओलावृष्टि, जलभराव, बादल फटने या भूस्खलन जैसी स्थानीयकृत आपदाओं से फसल को हुए नुकसान की सूचना किसान को 72 घंटे के भीतर संबंधित बीमा कंपनी या कृषि अधिकारी को देनी अनिवार्य होती है।",
+        keyFact: "Key Exam Fact: नुकसान की सूचना 'क्रॉप इंश्योरेंस ऐप' (Crop Insurance App) के माध्यम से भी सीधे दर्ज कराई जा सकती है।"
+      },
+      {
+        qNum: 96,
+        stemEn: "Which scheme was approved in 2021 with a budgetary outlay of ₹11,040 crore to specifically boost domestic production of palm oil and reduce edible oil imports?",
+        stemHi: "घरेलू पाम तेल उत्पादन को बढ़ावा देने और खाद्य तेल आयात को कम करने हेतु ₹11,040 करोड़ के बजटीय परिव्यय के साथ 2021 में किस योजना को मंजूरी दी गई थी?",
+        options: [
+          "(A) National Mission on Edible Oils - Oil Palm (NMEO-OP) / राष्ट्रीय खाद्य तेल मिशन - ऑयल पाम (NMEO-OP)",
+          "(B) Bharat Palm Oil Yojna / भारत पाम ऑयल योजना",
+          "(C) Tilhan Vikas Mission / तिलहन विकास मिशन",
+          "(D) Yellow Revolution 2.0 / पीली क्रांति 2.0",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "In August 2021, the Union Cabinet approved the 'National Mission on Edible Oils - Oil Palm' (NMEO-OP) with an outlay of ₹11,040 crore (Centre's share ₹8,844 crore). It provides price assurance to oil palm farmers via a Viability Price formula to insulate them from international price fluctuations.",
+        expHi: "अगस्त 2021 में ₹11,040 करोड़ के बजट के साथ 'राष्ट्रीय खाद्य तेल मिशन - ऑयल पाम' (NMEO-OP) को मंजूरी दी गई। यह मिशन किसानों को व्यवहार्यता मूल्य (Viability Price) की गारंटी देकर अंतरराष्ट्रीय बाजार के उतार-चढ़ाव से सुरक्षा प्रदान करता है।",
+        keyFact: "Key Exam Fact: इस मिशन का प्रमुख ध्यान पूर्वोत्तर राज्यों तथा अंडमान और निकोबार द्वीप समूह पर केंद्रित है।"
+      },
+      {
+        qNum: 97,
+        stemEn: "The 'SVAMITVA' scheme, which provides a 'Record of Rights' to rural village household owners via drone surveys, was launched nationwide in which year?",
+        stemHi: "ग्रामीण आबादी क्षेत्रों के गृह स्वामियों को ड्रोन सर्वेक्षण के माध्यम से संपत्ति अधिकार ('रिकॉर्ड ऑफ राइट्स') प्रदान करने वाली 'स्वामित्व' (SVAMITVA) योजना किस वर्ष देशव्यापी रूप से शुरू की गई थी?",
+        options: [
+          "(A) 2019 / 2019",
+          "(B) 2020 / 2020",
+          "(C) 2021 / 2021",
+          "(D) 2022 / 2022",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "While launched as a pilot in 9 states on National Panchayati Raj Day (April 24, 2020), SVAMITVA (Survey of Villages and Mapping with Improvised Technology in Village Areas) was formally launched nationwide across all states on April 24, 2021. It provides rural property cards enabling farmers and villagers to use their residential homes as financial collateral for bank loans.",
+        expHi: "यद्यपि 'स्वामित्व' (SVAMITVA) योजना का पायलट चरण अप्रैल 2020 में शुरू हुआ था, परंतु 24 अप्रैल 2021 (राष्ट्रीय पंचायती राज दिवस) को इसे पूरे देश में औपचारिक रूप से लागू किया गया। यह ग्रामीण आबादी भूमि का ड्रोन सर्वेक्षण कर ग्रामीणों को 'संपत्ति कार्ड' (Property Card) प्रदान करती है।",
+        keyFact: "Key Exam Fact: इसका क्रियान्वयन पंचायती राज मंत्रालय, सर्वे ऑफ इंडिया और राज्यों के राजस्व विभागों द्वारा संयुक्त रूप से किया जा रहा है।"
+      },
+      {
+        qNum: 98,
+        stemEn: "Under the 'Mission Amrit Sarovar', which Union Ministry served as the nodal ministry coordinating with rural development and water departments?",
+        stemHi: "'मिशन अमृत सरोवर' के तहत ग्रामीण विकास और जल विभागों के साथ समन्वय करने वाला प्रमुख नोडल केंद्रीय मंत्रालय कौन सा था?",
+        options: [
+          "(A) Ministry of Rural Development / ग्रामीण विकास मंत्रालय",
+          "(B) Ministry of Agriculture / कृषि मंत्रालय",
+          "(C) Ministry of Earth Sciences / पृथ्वी विज्ञान मंत्रालय",
+          "(D) Ministry of Environment, Forest and Climate Change / पर्यावरण, वन और जलवायु परिवर्तन मंत्रालय",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 0, // A
+        expEn: "Mission Amrit Sarovar was launched under the \"Whole of Government\" approach with the Ministry of Rural Development acting as the primary nodal coordinator alongside the Ministry of Jal Shakti, Ministry of Panchayati Raj, and Ministry of Environment, Forest and Climate Change, utilizing funds under MGNREGS, XV Finance Commission Grants, and PMKSY-WD.",
+        expHi: "मिशन अमृत सरोवर का प्राथमिक समन्वय 'ग्रामीण विकास मंत्रालय' (Ministry of Rural Development) द्वारा जल शक्ति मंत्रालय और पंचायती राज मंत्रालय के सहयोग से किया गया। इसमें मनरेगा और 15वें वित्त आयोग के फंड का उपयोग किया गया।",
+        keyFact: "Key Exam Fact: इस मिशन का तकनीकी भागीदार भास्कराचार्य राष्ट्रीय अंतरिक्ष अनुप्रयोग और भू-सूचना विज्ञान संस्थान (BISAG-N) था।"
+      },
+      {
+        qNum: 99,
+        stemEn: "Under the central agricultural price stabilization policy, what is the statutory frequency at which the Fair and Remunerative Price (FRP) of sugarcane is fixed?",
+        stemHi: "केंद्रीय कृषि मूल्य स्थिरीकरण नीति के तहत, गन्ने के उचित और लाभकारी मूल्य (FRP) के निर्धारण की वैधानिक आवृत्ति क्या है?",
+        options: [
+          "(A) Bi-annually (twice a year) / द्विवार्षिक (वर्ष में दो बार)",
+          "(B) Every three years / प्रत्येक तीन वर्ष में",
+          "(C) Annually for each sugar season / प्रत्येक चीनी मौसम (Sugar Season) हेतु वार्षिक",
+          "(D) Every five years / प्रत्येक पांच वर्ष में",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "The Fair and Remunerative Price (FRP) of sugarcane is announced annually by the Central Government (Cabinet Committee on Economic Affairs) for each sugar season (October to September) under the Sugarcane (Control) Order, 1966, on the recommendations of the Commission for Agricultural Costs and Prices (CACP).",
+        expHi: "गन्ने का उचित और लाभकारी मूल्य (FRP) केंद्र सरकार की आर्थिक मामलों की मंत्रिमंडलीय समिति (CCEA) द्वारा प्रत्येक पेराई सत्र/चीनी मौसम (अक्टूबर से सितंबर) के लिए प्रतिवर्ष वार्षिक रूप से तय किया जाता है।",
+        keyFact: "Key Exam Fact: FRP गन्ने की मूल रिकवरी दर (Basic Recovery Rate) से जुड़ा होता है; रिकवरी बढ़ने पर किसानों को अतिरिक्त प्रीमियम मिलता है।"
+      },
+      {
+        qNum: 100,
+        stemEn: "In which year was the 'National Agriculture Market' (e-NAM) mobile app first integrated with warehouse-based trading through electronic Negotiable Warehouse Receipts (e-NWRs)?",
+        stemHi: "इलेक्ट्रॉनिक नेगोशिएबल वेयरहाउस रसीदों (e-NWRs) के माध्यम से वेयरहाउस-आधारित व्यापार को ई-नाम (e-NAM) मोबाइल ऐप के साथ पहली बार किस वर्ष एकीकृत किया गया था?",
+        options: [
+          "(A) 2016 / 2016",
+          "(B) 2018 / 2018",
+          "(C) 2020 / 2020",
+          "(D) 2022 / 2022",
+          "(E) None of these / इनमें से कोई नहीं"
+        ],
+        correct: 2, // C
+        expEn: "In April 2020, the Ministry of Agriculture launched major technological enhancements to the e-NAM platform during the COVID-19 lockdown, including the integration of warehouse-based trading directly from WDRA-registered warehouses using electronic Negotiable Warehouse Receipts (e-NWRs). This enabled farmers to sell stored produce online without bringing physical bags to APMC mandis.",
+        expHi: "अप्रैल 2020 में कोविड-19 महामारी के दौरान ई-नाम (e-NAM) प्लेटफॉर्म में महत्वपूर्ण सुधार करते हुए वेयरहाउस-आधारित व्यापार मॉड्यूल शुरू किया गया। इसके तहत किसान WDRA पंजीकृत गोदामों में रखी अपनी उपज को इलेक्ट्रॉनिक नेगोशिएबल वेयरहाउस रसीदों (e-NWR) के जरिए सीधे ऑनलाइन बेच सकते हैं।",
+        keyFact: "Key Exam Fact: इस सुधार से किसानों को संकटकालीन बिक्री (Distress Sale) से बचने और वेयरहाउस रसीदों पर बैंक ऋण प्राप्त करने में मदद मिली।"
+      }
+    ];
+
+    /* State Management */
+    let currentIndex = 0;
+    // Status tracker for all 100 questions:
+    // status: 'unvisited' | 'unanswered' | 'correct' | 'wrong' | 'skipped' | 'review'
+    // selectedOption: null or 0..4
+    const userState = questionsData.map(() => ({
+      status: 'unvisited',
+      selectedOption: null,
+      isReview: false
+    }));
+
+    // Mark Q0 as visited on startup
+    userState[0].status = 'unanswered';
+
+    /* DOM Selectors */
+    const topCounter = document.getElementById('top-counter');
+    const topScore = document.getElementById('top-score');
+    const qBadge = document.getElementById('q-number-badge');
+    const qStemEn = document.getElementById('q-stem-en');
+    const qStemHi = document.getElementById('q-stem-hi');
+    const optionsContainer = document.getElementById('options-container');
+
+    const btnSkip = document.getElementById('btn-skip');
+    const btnReview = document.getElementById('btn-review');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+
+    const expCard = document.getElementById('explanation-card');
+    const expEnText = document.getElementById('exp-en-text');
+    const expHiText = document.getElementById('exp-hi-text');
+    const expFactText = document.getElementById('exp-fact-text');
+
+    const paletteDrawer = document.getElementById('palette-drawer');
+    const paletteBackdrop = document.getElementById('palette-backdrop');
+    const btnOpenPalette = document.getElementById('btn-open-palette');
+    const btnClosePalette = document.getElementById('btn-close-palette');
+    const paletteGrid = document.getElementById('palette-grid');
+
+    const reportDashboard = document.getElementById('report-dashboard');
+    const questionCard = document.getElementById('question-card');
+    const btnReviewQuestions = document.getElementById('btn-review-questions');
+
+    /* Build Question Palette Grid (1 to 100) */
+    function initializePaletteGrid() {
+      paletteGrid.innerHTML = '';
+      for (let i = 0; i < questionsData.length; i++) {
+        const cell = document.createElement('button');
+        cell.className = 'palette-cell';
+        cell.id = `palette-cell-${i}`;
+        cell.textContent = i + 1;
+        cell.title = `Go to Question ${i + 1}`;
+        cell.addEventListener('click', () => {
+          jumpToQuestion(i);
+          closePalette();
+        });
+        paletteGrid.appendChild(cell);
+      }
+      updatePaletteUI();
+    }
+
+    /* Score Engine (+1.00 / -0.25) */
+    function calculateScore() {
+      let correctCount = 0;
+      let wrongCount = 0;
+      let attemptedCount = 0;
+
+      userState.forEach(s => {
+        if (s.selectedOption !== null) {
+          attemptedCount++;
+          if (s.status === 'correct') correctCount++;
+          else if (s.status === 'wrong') wrongCount++;
+        }
+      });
+
+      const netScore = (correctCount * 1.0) - (wrongCount * 0.25);
+      return {
+        netScore: netScore.toFixed(2),
+        correctCount,
+        wrongCount,
+        attemptedCount,
+        accuracy: attemptedCount > 0 ? ((correctCount / attemptedCount) * 100).toFixed(1) : 0
+      };
+    }
+
+    function updateLiveScoreDisplay() {
+      const stats = calculateScore();
+      topScore.textContent = `Score: ${stats.netScore}`;
+    }
+
+    /* Render Active Question Card */
+    function renderQuestion(index) {
+      const q = questionsData[index];
+      const state = userState[index];
+
+      // Mark unvisited as unanswered when viewing
+      if (state.status === 'unvisited') {
+        state.status = 'unanswered';
+      }
+
+      // Headers & Stems
+      topCounter.textContent = `Question ${index + 1} of 100`;
+      qBadge.textContent = `Question ${index + 1}`;
+      qStemEn.textContent = q.stemEn;
+      qStemHi.textContent = q.stemHi;
+
+      // Update Review button visual
+      btnReview.classList.toggle('active', state.isReview);
+      btnReview.textContent = state.isReview ? '★ Marked Review' : 'Mark for Review';
+
+      // Render 5 Options
+      optionsContainer.innerHTML = '';
+      const isLocked = state.selectedOption !== null;
+
+      q.options.forEach((optStr, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.type = 'button';
+
+        const keyPrefix = optStr.substring(0, 3);
+        const textRest = optStr.substring(3).trim();
+
+        btn.innerHTML = `<span class="option-key">${keyPrefix}</span><span class="option-text">${textRest}</span>`;
+
+        if (isLocked) {
+          btn.disabled = true;
+          if (optIdx === q.correct) {
+            btn.classList.add('opt-correct');
+          }
+          if (optIdx === state.selectedOption && state.selectedOption !== q.correct) {
+            btn.classList.add('opt-wrong');
+          }
+        } else {
+          btn.addEventListener('click', () => handleOptionSelect(index, optIdx));
+        }
+
+        optionsContainer.appendChild(btn);
+      });
+
+      // Explanation Display
+      if (isLocked) {
+        expEnText.textContent = q.expEn;
+        expHiText.textContent = q.expHi;
+        expFactText.textContent = q.keyFact;
+        expCard.style.display = 'block';
+      } else {
+        expCard.style.display = 'none';
+      }
+
+      // Prev / Next button management
+      btnPrev.disabled = index === 0;
+      btnPrev.style.opacity = index === 0 ? '0.5' : '1';
+      btnNext.textContent = (index === questionsData.length - 1) ? 'Submit Test ➔' : 'Next ▸';
+
+      updatePaletteUI();
+      updateLiveScoreDisplay();
+    }
+
+    /* Option Selection Logic */
+    function handleOptionSelect(qIndex, selectedOpt) {
+      const state = userState[qIndex];
+      if (state.selectedOption !== null) return; // one-tap lock
+
+      state.selectedOption = selectedOpt;
+      const isCorrect = (selectedOpt === questionsData[qIndex].correct);
+      state.status = isCorrect ? 'correct' : 'wrong';
+
+      renderQuestion(qIndex);
+    }
+
+    /* Palette State Updates */
+    function updatePaletteUI() {
+      for (let i = 0; i < questionsData.length; i++) {
+        const cell = document.getElementById(`palette-cell-${i}`);
+        if (!cell) continue;
+
+        cell.className = 'palette-cell';
+        if (i === currentIndex) cell.classList.add('current-view');
+
+        const state = userState[i];
+        if (state.isReview) {
+          cell.classList.add('status-review');
+        } else if (state.status === 'correct') {
+          cell.classList.add('status-correct');
+        } else if (state.status === 'wrong') {
+          cell.classList.add('status-wrong');
+        } else if (state.status === 'skipped') {
+          cell.classList.add('status-skipped');
+        } else if (state.status === 'unanswered') {
+          cell.classList.add('status-unanswered');
+        }
+      }
+    }
+
+    function jumpToQuestion(index) {
+      if (index < 0 || index >= questionsData.length) return;
+      currentIndex = index;
+      questionCard.style.display = 'block';
+      reportDashboard.classList.remove('show');
+      renderQuestion(currentIndex);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* Actions */
+    btnSkip.addEventListener('click', () => {
+      const state = userState[currentIndex];
+      if (state.selectedOption === null) {
+        state.status = 'skipped';
+      }
+      if (currentIndex < questionsData.length - 1) {
+        jumpToQuestion(currentIndex + 1);
+      } else {
+        updatePaletteUI();
+      }
+    });
+
+    btnReview.addEventListener('click', () => {
+      const state = userState[currentIndex];
+      state.isReview = !state.isReview;
+      btnReview.classList.toggle('active', state.isReview);
+      btnReview.textContent = state.isReview ? '★ Marked Review' : 'Mark for Review';
+      updatePaletteUI();
+    });
+
+    btnPrev.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        jumpToQuestion(currentIndex - 1);
+      }
+    });
+
+    btnNext.addEventListener('click', () => {
+      if (currentIndex < questionsData.length - 1) {
+        jumpToQuestion(currentIndex + 1);
+      } else {
+        showFinalDashboard();
+      }
+    });
+
+    /* Final Dashboard Evaluation */
+    function showFinalDashboard() {
+      const stats = calculateScore();
+      document.getElementById('res-score').textContent = stats.netScore;
+      document.getElementById('res-accuracy').textContent = `${stats.accuracy}%`;
+      document.getElementById('res-correct').textContent = stats.correctCount;
+      document.getElementById('res-wrong').textContent = stats.wrongCount;
+      document.getElementById('res-attempted').textContent = `${stats.attemptedCount} / 100`;
+
+      questionCard.style.display = 'none';
+      expCard.style.display = 'none';
+      reportDashboard.classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    btnReviewQuestions.addEventListener('click', () => {
+      openPalette();
+    });
+
+    /* Palette Drawer Drawer Toggles */
+    function openPalette() {
+      paletteDrawer.classList.add('open');
+      paletteBackdrop.classList.add('open');
+    }
+
+    function closePalette() {
+      paletteDrawer.classList.remove('open');
+      paletteBackdrop.classList.remove('open');
+    }
+
+    btnOpenPalette.addEventListener('click', openPalette);
+    btnClosePalette.addEventListener('click', closePalette);
+    paletteBackdrop.addEventListener('click', closePalette);
+
+    /* Initialization */
+    window.addEventListener('DOMContentLoaded', () => {
+      initializePaletteGrid();
+      renderQuestion(0);
+    });
+  </script>
+</body>
+</html>

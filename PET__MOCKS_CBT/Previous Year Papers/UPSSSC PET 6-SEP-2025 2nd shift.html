@@ -1,0 +1,2993 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPSSSC PET Full Mock Exam Simulator (100 Questions)</title>
+  <style>
+    :root {
+      --bg-main: #121316;
+      --card-bg: #1e2024;
+      --card-border: #2d3139;
+      --accent-blue: #3b82f6;
+      --accent-hover: #2563eb;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success-green: #22c55e;
+      --danger-red: #ef4444;
+      --warn-orange: #f97316;
+      --review-purple: #a855f7;
+      --skip-slate: #64748b;
+      --unvisited-gray: #374151;
+      --table-header: #262930;
+      --table-border: #3f4451;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding-bottom: 50px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Header Bar */
+    .top-header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 14px 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    .top-header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0;
+    }
+    .header-title-box h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+    }
+    .header-title-box p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .badge-score {
+      background: #172554;
+      border: 1px solid #1e40af;
+      color: #93c5fd;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .btn-palette {
+      background-color: #27272a;
+      border: 1px solid #3f3f46;
+      color: #e4e4e7;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-palette:hover {
+      background-color: #3f3f46;
+      color: #fff;
+    }
+
+    /* Main Question Card */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    .q-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .q-number-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+    .q-marking-info {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .q-marking-info span {
+      font-weight: 600;
+    }
+    .q-marking-info .pos { color: var(--success-green); }
+    .q-marking-info .neg { color: var(--danger-red); }
+
+    /* Visual Asset Box (Charts, Tables, Passages) */
+    .visual-container {
+      background-color: #16181c;
+      border: 1px solid #2d3139;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 22px;
+    }
+    .visual-header {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #374151;
+    }
+    .passage-content {
+      font-size: 0.95rem;
+      color: #d1d5db;
+      line-height: 1.75;
+      white-space: pre-line;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .passage-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .passage-content::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 4px;
+    }
+
+    /* Structured HTML Tables */
+    .cbt-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.92rem;
+      text-align: center;
+    }
+    .cbt-table th, .cbt-table td {
+      border: 1px solid var(--table-border);
+      padding: 8px 12px;
+    }
+    .cbt-table th {
+      background-color: var(--table-header);
+      color: #93c5fd;
+      font-weight: 600;
+    }
+    .cbt-table tr:nth-child(even) {
+      background-color: #1a1c22;
+    }
+
+    /* SVG Chart Styling */
+    .chart-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      text-align: center;
+    }
+    .chart-wrapper svg {
+      max-width: 100%;
+      height: auto;
+      vertical-align: middle;
+    }
+
+    /* Question Stems */
+    .question-stem {
+      margin-bottom: 20px;
+    }
+    .stem-en {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #f3f4f6;
+      margin-bottom: 8px;
+    }
+    .stem-hi {
+      font-size: 1.02rem;
+      font-weight: 500;
+      color: #e5e7eb;
+      line-height: 1.6;
+    }
+
+    /* Options Section */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .option-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      padding: 13px 16px;
+      border-radius: 8px;
+      background: #252830;
+      border: 1.5px solid #374151;
+      color: #f3f4f6;
+      cursor: pointer;
+      font-size: 0.96rem;
+      transition: all 0.15s ease-in-out;
+    }
+    .option-btn:hover:not(.locked) {
+      background-color: #2e323c;
+      border-color: #4b5563;
+    }
+    .option-tag {
+      font-weight: 700;
+      background-color: #1e2025;
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: #9ca3af;
+      border: 1px solid #374151;
+      flex-shrink: 0;
+    }
+    .option-text {
+      flex-grow: 1;
+      line-height: 1.45;
+    }
+
+    /* Locked States & Validation */
+    .option-btn.locked {
+      cursor: default;
+    }
+    .option-btn.selected-correct {
+      background-color: rgba(34, 197, 94, 0.22) !important;
+      border-color: var(--success-green) !important;
+      color: #ffffff !important;
+    }
+    .option-btn.selected-correct .option-tag {
+      background-color: var(--success-green);
+      color: #000;
+      border-color: var(--success-green);
+    }
+    .option-btn.selected-incorrect {
+      background-color: rgba(239, 68, 68, 0.22) !important;
+      border-color: var(--danger-red) !important;
+      color: #ffffff !important;
+    }
+    .option-btn.selected-incorrect .option-tag {
+      background-color: var(--danger-red);
+      color: #fff;
+      border-color: var(--danger-red);
+    }
+    .option-btn.reveal-correct {
+      border: 2px dashed var(--success-green) !important;
+      background-color: rgba(34, 197, 94, 0.08) !important;
+    }
+
+    /* Explanation Accordion Card */
+    .solution-card {
+      display: none;
+      background-color: #181d26;
+      border: 1px solid #1e3a8a;
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-top: 18px;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .sol-header {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sol-section {
+      margin-bottom: 10px;
+      font-size: 0.93rem;
+      line-height: 1.6;
+      color: #d1d5db;
+    }
+    .sol-section strong {
+      color: #f9fafb;
+    }
+    .key-exam-fact {
+      background-color: #1e2638;
+      border-left: 4px solid #3b82f6;
+      padding: 10px 14px;
+      margin-top: 14px;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.9rem;
+      color: #93c5fd;
+    }
+
+    /* Action Nav Bar */
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .nav-group-left, .nav-group-right {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: #27272a;
+      border-color: #3f3f46;
+      color: #e4e4e7;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: #3f3f46;
+    }
+    .btn-warning {
+      background: #7c2d12;
+      border-color: #9a3412;
+      color: #fed7aa;
+    }
+    .btn-warning:hover:not(:disabled) {
+      background: #9a3412;
+    }
+    .btn-purple {
+      background: #581c87;
+      border-color: #7e22ce;
+      color: #f3e8ff;
+    }
+    .btn-purple:hover:not(:disabled) {
+      background: #7e22ce;
+    }
+    .btn-primary {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #fff;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+    .btn-success {
+      background: #15803d;
+      border-color: #16a34a;
+      color: #ffffff;
+    }
+    .btn-success:hover:not(:disabled) {
+      background: #16a34a;
+    }
+
+    /* Slide-Over Question Palette Drawer */
+    .palette-drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 200;
+      display: none;
+      backdrop-filter: blur(2px);
+    }
+    .palette-drawer {
+      position: fixed;
+      top: 0;
+      right: -380px;
+      width: 380px;
+      max-width: 90vw;
+      height: 100vh;
+      background: #181a1f;
+      border-left: 1px solid var(--card-border);
+      z-index: 210;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.25s ease-in-out;
+      box-shadow: -6px 0 24px rgba(0,0,0,0.6);
+    }
+    .palette-drawer.open {
+      right: 0;
+    }
+    .palette-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .palette-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f3f4f6;
+    }
+    .btn-close-palette {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+    .btn-close-palette:hover { color: #fff; }
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px 12px;
+      padding: 14px 20px;
+      background: #141519;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 0.78rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #d1d5db;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .palette-grid-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .palette-num-btn {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid transparent;
+      color: #fff;
+      transition: transform 0.1s;
+    }
+    .palette-num-btn:hover {
+      transform: scale(1.06);
+    }
+    .palette-num-btn.current {
+      outline: 2px solid #60a5fa;
+      outline-offset: 2px;
+    }
+
+    /* Palette 6-Status Classes */
+    .st-unvisited { background: #27272a; border-color: #3f3f46; color: #a1a1aa; }
+    .st-answered-correct { background: #16a34a; border-color: #22c55e; }
+    .st-answered-incorrect { background: #dc2626; border-color: #ef4444; }
+    .st-unanswered { background: #ea580c; border-color: #f97316; }
+    .st-skipped { background: #475569; border-color: #64748b; }
+    .st-review { background: #9333ea; border-color: #a855f7; }
+
+    /* Final Score Report Modal */
+    .report-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .report-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .report-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--card-border);
+      text-align: center;
+      background: #16181d;
+    }
+    .report-header h2 {
+      font-size: 1.4rem;
+      color: #60a5fa;
+    }
+    .report-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .score-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .summary-box {
+      background: #14161b;
+      border: 1px solid #2d3139;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .summary-box .val {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+    .summary-box .lbl {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+    .color-net { color: #60a5fa; }
+    .color-correct { color: var(--success-green); }
+    .color-incorrect { color: var(--danger-red); }
+    .color-skip { color: var(--skip-slate); }
+    .color-unans { color: var(--warn-orange); }
+    .color-rev { color: var(--review-purple); }
+
+    .matrix-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #e5e7eb;
+    }
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .matrix-table th, .matrix-table td {
+      border: 1px solid #2d3139;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .matrix-table th {
+      background: #16181d;
+      color: #93c5fd;
+    }
+    .report-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--card-border);
+      text-align: center;
+      background: #16181d;
+    }
+
+    @media (max-width: 640px) {
+      .header-controls .header-title-box h1 { font-size: 0.95rem; }
+      .nav-bar { flex-direction: column; align-items: stretch; }
+      .nav-group-left, .nav-group-right { justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Header Bar -->
+  <header class="top-header">
+    <div class="container">
+      <div class="header-title-box">
+        <h1>UPSSSC PET 6-SEP-2025 2nd shift</h1>
+        <p id="progressIndicator">Question 1 of 100</p>
+      </div>
+      <div class="header-controls">
+        <div class="badge-score" id="liveScoreBadge">Net Score: 0.00</div>
+        <button class="btn-palette" onclick="togglePalette(true)">📋 Question Palette</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Center Column Layout -->
+  <main class="container">
+    <div class="card">
+      <div class="q-meta-row">
+        <div class="q-number-title" id="qHeader">Question 1</div>
+        <div class="q-marking-info">Marks: <span class="pos">+1.00</span> | Neg: <span class="neg">-0.25</span></div>
+      </div>
+
+      <!-- Continuous Visual Asset Container (Charts / Passages / Tables) -->
+      <div class="visual-container" id="visualContainer" style="display: none;">
+        <div class="visual-header" id="visualHeader">Direction Asset</div>
+        <div id="visualBody"></div>
+      </div>
+
+      <!-- Question Text Stems -->
+      <div class="question-stem">
+        <div class="stem-en" id="stemEnglish"></div>
+        <div class="stem-hi" id="stemHindi"></div>
+      </div>
+
+      <!-- Options Container -->
+      <div class="options-grid" id="optionsGrid"></div>
+
+      <!-- Instant Solution Card -->
+      <div class="solution-card" id="solutionCard">
+        <div class="sol-header">
+          <span>💡 Answer & Comprehensive Explanation</span>
+        </div>
+        <div class="sol-section" id="solEnglishBox"></div>
+        <div class="sol-section" id="solHindiBox"></div>
+        <div class="key-exam-fact" id="keyFactBox"></div>
+      </div>
+
+      <!-- Navigation & Action Buttons -->
+      <div class="nav-bar">
+        <div class="nav-group-left">
+          <button class="btn btn-secondary" id="btnPrev" onclick="navigateQuestion(-1)">❮ Previous</button>
+          <button class="btn btn-purple" id="btnReview" onclick="toggleReview()">🔖 Mark for Review</button>
+          <button class="btn btn-warning" id="btnSkip" onclick="skipCurrentQuestion()">⏭ Skip</button>
+        </div>
+        <div class="nav-group-right">
+          <button class="btn btn-primary" id="btnNext" onclick="navigateQuestion(1)">Next Question ❯</button>
+          <button class="btn btn-success" id="btnSubmit" onclick="confirmSubmitTest()">Submit Test 🏁</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Slide-In Question Palette Drawer -->
+  <div class="palette-drawer-overlay" id="paletteOverlay" onclick="togglePalette(false)"></div>
+  <aside class="palette-drawer" id="paletteDrawer">
+    <div class="palette-header">
+      <h2>Question Palette</h2>
+      <button class="btn-close-palette" onclick="togglePalette(false)">&times;</button>
+    </div>
+    <div class="legend-grid">
+      <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> Correct (+1.0)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> Incorrect (-0.25)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ea580c"></div> Unanswered</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#475569"></div> Skipped</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#9333ea"></div> Review</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#27272a; border: 1px solid #3f3f46"></div> Not Visited</div>
+    </div>
+    <div class="palette-grid-scroll">
+      <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+  </aside>
+
+  <!-- Final Score Report Modal -->
+  <div class="report-overlay" id="reportOverlay">
+    <div class="report-card">
+      <div class="report-header">
+        <h2>UPSSSC PET Performance Report</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Official Scoring Benchmark: +1.00 Correct, -0.25 Incorrect</p>
+      </div>
+      <div class="report-body">
+        <div class="score-summary-grid">
+          <div class="summary-box">
+            <div class="lbl">Net Score</div>
+            <div class="val color-net" id="repNetScore">0.00</div>
+          </div>
+          <div class="summary-box">
+            <div class="lbl">Correct (+1)</div>
+            <div class="val color-correct" id="repCorrect">0</div>
+          </div>
+          <div class="summary-box">
+            <div class="lbl">Incorrect (-0.25)</div>
+            <div class="val color-incorrect" id="repIncorrect">0</div>
+          </div>
+          <div class="summary-box">
+            <div class="lbl">Skipped</div>
+            <div class="val color-skip" id="repSkipped">0</div>
+          </div>
+          <div class="summary-box">
+            <div class="lbl">Unanswered</div>
+            <div class="val color-unans" id="repUnanswered">0</div>
+          </div>
+          <div class="summary-box">
+            <div class="lbl">Accuracy</div>
+            <div class="val" id="repAccuracy" style="color: #38bdf8;">0%</div>
+          </div>
+        </div>
+
+        <div class="matrix-title">All Questions Breakdown (Q1 to Q100)</div>
+        <div style="overflow-x: auto; max-height: 350px;">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th>Q#</th>
+                <th>Status</th>
+                <th>Selected</th>
+                <th>Correct</th>
+                <th>Marks</th>
+              </tr>
+            </thead>
+            <tbody id="repMatrixBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="report-footer">
+        <button class="btn btn-primary" onclick="resetExam()">🔄 Retake Exam</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Question Data Definition */
+    const sharedVisualAssets = {
+      diTable_1_5: {
+        title: "Direction (Q. No. 1 to Q. No. 5) / निर्देश (प्र. सं. 1 से प्र. सं. 5): Laptop Sold by 5 Different Stores",
+        html: `
+          <div style="overflow-x: auto;">
+<p>Direction: Study the table and answer the questions.   Laptop sold by five different stores in different months.</p>
+<p>निर्देश: तालिका का अध्ययन करें और प्रश्न का उत्तर दें।   अलग-अलग महीनों में पाँच अलग-अलग दुकानों द्वारा बेचे गए लैपटॉप।  </p>
+            <table class="cbt-table">
+              <thead>
+                <tr>
+                  <th>स्टोर / Store</th>
+                  <th>जून / June</th>
+                  <th>जुलाई / July</th>
+                  <th>मई / May</th>
+                  <th>अक्टूबर / October</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>I</strong></td><td>240</td><td>342</td><td>234</td><td>210</td></tr>
+                <tr><td><strong>J</strong></td><td>230</td><td>234</td><td>432</td><td>242</td></tr>
+                <tr><td><strong>K</strong></td><td>120</td><td>338</td><td>235</td><td>234</td></tr>
+                <tr><td><strong>L</strong></td><td>280</td><td>348</td><td>342</td><td>178</td></tr>
+                <tr><td><strong>M</strong></td><td>326</td><td>456</td><td>362</td><td>148</td></tr>
+              </tbody>
+            </table>
+          </div>`
+      },
+      diBar_16_20: {
+        title: "Direction (Q. No. 16 to Q. No. 20) / निर्देश (प्र. सं. 16 से प्र. सं. 20): Vegetables Sold (Carrot & Radish in kg)",
+        html: `
+          <div class="chart-wrapper">
+<p>Direction: Study the following information carefully and answer the questions given below.   The given bar graph shows the quantity of vegetables (Carrot and Radish) (in kg) sold in five different shops.</p>
+<p>निर्देश: निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और नीचे दिए गए प्रश्नों के उत्तर दें।   दिया गया बार ग्राफ पाँच अलग-अलग दुकानों में बेची गई सब्जियों (गाजर और मूली) (किलोग्राम में) की मात्रा को दर्शाता है।</p>
+            <svg viewBox="0 0 680 340" width="100%" height="280" style="background:#13151a; border-radius:8px;">
+              <!-- Grid lines -->
+              <line x1="60" y1="260" x2="640" y2="260" stroke="#374151" stroke-width="1.5"/>
+              <line x1="60" y1="200" x2="640" y2="200" stroke="#262930" stroke-dasharray="4"/>
+              <line x1="60" y1="140" x2="640" y2="140" stroke="#262930" stroke-dasharray="4"/>
+              <line x1="60" y1="80" x2="640" y2="80" stroke="#262930" stroke-dasharray="4"/>
+              <line x1="60" y1="20" x2="640" y2="20" stroke="#262930" stroke-dasharray="4"/>
+
+              <!-- Y-Axis Labels -->
+              <text x="50" y="264" fill="#9ca3af" font-size="11" text-anchor="end">0</text>
+              <text x="50" y="204" fill="#9ca3af" font-size="11" text-anchor="end">250</text>
+              <text x="50" y="144" fill="#9ca3af" font-size="11" text-anchor="end">500</text>
+              <text x="50" y="84" fill="#9ca3af" font-size="11" text-anchor="end">750</text>
+              <text x="50" y="24" fill="#9ca3af" font-size="11" text-anchor="end">1000</text>
+
+              <!-- Scale Factor: 240px for 1000 kg => 0.24 px per kg. Base Y = 260. Bar height = Qty * 0.24 -->
+              <!-- Shop A (x=80): Radish=432 (h=103.7, y=156.3), Carrot=576 (h=138.2, y=121.8) -->
+              <rect x="85" y="156.3" width="38" height="103.7" fill="#38bdf8" rx="3"/>
+              <text x="104" y="150" fill="#7dd3fc" font-size="12" font-weight="700" text-anchor="middle">432</text>
+              <rect x="127" y="121.8" width="38" height="138.2" fill="#fb923c" rx="3"/>
+              <text x="146" y="115" fill="#fdba74" font-size="12" font-weight="700" text-anchor="middle">576</text>
+              <text x="125" y="280" fill="#e5e7eb" font-size="13" font-weight="700" text-anchor="middle">Shop A</text>
+
+              <!-- Shop B (x=195): Radish=648 (h=155.5, y=104.5), Carrot=504 (h=121, y=139) -->
+              <rect x="195" y="104.5" width="38" height="155.5" fill="#38bdf8" rx="3"/>
+              <text x="214" y="98" fill="#7dd3fc" font-size="12" font-weight="700" text-anchor="middle">648</text>
+              <rect x="237" y="139" width="38" height="121" fill="#fb923c" rx="3"/>
+              <text x="256" y="132" fill="#fdba74" font-size="12" font-weight="700" text-anchor="middle">504</text>
+              <text x="235" y="280" fill="#e5e7eb" font-size="13" font-weight="700" text-anchor="middle">Shop B</text>
+
+              <!-- Shop C (x=305): Radish=864 (h=207.4, y=52.6), Carrot=432 (h=103.7, y=156.3) -->
+              <rect x="305" y="52.6" width="38" height="207.4" fill="#38bdf8" rx="3"/>
+              <text x="324" y="46" fill="#7dd3fc" font-size="12" font-weight="700" text-anchor="middle">864</text>
+              <rect x="347" y="156.3" width="38" height="103.7" fill="#fb923c" rx="3"/>
+              <text x="366" y="150" fill="#fdba74" font-size="12" font-weight="700" text-anchor="middle">432</text>
+              <text x="345" y="280" fill="#e5e7eb" font-size="13" font-weight="700" text-anchor="middle">Shop C</text>
+
+              <!-- Shop D (x=415): Radish=576 (h=138.2, y=121.8), Carrot=792 (h=190.1, y=69.9) -->
+              <rect x="415" y="121.8" width="38" height="138.2" fill="#38bdf8" rx="3"/>
+              <text x="434" y="115" fill="#7dd3fc" font-size="12" font-weight="700" text-anchor="middle">576</text>
+              <rect x="457" y="69.9" width="38" height="190.1" fill="#fb923c" rx="3"/>
+              <text x="476" y="63" fill="#fdba74" font-size="12" font-weight="700" text-anchor="middle">792</text>
+              <text x="455" y="280" fill="#e5e7eb" font-size="13" font-weight="700" text-anchor="middle">Shop D</text>
+
+              <!-- Shop E (x=525): Radish=936 (h=224.6, y=35.4), Carrot=540 (h=129.6, y=130.4) -->
+              <rect x="525" y="35.4" width="38" height="224.6" fill="#38bdf8" rx="3"/>
+              <text x="544" y="29" fill="#7dd3fc" font-size="12" font-weight="700" text-anchor="middle">936</text>
+              <rect x="567" y="130.4" width="38" height="129.6" fill="#fb923c" rx="3"/>
+              <text x="586" y="124" fill="#fdba74" font-size="12" font-weight="700" text-anchor="middle">540</text>
+              <text x="565" y="280" fill="#e5e7eb" font-size="13" font-weight="700" text-anchor="middle">Shop E</text>
+
+              <!-- Legend -->
+              <rect x="230" y="312" width="16" height="12" fill="#38bdf8" rx="2"/>
+              <text x="252" y="322" fill="#9ca3af" font-size="12">Radish (मूली)</text>
+              <rect x="360" y="312" width="16" height="12" fill="#fb923c" rx="2"/>
+              <text x="382" y="322" fill="#9ca3af" font-size="12">Carrot (गाजर)</text>
+            </svg>
+          </div>`
+      },
+      diTable_31_35: {
+        title: "Direction (Q. No. 31 to Q. No. 35) / निर्देश (प्र. सं. 31 से प्र. सं. 35): Pages Written by P and Q (Hindi + English)",
+        html: `
+          <div style="overflow-x: auto;">
+<p>Direction: Study the table and answer the questions.   Total pages (Hindi + English) written by P and Q in four different months given.</p>
+<p>निर्देश: तालिका का अध्ययन करें और प्रश्न का उत्तर दें।   P और Q द्वारा चार अलग-अलग महीनों में लिखे गए कुल पृष्ठ (हिन्दी + अंग्रेजी) दिए गए हैं।  </p>
+            <table class="cbt-table">
+              <thead>
+                <tr>
+                  <th>महीना / Month</th>
+                  <th>P</th>
+                  <th>Q</th>
+                  <th>कुल / Total (P + Q)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>मई / May</strong></td><td>240</td><td>340</td><td>580</td></tr>
+                <tr><td><strong>जून / June</strong></td><td>320</td><td>234</td><td>554</td></tr>
+                <tr><td><strong>जुलाई / July</strong></td><td>420</td><td>280</td><td>700</td></tr>
+                <tr><td><strong>अगस्त / August</strong></td><td>220</td><td>360</td><td>580</td></tr>
+              </tbody>
+            </table>
+          </div>`
+      },
+      passage_48_49: {
+        title: "Direction (Q. No. 48 and 49): Read the passage and answer the questions",
+        html: `
+          <div class="passage-content">
+            <strong>Advances in Electric Vehicles</strong>
+            Electric Vehicles (EVs) have gained popularity as an alternative to traditional gasoline-powered cars. They offer environmental benefits, such as reduced greenhouse gas emissions and lower air pollution. Many countries are investing in EV infrastructure, including charging stations, to support the widespread adoption of electric vehicles.
+          </div>`
+      },
+      diLine_56_60: {
+        title: "Direction (Q. No. 56 to Q. No. 60) / निर्देश (प्र. सं. 56 से प्र. सं. 60): Pens Sold by 4 Shops (Multi-Series Line Graph)",
+        html: `
+          <div class="chart-wrapper">
+<p>Direction: Study the following information carefully and answer the questions.   The given line graph shows the number of ball point pens sold by four different shops i.e. A, B, C and D and also given the number of gel pens sold by four different shops and the number of fountain pens sold by four different shops.   </p>
+<p>निर्देश : निम्नलिखित जानकारी का ध्यानपूर्वक अध्ययन करें और प्रश्नों के उत्तर दें।   नीचे दिए गए रेखा ग्राफ चार अलग-अलग दुकानों यानी A, B, C और D द्वारा बेचे गए बॉल प्वाईंट पेन की संख्या को दर्शाता है और साथ ही चार अलग-अलग दुकानों द्वारा बेचे गए जेल पेन की संख्या और चार अलग-अलग दुकानों द्वारा बेचे गए फाउंटेन पेन की संख्या भी दी गई है।</p>
+
+            <svg viewBox="0 0 680 340" width="100%" height="280" style="background:#13151a; border-radius:8px;">
+              <!-- Grid lines -->
+              <line x1="60" y1="260" x2="640" y2="260" stroke="#374151" stroke-width="1.5"/>
+              <line x1="60" y1="200" x2="640" y2="200" stroke="#262930" stroke-dasharray="4"/>
+              <line x1="60" y1="140" x2="640" y2="140" stroke="#262930" stroke-dasharray="4"/>
+              <line x1="60" y1="80" x2="640" y2="80" stroke="#262930" stroke-dasharray="4"/>
+              <line x1="60" y1="20" x2="640" y2="20" stroke="#262930" stroke-dasharray="4"/>
+
+              <!-- Y-Axis Labels: Scale: 240px for 400 pens => 0.6 px per pen. Y = 260 - (qty * 0.6) -->
+              <text x="50" y="264" fill="#9ca3af" font-size="11" text-anchor="end">0</text>
+              <text x="50" y="204" fill="#9ca3af" font-size="11" text-anchor="end">100</text>
+              <text x="50" y="144" fill="#9ca3af" font-size="11" text-anchor="end">200</text>
+              <text x="50" y="84" fill="#9ca3af" font-size="11" text-anchor="end">300</text>
+              <text x="50" y="24" fill="#9ca3af" font-size="11" text-anchor="end">400</text>
+
+              <!-- Shop X positions: A=120, B=260, C=400, D=540 -->
+              <text x="120" y="280" fill="#e5e7eb" font-size="13" font-weight="700" text-anchor="middle">Shop A</text>
+              <text x="260" y="280" fill="#e5e7eb" font-size="13" font-weight="700" text-anchor="middle">Shop B</text>
+              <text x="400" y="280" fill="#e5e7eb" font-size="13" font-weight="700" text-anchor="middle">Shop C</text>
+              <text x="540" y="280" fill="#e5e7eb" font-size="13" font-weight="700" text-anchor="middle">Shop D</text>
+
+              <!-- Line 1: Ball Point Pens (A=140->y=176, B=300->y=80, C=180->y=152, D=270->y=98) - Cyan #06b6d4 -->
+              <polyline fill="none" stroke="#06b6d4" stroke-width="3" points="120,176 260,80 400,152 540,98"/>
+              <circle cx="120" cy="176" r="4.5" fill="#06b6d4"/>
+              <text x="120" y="168" fill="#67e8f9" font-size="11" font-weight="700" text-anchor="middle">140</text>
+              <circle cx="260" cy="80" r="4.5" fill="#06b6d4"/>
+              <text x="260" y="72" fill="#67e8f9" font-size="11" font-weight="700" text-anchor="middle">300</text>
+              <circle cx="400" cy="152" r="4.5" fill="#06b6d4"/>
+              <text x="400" y="144" fill="#67e8f9" font-size="11" font-weight="700" text-anchor="middle">180</text>
+              <circle cx="540" cy="98" r="4.5" fill="#06b6d4"/>
+              <text x="540" y="90" fill="#67e8f9" font-size="11" font-weight="700" text-anchor="middle">270</text>
+
+              <!-- Line 2: Gel Pens (A=240->y=116, B=120->y=188, C=320->y=68, D=100->y=200) - Amber #f59e0b -->
+              <polyline fill="none" stroke="#f59e0b" stroke-width="3" points="120,116 260,188 400,68 540,200"/>
+              <circle cx="120" cy="116" r="4.5" fill="#f59e0b"/>
+              <text x="120" y="108" fill="#fcd34d" font-size="11" font-weight="700" text-anchor="middle">240</text>
+              <circle cx="260" cy="188" r="4.5" fill="#f59e0b"/>
+              <text x="260" y="180" fill="#fcd34d" font-size="11" font-weight="700" text-anchor="middle">120</text>
+              <circle cx="400" cy="68" r="4.5" fill="#f59e0b"/>
+              <text x="400" y="60" fill="#fcd34d" font-size="11" font-weight="700" text-anchor="middle">320</text>
+              <circle cx="540" cy="200" r="4.5" fill="#f59e0b"/>
+              <text x="540" y="192" fill="#fcd34d" font-size="11" font-weight="700" text-anchor="middle">100</text>
+
+              <!-- Line 3: Fountain Pens (A=360->y=44, B=200->y=140, C=280->y=92, D=180->y=152) - Emerald #10b981 -->
+              <polyline fill="none" stroke="#10b981" stroke-width="3" points="120,44 260,140 400,92 540,152"/>
+              <circle cx="120" cy="44" r="4.5" fill="#10b981"/>
+              <text x="120" y="36" fill="#6ee7b7" font-size="11" font-weight="700" text-anchor="middle">360</text>
+              <circle cx="260" cy="140" r="4.5" fill="#10b981"/>
+              <text x="260" y="132" fill="#6ee7b7" font-size="11" font-weight="700" text-anchor="middle">200</text>
+              <circle cx="400" cy="92" r="4.5" fill="#10b981"/>
+              <text x="400" y="84" fill="#6ee7b7" font-size="11" font-weight="700" text-anchor="middle">280</text>
+              <circle cx="540" cy="152" r="4.5" fill="#10b981"/>
+              <text x="540" y="144" fill="#6ee7b7" font-size="11" font-weight="700" text-anchor="middle">180</text>
+
+              <!-- Legend -->
+              <circle cx="130" cy="318" r="5" fill="#06b6d4"/>
+              <text x="142" y="322" fill="#9ca3af" font-size="11">Ball point pens (बॉल प्वाईंट पेन)</text>
+              <circle cx="310" cy="318" r="5" fill="#f59e0b"/>
+              <text x="322" y="322" fill="#9ca3af" font-size="11">Gel pens (जेल पेन)</text>
+              <circle cx="465" cy="318" r="5" fill="#10b981"/>
+              <text x="477" y="322" fill="#9ca3af" font-size="11">Fountain pens (फाउंटेन पेन)</text>
+            </svg>
+          </div>`
+      },
+      passage_71_75: {
+        title: "निर्देश (प्र. सं. 71 से प्र. सं. 75): निम्नलिखित गद्यांश को पढ़कर पूछे गये प्रश्नों के उत्तर दीजिए",
+        html: `
+          <div class="passage-content">
+सैन्य संचालक और राणा का प्रतिनिधित्व करने वाले महारावत बाघसिंह की तलवार धूप में दामिनी-सी चमकी और वे गरज उठे- "हम बादशाह का सामना नहीं कर पाएँगे क्योंकि उसके पास बड़ी सेना है। ऐसी स्थिति में हमें केसरिया बाना पहन लेना चाहिए और दुर्ग की वीर ललनाओं को जौहर व्रत करने के लिए प्रेरित करना चाहिए।"
+यह सुनते ही हाड़ी राणी ने सगर्व कहा- "हम जौहर करेंगी। कोई भी शत्रु हमारे नारीत्व-सतीत्व को कलंकित करे, इससे पहले हम मरना ठीक समझेंगी।"
+महारावत तथा अन्य सरदारों को इससे संतोष हुआ। और वे निश्चिन्त हो गए। उन्होंने केसरिया बाना पहन लिया। वीर ललनाओं ने अग्नि-कुंड में बारूद तथा आग को प्रज्वलित करने वाली दूसरी सामग्रियाँ डालीं। कितना दारुण दृश्य था-हजारों नारियाँ और कुँवारी कन्याएँ ...
+एक कुँवारी कन्या ने कहा-"माँ सा, हम जीते जी अग्नि-कुंड में क्यों प्रवेश करती हैं?"
+"मर्यादा की रक्षा के लिए।"
+"क्या हम युद्ध करती हुई नहीं मर सकतीं?"
+उस नारी ने अहंकार से कहा- "मर सकती हैं, क्षत्राणी का धर्म भी युद्ध करते हुए मरना है। त्याग ही उनका गौरव है पर उसमें जीवित रूप में पकड़े जाने का भी अंदेशा है, तब...?"
+"ओह !" कुँवारी कन्या ने कहा- "मर्यादा से तो मृत्यु भली है। चलिए, माँ सा, हम सब अपनी आन पर उत्सर्ग हों।"
+एक युवती एक राणी से पूछ रही थी "इस युद्ध को बंद करा दीजिए। यह युद्ध कितना भयंकर होता है, कितना बीभत्स होता है, इसमें कितनी घृणा है, क्या मनुष्य प्रेम से नहीं रह सकता?"
+"युद्ध अपने स्थान पर श्रेष्ठ लगता है और प्रेम अपने स्थान पर। आज चित्तौड़ पर विपत्ति आई हुई है, उसकी मान-मर्यादा के गौरव को खतरा है; ऐसे समय प्रेम की बात या युद्ध बंद करने की बात हास्यास्पद लगती है। अभी सिर्फ युद्ध की बात करो, शत्रु-संहार की बात करो, उत्सर्ग की बात करो। हम जौहर व्रत करके अपने नरसिंहों को निश्चिन्त करा देंगी।"
+          </div>`
+      },
+      passage_76_80: {
+        title: "निर्देश (प्र. सं. 76 से प्र. सं. 80): निम्नलिखित गद्यांश को पढ़कर पूछे गये प्रश्नों के उत्तर दीजिए",
+        html: `
+          <div class="passage-content">
+'क' कई महीने बाद आये थे। सुबह चाय पीकर अखबार देख रहा था कि वे तूफान की तरह कमरे में घुसे, 'साइक्लोन' की तरह मुझे अपनी भुजाओं में जकड़ा तो मुझे धृतराष्ट्र की भुजाओं में जकड़े भीम के पुतले की याद आ गयी। यह धृतराष्ट्र की ही जकड़ थी। अंधे धृतराष्ट्र ने टटोलते हुए पूछा, "कहाँ है भीम ? आ बेटा, तुझे कलेजे से लगा लूँ। ' और जब भीम का पुतला उनकी पकड़ में आ गया तो उन्होंने प्राणघाती स्नेह से उसे जकड़कर चूर कर डाला।
+
+ऐसे मौके पर हम अक्सर अपने पुतले को अंकवार में दे देते हैं, हम अलग खड़े देखते रहते हैं। 'क' से क्या मैं गले मिला ? क्या मुझे उसने समेटकर कलेजे से लगा लिया ? हरगिज नहीं। मैंने अपना पुतला ही उसे दिया। पुतला इसलिए उसकी भुजाओं में सौंप दिया कि मुझे मालूम था कि मैं धृतराष्ट्र से मिल रहा हूँ। पिछली रात को एक मित्र ने बताया कि 'क' अपनी ससुराल आया है और 'ग' के साथ बैठकर शाम को दो-तीन घंटे तुम्हारी निन्दा करता रहा। इस सूचना के बाद जब आज सबेरे वह मेरे गले लगा तो मैंने शरीर से अपने मन को चुपचाप खिसका दिया और निःस्नेह, कँटीली देह उसकी बाँहों में छोड़ दी। भावना के अगर काँटे होते तो उसे मालूम होता कि वह नागफनी को कलेजे से चिपटाये है। छल का धृतराष्ट्र जब आलिंगन करे, तो पुतला ही आगे बढ़ाना चाहिए।
+
+पर वह मेरा दोस्त अभिनय में पूरा है। उसके आँसू भर नहीं आये, बाकी मिलन के हर्षोल्लास के सब चिन्ह प्रकट हो गये- वह गहरी आत्मीयता की जकड़, नयनों से छलकता वह असीम स्नेह और वह स्नेहसिक्त वाणी।
+
+बोला, 'अभी सुबह की गाड़ी से उतरा और एकदम तुमसे मिलने चला आया, जैसे आत्मा का एक खण्ड दूसरे खण्ड से मिलने को आतुर रहता है।' आते ही झूठ बोला कम्बख्त। कल का आया है, यह मुझे मेरा मित्र बता गया था। इस झूठ में कोई प्रयोजन शायद उसका न रहा हो। कुछ लोग बड़े निर्दोष मिथ्यावादी होते हैं। वे आदतन, प्रकृति के वशीभूत झूठ बोलते हैं। उनके मुख से निष्प्रयास, निष्प्रयोजन झूठ ही निकलता है। मेरे एक रिश्तेदार ऐसे हैं। वे अगर बम्बई जा रहे हैं और उनसे पूछे, तो वे कहेंगे, 'कलकत्ता जा रहा हूँ।'
+          </div>`
+      }
+    };
+
+    const questionsData = [
+      /* Batch 1: Q1 to Q25 */
+      {
+        id: 1,
+        assetKey: "diTable_1_5",
+        stemEn: "What is the ratio of the laptop sold by store K and L in June and the laptop sold by I and M in May ?",
+        stemHi: "जून में स्टोर K और L द्वारा बेचे गए लैपटॉप और मई में I और M द्वारा बेचे गए लैपटॉप का अनुपात क्या है ?",
+        options: [
+          { tag: "A", en: "29:37", hi: "29:37" },
+          { tag: "B", en: "100:149", hi: "100:149" },
+          { tag: "C", en: "25:37", hi: "25:37" },
+          { tag: "D", en: "21:37", hi: "21:37" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "1. Laptops sold by Store K and L in June = 120 + 280 = 400.<br>2. Laptops sold by Store I and M in May = 234 + 362 = 596.<br>3. Ratio = 400 : 596 = (400 / 4) : (596 / 4) = 100 : 149.",
+        expHi: "1. जून में स्टोर K और L द्वारा बेचे गए लैपटॉप = 120 + 280 = 400.<br>2. मई में स्टोर I और M द्वारा बेचे गए लैपटॉप = 234 + 362 = 596.<br>3. अभीष्ट अनुपात = 400 : 596 = 100 : 149.",
+        keyFact: "Divide both sides by gcd(400, 596) = 4 to reach lowest terms."
+      },
+      {
+        id: 2,
+        assetKey: "diTable_1_5",
+        stemEn: "If 37.5% of laptop sold by store L in June is defective, then find the non-defective laptop sold by store L in June.",
+        stemHi: "यदि जून में स्टोर L द्वारा बेचे गए 37.5% लैपटॉप दोषपूर्ण हैं, तो जून में स्टोर L द्वारा बेचे गए गैर-दोषपूर्ण लैपटॉप ज्ञात कीजिए ।",
+        options: [
+          { tag: "A", en: "142", hi: "142" },
+          { tag: "B", en: "175", hi: "175" },
+          { tag: "C", en: "125", hi: "125" },
+          { tag: "D", en: "145", hi: "145" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "1. Laptops sold by Store L in June = 280.<br>2. Non-defective percentage = 100% - 37.5% = 62.5% = 5/8.<br>3. Non-defective = (5/8) * 280 = 5 * 35 = 175.",
+        expHi: "1. जून में स्टोर L द्वारा बेचे गए कुल लैपटॉप = 280.<br>2. गैर-दोषपूर्ण लैपटॉप का प्रतिशत = 100% - 37.5% = 62.5% = 5/8.<br>3. गैर-दोषपूर्ण लैपटॉप = (5/8) * 280 = 175.",
+        keyFact: "37.5% = 3/8, while 62.5% = 5/8."
+      },
+      {
+        id: 3,
+        assetKey: "diTable_1_5",
+        stemEn: "Find the average (approx.) number of laptop sold by stores K, L and M in May.",
+        stemHi: "मई में स्टोर K, L और M द्वारा बेचे गए लैपटॉप की औसत (लगभग) संख्या ज्ञात कीजिए ।",
+        options: [
+          { tag: "A", en: "231", hi: "231" },
+          { tag: "B", en: "313", hi: "313" },
+          { tag: "C", en: "256", hi: "256" },
+          { tag: "D", en: "263", hi: "263" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "1. Laptops sold in May: Store K = 235, Store L = 342, Store M = 362.<br>2. Sum = 235 + 342 + 362 = 939.<br>3. Average = 939 / 3 = 313.",
+        expHi: "1. मई में बेचे गए लैपटॉप: K = 235, L = 342, M = 362.<br>2. कुल योग = 939.<br>3. औसत = 939 / 3 = 313.",
+        keyFact: "9 + 3 + 9 = 21, exactly divisible by 3, resulting in exact integer 313."
+      },
+      {
+        id: 4,
+        assetKey: "diTable_1_5",
+        stemEn: "Number of laptop sold by store J in July and October together is what percent of the laptop sold by store M in May and June?",
+        stemHi: "जुलाई और अक्टूबर में स्टोर J द्वारा बेचे गए लैपटॉप की संख्या मई और जून में स्टोर M द्वारा बेचे गए लैपटॉप का कितना प्रतिशत है ?",
+        options: [
+          { tag: "A", en: "98.33%", hi: "98.33%" },
+          { tag: "B", en: "66.81%", hi: "66.81%" },
+          { tag: "C", en: "78.32%", hi: "78.32%" },
+          { tag: "D", en: "69.18%", hi: "69.18%" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "1. Laptops by J in July and October = 234 + 242 = 476.<br>2. Laptops by M in May and June = 362 + 326 = 688.<br>3. Required Percentage = (476 / 688) * 100% ≈ 69.186% ≈ 69.18%.",
+        expHi: "1. स्टोर J (जुलाई + अक्टूबर) = 234 + 242 = 476.<br>2. स्टोर M (मई + जून) = 362 + 326 = 688.<br>3. अभीष्ट प्रतिशत = (476 / 688) * 100 ≈ 69.18%.",
+        keyFact: "70% of 688 is 481.6; 476 is slightly below it, leading directly to 69.18%."
+      },
+      {
+        id: 5,
+        assetKey: "diTable_1_5",
+        stemEn: "In October total laptop sold by store I is 71.42% of total laptop in the shop. Find the number of unsold laptop in store I in the month of October.",
+        stemHi: "अक्टूबर में स्टोर I द्वारा बेचे गए कुल लैपटॉप, दुकान में कुल लैपटॉप का 71.42% है। अक्टूबर महीने में स्टोर I में न बिकने वाले लैपटॉप की संख्या ज्ञात करें ।",
+        options: [
+          { tag: "A", en: "84", hi: "84" },
+          { tag: "B", en: "21", hi: "21" },
+          { tag: "C", en: "86", hi: "86" },
+          { tag: "D", en: "54", hi: "54" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "1. 71.42% ≈ 5/7.<br>2. Laptops sold by Store I in October = 210.<br>3. Total laptops = (210 * 7) / 5 = 294.<br>4. Unsold laptops = 294 - 210 = 84 (or 2/7 of 294 = 84).",
+        expHi: "1. 71.42% ≈ 5/7.<br>2. अक्टूबर में स्टोर I द्वारा बेचे गए लैपटॉप = 210.<br>3. कुल लैपटॉप = 210 * (7/5) = 294.<br>4. न बिकने वाले लैपटॉप = 294 - 210 = 84.",
+        keyFact: "1/7 ≈ 14.28%, 5/7 ≈ 71.42%, 2/7 ≈ 28.57%."
+      },
+      {
+        id: 6,
+        stemEn: "On 26 December, 2024, which country successfully tested the firing of the supersonic missile UAV-122 from the Bayraktar Akinci drone ?",
+        stemHi: "26 दिसंबर, 2024 को किस देश ने बायरक्टर अकिंसी ड्रोन से सुपरसोनिक मिसाइल UAV-122 का सफल परीक्षण किया ?",
+        options: [
+          { tag: "A", en: "Iran", hi: "ईरान" },
+          { tag: "B", en: "Israel", hi: "इज़राइल" },
+          { tag: "C", en: "Turkey", hi: "तुर्की" },
+          { tag: "D", en: "Russia", hi: "रूस" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "Turkey (Türkiye) successfully test-fired the supersonic missile UAV-122, developed by Roketsan, using its indigenous Bayraktar Akinci UCAV.",
+        expHi: "तुर्की (तुर्किये) ने रोकेत्सन द्वारा विकसित सुपरसोनिक मिसाइल UAV-122 का अपने बायरक्टर अकिंसी ड्रोन से सफल परीक्षण किया।",
+        keyFact: "Bayraktar Akinci is Turkey's state-of-the-art combat drone manufactured by Baykar."
+      },
+      {
+        id: 7,
+        stemEn: "\"Development Planning - the Indian Experience\" book was written by",
+        stemHi: "\"डेवलपमेंट प्लानिंग - द इंडियन एक्स्पीरियन्स\" पुस्तक किसके द्वारा लिखी गई थी ?",
+        options: [
+          { tag: "A", en: "Sukhamoy Chakravarty", hi: "सुखमय चक्रवर्ती" },
+          { tag: "B", en: "S.N. Sen", hi: "एस.एन. सेन" },
+          { tag: "C", en: "Amartya Sen", hi: "अमर्त्य सेन" },
+          { tag: "D", en: "Adam Smith", hi: "एडम स्मिथ" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "The book 'Development Planning: The Indian Experience' was written by eminent Indian economist Sukhamoy Chakravarty in 1987.",
+        expHi: "यह पुस्तक विख्यात भारतीय अर्थशास्त्री प्रोफेसर सुखमय चक्रवर्ती द्वारा 1987 में लिखी गई थी।",
+        keyFact: "Chakravarty headed the Economic Advisory Council to the Prime Minister during the 1980s."
+      },
+      {
+        id: 8,
+        stemEn: "Find the odd word from the following.",
+        stemHi: "निम्नलिखित में से भिन्न शब्द चुनिए ।",
+        options: [
+          { tag: "A", en: "Bat", hi: "चमगादड़" },
+          { tag: "B", en: "Pigeon", hi: "कबूतर" },
+          { tag: "C", en: "Parrot", hi: "तोता" },
+          { tag: "D", en: "Crow", hi: "कौआ" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "Pigeon, Parrot, and Crow are birds (Aves), whereas Bat is a flying mammal (Mammalia).",
+        expHi: "कबूतर, तोता और कौआ पक्षी हैं जो अंडे देते हैं, जबकि चमगादड़ एक स्तनपायी (मैमल) है।",
+        keyFact: "Bats are the only mammals capable of true, sustained flight."
+      },
+      {
+        id: 9,
+        stemEn: "The book 'Economic History of India' was published by",
+        stemHi: "'इकॉनॉमिक हिस्टरी ऑफ इंडिया' पुस्तक किसके द्वारा प्रकाशित की गई थी ?",
+        options: [
+          { tag: "A", en: "B. G. Tilak", hi: "बी.जी. तिलक" },
+          { tag: "B", en: "R. C. Dutt", hi: "आर.सी. दत्त" },
+          { tag: "C", en: "M. G. Ranade", hi: "एम.जी. रानाडे" },
+          { tag: "D", en: "S. N. Sen", hi: "एस.एन. सेन" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "'The Economic History of India' was authored by Romesh Chunder Dutt (R. C. Dutt), published in 1902 and 1904, detailing the colonial economic drain.",
+        expHi: "यह पुस्तक रोमेश चंद्र दत्त (आर.सी. दत्त) द्वारा 1902 और 1904 में प्रकाशित की गई थी, जिसमें औपनिवेशिक शोषण और धन की निकासी का विश्लेषण था।",
+        keyFact: "R.C. Dutt was the President of the 1899 Lucknow Session of the Indian National Congress."
+      },
+      {
+        id: 10,
+        stemEn: "12½% of 1 hour 40 mins is",
+        stemHi: "1 घंटा 40 मिनट का 12½% क्या है ?",
+        options: [
+          { tag: "A", en: "12.5 mins", hi: "12.5 मिनट" },
+          { tag: "B", en: "20.5 mins", hi: "20.5 मिनट" },
+          { tag: "C", en: "25 mins", hi: "25 मिनट" },
+          { tag: "D", en: "15 mins", hi: "15 मिनट" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "1. 1 hour 40 mins = 60 + 40 = 100 minutes.<br>2. 12.5% of 100 minutes = 12.5 minutes.",
+        expHi: "1. 1 घंटा 40 मिनट = 100 मिनट.<br>2. 100 मिनट का 12.5% = 12.5 मिनट.",
+        keyFact: "Any percentage of 100 equals the number itself."
+      },
+      {
+        id: 11,
+        stemEn: "________ refers to the existence of more than one level of Government in the country.",
+        stemHi: "________ देश में एक से अधिक स्तर की सरकार के अस्तित्व को दर्शाता है ।",
+        options: [
+          { tag: "A", en: "Federalism", hi: "संघवाद" },
+          { tag: "B", en: "Secularism", hi: "धर्मनिरपेक्षता" },
+          { tag: "C", en: "Democracy", hi: "लोकतंत्र" },
+          { tag: "D", en: "Unitary system", hi: "एकात्मक प्रणाली" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "Federalism refers to the existence of more than one tier of government (e.g., Union, State, Local) in a nation.",
+        expHi: "संघवाद (Federalism) से आशय देश में एक से अधिक स्तर की सरकारों के अस्तित्व से है।",
+        keyFact: "Article 1 describes India as a 'Union of States'."
+      },
+      {
+        id: 12,
+        stemEn: "Which of the following adaptations is common in desert plants ?",
+        stemHi: "रेगिस्तानी पौधों में निम्नलिखित में से कौन-सा अनुकूलन सामान्य है ?",
+        options: [
+          { tag: "A", en: "Large flat leaves", hi: "बड़े चपटे पत्ते" },
+          { tag: "B", en: "Bright colored flowers", hi: "चमकीले रंग के फूल" },
+          { tag: "C", en: "Shallow roots", hi: "उथली जड़ें" },
+          { tag: "D", en: "Thick stems for water storage", hi: "जल भंडारण के लिए मोटे तने" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Desert plants (xerophytes) feature thick succulent stems to store water, waxy cuticles, and spines instead of leaves to prevent transpiration.",
+        expHi: "रेगिस्तानी पौधों (मरुद्भिद) में जल संचयन के लिए मोटे व गूदेदार तने होते हैं और पत्तियां कांटों में बदल जाती हैं।",
+        keyFact: "In cacti, photosynthesis is performed by the green fleshy stem."
+      },
+      {
+        id: 13,
+        stemEn: "27th September is observed as",
+        stemHi: "27 सितंबर को ________ के रूप में मनाया जाता है।",
+        options: [
+          { tag: "A", en: "Teachers' Day", hi: "शिक्षक दिवस" },
+          { tag: "B", en: "World Tourism Day", hi: "विश्व पर्यटन दिवस" },
+          { tag: "C", en: "International Literacy Day", hi: "अंतर्राष्ट्रीय साक्षरता दिवस" },
+          { tag: "D", en: "United Nations Day", hi: "संयुक्त राष्ट्र दिवस" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "27 September is celebrated annually as World Tourism Day by UNWTO.",
+        expHi: "27 सितंबर को प्रतिवर्ष 'विश्व पर्यटन दिवस' के रूप में मनाया जाता है।",
+        keyFact: "UNWTO statutes were adopted on September 27, 1970."
+      },
+      {
+        id: 14,
+        stemEn: "When was the International Big Cat Alliance (IBCA) launched by India?",
+        stemHi: "भारत द्वारा अंतर्राष्ट्रीय बिग कैट अलायंस (IBCA) कब शुरू किया गया था ?",
+        options: [
+          { tag: "A", en: "3 March, 2023", hi: "3 मार्च, 2023" },
+          { tag: "B", en: "5 June, 2023", hi: "5 जून, 2023" },
+          { tag: "C", en: "9 April, 2023", hi: "9 अप्रैल, 2023" },
+          { tag: "D", en: "22 May, 2023", hi: "22 मई, 2023" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "PM Narendra Modi launched the International Big Cat Alliance (IBCA) on 9 April, 2023 in Mysuru, commemorating 50 years of Project Tiger.",
+        expHi: "प्रधानमंत्री नरेंद्र मोदी ने 9 अप्रैल, 2023 को 'प्रोजेक्ट टाइगर' के 50 वर्ष पूरे होने पर मैसूर में IBCA का शुभारंभ किया।",
+        keyFact: "Project Tiger was initiated in India on 1 April 1973."
+      },
+      {
+        id: 15,
+        stemEn: "India defeated which team in the 1983 Cricket World Cup final ?",
+        stemHi: "भारत ने 1983 क्रिकेट विश्व कप फाइनल में किस टीम को हराया था ?",
+        options: [
+          { tag: "A", en: "England", hi: "इंग्लैंड" },
+          { tag: "B", en: "West Indies", hi: "वेस्टइंडीज़" },
+          { tag: "C", en: "Australia", hi: "ऑस्ट्रेलिया" },
+          { tag: "D", en: "Pakistan", hi: "पाकिस्तान" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "India under Kapil Dev defeated two-time champion West Indies by 43 runs at Lord's on 25 June 1983.",
+        expHi: "भारत ने 25 जून 1983 को लॉर्ड्स में क्लाइव लॉयड की कप्तानी वाली वेस्टइंडीज़ को 43 रनों से हराया था।",
+        keyFact: "Mohinder Amarnath was awarded Player of the Match in the 1983 final."
+      },
+      {
+        id: 16,
+        assetKey: "diBar_16_20",
+        stemEn: "The quantity of Radish sold in F is the average quantity of Radish sold in A, C and D together and the ratio of the Radish to Carrot sold in F is 4: 5. Find the quantity of Carrot sold in F.",
+        stemHi: "F में बेचे गए मूली की मात्रा A, C और D में बेचे गए मूली की औसत मात्रा है और F में बेचे गए मूली और गाजर का अनुपात 4:5 है। F में बेचे गए गाजर की मात्रा ज्ञात कीजिए ।",
+        options: [
+          { tag: "A", en: "720 kg", hi: "720 kg" },
+          { tag: "B", en: "810 kg", hi: "810 kg" },
+          { tag: "C", en: "750 kg", hi: "750 kg" },
+          { tag: "D", en: "780 kg", hi: "780 kg" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "1. Radish sold in A (432) + C (864) + D (576) = 1872 kg.<br>2. Average Radish in F = 1872 / 3 = 624 kg.<br>3. Ratio Radish : Carrot = 4 : 5. 4 units = 624 => 1 unit = 156.<br>4. Carrot in F = 5 * 156 = 780 kg.",
+        expHi: "1. A, C और D में मूली की कुल मात्रा = 432 + 864 + 576 = 1872 किग्रा.<br>2. F में मूली (औसत) = 1872 / 3 = 624 किग्रा.<br>3. 4 इकाई = 624 => 1 इकाई = 156.<br>4. F में गाजर की मात्रा = 5 * 156 = 780 किग्रा.",
+        keyFact: "624 * (5/4) = 156 * 5 = 780 kg."
+      },
+      {
+        id: 17,
+        assetKey: "diBar_16_20",
+        stemEn: "The quantity of Pumpkin sold in A is the difference between the quantity of Radish sold in A and B together and the quantity of Carrot sold in C and D together. Find the total quantity of vegetables sold in A (Carrot, Radish and Pumpkin).",
+        stemHi: "A में बेचे गए कद्दू की मात्रा A और B में बेचे गए मूली की मात्रा और C और D में बेचे गए गाजर की मात्रा के बीच का अंतर है। A में बेची गई सब्जियों की कुल मात्रा ज्ञात कीजिए। (गाजर, मूली और कद्दू)",
+        options: [
+          { tag: "A", en: "1048 kg", hi: "1048 kg" },
+          { tag: "B", en: "1124 kg", hi: "1124 kg" },
+          { tag: "C", en: "1152 kg", hi: "1152 kg" },
+          { tag: "D", en: "1096 kg", hi: "1096 kg" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "1. Radish in A + B = 432 + 648 = 1080 kg.<br>2. Carrot in C + D = 432 + 792 = 1224 kg.<br>3. Pumpkin in A = |1224 - 1080| = 144 kg.<br>4. Total vegetables in A = Radish (432) + Carrot (576) + Pumpkin (144) = 1008 + 144 = 1152 kg.",
+        expHi: "1. A और B में मूली = 432 + 648 = 1080 किग्रा.<br>2. C और D में गाजर = 432 + 792 = 1224 किग्रा.<br>3. कद्दू की मात्रा = 1224 - 1080 = 144 किग्रा.<br>4. A में कुल सब्जियां = 432 + 576 + 144 = 1152 किग्रा.",
+        keyFact: "Vegetables in Shop A (Carrot + Radish) initially equal 1008 kg."
+      },
+      {
+        id: 18,
+        assetKey: "diBar_16_20",
+        stemEn: "What is the difference between the quantity of Carrot and Radish in all the shops together?",
+        stemHi: "सभी दुकानों में गाजर और मूली की मात्रा में क्या अंतर है ?",
+        options: [
+          { tag: "A", en: "608 kg", hi: "608 kg" },
+          { tag: "B", en: "620 kg", hi: "620 kg" },
+          { tag: "C", en: "612 kg", hi: "612 kg" },
+          { tag: "D", en: "616 kg", hi: "616 kg" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "1. Total Radish = 432 + 648 + 864 + 576 + 936 = 3456 kg.<br>2. Total Carrot = 576 + 504 + 432 + 792 + 540 = 2844 kg.<br>3. Difference = 3456 - 2844 = 612 kg.",
+        expHi: "1. सभी दुकानों में कुल मूली = 3456 किग्रा.<br>2. सभी दुकानों में कुल गाजर = 2844 किग्रा.<br>3. अंतर = 3456 - 2844 = 612 किग्रा.",
+        keyFact: "Net difference by shop: -144 + 144 + 432 - 216 + 396 = 612 kg."
+      },
+      {
+        id: 19,
+        assetKey: "diBar_16_20",
+        stemEn: "The ratio of the total quantity of vegetables sold in B and F is 32: 35. Find the difference between the number of vegetables sold in F and D.",
+        stemHi: "B और F में बेची गई सब्जियों की कुल मात्रा का अनुपात 32 : 35 है। F और D में बेची गई सब्जियों की संख्या के बीच अंतर ज्ञात कीजिए ।",
+        options: [
+          { tag: "A", en: "108 kg", hi: "108 kg" },
+          { tag: "B", en: "116 kg", hi: "116 kg" },
+          { tag: "C", en: "112 kg", hi: "112 kg" },
+          { tag: "D", en: "104 kg", hi: "104 kg" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "1. Total in B = 648 + 504 = 1152 kg.<br>2. Ratio B:F = 32:35 => 1 unit = 1152 / 32 = 36.<br>3. Vegetables in F = 35 * 36 = 1260 kg.<br>4. Total in D = 576 + 792 = 1368 kg.<br>5. Difference = 1368 - 1260 = 108 kg.",
+        expHi: "1. B में कुल सब्जियां = 648 + 504 = 1152 किग्रा.<br>2. 32 इकाई = 1152 => 1 इकाई = 36.<br>3. F में सब्जियां = 35 * 36 = 1260 किग्रा.<br>4. D में सब्जियां = 576 + 792 = 1368 किग्रा.<br>5. अंतर = 1368 - 1260 = 108 किग्रा.",
+        keyFact: "35 * 36 = 1260; 1368 - 1260 = 108."
+      },
+      {
+        id: 20,
+        assetKey: "diBar_16_20",
+        stemEn: "The quantity of Carrot sold in B and D together is what percent of the total quantity of vegetables sold in E?",
+        stemHi: "B और D में बेचे गए गाजर की मात्रा E में बेची गई सब्जियों की कुल मात्रा का कितना प्रतिशत है ?",
+        options: [
+          { tag: "A", en: "87.8%", hi: "87.8%" },
+          { tag: "B", en: "83.9%", hi: "83.9%" },
+          { tag: "C", en: "89.5%", hi: "89.5%" },
+          { tag: "D", en: "85.6%", hi: "85.6%" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "1. Carrot in B + D = 504 + 792 = 1296 kg.<br>2. Total vegetables in E = 936 + 540 = 1476 kg.<br>3. Percentage = (1296 / 1476) * 100% = (36 / 41) * 100% ≈ 87.804% ≈ 87.8%.",
+        expHi: "1. B और D में गाजर = 504 + 792 = 1296 किग्रा.<br>2. E में कुल सब्जियां = 936 + 540 = 1476 किग्रा.<br>3. अभीष्ट प्रतिशत = (1296 / 1476) * 100 = (36 / 41) * 100 ≈ 87.8%.",
+        keyFact: "Both 1296 and 1476 are divisible by 36 (1296/36 = 36, 1476/36 = 41)."
+      },
+      {
+        id: 21,
+        stemEn: "India shares its land boundaries with how many countries?",
+        stemHi: "भारत अपनी भूमि सीमा कितने देशों के साथ साझा करता है ?",
+        options: [
+          { tag: "A", en: "7", hi: "7" },
+          { tag: "B", en: "9", hi: "9" },
+          { tag: "C", en: "5", hi: "5" },
+          { tag: "D", en: "6", hi: "6" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "India shares land borders with 7 countries: Bangladesh, China, Pakistan, Nepal, Myanmar, Bhutan, and Afghanistan.",
+        expHi: "भारत 7 देशों के साथ अपनी स्थलीय सीमाएं साझा करता है: बांग्लादेश, चीन, पाकिस्तान, नेपाल, म्यांमार, भूटान और अफगानिस्तान।",
+        keyFact: "Longest land boundary is with Bangladesh (4,096.7 km)."
+      },
+      {
+        id: 22,
+        stemEn: "Which of the following statement is true regarding the Money bill?",
+        stemHi: "धन विधेयक के संबंध में निम्नलिखित में से कौन-सा कथन सत्य है ?",
+        options: [
+          { tag: "A", en: "It can be introduced in either House of Parliament", hi: "इसे संसद के किसी भी सदन में पेश किया जा सकता है" },
+          { tag: "B", en: "It cannot be introduced in either House of Parliament", hi: "इसे संसद के किसी भी सदन में पेश नहीं किया जा सकता है" },
+          { tag: "C", en: "It can be introduced only in the Rajya Sabha", hi: "इसे केवल राज्यसभा में पेश किया जा सकता है" },
+          { tag: "D", en: "It can be introduced only in the Lok Sabha", hi: "इसे केवल लोकसभा में पेश किया जा सकता है" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Under Article 109 of the Indian Constitution, a Money Bill can be introduced ONLY in the Lok Sabha with the prior recommendation of the President.",
+        expHi: "अनुच्छेद 109 के अनुसार, धन विधेयक केवल लोकसभा में ही प्रस्तुत किया जा सकता है, राज्यसभा में नहीं।",
+        keyFact: "Speaker of Lok Sabha decides whether a bill is a Money Bill or not (Article 110)."
+      },
+      {
+        id: 23,
+        stemEn: "LPG Model of development was introduced in India in",
+        stemHi: "भारत में विकास का LPG मॉडल ________ में प्रस्तुत किया गया था।",
+        options: [
+          { tag: "A", en: "1990", hi: "1990" },
+          { tag: "B", en: "1995", hi: "1995" },
+          { tag: "C", en: "1991", hi: "1991" },
+          { tag: "D", en: "1992", hi: "1992" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "The Liberalisation, Privatisation, and Globalisation (LPG) economic reforms were launched in July 1991 by PM P.V. Narasimha Rao and Finance Minister Dr. Manmohan Singh.",
+        expHi: "एलपीजी (उदारीकरण, निजीकरण और वैश्वीकरण) मॉडल जुलाई 1991 में तत्कालीन प्रधानमंत्री पी.वी. नरसिम्हा राव और वित्त मंत्री डॉ. मनमोहन सिंह द्वारा पेश किया गया।",
+        keyFact: "It marked the New Economic Policy (NEP) 1991 to resolve balance-of-payments crisis."
+      },
+      {
+        id: 24,
+        stemEn: "How many total Padma Awards were announced in 2025, including a duo case (counted as one)?",
+        stemHi: "2025 में कुल कितने पद्म पुरस्कारों की घोषणा की गई, जिसमें एक युगल मामला (एक के रूप में गिना गया) भी शामिल है ?",
+        options: [
+          { tag: "A", en: "135", hi: "135" },
+          { tag: "B", en: "139", hi: "139" },
+          { tag: "C", en: "145", hi: "145" },
+          { tag: "D", en: "140", hi: "140" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "A total of 139 Padma Awards were announced for 2025: 7 Padma Vibhushan, 19 Padma Bhushan, and 113 Padma Shri (including 1 duo case).",
+        expHi: "वर्ष 2025 के लिए कुल 139 पद्म पुरस्कारों (7 पद्म विभूषण, 19 पद्म भूषण, 113 पद्म श्री) की घोषणा की गई।",
+        keyFact: "Duo cases in Padma Awards are officially counted as one single award."
+      },
+      {
+        id: 25,
+        stemEn: "The time gap between the question hour and the agenda of the day is called",
+        stemHi: "प्रश्न काल और दिन के एजेंडे के बीच के समय अंतराल को ________ कहा जाता है।",
+        options: [
+          { tag: "A", en: "First hour", hi: "पहला घंटा" },
+          { tag: "B", en: "Zero hour", hi: "शून्य काल" },
+          { tag: "C", en: "Half an hour", hi: "आधा घंटा" },
+          { tag: "D", en: "Starred question hour", hi: "तारांकित प्रश्न काल" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Zero Hour in Indian Parliament is the period immediately following Question Hour until the listed agenda is taken up.",
+        expHi: "प्रश्न काल और दिन की कार्यसूची (एजेंडा) के बीच के समय को 'शून्य काल' (Zero Hour) कहा जाता है।",
+        keyFact: "Zero Hour is an Indian parliamentary innovation introduced in 1962."
+      },
+
+      /* Batch 2: Q26 to Q50 */
+      {
+        id: 26,
+        stemEn: "The Girnar Rock Inscription of Rudradaman refers to Sudarshan Lake, constructed during the reign of which Mauryan ruler?",
+        stemHi: "रुद्रदामन के गिरनार शिलालेख में सुदर्शन झील का उल्लेख है, जिसका निर्माण किस मौर्य शासक के शासनकाल में हुआ था ?",
+        options: [
+          { tag: "A", en: "Ashoka", hi: "अशोक" },
+          { tag: "B", en: "Dasharatha Maurya", hi: "दशरथ मौर्य" },
+          { tag: "C", en: "Bindusara", hi: "बिंदुसार" },
+          { tag: "D", en: "Chandragupta Maurya", hi: "चंद्रगुप्त मौर्य" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Sudarshana Lake in Junagadh was constructed during the reign of Chandragupta Maurya by his governor Pushyagupta Vaishya.",
+        expHi: "सुदर्शन झील का निर्माण चंद्रगुप्त मौर्य के प्रांतीय राज्यपाल पुष्यगुप्त वैश्य द्वारा कराया गया था।",
+        keyFact: "Rudradaman I's Junagadh inscription (150 CE) is the earliest long inscription in chaste Sanskrit."
+      },
+      {
+        id: 27,
+        stemEn: "The age of Amit is same as Sumit because they are twins, Richa is younger than Sumit, Richa is younger than Jyotsana but elder than Saurabh, Sumit is younger than Jyotsana. Who is the eldest among them?",
+        stemHi: "अमित की आयु सुमित के समान है क्योंकि वे जुड़वाँ हैं, ऋचा सुमित से छोटी है, ऋचा ज्योत्सना से छोटी है लेकिन सौरभ से बड़ी है, सुमित ज्योत्सना से छोटा है । उनमें सबसे बड़ा कौन है ?",
+        options: [
+          { tag: "A", en: "Amit", hi: "अमित" },
+          { tag: "B", en: "Saurabh", hi: "सौरभ" },
+          { tag: "C", en: "Richa", hi: "ऋचा" },
+          { tag: "D", en: "Jyotsana", hi: "ज्योत्सना" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Order of ages: Jyotsana > Sumit = Amit > Richa > Saurabh. Hence, Jyotsana is the eldest.",
+        expHi: "आयु का क्रम: ज्योत्सना > सुमित = अमित > ऋचा > सौरभ। अतः ज्योत्सना सबसे बड़ी है।",
+        keyFact: "Inequality chain confirms Jyotsana is older than all others."
+      },
+      {
+        id: 28,
+        stemEn: "Defence Research and Development Organization (DRDO) was established in the year",
+        stemHi: "रक्षा अनुसंधान एवं विकास संगठन (DRDO) की स्थापना किस वर्ष हुई थी ?",
+        options: [
+          { tag: "A", en: "1968", hi: "1968" },
+          { tag: "B", en: "1962", hi: "1962" },
+          { tag: "C", en: "1972", hi: "1972" },
+          { tag: "D", en: "1958", hi: "1958" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "DRDO was formed in 1958 by amalgamating Defence Science Organisation with technical development establishments.",
+        expHi: "DRDO की स्थापना वर्ष 1958 में रक्षा विज्ञान संगठन और तकनीकी विकास प्रतिष्ठानों को मिलाकर की गई थी।",
+        keyFact: "Motto of DRDO is 'बलस्य मूलं विज्ञानम्' (Strength's Origin is in Science)."
+      },
+      {
+        id: 29,
+        stemEn: "In human beings, the posture and balance of the body is controlled by",
+        stemHi: "मनुष्य में शरीर की मुद्रा और संतुलन किसके द्वारा नियंत्रित होता है ?",
+        options: [
+          { tag: "A", en: "Pons", hi: "पोंस" },
+          { tag: "B", en: "Cerebrum", hi: "सेरेब्रम" },
+          { tag: "C", en: "Medulla oblongata", hi: "मेडुला ऑब्लोंगटा" },
+          { tag: "D", en: "Cerebellum", hi: "सेरिबैलम" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "The cerebellum (hindbrain) controls precision of voluntary motor movements and maintains body balance and posture.",
+        expHi: "सेरिबैलम (अनुमस्तिष्क) शरीर के संतुलन, समन्वय और शारीरिक मुद्रा को नियंत्रित करता है।",
+        keyFact: "Alcohol consumption severely affects cerebellum functioning."
+      },
+      {
+        id: 30,
+        stemEn: "Keoladeo National Park is located in which state of India?",
+        stemHi: "केवलादेव राष्ट्रीय उद्यान भारत के किस राज्य में स्थित है ?",
+        options: [
+          { tag: "A", en: "Gujarat", hi: "गुजरात" },
+          { tag: "B", en: "Rajasthan", hi: "राजस्थान" },
+          { tag: "C", en: "Madhya Pradesh", hi: "मध्य प्रदेश" },
+          { tag: "D", en: "Assam", hi: "असम" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Keoladeo National Park (formerly Bharatpur Bird Sanctuary) is located in Rajasthan. It is a UNESCO World Heritage & Ramsar site.",
+        expHi: "केवलादेव राष्ट्रीय उद्यान (भरतपुर पक्षी अभयारण्य) राजस्थान में स्थित है। यह यूनेस्को विश्व धरोहर स्थल है।",
+        keyFact: "Famous wintering ground for the endangered Siberian Crane."
+      },
+      {
+        id: 31,
+        assetKey: "diTable_31_35",
+        stemEn: "Total pages written by P in May and June together is approximately what percent of total pages written by Q in May and August together?",
+        stemHi: "मई और जून में P द्वारा लिखे गए कुल पृष्ठ, मई और अगस्त में Q द्वारा लिखे गए कुल पृष्ठों का लगभग कितना प्रतिशत है ?",
+        options: [
+          { tag: "A", en: "56%", hi: "56%" },
+          { tag: "B", en: "78%", hi: "78%" },
+          { tag: "C", en: "80%", hi: "80%" },
+          { tag: "D", en: "70%", hi: "70%" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "1. P in May + June = 240 + 320 = 560.<br>2. Q in May + August = 340 + 360 = 700.<br>3. Percentage = (560 / 700) * 100% = 4/5 * 100% = 80%.",
+        expHi: "1. P (मई + जून) = 240 + 320 = 560.<br>2. Q (मई + अगस्त) = 340 + 360 = 700.<br>3. अभीष्ट प्रतिशत = (560 / 700) * 100 = 80%.",
+        keyFact: "560 / 700 = 56 / 70 = 8 / 10 = 80% exact."
+      },
+      {
+        id: 32,
+        assetKey: "diTable_31_35",
+        stemEn: "How much more percentage of pages written by P in June as compared to Q in same month?",
+        stemHi: "जून में P द्वारा लिखे गए पृष्ठों का प्रतिशत Q की तुलना में समान महीने में कितना अधिक है ?",
+        options: [
+          { tag: "A", en: "36.75%", hi: "36.75%" },
+          { tag: "B", en: "33.3%", hi: "33.3%" },
+          { tag: "C", en: "48.36%", hi: "48.36%" },
+          { tag: "D", en: "25.96%", hi: "25.96%" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "1. June: P = 320, Q = 234.<br>2. Difference = 320 - 234 = 86.<br>3. Percentage increase over Q = (86 / 234) * 100% ≈ 36.752% ≈ 36.75%.",
+        expHi: "1. जून में: P = 320, Q = 234.<br>2. अंतर = 320 - 234 = 86.<br>3. Q की तुलना में प्रतिशत अधिक = (86 / 234) * 100 ≈ 36.75%.",
+        keyFact: "Denominator is Q's value (234) as asked 'compared to Q'."
+      },
+      {
+        id: 33,
+        assetKey: "diTable_31_35",
+        stemEn: "What are the average pages written by P in all the months together?",
+        stemHi: "सभी महीनों में P द्वारा लिखे गए औसत पृष्ठ क्या हैं ?",
+        options: [
+          { tag: "A", en: "243", hi: "243" },
+          { tag: "B", en: "360", hi: "360" },
+          { tag: "C", en: "256", hi: "256" },
+          { tag: "D", en: "300", hi: "300" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "1. Total pages by P = 240 + 320 + 420 + 220 = 1200.<br>2. Average = 1200 / 4 = 300.",
+        expHi: "1. P द्वारा कुल पृष्ठ = 240 + 320 + 420 + 220 = 1200.<br>2. औसत = 1200 / 4 = 300.",
+        keyFact: "1200 / 4 gives exactly 300."
+      },
+      {
+        id: 34,
+        assetKey: "diTable_31_35",
+        stemEn: "28.57% of the total pages written by Q in July is in Hindi. How many English pages are written by Q in July ?",
+        stemHi: "जुलाई में Q द्वारा लिखे गए कुल पृष्ठों का 28.57% हिन्दी में है। Q द्वारा जुलाई में कितने अंग्रेजी पृष्ठ लिखे गए ?",
+        options: [
+          { tag: "A", en: "284", hi: "284" },
+          { tag: "B", en: "200", hi: "200" },
+          { tag: "C", en: "232", hi: "232" },
+          { tag: "D", en: "268", hi: "268" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "1. Total by Q in July = 280.<br>2. 28.57% ≈ 2/7.<br>3. English fraction = 1 - 2/7 = 5/7.<br>4. English pages = (5/7) * 280 = 5 * 40 = 200.",
+        expHi: "1. जुलाई में Q के कुल पृष्ठ = 280.<br>2. 28.57% ≈ 2/7.<br>3. अंग्रेजी पृष्ठ = (5/7) * 280 = 200.",
+        keyFact: "1/7 = 14.285%, 2/7 = 28.57%, 5/7 = 71.43%."
+      },
+      {
+        id: 35,
+        assetKey: "diTable_31_35",
+        stemEn: "What is respective ratio between the total pages written by both P and Q in May and the total pages written by both P and Q in July?",
+        stemHi: "मई में P और Q दोनों द्वारा लिखे गए कुल पृष्ठों और जुलाई में P और Q दोनों द्वारा लिखे गए कुल पृष्ठों के बीच क्रमशः अनुपात क्या है ?",
+        options: [
+          { tag: "A", en: "31:23", hi: "31:23" },
+          { tag: "B", en: "39:21", hi: "39:21" },
+          { tag: "C", en: "29:35", hi: "29:35" },
+          { tag: "D", en: "37:59", hi: "37:59" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "1. Total in May = 240 + 340 = 580.<br>2. Total in July = 420 + 280 = 700.<br>3. Ratio = 580 : 700 = 58 : 70 = 29 : 35.",
+        expHi: "1. मई में कुल पृष्ठ = 240 + 340 = 580.<br>2. जुलाई में कुल पृष्ठ = 420 + 280 = 700.<br>3. अनुपात = 580 : 700 = 29 : 35.",
+        keyFact: "Divide both 580 and 700 by 20 to get 29:35."
+      },
+      {
+        id: 36,
+        stemEn: "India's first overseas Jan Aushadi Kendra was installed in",
+        stemHi: "भारत का पहला विदेशी जन औषधि केंद्र किस देश में शुरू हुआ ?",
+        options: [
+          { tag: "A", en: "Nepal", hi: "नेपाल" },
+          { tag: "B", en: "Bangladesh", hi: "बांग्लादेश" },
+          { tag: "C", en: "Sri Lanka", hi: "श्रीलंका" },
+          { tag: "D", en: "Mauritius", hi: "मॉरीशस" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "India's first overseas Jan Aushadi Kendra was inaugurated in Mauritius in July 2024 to provide affordable Indian generic medicines.",
+        expHi: "भारत का पहला विदेशी जन औषधि केंद्र जुलाई 2024 में मॉरीशस में उद्घाटित किया गया था।",
+        keyFact: "Administered by the Pharmaceuticals & Medical Devices Bureau of India (PMBI)."
+      },
+      {
+        id: 37,
+        stemEn: "What is the symbol associated with Parshvanatha, the 23rd Tirthankara?",
+        stemHi: "23 वें तीर्थंकर पार्श्वनाथ से जुड़ा प्रतीक क्या है ?",
+        options: [
+          { tag: "A", en: "Bull", hi: "बैल" },
+          { tag: "B", en: "Lion", hi: "शेर" },
+          { tag: "C", en: "Conch", hi: "शंख" },
+          { tag: "D", en: "Snake", hi: "साँप" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "The cognisance (symbol) of Parshvanatha (23rd Tirthankara) is the Snake / Serpent. (Bull: Rishabhanatha, Conch: Neminatha, Lion: Mahavira).",
+        expHi: "23वें तीर्थंकर भगवान पार्श्वनाथ का प्रतीक 'सर्प' (सांप) है। (ऋषभदेव का बैल, नेमिनाथ का शंख, महावीर का सिंह)।",
+        keyFact: "Parshvanatha propounded the 4 great vows (Chaturyama) of Jainism."
+      },
+      {
+        id: 38,
+        stemEn: "Under Article 129 of the Indian Constitution, the ________ has been declared as a Court of Record.",
+        stemHi: "भारतीय संविधान की अनुच्छेद 129 के तहत, ________ को अभिलेख का न्यायालय घोषित किया गया है।",
+        options: [
+          { tag: "A", en: "Gram Nyayalayas", hi: "ग्राम न्यायालय" },
+          { tag: "B", en: "Supreme Court", hi: "सर्वोच्च न्यायालय" },
+          { tag: "C", en: "High Court", hi: "उच्च न्यायालय" },
+          { tag: "D", en: "District Court", hi: "जिला न्यायालय" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Article 129 declares the Supreme Court of India as a Court of Record with power to punish for contempt. (High Courts are under Article 215).",
+        expHi: "भारतीय संविधान के अनुच्छेद 129 के तहत सर्वोच्च न्यायालय (Supreme Court) को अभिलेख का न्यायालय घोषित किया गया है।",
+        keyFact: "Article 215 declares High Courts as Courts of Record."
+      },
+      {
+        id: 39,
+        stemEn: "Justin Trudeau, who announced his resignation on 6 January, 2025, served as the Prime Minister of which country?",
+        stemHi: "जस्टिन ट्रूडो, जिन्होंने 6 जनवरी, 2025 को अपने इस्तीफे की घोषणा की, किस देश के प्रधानमंत्री थे ?",
+        options: [
+          { tag: "A", en: "Australia", hi: "ऑस्ट्रेलिया" },
+          { tag: "B", en: "New Zealand", hi: "न्यूज़ीलैंड" },
+          { tag: "C", en: "Canada", hi: "कनाडा" },
+          { tag: "D", en: "United Kingdom", hi: "यूनाइटेड किंगडम" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "Justin Trudeau was the Prime Minister of Canada (Liberal Party leader) from 2015 until his resignation announcement on 6 January 2025.",
+        expHi: "जस्टिन ट्रूडो 2015 से कनाडा के 23वें प्रधानमंत्री थे, जिन्होंने 6 जनवरी 2025 को इस्तीफे की घोषणा की।",
+        keyFact: "Capital of Canada is Ottawa and currency is Canadian Dollar."
+      },
+      {
+        id: 40,
+        stemEn: "Which of the following States faces the most serious issue of groundwater over-exploitation ?",
+        stemHi: "निम्नलिखित में से कौन-सा राज्य भूजल के अति-दोहन की सबसे गंभीर समस्या का सामना कर रहा है ?",
+        options: [
+          { tag: "A", en: "Kerala", hi: "केरल" },
+          { tag: "B", en: "Meghalaya", hi: "मेघालय" },
+          { tag: "C", en: "Punjab", hi: "पंजाब" },
+          { tag: "D", en: "Odisha", hi: "ओडिशा" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "Punjab faces the most severe groundwater depletion in India, with extraction rate exceeding 160% due to intensive tubewell irrigation.",
+        expHi: "पंजाब राज्य में नलकूपों द्वारा अत्यधिक दोहन के कारण भूजल स्तर में सबसे तीव्र गिरावट आई है (दोहन दर 160% से अधिक)।",
+        keyFact: "Over 75% assessment blocks in Punjab are officially declared 'Over-exploited'."
+      },
+      {
+        id: 41,
+        stemEn: "\"Conditions of Economic Progress\" - This work was done by",
+        stemHi: "\"कंडिशन्स ऑफ इकॉनॉमिक प्रोग्रेस\" यह कार्य किसके द्वारा किया गया ?",
+        options: [
+          { tag: "A", en: "Adam Smith", hi: "एडम स्मिथ" },
+          { tag: "B", en: "Colin Clark", hi: "कॉलिन क्लार्क" },
+          { tag: "C", en: "Robinhood", hi: "रॉबिनहुड" },
+          { tag: "D", en: "Alfred Marshall", hi: "अल्फ्रेड मार्शल" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "'The Conditions of Economic Progress' (1940) was written by British-Australian economist Colin Clark, who classified the economy into Primary, Secondary, and Tertiary sectors.",
+        expHi: "यह पुस्तक 1940 में कॉलिन क्लार्क द्वारा लिखी गई थी, जिसमें उन्होंने अर्थव्यवस्था को प्राथमिक, द्वितीयक और तृतीयक क्षेत्रों में विभाजित किया।",
+        keyFact: "Colin Clark pioneered empirical comparisons of national income."
+      },
+      {
+        id: 42,
+        stemEn: "Consumer Protection Act in India was passed in the year",
+        stemHi: "भारत में उपभोक्ता संरक्षण अधिनियम किस वर्ष पारित हुआ था ?",
+        options: [
+          { tag: "A", en: "1976", hi: "1976" },
+          { tag: "B", en: "1966", hi: "1966" },
+          { tag: "C", en: "1996", hi: "1996" },
+          { tag: "D", en: "1986", hi: "1986" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "The Consumer Protection Act was originally enacted by Indian Parliament in 1986 (COPRA 1986), setting up a 3-tier quasi-judicial redressal mechanism.",
+        expHi: "भारत में ऐतिहासिक उपभोक्ता संरक्षण अधिनियम वर्ष 1986 में पारित किया गया था। (इसे बाद में 2019 के नए अधिनियम द्वारा प्रतिस्थापित किया गया)।",
+        keyFact: "24 December is celebrated as National Consumer Rights Day in India."
+      },
+      {
+        id: 43,
+        stemEn: "The product of 2 numbers is 1530 and their HCF is 15, then their LCM is",
+        stemHi: "2 संख्याओं का गुणनफल 1530 है और उनका म.स.प. 15 है, तो उनका ल.स.प. क्या है ?",
+        options: [
+          { tag: "A", en: "112", hi: "112" },
+          { tag: "B", en: "102", hi: "102" },
+          { tag: "C", en: "120", hi: "120" },
+          { tag: "D", en: "84", hi: "84" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Formula: Product of two numbers = HCF * LCM.<br>1530 = 15 * LCM => LCM = 1530 / 15 = 102.",
+        expHi: "सूत्र: दो संख्याओं का गुणनफल = HCF * LCM.<br>1530 = 15 * LCM => LCM = 1530 / 15 = 102.",
+        keyFact: "15 * 100 = 1500; 15 * 2 = 30 => 102."
+      },
+      {
+        id: 44,
+        stemEn: "Which part of the Tripitaka contains the conventional teachings of the Buddha?",
+        stemHi: "त्रिपिटक के किस भाग में बुद्ध की पारंपरिक शिक्षाएँ हैं ?",
+        options: [
+          { tag: "A", en: "Vinaya Pitaka", hi: "विनय पिटक" },
+          { tag: "B", en: "Dipa Vamsha", hi: "दीपवंश" },
+          { tag: "C", en: "Abhidhamma Pitaka", hi: "अभिधम्म पिटक" },
+          { tag: "D", en: "Sutta Pitaka", hi: "सुत्त पिटक" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Sutta Pitaka contains the discourses and conventional religious teachings of the Buddha. Vinaya contains monastic discipline, and Abhidhamma contains philosophical doctrines.",
+        expHi: "सुत्त पिटक में भगवान बुद्ध की पारंपरिक शिक्षाएं, उपदेश और संवाद संकलित हैं।",
+        keyFact: "Recited by Ananda at the First Buddhist Council in 483 BCE."
+      },
+      {
+        id: 45,
+        stemEn: "How much angular distance will be covered by the minute hand of a correct clock in a period of 2 hours 20 minutes?",
+        stemHi: "एक सही घड़ी की मिनट की सुई 2 घंटे 20 मिनट में कितनी कोणीय दूरी तय करेगी ?",
+        options: [
+          { tag: "A", en: "840°", hi: "840°" },
+          { tag: "B", en: "520°", hi: "520°" },
+          { tag: "C", en: "140°", hi: "140°" },
+          { tag: "D", en: "320°", hi: "320°" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "1. Minute hand rotates 360° in 60 mins => 6° per minute.<br>2. 2 hours 20 minutes = 140 minutes.<br>3. Total angle = 140 * 6° = 840°.",
+        expHi: "1. मिनट की सुई 1 मिनट में 6° घूमती है.<br>2. 2 घंटे 20 मिनट = 140 मिनट.<br>3. कुल कोण = 140 * 6° = 840°.",
+        keyFact: "2 full rotations (720°) + 20 minutes (120°) = 840°."
+      },
+      {
+        id: 46,
+        isEnglishOnly: true,
+        stemEn: "Choose the correct question tag for the following statement:\nThe windows are open, ________?",
+        options: [
+          { tag: "A", en: "aren't it?" },
+          { tag: "B", en: "isn't they?" },
+          { tag: "C", en: "isn't it?" },
+          { tag: "D", en: "aren't they?" },
+          { tag: "E", en: "None of the above" }
+        ],
+        correct: "D",
+        expEn: "The subject 'The windows' is plural and takes the pronoun 'they'. Since the auxiliary 'are' is affirmative, the tag must be negative: 'aren't they?'.",
+        keyFact: "Affirmative statement requires a negative question tag."
+      },
+      {
+        id: 47,
+        isEnglishOnly: true,
+        stemEn: "Choose the indirect form of the given sentence:\nI said, \"The teacher likes me\".",
+        options: [
+          { tag: "A", en: "I said that the teacher liked me." },
+          { tag: "B", en: "I said that the teacher was liking me." },
+          { tag: "C", en: "I said that the teacher likes me." },
+          { tag: "D", en: "I said that the teacher is liking me." },
+          { tag: "E", en: "None of the above" }
+        ],
+        correct: "A",
+        expEn: "The past reporting verb 'said' causes the present simple verb 'likes' to backshift to past simple 'liked'. The first-person pronoun 'me' remains 'me' as the speaker is 'I'.",
+        keyFact: "Present simple ('likes') becomes past simple ('liked') in reported speech."
+      },
+      {
+        id: 48,
+        isEnglishOnly: true,
+        assetKey: "passage_48_49",
+        stemEn: "Why are countries investing in EV infrastructure?",
+        options: [
+          { tag: "A", en: "To replace public transport" },
+          { tag: "B", en: "To promote air travel" },
+          { tag: "C", en: "To support EV adoption" },
+          { tag: "D", en: "To reduce taxes on fuel" },
+          { tag: "E", en: "None of the above" }
+        ],
+        correct: "C",
+        expEn: "The text directly states: '...investing in EV infrastructure, including charging stations, to support the widespread adoption of electric vehicles.'",
+        keyFact: "Always rely on explicit context stated in reading comprehension passages."
+      },
+      {
+        id: 49,
+        isEnglishOnly: true,
+        assetKey: "passage_48_49",
+        stemEn: "Which of the following is a type of EV infrastructure ?",
+        options: [
+          { tag: "A", en: "Petrol pumps" },
+          { tag: "B", en: "Gas pipelines" },
+          { tag: "C", en: "Charging stations" },
+          { tag: "D", en: "Oil rigs" },
+          { tag: "E", en: "None of the above" }
+        ],
+        correct: "C",
+        expEn: "The passage explicitly names 'charging stations' as an example of EV infrastructure.",
+        keyFact: "Direct factual retrieval from passage sentence 3."
+      },
+      {
+        id: 50,
+        isEnglishOnly: true,
+        stemEn: "Choose the word which is nearest in meaning (synonym) to the given word:\nAdmire",
+        options: [
+          { tag: "A", en: "Blame" },
+          { tag: "B", en: "Stop" },
+          { tag: "C", en: "Curse" },
+          { tag: "D", en: "Praise" },
+          { tag: "E", en: "None of the above" }
+        ],
+        correct: "D",
+        expEn: "'Admire' means to regard with respect, esteem, or warm approval. Its closest synonym is 'Praise'.",
+        keyFact: "Synonyms of admire include Praise, Applaud, Commend, and Respect."
+      },
+
+      /* Batch 3: Q51 to Q75 */
+      {
+        id: 51,
+        stemEn: "Exercise CYCLONE 2025 is conducted between India and which country?",
+        stemHi: "अभ्यास साइक्लोन 2025 भारत और किस देश के बीच आयोजित किया जा रहा है ?",
+        options: [
+          { tag: "A", en: "Maldives", hi: "मालदीव" },
+          { tag: "B", en: "Egypt", hi: "मिस्र" },
+          { tag: "C", en: "Turkey", hi: "तुर्की" },
+          { tag: "D", en: "Saudi Arabia", hi: "सऊदी अरब" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Exercise CYCLONE is the bilateral joint special forces exercise conducted between the Indian Army and the Egyptian Army.",
+        expHi: "अभ्यास साइक्लोन भारत और मिस्र (Egypt) के विशेष सैन्य बलों के बीच आयोजित द्विपक्षीय अभ्यास है।",
+        keyFact: "First edition of Cyclone was held in Rajasthan in 2023."
+      },
+      {
+        id: 52,
+        stemEn: "Which instrument is used to measure potential difference?",
+        stemHi: "विभवान्तर मापने के लिए किस उपकरण का उपयोग किया जाता है ?",
+        options: [
+          { tag: "A", en: "Voltmeter", hi: "वोल्टमीटर" },
+          { tag: "B", en: "Galvanometer", hi: "गैल्वेनोमीटर" },
+          { tag: "C", en: "Ammeter", hi: "एमीटर" },
+          { tag: "D", en: "Ohmmeter", hi: "ओममीटर" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "A voltmeter is used to measure electric potential difference and is connected in parallel.",
+        expHi: "परिपथ में किन्हीं दो बिंदुओं के बीच विभवान्तर मापने के लिए वोल्टमीटर (Voltmeter) का उपयोग किया जाता है।",
+        keyFact: "An ideal voltmeter has infinite internal resistance."
+      },
+      {
+        id: 53,
+        stemEn: "What comes in place of question mark (?) in the following number series ?\n4, 12, 36, 108, 324, ?",
+        stemHi: "निम्नलिखित संख्या श्रृंखला में प्रश्न चिह्न (?) के स्थान पर क्या आएगा ?\n4, 12, 36, 108, 324, ?",
+        options: [
+          { tag: "A", en: "520", hi: "520" },
+          { tag: "B", en: "972", hi: "972" },
+          { tag: "C", en: "680", hi: "680" },
+          { tag: "D", en: "475", hi: "475" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Geometric progression with common ratio 3: 4*3=12, 12*3=36, 36*3=108, 108*3=324, 324*3=972.",
+        expHi: "प्रत्येक पद को 3 से गुणा किया जा रहा है: 324 * 3 = 972.",
+        keyFact: "Mental math: 300 * 3 + 24 * 3 = 900 + 72 = 972."
+      },
+      {
+        id: 54,
+        stemEn: "Which of the following forests are adapted to saline water?",
+        stemHi: "निम्नलिखित में से कौन-से वन खारे पानी के अनुकूल हैं ?",
+        options: [
+          { tag: "A", en: "Thorn", hi: "काँटेदार" },
+          { tag: "B", en: "Evergreen", hi: "सदाबहार" },
+          { tag: "C", en: "Mangrove", hi: "मैंग्रोव" },
+          { tag: "D", en: "Deciduous", hi: "पर्णपाती" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "Mangrove forests (halophytes) grow in coastal saline waters and have stilt roots and pneumatophores (breathing roots).",
+        expHi: "मैंग्रोव वन (ज्वारीय वन) तटीय खारे पानी के अनुकूल होते हैं और इनमें श्वसन मूल (Pneumatophores) पाए जाते हैं।",
+        keyFact: "Sundarbans is the world's largest mangrove forest."
+      },
+      {
+        id: 55,
+        stemEn: "Which among the following is not a prime number?",
+        stemHi: "निम्नलिखित में से कौन-सी अभाज्य संख्या नहीं है ?",
+        options: [
+          { tag: "A", en: "53", hi: "53" },
+          { tag: "B", en: "29", hi: "29" },
+          { tag: "C", en: "47", hi: "47" },
+          { tag: "D", en: "57", hi: "57" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "57 is composite because 5 + 7 = 12 (divisible by 3); 57 = 3 * 19.",
+        expHi: "57 अभाज्य नहीं है क्योंकि यह 3 और 19 से विभाज्य है (57 = 3 * 19)।",
+        keyFact: "Divisibility rule: If digit sum is divisible by 3, the number is composite."
+      },
+      {
+        id: 56,
+        assetKey: "diLine_56_60",
+        stemEn: "Find the ratio of the total number of ball point pens sold by shop A to the total number of fountain pens sold by shops A and B together.",
+        stemHi: "दुकान A द्वारा बेचे गए बॉल प्वाईंट पेन की कुल संख्या दुकान A और B द्वारा बेचे गए फाउंटेन पेन की कुल संख्या से अनुपात ज्ञात करें ।",
+        options: [
+          { tag: "A", en: "9:8", hi: "9:8" },
+          { tag: "B", en: "5:3", hi: "5:3" },
+          { tag: "C", en: "2:7", hi: "2:7" },
+          { tag: "D", en: "1:4", hi: "1:4" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "1. Ball point pens sold by Shop A = 140.<br>2. Fountain pens by A and B = 360 + 200 = 560.<br>3. Ratio = 140 : 560 = 1 : 4.",
+        expHi: "1. दुकान A द्वारा बेचे गए बॉल प्वाईंट पेन = 140.<br>2. दुकान A और B द्वारा बेचे गए फाउंटेन पेन = 360 + 200 = 560.<br>3. अनुपात = 140 / 560 = 1 : 4.",
+        keyFact: "140 * 4 = 560."
+      },
+      {
+        id: 57,
+        assetKey: "diLine_56_60",
+        stemEn: "Find the difference between the total number of ball point and fountain pens sold by shop A and the total number of ball point pens sold by shop D.",
+        stemHi: "दुकान A द्वारा बेचे गए बॉल प्वाईंट और फाउंटेन पेन की कुल संख्या और दुकान D द्वारा बेचे गए बॉल प्वाईंट पेन की कुल संख्या के बीच अंतर ज्ञात करें ।",
+        options: [
+          { tag: "A", en: "250", hi: "250" },
+          { tag: "B", en: "230", hi: "230" },
+          { tag: "C", en: "190", hi: "190" },
+          { tag: "D", en: "340", hi: "340" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "1. Ball point + Fountain in A = 140 + 360 = 500.<br>2. Ball point in D = 270.<br>3. Difference = 500 - 270 = 230.",
+        expHi: "1. दुकान A के बॉल प्वाईंट + फाउंटेन पेन = 140 + 360 = 500.<br>2. दुकान D के बॉल प्वाईंट पेन = 270.<br>3. अंतर = 500 - 270 = 230.",
+        keyFact: "500 - 270 = 230."
+      },
+      {
+        id: 58,
+        assetKey: "diLine_56_60",
+        stemEn: "The total number of gel pens sold by shops A and B together is what percentage of the total number of ball point pens sold by shop B?",
+        stemHi: "दुकान A और B द्वारा बेचे गए जेल पेन की कुल संख्या दुकान B द्वारा बेचे गए बॉल प्वाईंट पेन की कुल संख्या का कितना प्रतिशत है ?",
+        options: [
+          { tag: "A", en: "50%", hi: "50%" },
+          { tag: "B", en: "100%", hi: "100%" },
+          { tag: "C", en: "120%", hi: "120%" },
+          { tag: "D", en: "80%", hi: "80%" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "1. Gel pens in A + B = 240 + 120 = 360.<br>2. Ball point in B = 300.<br>3. Percentage = (360 / 300) * 100% = 6/5 * 100% = 120%.",
+        expHi: "1. A और B में जेल पेन = 240 + 120 = 360.<br>2. B में बॉल प्वाईंट पेन = 300.<br>3. प्रतिशत = (360 / 300) * 100 = 120%.",
+        keyFact: "6/5 = 1.20 = 120%."
+      },
+      {
+        id: 59,
+        assetKey: "diLine_56_60",
+        stemEn: "If the total number of ball point, gel and fountain pens sold by shop E is 33.33% less than that of shop C and the ratio of the number of fountain pens sold by shop C to shop E is 7: 5, then find the total number of ball point and gel pens sold by shop E.",
+        stemHi: "यदि दुकान E द्वारा बेचे गए बॉल प्वाईंट, जेल और फाउंटेन पेन की कुल संख्या दुकान C की तुलना में 33.33% कम है और दुकान C द्वारा बेचे गए फाउंटेन पेन की संख्या का दुकान E से अनुपात 7:5 है, तो दुकान E द्वारा बेचे गए बॉल प्वाईंट और जेल पेन की कुल संख्या ज्ञात कीजिए ।",
+        options: [
+          { tag: "A", en: "320", hi: "320" },
+          { tag: "B", en: "450", hi: "450" },
+          { tag: "C", en: "410", hi: "410" },
+          { tag: "D", en: "290", hi: "290" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "1. Total pens in C = 180 + 320 + 280 = 780.<br>2. Total in E = 780 * (1 - 1/3) = 780 * 2/3 = 520.<br>3. Fountain pens in C = 280. Ratio C:E = 7:5 => 7 units = 280 => E = 5 * 40 = 200.<br>4. Ball + Gel in E = 520 - 200 = 320.",
+        expHi: "1. C में कुल पेन = 180 + 320 + 280 = 780.<br>2. E में कुल पेन = 780 * (2/3) = 520.<br>3. C में फाउंटेन पेन = 280; अनुपात 7:5 => E में फाउंटेन पेन = 200.<br>4. E में बॉल + जेल पेन = 520 - 200 = 320.",
+        keyFact: "33.33% less means multiplying by 2/3."
+      },
+      {
+        id: 60,
+        assetKey: "diLine_56_60",
+        stemEn: "Out of the total number of pens sold by shop F, 40% of the pens are fountain pens. If the ratio of the number of fountain pen sold by shop D to shop F is 3: 4, then find the total number of pens sold by shop F.",
+        stemHi: "दुकान F द्वारा बेचे गए कुल पेन में से 40% पेन फाउंटेन पेन है। यदि दुकान D द्वारा बेचे गए फाउंटेन पेन की संख्या का दुकान F से अनुपात 3: 4 है, तो दुकान F द्वारा बेचे गए पेन की कुल संख्या ज्ञात कीजिए ।",
+        options: [
+          { tag: "A", en: "560", hi: "560" },
+          { tag: "B", en: "480", hi: "480" },
+          { tag: "C", en: "720", hi: "720" },
+          { tag: "D", en: "600", hi: "600" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "1. Fountain pens in D = 180. Ratio D:F = 3:4 => 3 units = 180 => F = 4 * 60 = 240.<br>2. 40% of Total in F = 240 => Total in F = 240 / 0.4 = 600.",
+        expHi: "1. दुकान D में फाउंटेन पेन = 180; अनुपात 3:4 => F में फाउंटेन पेन = 240.<br>2. F के कुल पेन का 40% = 240 => कुल पेन = 240 / 0.4 = 600.",
+        keyFact: "240 / 0.4 = 600."
+      },
+      {
+        id: 61,
+        stemEn: "The backbone of the Indian Economy is",
+        stemHi: "भारतीय अर्थव्यवस्था की रीढ़ है",
+        options: [
+          { tag: "A", en: "Industry", hi: "उद्योग" },
+          { tag: "B", en: "Agriculture", hi: "कृषि" },
+          { tag: "C", en: "Trade and Commerce", hi: "व्यापार और वाणिज्य" },
+          { tag: "D", en: "Transport and Communication", hi: "परिवहन और संचार" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Agriculture is recognized as the backbone of the Indian economy as it employs nearly half of the workforce and ensures food security.",
+        expHi: "कृषि को भारतीय अर्थव्यवस्था की रीढ़ माना जाता है क्योंकि यह लगभग आधी आबादी को आजीविका प्रदान करती है।",
+        keyFact: "Agriculture employs roughly 45-50% of India's total workforce."
+      },
+      {
+        id: 62,
+        stemEn: "'Maach' is a traditional folk theatre form of which State ?",
+        stemHi: "'माच' किस राज्य का एक पारंपरिक लोक नाट्य रूप है ?",
+        options: [
+          { tag: "A", en: "Madhya Pradesh", hi: "मध्य प्रदेश" },
+          { tag: "B", en: "Maharashtra", hi: "महाराष्ट्र" },
+          { tag: "C", en: "Rajasthan", hi: "राजस्थान" },
+          { tag: "D", en: "Gujarat", hi: "गुजरात" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "'Maach' is the traditional lyrical folk theatre of the Malwa region in Madhya Pradesh.",
+        expHi: "'माच' मध्य प्रदेश के मालवा क्षेत्र का पारंपरिक लोक नाट्य रूप है।",
+        keyFact: "Derived from the Sanskrit word 'Mancha' (stage)."
+      },
+      {
+        id: 63,
+        stemEn: "Who is known as 'Grand Old Man of India'?",
+        stemHi: "'भारत के ग्रैंड ओल्ड मैन' के रूप में किसे जाना जाता है ?",
+        options: [
+          { tag: "A", en: "Dadabhai Naoroji", hi: "दादाभाई नवरोजी" },
+          { tag: "B", en: "Gopal Krishna Gokhale", hi: "गोपालकृष्ण गोखले" },
+          { tag: "C", en: "Bal Gangadhar Tilak", hi: "बाल गंगाधर तिलक" },
+          { tag: "D", en: "M.G. Ranade", hi: "एम.जी. रानाडे" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "Dadabhai Naoroji is acclaimed as the 'Grand Old Man of India'. He propounded the 'Drain of Wealth' theory and was elected MP to the UK House of Commons.",
+        expHi: "दादाभाई नौरोजी को 'भारत के ग्रैंड ओल्ड मैन' के रूप में जाना जाता है। उन्होंने 'धन की निकासी' का सिद्धांत दिया था।",
+        keyFact: "Author of 'Poverty and Un-British Rule in India'."
+      },
+      {
+        id: 64,
+        stemEn: "Suket has three daughters and each daughter has a brother. How many male members are there in the family?",
+        stemHi: "सुकेत की तीन बेटियाँ हैं और प्रत्येक बेटी का एक भाई है। परिवार में कितने पुरुष सदस्य हैं ?",
+        options: [
+          { tag: "A", en: "4", hi: "4" },
+          { tag: "B", en: "2", hi: "2" },
+          { tag: "C", en: "1", hi: "1" },
+          { tag: "D", en: "3", hi: "3" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Suket is the father (1 male). The 3 daughters share the exact same 1 brother (1 male). Total male members = 1 + 1 = 2.",
+        expHi: "सुकेत (पिता = 1 पुरुष) और तीनों बहनों का एक ही साझा भाई है (1 पुरुष)। कुल पुरुष = 1 + 1 = 2.",
+        keyFact: "Sisters in the same family share common brothers."
+      },
+      {
+        id: 65,
+        stemEn: "Potential difference between two points of a wire carrying 2 ampere current is 0.1 volt. What is the resistance between these points?",
+        stemHi: "2 एम्पियर विद्युत धारा प्रवाहित करने वाले तार के दो बिंदुओं के बीच विभवांतर 0.1 वोल्ट है । इन बिंदुओं के बीच प्रतिरोध क्या है ?",
+        options: [
+          { tag: "A", en: "0.5 ohm", hi: "0.5 ओम" },
+          { tag: "B", en: "2 ohm", hi: "2 ओम" },
+          { tag: "C", en: "20 ohm", hi: "20 ओम" },
+          { tag: "D", en: "0.05 ohm", hi: "0.05 ओम" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Ohm's Law: R = V / I = 0.1 V / 2 A = 0.05 ohm.",
+        expHi: "ओम के नियम से: R = V / I = 0.1 / 2 = 0.05 ओम।",
+        keyFact: "0.1 / 2 = 1 / 20 = 0.05 ohm."
+      },
+      {
+        id: 66,
+        stemEn: "The Chhandogya Upanishad clearly refers to which of the following ashramas ?",
+        stemHi: "छांदोग्य उपनिषद स्पष्ट रूप से निम्नलिखित में से किस आश्रम को संदर्भित करता है ?",
+        options: [
+          { tag: "A", en: "Only Grihastha and Vanaprastha", hi: "केवल गृहस्थ और वानप्रस्थ" },
+          { tag: "B", en: "Only Grihastha and Brahmacharya", hi: "केवल गृहस्थ और ब्रह्मचर्य" },
+          { tag: "C", en: "Only Brahmacharya and Sannyasa", hi: "केवल ब्रह्मचर्य और संन्यास" },
+          { tag: "D", en: "Brahmacharya, Grihastha and Vanaprastha", hi: "ब्रह्मचर्य, गृहस्थ और वानप्रस्थ" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Chhandogya Upanishad explicitly refers to the first 3 ashramas: Brahmacharya, Grihastha, and Vanaprastha. (All 4 first appear in Jabala Upanishad).",
+        expHi: "छांदोग्य उपनिषद में प्रथम तीन आश्रमों—ब्रह्मचर्य, गृहस्थ और वानप्रस्थ—का उल्लेख है। चारों आश्रमों का उल्लेख 'जाबालोपनिषद' में है।",
+        keyFact: "Jabala Upanishad first listed all four ashramas together."
+      },
+      {
+        id: 67,
+        stemEn: "Which international initiative has the Reserve Bank of India (RBI) joined to enable instant cross-border retail payments ?",
+        stemHi: "भारतीय रिज़र्व बैंक (RBI) तत्काल सीमा-पार खुदरा भुगतान सक्षम करने के लिए किस अंतर्राष्ट्रीय पहल में शामिल हुआ है ?",
+        options: [
+          { tag: "A", en: "Project Horizon", hi: "प्रोजेक्ट होरिज़ॉन" },
+          { tag: "B", en: "Project Phoenix", hi: "प्रोजेक्ट फीनिक्स" },
+          { tag: "C", en: "Project Dart", hi: "प्रोजेक्ट डार्ट" },
+          { tag: "D", en: "Project Nexus", hi: "प्रोजेक्ट नेक्सस" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "RBI joined 'Project Nexus', a multilateral initiative by the BIS Innovation Hub to connect fast payment systems (like UPI) across nations.",
+        expHi: "आरबीआई (RBI) सीमा-पार खुदरा भुगतानों को तुरंत सक्षम करने के लिए BIS की 'प्रोजेक्ट नेक्सस' पहल में शामिल हुआ।",
+        keyFact: "Enables instant linkage of India's UPI with ASEAN nations."
+      },
+      {
+        id: 68,
+        stemEn: "The Brahmaputra River is called ________ in Tibet.",
+        stemHi: "तिब्बत में ब्रह्मपुत्र नदी को ________ कहा जाता है ।",
+        options: [
+          { tag: "A", en: "Dihang", hi: "दिहांग" },
+          { tag: "B", en: "Tsangpo", hi: "त्सांगपो" },
+          { tag: "C", en: "Lohit", hi: "लोहित" },
+          { tag: "D", en: "Lhasa", hi: "ल्हासा" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "The Brahmaputra originates near Mansarovar lake in Tibet where it is known as Yarlung Tsangpo (meaning 'The Purifier').",
+        expHi: "तिब्बत में ब्रह्मपुत्र नदी को 'यारलुंग त्सांगपो' (Tsangpo) कहा जाता है। अरुणाचल में इसे दिहांग कहते हैं।",
+        keyFact: "Known as the Jamuna in Bangladesh."
+      },
+      {
+        id: 69,
+        stemEn: "If you subtract ½ from a number and multiply the result by ½, you get ⅛. The number is",
+        stemHi: "यदि आप किसी संख्या से ½ घटाते हैं और परिणाम को ½ से गुणा करते हैं, तो आपको ⅛ मिलता है। संख्या क्या है ?",
+        options: [
+          { tag: "A", en: "¼", hi: "¼" },
+          { tag: "B", en: "1¼", hi: "1¼" },
+          { tag: "C", en: "½", hi: "½" },
+          { tag: "D", en: "¾", hi: "¾" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Let number be x. (x - 1/2) * 1/2 = 1/8 => x - 1/2 = 1/4 => x = 1/4 + 1/2 = 3/4.",
+        expHi: "माना संख्या x है। (x - 1/2) * (1/2) = 1/8 => x - 1/2 = 1/4 => x = 3/4.",
+        keyFact: "Check: (3/4 - 1/2) * 1/2 = 1/4 * 1/2 = 1/8."
+      },
+      {
+        id: 70,
+        stemEn: "Who among the following received the Arjun Award (Lifetime) in 2024 for Para-Swimming?",
+        stemHi: "निम्नलिखित में से किसे 2024 में पैरा-तैराकी के लिए अर्जुन पुरस्कार (लाइफटाइम) मिला ?",
+        options: [
+          { tag: "A", en: "Devendra Jhajharia", hi: "देवेंद्र झाझरिया" },
+          { tag: "B", en: "Sharad Kumar", hi: "शरद कुमार" },
+          { tag: "C", en: "Murlikant Rajaram Petkar", hi: "मुरलीकांत राजाराम पेटकर" },
+          { tag: "D", en: "Mariyappan Thangavelu", hi: "मरियप्पन थंगावेलु" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "Murlikant Rajaram Petkar, India's first Paralympic gold medalist (1972 Heidelberg), was awarded the Arjuna Award (Lifetime) for Para-Swimming in 2024.",
+        expHi: "भारत के प्रथम पैरालंपिक स्वर्ण पदक विजेता (1972) मुरलीकांत राजाराम पेटकर को 2024 में पैरा-तैराकी के लिए अर्जुन पुरस्कार (लाइफटाइम) मिला।",
+        keyFact: "Won gold in 50m freestyle swimming at 1972 Heidelberg Paralympics."
+      },
+      {
+        id: 71,
+        isHindiOnly: true,
+        assetKey: "passage_71_75",
+        stemHi: "\"इस युद्ध को बंद करा दीजिए। यह युद्ध कितना भयंकर होता है।\" इस वाक्य को किसने किससे कहा ?",
+        options: [
+          { tag: "A", hi: "एक बेटी ने अपने पिता से" },
+          { tag: "B", hi: "एक युवती ने राणी से" },
+          { tag: "C", hi: "एक कुँवारी कन्या ने माँ से" },
+          { tag: "D", hi: "एक सखी ने दूसरी सखी से" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expHi: "गद्यांश की प्रत्यक्ष पंक्ति के अनुसार: 'एक युवती एक राणी से पूछ रही थी \"इस युद्ध को बंद करा दीजिए...\"' ।",
+        keyFact: "गद्यांश में युवती और राणी के बीच युद्ध और प्रेम पर संवाद हुआ है।"
+      },
+      {
+        id: 72,
+        isHindiOnly: true,
+        assetKey: "passage_71_75",
+        stemHi: "कुँवारी कन्या मर्यादा से मृत्यु को ही क्यों भली मानती है ?",
+        options: [
+          { tag: "A", hi: "अगर युद्ध करते समय जीवित पकड़े जाने पर जो हालात होगी, उससे बचने के लिए ।" },
+          { tag: "B", hi: "अपने जन्मभूमि की इज्जत के लिए ।" },
+          { tag: "C", hi: "यवन सेना के बर्बरता से डरकर ।" },
+          { tag: "D", hi: "उसके परिवारवालों के साथ दुनिया से मुक्ति पाने के लिए ।" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expHi: "गद्यांश के अनुसार, युद्ध में जीवित पकड़े जाने और शील-मर्यादा के कलंकित होने के अंदेशे से बचने के लिए वह जौहर (मृत्यु) को भली मानती है।",
+        keyFact: "नारीत्व और सतीत्व की रक्षा राजपूत वीरांगनाओं का सर्वोच्च आदर्श था।"
+      },
+      {
+        id: 73,
+        isHindiOnly: true,
+        assetKey: "passage_71_75",
+        stemHi: "महारावत और अन्य सरदारों को क्यों संतोष हुआ ?",
+        options: [
+          { tag: "A", hi: "जब हाड़ी राणी गर्व से जौहर के लिए तैयार हो जाती है।" },
+          { tag: "B", hi: "उत्तर में राजपूत वीरों ने बाण बरसाना शुरू किया था ।" },
+          { tag: "C", hi: "बाघसिंहजी राजकीय पोशाक पहनने लगे ।" },
+          { tag: "D", hi: "सैनिक वीरता से शत्रुओं का सामना कर रहे थे ।" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expHi: "जब हाड़ी राणी ने सगर्व जौहर करने का संकल्प लिया, तो महारावत और सरदार निश्चिन्त व संतुष्ट हो गए।",
+        keyFact: "हाड़ी राणी के दृढ़ संकल्प से राजपूत वीरों ने केसरिया बाना धारण किया।"
+      },
+      {
+        id: 74,
+        isHindiOnly: true,
+        assetKey: "passage_71_75",
+        stemHi: "एक कुँवारी कन्या जौहर से पहले अपनी माँ से क्या पूछती है ?",
+        options: [
+          { tag: "A", hi: "हम सूर्यवंशी हैं और सूर्य पर कौन कीचड़ उछाल सकता है ?" },
+          { tag: "B", hi: "इस युद्ध को बंद कर दीजिए ।" },
+          { tag: "C", hi: "हम जीते जी अग्नि-कुंड में क्यों प्रवेश करती हैं ?" },
+          { tag: "D", hi: "क्षत्राणी का धर्म युद्ध करते हुए मरना है या नहीं ?" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expHi: "गद्यांश में स्पष्ट उल्लेख है: 'एक कुँवारी कन्या ने कहा-\"माँ सा, हम जीते जी अग्नि-कुंड में क्यों प्रवेश करती हैं?\"'।",
+        keyFact: "माँ ने उत्तर में कहा था- 'मर्यादा की रक्षा के लिए'।"
+      },
+      {
+        id: 75,
+        isHindiOnly: true,
+        assetKey: "passage_71_75",
+        stemHi: "सैन्य संचालक और महारावत बाघसिंह क्या पहनकर युद्ध रंग में जाने की बातें करने लगते हैं ?",
+        options: [
+          { tag: "A", hi: "यवन सेना का पोशाक" },
+          { tag: "B", hi: "केसरिया बाना" },
+          { tag: "C", hi: "सफेद बाना" },
+          { tag: "D", hi: "राजकीय पोशाक" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expHi: "गद्यांश के अनुसार महारावत बाघसिंह कहते हैं: 'ऐसी स्थिति में हमें केसरिया बाना पहन लेना चाहिए...'।",
+        keyFact: "केसरिया बाना अंतिम निर्णायक संघर्ष और सर्वोच्च बलिदान का प्रतीक है।"
+      },
+
+      /* Batch 4: Q76 to Q100 */
+      {
+        id: 76,
+        isHindiOnly: true,
+        assetKey: "passage_76_80",
+        stemHi: "जब 'क' लेखक जी से मिलने आता है तो लेखक जी ने उसके साथ क्या किया ?",
+        options: [
+          { tag: "A", hi: "लेखक जी ने शरीर से अपने मन को खिसकाकर निःस्नेह कँटीली देह को उसके बाँहों में छोड़ा था।" },
+          { tag: "B", hi: "जरूरी काम का बहाना करके बाज़ार गये थे।" },
+          { tag: "C", hi: "उसे देखते ही कमरे में चले गये थे।" },
+          { tag: "D", hi: "सिर दर्द का बहाना करके बाहर चले गये थे।" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expHi: "गद्यांश में लिखा है: '...मैंने शरीर से अपने मन को चुपचाप खिसका दिया और निःस्नेह, कँटीली देह उसकी बाँहों में छोड़ दी।'",
+        keyFact: "छल के आलिंगन के सामने पुतला आगे बढ़ाना लेखक की आत्मरक्षा थी।"
+      },
+      {
+        id: 77,
+        isHindiOnly: true,
+        assetKey: "passage_76_80",
+        stemHi: "पिछली रात 'क' कहाँ पर आया हुआ था ?",
+        options: [
+          { tag: "A", hi: "किसी की शादी में" },
+          { tag: "B", hi: "अपनी ससुराल में" },
+          { tag: "C", hi: "अपने दोस्त के घर पर" },
+          { tag: "D", hi: "किसी धर्मशाला में" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expHi: "गद्यांश के अनुसार: 'पिछली रात को एक मित्र ने बताया कि \"क\" अपनी ससुराल आया है...'",
+        keyFact: "ससुराल आकर उसने 'ग' के साथ लेखक की निंदा की थी।"
+      },
+      {
+        id: 78,
+        isHindiOnly: true,
+        assetKey: "passage_76_80",
+        stemHi: "जब 'क' ने लेखक जी को अपने बाहों में जकड़ा तो उन्हें किस तरह का एहसास हुआ?",
+        options: [
+          { tag: "A", hi: "धृतराष्ट्र की भुजाओं में जकड़े भीम के पुतले की याद आयी।" },
+          { tag: "B", hi: "किसी की आत्मीयता ने जकड़ लिया हो।" },
+          { tag: "C", hi: "ऐसा लगा जैसे किसी ने जोर से धक्का दिया।" },
+          { tag: "D", hi: "जैसा कोई अभिनय कर रहा है।" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expHi: "गद्यांश के अनुसार: 'साइक्लोन की तरह मुझे अपनी भुजाओं में जकड़ा तो मुझे धृतराष्ट्र की भुजाओं में जकड़े भीम के पुतले की याद आ गयी।'",
+        keyFact: "धृतराष्ट्र ने आलिंगन में भीम के लोहे के पुतले को चूर कर दिया था।"
+      },
+      {
+        id: 79,
+        isHindiOnly: true,
+        assetKey: "passage_76_80",
+        stemHi: "लेखक जी के एक रिश्तेदार बम्बई जा रहे हैं और उनसे पूछे, तो वे क्या कहेंगे ?",
+        options: [
+          { tag: "A", hi: "पटना जा रहा हूँ।" },
+          { tag: "B", hi: "पूना जा रहा हूँ।" },
+          { tag: "C", hi: "कलकत्ता जा रहा हूँ।" },
+          { tag: "D", hi: "दिल्ली जा रहा हूँ।" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expHi: "गद्यांश के अंतिम वाक्य में लेखक कहते हैं: 'वे अगर बम्बई जा रहे हैं और उनसे पूछे, तो वे कहेंगे, \"कलकत्ता जा रहा हूँ।\"'",
+        keyFact: "लेखक ने इन्हें 'निर्दोष मिथ्यावादी' कहा है जो आदतन झूठ बोलते हैं।"
+      },
+      {
+        id: 80,
+        isHindiOnly: true,
+        assetKey: "passage_76_80",
+        stemHi: "पिछली रात उनके एक मित्र ने 'क' के बारे में क्या कहा था ?",
+        options: [
+          { tag: "A", hi: "'क' ने 'ग' के साथ मिलकर लेखक जी की निंदा की थी।" },
+          { tag: "B", hi: "'क' बहुत बड़ा धोखेबाज है।" },
+          { tag: "C", hi: "'क' कल सुबह लेखक जी से मिलने आयेगा।" },
+          { tag: "D", hi: "'क' से जरा दूर रहने के लिए कहा था।" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expHi: "गद्यांश के अनुसार मित्र ने बताया था कि 'क' ने 'ग' के साथ बैठकर शाम को दो-तीन घंटे लेखक की निंदा की थी।",
+        keyFact: "निंदा की पूर्व सूचना के कारण लेखक ने भावनात्मक दूरी बना ली।"
+      },
+      {
+        id: 81,
+        isHindiOnly: true,
+        stemHi: "उपकार को मानने वाले को ________ कहते हैं।",
+        options: [
+          { tag: "A", hi: "कृतघ्न" },
+          { tag: "B", hi: "अवैध" },
+          { tag: "C", hi: "कृतज्ञ" },
+          { tag: "D", hi: "अनन्य" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expHi: "किए गए उपकार को मानने वाले को 'कृतज्ञ' कहते हैं। उपकार न मानने वाले को 'कृतघ्न' कहते हैं।",
+        keyFact: "'कृतज्ञ' का विलोम शब्द 'कृतघ्न' होता है।"
+      },
+      {
+        id: 82,
+        isHindiOnly: true,
+        stemHi: "'कश्मीरी सेब' कहानी के कहानीकार कौन हैं ?",
+        options: [
+          { tag: "A", hi: "जयशंकर प्रसाद" },
+          { tag: "B", hi: "यादवेंद्र चंद्र शर्मा" },
+          { tag: "C", hi: "प्रेमचंद" },
+          { tag: "D", hi: "यशपाल" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expHi: "'कश्मीरी सेब' मुंशी प्रेमचंद की प्रसिद्ध कहानी है, जिसमें बाजार की मिलावट और उपभोक्ता जागरूकता का चित्रण है।",
+        keyFact: "मुंशी प्रेमचंद को 'उपन्यास सम्राट' कहा जाता है।"
+      },
+      {
+        id: 83,
+        isHindiOnly: true,
+        stemHi: "'डंडा' तद्भव शब्द है, उसका तत्सम शब्द ________ है।",
+        options: [
+          { tag: "A", hi: "दश" },
+          { tag: "B", hi: "दीमा" },
+          { tag: "C", hi: "दुग्ध" },
+          { tag: "D", hi: "दंड" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expHi: "तद्भव शब्द 'डंडा' का मूल संस्कृत तत्सम शब्द 'दंड' होता है।",
+        keyFact: "संस्कृत के 'दंड' से प्राकृत के माध्यम से तद्भव 'डंडा' बना।"
+      },
+      {
+        id: 84,
+        isHindiOnly: true,
+        stemHi: "जो विशेषण शब्द विशेषणों की विशेषता बताते हैं, उसे क्या कहते हैं ?",
+        options: [
+          { tag: "A", hi: "उद्देश्य विशेषण" },
+          { tag: "B", hi: "प्रविशेषण" },
+          { tag: "C", hi: "विधेय विशेषण" },
+          { tag: "D", hi: "सार्वनामिक विशेषण" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expHi: "जो शब्द विशेषण की भी विशेषता बताते हैं, उन्हें 'प्रविशेषण' कहा जाता है (जैसे: 'बहुत' सुंदर, 'अत्यंत' गहरा)।",
+        keyFact: "विशेष्य से पूर्व आने वाला विशेषण 'उद्देश्य विशेषण' कहलाता है।"
+      },
+      {
+        id: 85,
+        isHindiOnly: true,
+        stemHi: "'शरीरिक' एक अशुद्ध शब्द है, निम्नलिखित शब्दों में से सही शब्द का चयन कीजिए।",
+        options: [
+          { tag: "A", hi: "शारीरिक" },
+          { tag: "B", hi: "शरीरक" },
+          { tag: "C", hi: "शरिरिक" },
+          { tag: "D", hi: "शारीरीक" },
+          { tag: "E", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expHi: "शरीर + इक = शारीरिक (प्रत्यय 'इक' जुड़ने पर प्रथम स्वर 'अ' का 'आ' में आदिवृद्धि हो जाती है)।",
+        keyFact: "समाज + इक = सामाजिक, भूगोल + इक = भौगोलिक।"
+      },
+      {
+        id: 86,
+        stemEn: "Rasiya Geet is a regional song of which State ?",
+        stemHi: "रसिया गीत किस राज्य का क्षेत्रीय गीत है ?",
+        options: [
+          { tag: "A", en: "Uttar Pradesh", hi: "उत्तर प्रदेश" },
+          { tag: "B", en: "Jharkhand", hi: "झारखंड" },
+          { tag: "C", en: "Rajasthan", hi: "राजस्थान" },
+          { tag: "D", en: "Chhattisgarh", hi: "छत्तीसगढ़" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "Rasiya Geet is a traditional folk song form native to the Braj region of Uttar Pradesh (Mathura, Vrindavan, Agra).",
+        expHi: "रसिया उत्तर प्रदेश के ब्रज क्षेत्र (मथुरा, वृंदावन, आगरा आदि) का प्रसिद्ध पारंपरिक लोकगीत है।",
+        keyFact: "Associated with Radha-Krishna leelas and celebrated during Holi."
+      },
+      {
+        id: 87,
+        stemEn: "Who founded the 'Forward Bloc'?",
+        stemHi: "'फॉरवर्ड ब्लॉक' की स्थापना किसने की ?",
+        options: [
+          { tag: "A", en: "C.R. Das", hi: "सी.आर. दास" },
+          { tag: "B", en: "Gandhiji", hi: "गाँधीजी" },
+          { tag: "C", en: "Motilal Nehru", hi: "मोतीलाल नेहरू" },
+          { tag: "D", en: "Subhas Chandra Bose", hi: "सुभाष चंद्र बोस" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Netaji Subhas Chandra Bose founded the All India Forward Bloc on 3 May 1939 after resigning from the Congress presidency.",
+        expHi: "नेताजी सुभाष चंद्र बोस ने 3 मई 1939 को 'ऑल इंडिया फॉरवर्ड ब्लॉक' की स्थापना की थी।",
+        keyFact: "Founded after differences following the 1939 Tripuri Congress Session."
+      },
+      {
+        id: 88,
+        stemEn: "The International Civil Aviation Organisation (ICAO) has its Headquarters in",
+        stemHi: "अंतर्राष्ट्रीय नागरिक उड्डयन संगठन (ICAO) का मुख्यालय कहाँ स्थित है ?",
+        options: [
+          { tag: "A", en: "Montreal", hi: "मॉन्ट्रियल" },
+          { tag: "B", en: "Brussels", hi: "ब्रुसेल्स" },
+          { tag: "C", en: "Geneva", hi: "जिनेवा" },
+          { tag: "D", en: "Paris", hi: "पेरिस" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "The International Civil Aviation Organization (ICAO), established in 1944 under the Chicago Convention, is headquartered in Montreal, Canada.",
+        expHi: "ICAO संयुक्त राष्ट्र की एक विशेष एजेंसी है, जिसका मुख्यालय मॉन्ट्रियल (कनाडा) में स्थित है।",
+        keyFact: "International Civil Aviation Day is observed every year on 7 December."
+      },
+      {
+        id: 89,
+        stemEn: "According to Article 57 of the Indian Constitution, a person who holds, or who has held, office as ________ shall, subject to the other provisions of this Constitution, be eligible for re-election to that office.",
+        stemHi: "भारतीय संविधान के अनुच्छेद 57 के अनुसार कोई व्यक्ति जो ________ के रूप में पद धारण करता है, या जिसने पद धारण किया है, इस संविधान के अन्य प्रावधानों के अधीन, उस पद पर पुनः चुनाव के लिए पात्र होगा।",
+        options: [
+          { tag: "A", en: "Vice-President", hi: "उपराष्ट्रपति" },
+          { tag: "B", en: "Attorney General", hi: "अटॉर्नी जनरल" },
+          { tag: "C", en: "President", hi: "राष्ट्रपति" },
+          { tag: "D", en: "Prime Minister", hi: "प्रधानमंत्री" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "Article 57 explicitly provides that the President of India is eligible for re-election to that office any number of times.",
+        expHi: "अनुच्छेद 57 के अनुसार कोई व्यक्ति जो राष्ट्रपति पद धारण कर चुका है, पुनः राष्ट्रपति पद के चुनाव के लिए पात्र होगा।",
+        keyFact: "Dr. Rajendra Prasad was the only President to serve two full terms."
+      },
+      {
+        id: 90,
+        stemEn: "Manish Singhal was appointed as the Secretary General of ________ on 1 January, 2025.",
+        stemHi: "मनीष सिंघल को 1 जनवरी, 2025 को ________ का महासचिव नियुक्त किया गया।",
+        options: [
+          { tag: "A", en: "Confederation of Indian Industry (CII)", hi: "कॉन्फेडरेशन ऑफ इंडियन इंडस्ट्री (CII)" },
+          { tag: "B", en: "Associated Chambers of Commerce and Industry of India (ASSOCHAM)", hi: "एसोसिएटेड चेम्बर्स ऑफ कॉमर्स एण्ड इंडस्ट्री ऑफ इंडिया (ASSOCHAM)" },
+          { tag: "C", en: "Federation of Indian Chambers of Commerce and Industry (FICCI)", hi: "फेडरेशन ऑफ इंडियन चेम्बर्स ऑफ कॉमर्स एण्ड इंडस्ट्री (FICCI)" },
+          { tag: "D", en: "National Association of Software and Service Companies (NASSCOM)", hi: "नेशनल एसोसिएशन ऑफ सॉफ्टवेयर एण्ड सर्विस कम्पनीज (NASSCOM)" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Manish Singhal took charge as the Secretary General of ASSOCHAM on 1 January, 2025, succeeding Deepak Sood.",
+        expHi: "मनीष सिंघल ने 1 जनवरी, 2025 को उद्योग संगठन ASSOCHAM के महासचिव का पदभार ग्रहण किया।",
+        keyFact: "ASSOCHAM was established in 1920 in New Delhi."
+      },
+      {
+        id: 91,
+        stemEn: "Quit India Resolution was passed in",
+        stemHi: "भारत छोड़ो प्रस्ताव कब पारित किया गया था ?",
+        options: [
+          { tag: "A", en: "September 1943", hi: "सितम्बर 1943" },
+          { tag: "B", en: "August 1942", hi: "अगस्त 1942" },
+          { tag: "C", en: "August 1943", hi: "अगस्त 1943" },
+          { tag: "D", en: "September 1942", hi: "सितम्बर 1942" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "The Quit India Resolution was passed by the AICC on 8 August 1942 at Gowalia Tank Maidan, Bombay.",
+        expHi: "भारत छोड़ो प्रस्ताव 8 अगस्त 1942 को बॉम्बे के ग्वालिया टैंक मैदान में पारित हुआ था।",
+        keyFact: "Mahatma Gandhi gave the historic call 'Do or Die' (करो या मरो)."
+      },
+      {
+        id: 92,
+        stemEn: "What is the capital of Cuba?",
+        stemHi: "क्यूबा की राजधानी क्या है ?",
+        options: [
+          { tag: "A", en: "Dhaka", hi: "ढाका" },
+          { tag: "B", en: "Prague", hi: "प्राग" },
+          { tag: "C", en: "Havana", hi: "हवाना" },
+          { tag: "D", en: "Quito", hi: "क्विटो" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "Havana is the capital of Cuba. Dhaka is capital of Bangladesh, Prague of Czechia, Quito of Ecuador.",
+        expHi: "क्यूबा की राजधानी हवाना (Havana) है। ढाका बांग्लादेश, प्राग चेक गणराज्य और क्विटो इक्वाडोर की राजधानी है।",
+        keyFact: "Cuba is historically nicknamed 'Sugar Bowl of the World'."
+      },
+      {
+        id: 93,
+        stemEn: "What happens to the temperature of a reaction mixture when a chemical reaction absorbs heat energy?",
+        stemHi: "जब रासायनिक अभिक्रिया ऊष्मा ऊर्जा को अवशोषित करती है तो अभिक्रिया मिश्रण के तापमान पर क्या प्रभाव पड़ता है ?",
+        options: [
+          { tag: "A", en: "The temperature rises", hi: "तापमान बढ़ जाता है" },
+          { tag: "B", en: "Heat energy is produced", hi: "ऊष्मा ऊर्जा उत्पन्न होती है" },
+          { tag: "C", en: "The temperature remains the same", hi: "तापमान वही रहता है" },
+          { tag: "D", en: "The temperature falls", hi: "तापमान गिरता है" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "In endothermic reactions, heat energy is absorbed from the mixture/surroundings, resulting in a drop (fall) in temperature.",
+        expHi: "ऊष्माशोषी (Endothermic) अभिक्रिया में परिवेश से ऊष्मा अवशोषित होने के कारण मिश्रण का तापमान गिर (घट) जाता है।",
+        keyFact: "Dissolution of ammonium chloride in water causes cooling."
+      },
+      {
+        id: 94,
+        stemEn: "Between which two consecutive integers does √290 lie?",
+        stemHi: "√290 किस दो लगातार पूर्णांकों के बीच स्थित है ?",
+        options: [
+          { tag: "A", en: "16 and 17", hi: "16 और 17" },
+          { tag: "B", en: "19 and 20", hi: "19 और 20" },
+          { tag: "C", en: "17 and 18", hi: "17 और 18" },
+          { tag: "D", en: "18 and 19", hi: "18 और 19" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "C",
+        expEn: "17^2 = 289 and 18^2 = 324. Since 289 < 290 < 324, √290 lies between 17 and 18.",
+        expHi: "17 का वर्ग 289 तथा 18 का वर्ग 324 है। 289 < 290 < 324, अतः √290 संख्या 17 और 18 के बीच है।",
+        keyFact: "√290 ≈ 17.029."
+      },
+      {
+        id: 95,
+        stemEn: "Which of the following metals was not known or used by the people of the Harappan Civilization?",
+        stemHi: "निम्नलिखित में से कौन-सी धातु हड़प्पा सभ्यता के लोगों द्वारा ज्ञात या उपयोग नहीं की गई थी ?",
+        options: [
+          { tag: "A", en: "Copper", hi: "तांबा" },
+          { tag: "B", en: "Iron", hi: "लोहा" },
+          { tag: "C", en: "Gold", hi: "सोना" },
+          { tag: "D", en: "Bronze", hi: "कांस्य" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Harappans were part of a Bronze Age civilization and did NOT know iron. Iron came to India later in the Later Vedic period (c. 1000 BCE).",
+        expHi: "हड़प्पा सभ्यता कांस्य युगीन थी। हड़प्पावासी लोहे (Iron) से पूरी तरह अनभिज्ञ थे।",
+        keyFact: "Iron first appeared in North India at sites like Atranjikhera (UP)."
+      },
+      {
+        id: 96,
+        stemEn: "Where was the 18th Pravasi Bharatiya Divas (PBD) Convention 2025 held ?",
+        stemHi: "18 वां प्रवासी भारतीय दिवस (PBD) सम्मेलन 2025 कहाँ आयोजित किया गया था ?",
+        options: [
+          { tag: "A", en: "New Delhi", hi: "नई दिल्ली" },
+          { tag: "B", en: "Hyderabad", hi: "हैदराबाद" },
+          { tag: "C", en: "Ahmedabad", hi: "अहमदाबाद" },
+          { tag: "D", en: "Bhubaneshwar", hi: "भुवनेश्वर" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "The 18th Pravasi Bharatiya Divas (PBD) Convention was held in Bhubaneswar, Odisha from 8 to 10 January 2025.",
+        expHi: "18वां प्रवासी भारतीय दिवस सम्मेलन 8-10 जनवरी 2025 को भुवनेश्वर (ओडिशा) में आयोजित किया गया था।",
+        keyFact: "Commemorates Mahatma Gandhi's return from South Africa on 9 January 1915."
+      },
+      {
+        id: 97,
+        stemEn: "What term describes the splitting of a country into smaller, often hostile units ?",
+        stemHi: "किसी देश के छोटे, अक्सर शत्रुतापूर्ण इकाइयों में विभाजन को कौन-सा शब्द दर्शाता है ?",
+        options: [
+          { tag: "A", en: "Annexation", hi: "विलयन" },
+          { tag: "B", en: "Federalism", hi: "संघवाद" },
+          { tag: "C", en: "Colonialism", hi: "उपनिवेशवाद" },
+          { tag: "D", en: "Balkanization", hi: "बाल्कनीकरण" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Balkanization refers to the fragmentation of a region or country into smaller, mutually hostile states.",
+        expHi: "किसी देश का परस्पर शत्रुतापूर्ण छोटी इकाइयों में विखंडन 'बाल्कनीकरण' (Balkanization) कहलाता है।",
+        keyFact: "Derived from the geopolitical disintegration of the Balkan peninsula."
+      },
+      {
+        id: 98,
+        stemEn: "Who handed over the Presidentship of Indian Independence League to Subhas Chandra Bose ?",
+        stemHi: "सुभाष चंद्र बोस को भारतीय स्वतंत्रता लीग की अध्यक्षता किसने सौंपी ?",
+        options: [
+          { tag: "A", en: "Gandhiji", hi: "गाँधीजी" },
+          { tag: "B", en: "Rash Behari Bose", hi: "रास बिहारी बोस" },
+          { tag: "C", en: "Nehru", hi: "नेहरू" },
+          { tag: "D", en: "Maulana Azad", hi: "मौलाना आज़ाद" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "B",
+        expEn: "Rash Behari Bose founded the Indian Independence League in Tokyo in 1942 and handed over leadership to Subhas Chandra Bose in Singapore in July 1943.",
+        expHi: "क्रांतिकारी रास बिहारी बोस ने जुलाई 1943 में सिंगापुर में भारतीय स्वतंत्रता लीग की बागडोर नेताजी सुभाष चंद्र बोस को सौंपी।",
+        keyFact: "Rash Behari Bose led the 1912 bomb attack on Viceroy Lord Hardinge."
+      },
+      {
+        id: 99,
+        stemEn: "Why is burning of natural gas classified as an exothermic reaction?",
+        stemHi: "प्राकृतिक गैस के जलने को ऊष्माक्षेपी अभिक्रिया के रूप में क्यों वर्गीकृत किया जाता है ?",
+        options: [
+          { tag: "A", en: "Because it absorbs heat", hi: "क्योंकि यह गर्मी को अवशोषित करता है" },
+          { tag: "B", en: "Because it involves a change in state", hi: "क्योंकि इसमें अवस्था में परिवर्तन शामिल है" },
+          { tag: "C", en: "Because it produces light", hi: "क्योंकि यह प्रकाश उत्पन्न करता है" },
+          { tag: "D", en: "Because heat is produced in this reaction", hi: "क्योंकि इस अभिक्रिया में ऊष्मा उत्पन्न होती है" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "D",
+        expEn: "Combustion of methane (CH4 + 2O2 -> CO2 + 2H2O + Heat) produces heat, making it an exothermic reaction.",
+        expHi: "प्राकृतिक गैस (मीथेन) के दहन से प्रचुर मात्रा में ऊष्मा उत्पन्न होती है, इसलिए यह ऊष्माक्षेपी अभिक्रिया है।",
+        keyFact: "Reactions releasing heat are exothermic (ΔH < 0)."
+      },
+      {
+        id: 100,
+        stemEn: "________ means an institution of self-government constituted under Article 243Q of the Constitution of India.",
+        stemHi: "________ का अर्थ भारतीय संविधान के अनुच्छेद 243Q के अंतर्गत गठित स्वशासन की संस्था है।",
+        options: [
+          { tag: "A", en: "Municipality", hi: "नगरपालिका" },
+          { tag: "B", en: "Panchayath", hi: "पंचायत" },
+          { tag: "C", en: "Metropolitan area", hi: "महानगरीय क्षेत्र" },
+          { tag: "D", en: "District", hi: "जिला" },
+          { tag: "E", en: "None of the above", hi: "उपर्युक्त में से कोई नहीं" }
+        ],
+        correct: "A",
+        expEn: "Article 243Q provides for the constitution of Municipalities (Nagar Panchayat, Municipal Council, and Municipal Corporation).",
+        expHi: "अनुच्छेद 243Q के तहत शहरी क्षेत्रों में स्वशासन की संस्था के रूप में 'नगरपालिका' (Municipality) का गठन किया जाता है।",
+        keyFact: "Inserted by the 74th Constitutional Amendment Act, 1992."
+      }
+    ];
+
+    /* App State Management */
+    let currentIndex = 0;
+    const totalQuestions = questionsData.length;
+    let userState = Array.from({ length: totalQuestions }, (_, i) => ({
+      id: i + 1,
+      visited: false,
+      answered: false,
+      selectedOption: null,
+      isCorrect: null,
+      isSkipped: false,
+      isMarkedReview: false
+    }));
+
+    /* Initialization */
+    window.addEventListener("DOMContentLoaded", () => {
+      buildPalette();
+      loadQuestion(0);
+      updateLiveScore();
+    });
+
+    /* Render Slide-In Palette Grid */
+    function buildPalette() {
+      const grid = document.getElementById("paletteGrid");
+      grid.innerHTML = "";
+      for (let i = 0; i < totalQuestions; i++) {
+        const btn = document.createElement("button");
+        btn.className = "palette-num-btn st-unvisited";
+        btn.id = `palette-btn-${i}`;
+        btn.textContent = i + 1;
+        btn.onclick = () => {
+          jumpToQuestion(i);
+          togglePalette(false);
+        };
+        grid.appendChild(btn);
+      }
+    }
+
+    function togglePalette(open) {
+      const drawer = document.getElementById("paletteDrawer");
+      const overlay = document.getElementById("paletteOverlay");
+      if (open) {
+        drawer.classList.add("open");
+        overlay.style.display = "block";
+      } else {
+        drawer.classList.remove("open");
+        overlay.style.display = "none";
+      }
+    }
+
+    /* Load & Render Question */
+    function loadQuestion(index) {
+      if (index < 0 || index >= totalQuestions) return;
+      currentIndex = index;
+      const q = questionsData[index];
+      const state = userState[index];
+
+      // Mark as visited
+      if (!state.visited) {
+        state.visited = true;
+      }
+
+      // Update Header Info
+      document.getElementById("qHeader").textContent = `Question ${q.id}`;
+      document.getElementById("progressIndicator").textContent = `Question ${index + 1} of ${totalQuestions}`;
+
+      // Handle Continuous Direction / Visual Asset Box
+      const visualContainer = document.getElementById("visualContainer");
+      const visualHeader = document.getElementById("visualHeader");
+      const visualBody = document.getElementById("visualBody");
+
+      if (q.assetKey && sharedVisualAssets[q.assetKey]) {
+        visualContainer.style.display = "block";
+        visualHeader.textContent = sharedVisualAssets[q.assetKey].title;
+        visualBody.innerHTML = sharedVisualAssets[q.assetKey].html;
+      } else {
+        visualContainer.style.display = "none";
+        visualBody.innerHTML = "";
+      }
+
+      // Render Stems (Language Strictness)
+      const stemEn = document.getElementById("stemEnglish");
+      const stemHi = document.getElementById("stemHindi");
+
+      if (q.isHindiOnly) {
+        stemEn.style.display = "none";
+        stemHi.style.display = "block";
+        stemHi.innerHTML = q.stemHi.replace(/\n/g, "<br>");
+      } else if (q.isEnglishOnly) {
+        stemEn.style.display = "block";
+        stemHi.style.display = "none";
+        stemEn.innerHTML = q.stemEn.replace(/\n/g, "<br>");
+      } else {
+        stemEn.style.display = "block";
+        stemHi.style.display = "block";
+        stemEn.innerHTML = q.stemEn.replace(/\n/g, "<br>");
+        stemHi.innerHTML = q.stemHi.replace(/\n/g, "<br>");
+      }
+
+      // Render Options
+      const optGrid = document.getElementById("optionsGrid");
+      optGrid.innerHTML = "";
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.id = `opt-${opt.tag}`;
+
+        let optLabel = "";
+        if (q.isHindiOnly) {
+          optLabel = opt.hi;
+        } else if (q.isEnglishOnly) {
+          optLabel = opt.en;
+        } else {
+          optLabel = `${opt.en} / ${opt.hi}`;
+        }
+
+        btn.innerHTML = `<span class="option-tag">${opt.tag}</span><span class="option-text">${optLabel}</span>`;
+
+        // If already answered, lock options and show validation colors
+        if (state.answered) {
+          btn.classList.add("locked");
+          if (opt.tag === q.correct) {
+            btn.classList.add(state.selectedOption === q.correct ? "selected-correct" : "reveal-correct");
+          } else if (opt.tag === state.selectedOption) {
+            btn.classList.add("selected-incorrect");
+          }
+        } else {
+          btn.onclick = () => handleOptionSelection(opt.tag);
+        }
+
+        optGrid.appendChild(btn);
+      });
+
+      // Render Solution Accordion Card
+      const solCard = document.getElementById("solutionCard");
+      const solEn = document.getElementById("solEnglishBox");
+      const solHi = document.getElementById("solHindiBox");
+      const keyFact = document.getElementById("keyFactBox");
+
+      if (state.answered) {
+        solCard.style.display = "block";
+        if (q.isHindiOnly) {
+          solEn.style.display = "none";
+          solHi.style.display = "block";
+          solHi.innerHTML = `<strong>व्याख्या:</strong> ${q.expHi}`;
+        } else if (q.isEnglishOnly) {
+          solEn.style.display = "block";
+          solHi.style.display = "none";
+          solEn.innerHTML = `<strong>Explanation:</strong> ${q.expEn}`;
+        } else {
+          solEn.style.display = "block";
+          solHi.style.display = "block";
+          solEn.innerHTML = `<strong>Explanation (English):</strong> ${q.expEn}`;
+          solHi.innerHTML = `<strong>व्याख्या (Hindi):</strong> ${q.expHi}`;
+        }
+        keyFact.innerHTML = `<strong>⚡ Key Exam Fact:</strong> ${q.keyFact}`;
+      } else {
+        solCard.style.display = "none";
+      }
+
+      // Update Navigation Buttons State
+      document.getElementById("btnPrev").disabled = (currentIndex === 0);
+      document.getElementById("btnNext").textContent = (currentIndex === totalQuestions - 1) ? "Submit Exam 🏁" : "Next Question ❯";
+      
+      const btnReview = document.getElementById("btnReview");
+      if (state.isMarkedReview) {
+        btnReview.textContent = "✓ Review Marked";
+        btnReview.style.background = "#7e22ce";
+      } else {
+        btnReview.textContent = "🔖 Mark for Review";
+        btnReview.style.background = "#581c87";
+      }
+
+      updatePaletteItem(index);
+    }
+
+    /* Option Selection & Evaluation */
+    function handleOptionSelection(chosenTag) {
+      const q = questionsData[currentIndex];
+      const state = userState[currentIndex];
+      if (state.answered) return; // Prevent re-attempt
+
+      state.answered = true;
+      state.isSkipped = false;
+      state.selectedOption = chosenTag;
+      state.isCorrect = (chosenTag === q.correct);
+
+      // Lock buttons & show feedback
+      const allBtns = document.querySelectorAll(".option-btn");
+      allBtns.forEach(btn => btn.classList.add("locked"));
+
+      const selectedBtn = document.getElementById(`opt-${chosenTag}`);
+      if (state.isCorrect) {
+        selectedBtn.classList.add("selected-correct");
+      } else {
+        selectedBtn.classList.add("selected-incorrect");
+        const correctBtn = document.getElementById(`opt-${q.correct}`);
+        if (correctBtn) correctBtn.classList.add("reveal-correct");
+      }
+
+      // Reveal Solution Card
+      const solCard = document.getElementById("solutionCard");
+      const solEn = document.getElementById("solEnglishBox");
+      const solHi = document.getElementById("solHindiBox");
+      const keyFact = document.getElementById("keyFactBox");
+
+      solCard.style.display = "block";
+      if (q.isHindiOnly) {
+        solEn.style.display = "none";
+        solHi.style.display = "block";
+        solHi.innerHTML = `<strong>व्याख्या:</strong> ${q.expHi}`;
+      } else if (q.isEnglishOnly) {
+        solEn.style.display = "block";
+        solHi.style.display = "none";
+        solEn.innerHTML = `<strong>Explanation:</strong> ${q.expEn}`;
+      } else {
+        solEn.style.display = "block";
+        solHi.style.display = "block";
+        solEn.innerHTML = `<strong>Explanation (English):</strong> ${q.expEn}`;
+        solHi.innerHTML = `<strong>व्याख्या (Hindi):</strong> ${q.expHi}`;
+      }
+      keyFact.innerHTML = `<strong>⚡ Key Exam Fact:</strong> ${q.keyFact}`;
+
+      updatePaletteItem(currentIndex);
+      updateLiveScore();
+    }
+
+    /* Navigation Handlers (Manual progression strictly preserved) */
+    function navigateQuestion(direction) {
+      const targetIndex = currentIndex + direction;
+      if (targetIndex >= 0 && targetIndex < totalQuestions) {
+        loadQuestion(targetIndex);
+      } else if (targetIndex >= totalQuestions) {
+        confirmSubmitTest();
+      }
+    }
+
+    function jumpToQuestion(index) {
+      loadQuestion(index);
+    }
+
+    function skipCurrentQuestion() {
+      const state = userState[currentIndex];
+      if (!state.answered) {
+        state.isSkipped = true;
+        updatePaletteItem(currentIndex);
+      }
+      navigateQuestion(1);
+    }
+
+    function toggleReview() {
+      const state = userState[currentIndex];
+      state.isMarkedReview = !state.isMarkedReview;
+      const btnReview = document.getElementById("btnReview");
+      if (state.isMarkedReview) {
+        btnReview.textContent = "✓ Review Marked";
+        btnReview.style.background = "#7e22ce";
+      } else {
+        btnReview.textContent = "🔖 Mark for Review";
+        btnReview.style.background = "#581c87";
+      }
+      updatePaletteItem(currentIndex);
+    }
+
+    /* Status & Palette Color Synchronization */
+    function updatePaletteItem(idx) {
+      const state = userState[idx];
+      const pBtn = document.getElementById(`palette-btn-${idx}`);
+      if (!pBtn) return;
+
+      // Clear existing status classes
+      pBtn.className = "palette-num-btn";
+      if (idx === currentIndex) pBtn.classList.add("current");
+
+      if (state.answered) {
+        if (state.isCorrect) {
+          pBtn.classList.add("st-answered-correct");
+        } else {
+          pBtn.classList.add("st-answered-incorrect");
+        }
+      } else if (state.isMarkedReview) {
+        pBtn.classList.add("st-review");
+      } else if (state.isSkipped) {
+        pBtn.classList.add("st-skipped");
+      } else if (state.visited) {
+        pBtn.classList.add("st-unanswered");
+      } else {
+        pBtn.classList.add("st-unvisited");
+      }
+    }
+
+    /* Mathematical Score Calculation (UPSSSC PET Standard) */
+    function calculateScore() {
+      let correctCount = userState.filter(q => q.answered && q.isCorrect === true).length;
+      let incorrectCount = userState.filter(q => q.answered && q.isCorrect === false && !q.isSkipped).length;
+      let netScore = (correctCount * 1.0) - (incorrectCount * 0.25);
+      return {
+        correctCount,
+        incorrectCount,
+        netScore: netScore.toFixed(2)
+      };
+    }
+
+    function updateLiveScore() {
+      const score = calculateScore();
+      document.getElementById("liveScoreBadge").textContent = `Net Score: ${score.netScore}`;
+    }
+
+    /* Submit and Report Dashboard */
+    function confirmSubmitTest() {
+      const answeredTotal = userState.filter(q => q.answered).length;
+      const confirmMsg = `You have answered ${answeredTotal} out of ${totalQuestions} questions.\nDo you really want to submit the exam and view your final performance breakdown?`;
+      if (confirm(confirmMsg)) {
+        displayReport();
+      }
+    }
+
+    function displayReport() {
+      const score = calculateScore();
+      const correct = score.correctCount;
+      const incorrect = score.incorrectCount;
+      const skipped = userState.filter(q => q.isSkipped && !q.answered).length;
+      const unanswered = userState.filter(q => !q.answered && !q.isSkipped && q.visited).length;
+      const totalAttempted = correct + incorrect;
+      const accuracy = totalAttempted > 0 ? ((correct / totalAttempted) * 100).toFixed(1) + "%" : "0.0%";
+
+      document.getElementById("repNetScore").textContent = `${score.netScore} / 100.00`;
+      document.getElementById("repCorrect").textContent = correct;
+      document.getElementById("repIncorrect").textContent = incorrect;
+      document.getElementById("repSkipped").textContent = skipped;
+      document.getElementById("repUnanswered").textContent = unanswered;
+      document.getElementById("repAccuracy").textContent = accuracy;
+
+      // Populate Review Matrix
+      const matrixBody = document.getElementById("repMatrixBody");
+      matrixBody.innerHTML = "";
+
+      userState.forEach((st, idx) => {
+        const q = questionsData[idx];
+        const tr = document.createElement("tr");
+
+        let statusText = "Not Visited";
+        let marks = "0.00";
+        if (st.answered) {
+          if (st.isCorrect) {
+            statusText = "<span style='color:var(--success-green); font-weight:700;'>Correct</span>";
+            marks = "+1.00";
+          } else {
+            statusText = "<span style='color:var(--danger-red); font-weight:700;'>Incorrect</span>";
+            marks = "-0.25";
+          }
+        } else if (st.isSkipped) {
+          statusText = "<span style='color:var(--skip-slate);'>Skipped</span>";
+        } else if (st.visited) {
+          statusText = "<span style='color:var(--warn-orange);'>Unanswered</span>";
+        }
+
+        tr.innerHTML = `
+          <td><strong>Q${q.id}</strong></td>
+          <td>${statusText}</td>
+          <td>${st.selectedOption ? st.selectedOption : "-"}</td>
+          <td><strong style="color:#60a5fa;">${q.correct}</strong></td>
+          <td><strong>${marks}</strong></td>
+        `;
+        matrixBody.appendChild(tr);
+      });
+
+      document.getElementById("reportOverlay").style.display = "flex";
+    }
+
+    function resetExam() {
+      userState = Array.from({ length: totalQuestions }, (_, i) => ({
+        id: i + 1,
+        visited: false,
+        answered: false,
+        selectedOption: null,
+        isCorrect: null,
+        isSkipped: false,
+        isMarkedReview: false
+      }));
+      document.getElementById("reportOverlay").style.display = "none";
+      buildPalette();
+      loadQuestion(0);
+      updateLiveScore();
+    }
+  </script>
+</body>
+</html>

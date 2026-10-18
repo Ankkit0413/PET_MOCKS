@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSSSC PET CBT Simulator - सामान्य हिन्दी (वाक्यांशों के लिए एक शब्द)</title>
+<style>
+  :root {
+    --bg-main: #121316;
+    --bg-card: #1e2024;
+    --bg-hover: #282b30;
+    --bg-elevated: #25282e;
+    --text-primary: #f1f3f5;
+    --text-secondary: #adb5bd;
+    --accent-blue: #3b82f6;
+    --accent-blue-hover: #2563eb;
+    --border-color: #343840;
+    
+    /* 6-Status Palette Colors */
+    --st-correct: #10b981;
+    --st-correct-bg: rgba(16, 185, 129, 0.14);
+    --st-incorrect: #ef4444;
+    --st-incorrect-bg: rgba(239, 68, 68, 0.14);
+    --st-unanswered: #f97316;
+    --st-skipped: #64748b;
+    --st-review: #a855f7;
+    --st-notvisited: #2c3038;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Noto Sans Devanagari', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top Navigation Bar */
+  .top-bar {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+
+  .brand-area {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .exam-badge {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-blue);
+    font-weight: 700;
+  }
+
+  .subject-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .top-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .q-counter-pill {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--text-primary);
+  }
+
+  .score-badge {
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid var(--accent-blue);
+    color: #93c5fd;
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.92rem;
+  }
+
+  .btn {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-elevated);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn:hover:not(:disabled) {
+    background-color: var(--bg-hover);
+    border-color: #4b5262;
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-palette {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #ffffff;
+  }
+
+  .btn-palette:hover:not(:disabled) {
+    background-color: var(--accent-blue-hover);
+    border-color: var(--accent-blue-hover);
+  }
+
+  .btn-finish {
+    background-color: rgba(16, 185, 129, 0.15);
+    border-color: var(--st-correct);
+    color: #6ee7b7;
+  }
+
+  .btn-finish:hover:not(:disabled) {
+    background-color: var(--st-correct);
+    color: #0b1114;
+  }
+
+  /* Main Container */
+  .main-container {
+    width: 100%;
+    max-width: 880px;
+    margin: 1.75rem auto;
+    padding: 0 1.2rem 3rem;
+    flex: 1;
+  }
+
+  /* Question Card */
+  .question-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1.75rem;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+  }
+
+  .card-meta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .q-number-tag {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .status-pill {
+    font-size: 0.78rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .marking-info {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .marking-info .pos { color: var(--st-correct); font-weight: 600; }
+  .marking-info .neg { color: var(--st-incorrect); font-weight: 600; }
+
+  .question-stem {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    line-height: 1.65;
+  }
+
+  /* Options List */
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .option-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.95rem 1.15rem;
+    background-color: var(--bg-elevated);
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    width: 100%;
+    color: var(--text-primary);
+    font-size: 1.05rem;
+    font-family: inherit;
+  }
+
+  .option-card:hover:not(.locked) {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-blue);
+    transform: translateX(3px);
+  }
+
+  .option-card.locked {
+    cursor: default;
+  }
+
+  .opt-letter {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+  }
+
+  .opt-text {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .opt-feedback-tag {
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+  }
+
+  /* Correct & Incorrect Option States */
+  .option-card.correct-choice {
+    background-color: var(--st-correct-bg);
+    border-color: var(--st-correct);
+  }
+
+  .option-card.correct-choice .opt-letter {
+    background-color: var(--st-correct);
+    border-color: var(--st-correct);
+    color: #091310;
+  }
+
+  .option-card.wrong-choice {
+    background-color: var(--st-incorrect-bg);
+    border-color: var(--st-incorrect);
+  }
+
+  .option-card.wrong-choice .opt-letter {
+    background-color: var(--st-incorrect);
+    border-color: var(--st-incorrect);
+    color: #ffffff;
+  }
+
+  /* Action Bar Inside Question Card */
+  .card-actions {
+    margin-top: 1.65rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .left-actions, .right-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-review.active-review {
+    background-color: rgba(168, 85, 247, 0.2);
+    border-color: var(--st-review);
+    color: #d8b4fe;
+  }
+
+  .btn-skip.active-skip {
+    background-color: rgba(100, 116, 139, 0.25);
+    border-color: var(--st-skipped);
+    color: #cbd5e1;
+  }
+
+  .btn-next {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #ffffff;
+    padding: 0.55rem 1.25rem;
+  }
+
+  .btn-next:hover:not(:disabled) {
+    background-color: var(--accent-blue-hover);
+  }
+
+  /* Explanation Box */
+  .explanation-box {
+    margin-top: 1.5rem;
+    background-color: #17191d;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--accent-blue);
+    border-radius: 10px;
+    padding: 1.35rem;
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .explanation-box.visible {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .exp-header {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .exp-section {
+    margin-bottom: 0.75rem;
+    font-size: 0.98rem;
+    color: #e2e8f0;
+  }
+
+  .exp-section strong {
+    color: #93c5fd;
+  }
+
+  .exam-fact-box {
+    margin-top: 0.85rem;
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.92rem;
+    color: #fde68a;
+  }
+
+  /* Hidden Slide-Over Question Palette */
+  .palette-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(3px);
+    z-index: 900;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .palette-backdrop.open {
+    display: block;
+    opacity: 1;
+  }
+
+  .palette-drawer {
+    position: fixed;
+    top: 0;
+    right: -460px;
+    width: 100%;
+    max-width: 440px;
+    height: 100vh;
+    background-color: var(--bg-card);
+    border-left: 1px solid var(--border-color);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.6);
+  }
+
+  .palette-drawer.open {
+    right: 0;
+  }
+
+  .palette-header {
+    padding: 1.15rem 1.35rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .palette-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .btn-close-palette {
+    background-color: rgba(239, 68, 68, 0.15);
+    border: 1px solid var(--st-incorrect);
+    color: #fca5a5;
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-close-palette:hover {
+    background-color: var(--st-incorrect);
+    color: #ffffff;
+  }
+
+  /* Palette Legend */
+  .palette-legend {
+    padding: 1rem 1.35rem;
+    background-color: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.55rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  /* Numbered Grid 1 to 100 */
+  .palette-grid-wrapper {
+    padding: 1.25rem 1.35rem;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.65rem;
+  }
+
+  .pal-btn {
+    height: 42px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color);
+    background-color: var(--st-notvisited);
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    position: relative;
+  }
+
+  .pal-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .pal-btn.current-q {
+    outline: 2.5px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  /* 6-Status Classes for Palette Buttons */
+  .pal-btn.st-correct {
+    background-color: var(--st-correct);
+    border-color: var(--st-correct);
+    color: #06130e;
+  }
+  .pal-btn.st-incorrect {
+    background-color: var(--st-incorrect);
+    border-color: var(--st-incorrect);
+    color: #ffffff;
+  }
+  .pal-btn.st-unanswered {
+    background-color: var(--st-unanswered);
+    border-color: var(--st-unanswered);
+    color: #140800;
+  }
+  .pal-btn.st-skipped {
+    background-color: var(--st-skipped);
+    border-color: var(--st-skipped);
+    color: #ffffff;
+  }
+  .pal-btn.st-review {
+    background-color: var(--st-review);
+    border-color: var(--st-review);
+    color: #ffffff;
+  }
+  .pal-btn.st-notvisited {
+    background-color: var(--st-notvisited);
+    border-color: #3f4451;
+    color: var(--text-secondary);
+  }
+
+  /* Final Report Dashboard */
+  .report-container {
+    display: none;
+    width: 100%;
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1.2rem 4rem;
+  }
+
+  .report-container.active {
+    display: block;
+  }
+
+  .report-header-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 2rem;
+    margin-bottom: 1.75rem;
+    text-align: center;
+  }
+
+  .report-score-big {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent-blue);
+    margin: 0.5rem 0;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .stat-box {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+
+  .stat-lbl {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  .review-matrix-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1.75rem;
+  }
+
+  .review-filter-bar {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+  }
+
+  .review-item {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .question-stem { font-size: 1.1rem; }
+    .question-card { padding: 1.2rem; }
+    .top-bar { padding: 0.75rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<header class="top-bar">
+  <div class="brand-area">
+    <span class="exam-badge">UPSSSC PET (Group C) • Strict NCERT Standard</span>
+    <div class="subject-title">सामान्य हिन्दी : वाक्यांशों के लिए एक शब्द</div>
+  </div>
+  <div class="top-controls">
+    <div class="q-counter-pill" id="topQCounter">Question 1 of 100</div>
+    <div class="score-badge" id="topScoreBadge">Net Score: 0.00</div>
+    <button class="btn btn-palette" id="openPaletteTopBtn" onclick="togglePalette(true)">📋 Open Palette</button>
+    <button class="btn btn-finish" onclick="showFinalReport()">📊 Final Report</button>
+  </div>
+</header>
+
+<!-- Main Single-Column Question View -->
+<main class="main-container" id="simulatorMainView">
+  <section class="question-card">
+    <div class="card-meta-header">
+      <div class="q-number-tag">
+        <span id="qNumberDisplay">प्रश्न 1 / 100</span>
+        <span class="status-pill" id="qStatusPill"></span>
+      </div>
+      <div class="marking-info">
+        <span>सही: <b class="pos">+1.00</b></span>
+        <span>गलत: <b class="neg">-0.25</b></span>
+        <span>छोड़ा गया: <b>0.00</b></span>
+      </div>
+    </div>
+
+    <div class="question-stem" id="qStemText"></div>
+
+    <div class="options-grid" id="optionsContainer"></div>
+
+    <!-- Explanation Section (Appears immediately upon answering) -->
+    <div class="explanation-box" id="explanationBox">
+      <div class="exp-header" id="expResultBanner"></div>
+      <div class="exp-section" id="expHindiText"></div>
+      <div class="exp-section" id="expEnglishText"></div>
+      <div class="exam-fact-box" id="expFactText"></div>
+    </div>
+
+    <!-- Controls Footer -->
+    <div class="card-actions">
+      <div class="left-actions">
+        <button class="btn" id="prevQBtn" onclick="navigateQuestion(-1)">⬅ Previous</button>
+        <button class="btn btn-skip" id="skipQBtn" onclick="markSkipped()">⏭ Skip Question</button>
+        <button class="btn btn-review" id="reviewQBtn" onclick="toggleReview()">🟣 Mark for Review</button>
+      </div>
+      <div class="right-actions">
+        <button class="btn btn-palette" onclick="togglePalette(true)">📋 Open Palette</button>
+        <button class="btn btn-next" id="nextQBtn" onclick="navigateQuestion(1)">Next Question ➔</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- On-Demand Hidden Slide-in Question Palette -->
+<div class="palette-backdrop" id="paletteBackdrop" onclick="togglePalette(false)"></div>
+<aside class="palette-drawer" id="paletteDrawer" aria-label="Question Palette">
+  <div class="palette-header">
+    <div class="palette-title">📋 प्रश्न पैलेट (1 - 100)</div>
+    <button class="btn-close-palette" onclick="togglePalette(false)">✕ Close Palette</button>
+  </div>
+
+  <div class="palette-legend">
+    <div class="legend-item"><span class="legend-dot" style="background:var(--st-correct)"></span>🟢 Correct (<span id="legCorrect">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--st-incorrect)"></span>🔴 Incorrect (<span id="legIncorrect">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--st-unanswered)"></span>🟠 Unanswered (<span id="legUnanswered">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--st-skipped)"></span>⚪ Skipped (<span id="legSkipped">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--st-review)"></span>🟣 Review (<span id="legReview">0</span>)</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--st-notvisited)"></span>⚫ Not Visited (<span id="legNotVisited">100</span>)</div>
+  </div>
+
+  <div class="palette-grid-wrapper">
+    <div class="palette-grid" id="paletteGrid"></div>
+  </div>
+</aside>
+
+<!-- Final Report Dashboard -->
+<section class="report-container" id="finalReportView">
+  <div class="report-header-card">
+    <span class="exam-badge">UPSSSC PET CBT PERFORMANCE REPORT</span>
+    <h1 style="margin-top:0.35rem;">सामान्य हिन्दी : वाक्यांशों के लिए एक शब्द</h1>
+    <div class="report-score-big" id="repNetScore">0.00 / 100.00</div>
+    <p style="color:var(--text-secondary);" id="repFormulaText">Net Score = (0 × 1.00) - (0 × 0.25)</p>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-val" style="color:var(--st-correct)" id="repCorrect">0</div>
+        <div class="stat-lbl">सही उत्तर (+1.00)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:var(--st-incorrect)" id="repIncorrect">0</div>
+        <div class="stat-lbl">गलत उत्तर (-0.25)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:#60a5fa" id="repAttempted">0</div>
+        <div class="stat-lbl">कुल हल किए गए</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:var(--st-skipped)" id="repUnattempted">100</div>
+        <div class="stat-lbl">छोड़े गए / अनछुए (0.00)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" style="color:#fbbf24" id="repAccuracy">0.00%</div>
+        <div class="stat-lbl">सटीकता दर (Accuracy)</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.75rem; display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+      <button class="btn btn-palette" onclick="returnToSimulator()">⬅ परीक्षा में वापस जाएँ (Back to Questions)</button>
+      <button class="btn" onclick="resetSimulator()">🔄 रीसेट करें (Restart CBT)</button>
+    </div>
+  </div>
+
+  <div class="review-matrix-card">
+    <h2>संपूर्ण 100-प्रश्न समीक्षा मैट्रिक्स (Bilingual Review Matrix)</h2>
+    <div class="review-filter-bar">
+      <button class="btn" onclick="renderReviewMatrix('ALL')">सभी प्रश्न (100)</button>
+      <button class="btn" onclick="renderReviewMatrix('CORRECT')">🟢 केवल सही</button>
+      <button class="btn" onclick="renderReviewMatrix('INCORRECT')">🔴 केवल गलत</button>
+      <button class="btn" onclick="renderReviewMatrix('UNATTEMPTED')">⚪ छोड़े गए / अनछुए</button>
+    </div>
+    <div id="reviewMatrixList"></div>
+  </div>
+</section>
+
+<script>
+// 100 Strictly Verified, Unique UPSSSC PET Questions (General Hindi: One-Word Substitution)
+// Format per item: [qStem, [optA, optB, optC, optD], correctIndex(0-4), hindiExp, keyFact, engBreakdown]
+const rawQuestionData = [
+  // BATCH 1 (1 - 25)
+  ["'जिसका जन्म पहले हुआ हो' (बड़ा भाई) — इस वाक्यांश के लिए एक उपयुक्त शब्द क्या है?", ["अनुज", "अग्रज", "द्विज", "सर्वज्ञ"], 1, "जिसका जन्म पहले हुआ हो (बड़ा भाई) उसे 'अग्रज' (अग्र + ज = पहले जन्म लेने वाला) कहते हैं। जिसका जन्म बाद में हुआ हो उसे 'अनुज' कहा जाता है।", "'अग्रज' का सटीक विलोम शब्द 'अनुज' होता है, जो UPSSSC की परीक्षाओं में बार-बार पूछा जाता है।", "Agraja (अग्रज) means elder brother (born earlier), whereas Anuja (अनुज) means younger brother."],
+  ["'जिसे बुलाया न गया हो' — वाक्य के लिए प्रयुक्त होने वाला एक शब्द है:", ["अतिथि", "अभ्यागत", "अनाहूत", "अनबोला"], 2, "जिसे बुलाया न गया हो या जो बिना बुलाए आया हो, उसके लिए एक शब्द 'अनाहूत' (अन् + आहूत) है। जिसे बुलाया गया हो, उसे 'आहूत' कहते हैं।", "व्याकरणिक दृष्टि से 'अनाहूत' में 'अन्' उपसर्ग का प्रयोग हुआ है और इसका विलोम 'आहूत' होता है।", "Anahoot (अनाहूत) refers to one who is uninvited; its antonym is Ahoot (invited)."],
+  ["'जो आँखों के सामने न हो' — इस वाक्यांश के लिए सही एक शब्द चुनिए:", ["प्रत्यक्ष", "परोक्ष", "अपरोक्ष", "दृष्टव्य"], 1, "जो आँखों के सामने न हो, उसे 'परोक्ष' (अक्ष के परे) या 'अप्रत्यक्ष' कहा जाता है। जो आँखों के ठीक सामने हो, उसे 'प्रत्यक्ष' कहते हैं।", "याद रखें— 'अपरोक्ष' का अर्थ 'जो परोक्ष न हो' अर्थात् 'प्रत्यक्ष' होता है, इसलिए सही उत्तर 'परोक्ष' है।", "Paroksha (परोक्ष) means indirect or beyond sight, while Pratyaksha (प्रत्यक्ष) means directly before the eyes."],
+  ["'जिस स्त्री का पति जीवित हो' — उसके लिए उपयुक्त एक शब्द क्या होगा?", ["विधवा", "सधवा", "पतिव्रता", "विवाहिता"], 1, "जिस स्त्री का पति जीवित हो, उसे 'सधवा' कहते हैं। जिस स्त्री का पति मर गया हो, उसे 'विधवा' कहा जाता है।", "'सधवा' का विलोम 'विधवा' होता है, जबकि जिस पुरुष की पत्नी मर गई हो उसे 'विधुर' कहा जाता है।", "Sadhava (सधवा) denotes a woman whose husband is alive; Vidhava (विधवा) is its antonym."],
+  ["'दोपहर के बाद का समय' — इस वाक्यांश के लिए एक शब्द है:", ["पूर्वाह्न", "मध्याह्न", "अपराह्न", "गोधूलि"], 2, "दोपहर के बाद के समय को 'अपराह्न' कहते हैं। दोपहर के पहले का समय 'पूर्वाह्न' और ठीक दोपहर का समय 'मध्याह्न' कहलाता है।", "वर्तनी शुद्धि में भी 'अपराह्न' और 'पूर्वाह्न' पूछे जाते हैं— इनमें 'ह' के नीचे 'न' (ह्न) जुड़ा होता है।", "Aparahna (अपराह्न) means afternoon (PM), Purvahna (पूर्वाह्न) means forenoon (AM), and Madhyahna means noon."],
+  ["'जिसके पास कुछ भी न हो' — वाक्यांश के लिए उचित एक शब्द क्या है?", ["गरीब", "अकिंचन", "दरिद्र", "विनीत"], 1, "जिसके पास कुछ भी न हो (अत्यंत निर्धन), उसके लिए मानक हिंदी व्याकरण में 'अकिंचन' शब्द का प्रयोग किया जाता है।", "UPSSSC PET और RO/ARO दोनों में 'अकिंचन' सर्वाधिक बार पूछे गए प्रश्नों की श्रेणी में आता है।", "Akinchan (अकिंचन) specifically means utterly destitute or possessing nothing at all."],
+  ["'मोक्ष की इच्छा रखने वाला' — वाक्यांश के लिए एक शब्द का चयन कीजिए:", ["मुमुक्षा", "मुमुक्षु", "जिज्ञासु", "तितीर्षु"], 1, "मोक्ष की इच्छा रखने वाले व्यक्ति को 'मुमुक्षु' कहा जाता है, जबकि केवल 'मोक्ष की इच्छा' को 'मुमुक्षा' कहते हैं।", "यदि वाक्यांश के अंत में 'इच्छा' हो तो अंत में 'आ' (मुमुक्षा) आता है, और 'इच्छा रखने वाला' हो तो अंत में 'उ' (मुमुक्षु) आता है।", "Mumukshu (मुमुक्षु) is a person desiring salvation (Moksha), whereas Mumuksha (मुमुक्षा) is the desire itself."],
+  ["'जिस पर आक्रमण न किया गया हो' — इस वाक्यांश के लिए सही शब्द है:", ["आक्रांत", "अनाक्रांत", "आक्रामक", "अजेय"], 1, "जिस पर आक्रमण न किया गया हो, उसे 'अनाक्रांत' कहते हैं। जिस पर आक्रमण किया गया हो, वह 'आक्रांत' कहलाता है।", "'आक्रांत' (जिस पर हमला हुआ हो) और 'अनाक्रांत' (जिस पर हमला न हुआ हो) का अंतर अत्यंत महत्वपूर्ण है।", "Anakrant (अनाक्रांत) means unattacked or uninvaded; Akrant (आक्रांत) means attacked."],
+  ["'पृथ्वी और ग्रहों के बीच का स्थान' — इसके लिए एक शब्द क्या होगा?", ["अंतरिक्ष", "अंबर", "क्षितिज", "ब्रह्मांड"], 0, "पृथ्वी, तारों और ग्रहों के बीच के स्थान को 'अंतरिक्ष' कहा जाता है। जहाँ पृथ्वी और आकाश मिलते दिखाई देते हैं, उसे 'क्षितिज' कहते हैं।", "'क्षितिज' (जहाँ धरती-आकाश मिलते दिखें) और 'अंतरिक्ष' (ग्रहों के बीच का स्थान) दोनों ही UPSSSC के प्रिय प्रश्न हैं।", "Antariksha (अंतरिक्ष) refers to outer space between Earth and celestial bodies."],
+  ["'जो कम बोलता हो' — वाक्यांश के लिए उपयुक्त एक शब्द है:", ["वाचाल", "मूक", "मितभाषी", "मृदुभाषी"], 2, "जो कम (नपा-तुला) बोलता हो, उसे 'मितभाषी' या 'अल्पभाषी' कहते हैं। जो बहुत अधिक बोलता हो उसे 'वाचाल' कहा जाता है।", "'मितभाषी' का विलोम शब्द 'वाचाल' होता है। इसी प्रकार 'मितव्ययी' का अर्थ 'कम खर्च करने वाला' होता है।", "Mitabhashi (मितभाषी) means a person of few words (reticent); Vachal (वाचाल) means talkative."],
+  ["'जंगल में लगने वाली आग' को एक शब्द में क्या कहा जाता है?", ["जठराग्नि", "बड़वाग्नि", "दावाग्नि", "मंदाग्नि"], 2, "जंगल (दाव) में लगने वाली आग को 'दावाग्नि' या 'दावानल' कहते हैं। पेट की आग को 'जठराग्नि' और समुद्र की आग को 'बड़वाग्नि' कहा जाता है।", "तीनों अग्नियों का सूत्र— दव (जंगल) = दावाग्नि; जठर (पेट) = जठराग्नि; बड़वा (समुद्र) = बड़वाग्नि।", "Davagni (दावाग्नि) or Davanal refers to a forest fire."],
+  ["'जिसकी गर्दन सुंदर हो' — वाक्यांश के लिए एक शब्द है:", ["सुदर्शन", "सुग्रीव", "सुगंध", "कंबुग्रीव"], 1, "जिसकी गर्दन (ग्रीवा) सुंदर हो, उसे 'सुग्रीव' कहते हैं। जिसकी गर्दन शंख के समान तीन रेखाओं वाली हो, उसे 'कंबुग्रीव' कहा जाता है।", "'सुग्रीव' का शाब्दिक अर्थ 'सुंदर गर्दन वाला' (सु + ग्रीव) होता है।", "Sugriva (सुग्रीव) literally means one with a handsome or shapely neck."],
+  ["'जो सब कुछ जानता हो' — इस वाक्यांश के लिए सही एक शब्द क्या है?", ["अल्पज्ञ", "बहुज्ञ", "सर्वज्ञ", "विज्ञ"], 2, "जो सब कुछ जानता हो, उसे 'सर्वज्ञ' कहते हैं। जो थोड़ा जानता हो उसे 'अल्पज्ञ' और जो बहुत जानता हो उसे 'बहुज्ञ' कहते हैं।", "यहाँ 'ज्ञ' धातु का अर्थ 'जानना' होता है। 'सर्वज्ञ' का विलोम 'अल्पज्ञ' माना जाता है।", "Sarvagya (सर्वज्ञ) means omniscient (all-knowing); Alpagya (अल्पज्ञ) means knowing little."],
+  ["'जिसका कोई शत्रु पैदा ही न हुआ हो' — उसे एक शब्द में क्या कहते हैं?", ["अजेय", "अजातशत्रु", "शत्रुघ्न", "शत्रुंजय"], 1, "जिसका कोई शत्रु जन्मा (पैदा) ही न हो, उसे 'अजातशत्रु' कहते हैं। शत्रु को मारने वाला 'शत्रुघ्न' कहलाता है।", "'अजात' का अर्थ है 'जो जन्मा न हो'। अतः अजातशत्रु = जिसका कोई शत्रु न जन्मा हो।", "Ajatashatru (अजातशत्रु) denotes one whose enemy has never been born."],
+  ["'जो किए गए उपकारों को मानता हो' — वाक्यांश के लिए एक शब्द चुनिए:", ["कृतघ्न", "कृतज्ञ", "कृतकार्य", "उपकारी"], 1, "जो किए गए उपकार को मानता है, उसे 'कृतज्ञ' कहते हैं। जो किए गए उपकार को नहीं मानता, उसे 'कृतघ्न' कहा जाता है।", "'कृतज्ञ' (उपकार मानने वाला) और 'कृतघ्न' (उपकार न मानने वाला) एक-दूसरे के विलोम भी हैं।", "Kritagya (कृतज्ञ) means grateful; Kritaghna (कृतघ्न) means ungrateful."],
+  ["'पर्वत की तलहटी' (पर्वत के नीचे की समतल भूमि) के लिए एक शब्द क्या है?", ["अधित्यका", "उपत्यका", "घाटी", "द्रोणी"], 1, "पर्वत के नीचे की पास वाली भूमि (तलहटी) को 'उपत्यका' कहा जाता है। पर्वत के ऊपर की समतल भूमि को 'अधित्यका' कहते हैं।", "ट्रिक— 'उ' से उपत्यका (नीचे की तलहटी) और 'अ' से अधित्यका (अधिक ऊपर/चोटी की समतल भूमि)।", "Upatyaka (उपत्यका) refers to foothills/land at the base of a mountain; Adhityaka is tableland on top."],
+  ["'जिसका निवारण अत्यंत कष्ट से किया जा सके' — वाक्यांश के लिए एक शब्द है:", ["अनिवार्य", "दुर्निवार", "अनिर्णीत", "कुत्सित"], 1, "जिसका निवारण (रोकथाम) बहुत कठिनता या कष्ट से किया जा सके, उसे 'दुर्निवार' कहते हैं। जिसका निवारण न हो सके, उसे 'अनिवार्य' कहते हैं।", "सूक्ष्म अंतर: 'निवारण न हो सके' = अनिवार्य; 'कठिनाई से निवारण हो सके' = दुर्निवार।", "Durnivar (दुर्निवार) means something that is very difficult to ward off or prevent."],
+  ["'आदि से लेकर अंत तक' — इस वाक्यांश के लिए उपयुक्त एक शब्द क्या होगा?", ["आद्योपांत", "सर्वांग", "अनादि", "दिगंत"], 0, "'आदि (प्रारंभ) से लेकर अंत तक' के लिए एक शब्द 'आद्योपांत' (आदि + उपांत) होता है।", "सिर से लेकर पैर तक के लिए 'आपादमस्तक' और आदि से अंत तक के लिए 'आद्योपांत' शब्द का प्रयोग होता है।", "Adyopant (आद्योपांत) means from the very beginning to the end."],
+  ["'जानने की इच्छा' — इस वाक्यांश के लिए सही एक शब्द का चयन करें:", ["जिज्ञासु", "जिज्ञासा", "जिजीविषा", "पिपासा"], 1, "'जानने की इच्छा' को 'जिज्ञासा' कहते हैं, और 'जानने की इच्छा रखने वाला' व्यक्ति 'जिज्ञासु' कहलाता है।", "प्रश्न को ध्यान से पढ़ें— यहाँ 'इच्छा' पूछा गया है (जिज्ञासा), न कि 'इच्छा रखने वाला' (जिज्ञासु)।", "Jigyasa (जिज्ञासा) means curiosity or the desire to know."],
+  ["'ऐसी जीविका जिसका कुछ ठीक ठिकाना न हो' — के लिए एक शब्द है:", ["आकाशकुसुम", "आकाशवृत्ति", "आकाशवाणी", "अनिश्चित"], 1, "ऐसी जीविका (कमाई) जिसका कोई निश्चित ठिकाना न हो, उसे 'आकाशवृत्ति' कहते हैं। असंभव बात को 'आकाशकुसुम' कहते हैं।", "'वृत्ति' का अर्थ रोजी-रोटी या जीविका होता है, अतः अनिश्चित जीविका = 'आकाशवृत्ति'।", "Akashvritti (आकाशवृत्ति) refers to a precarious or uncertain livelihood."],
+  ["'जिसका इलाज न हो सके' — इस वाक्यांश के लिए उपयुक्त एक शब्द क्या है?", ["असाध्य", "दुःसाध्य", "साधनहीन", "अजेय"], 0, "जिस रोग या समस्या का इलाज (उपचार) न हो सके, उसे 'असाध्य' कहते हैं। जिसका इलाज कठिनाई से हो सके, उसे 'दुःसाध्य' कहा जाता है।", "'असाध्य' (इलाज असंभव) और 'दुःसाध्य' (इलाज कठिन)— यह युग्म सूक्ष्म भेद परखने के लिए दिया जाता है।", "Asadhya (असाध्य) means incurable; Duhsadhya (दुःसाध्य) means difficult to cure."],
+  ["'तैरने या पार होने की इच्छा' — वाक्यांश के लिए एक शब्द है:", ["तितीर्षा", "तितीर्षु", "बुभुक्षा", "मुमूर्षा"], 0, "तैरकर पार जाने की इच्छा को 'तितीर्षा' कहते हैं, और तैरने की इच्छा रखने वाले को 'तितीर्षु' कहा जाता है।", "इच्छा संबंधी प्रमुख शब्द— जिजीविषा (जीने की), मुमूर्षा (मरने की), बुभुक्षा (खाने की), तितीर्षा (तैरने की)।", "Titirsha (तितीर्षा) is the desire to swim or cross over."],
+  ["'रात्रि के तीसरे पहर' को एक शब्द में क्या कहा जाता है?", ["प्रदोष", "निशीथ", "त्रियामा", "गोधूलि"], 2, "रात्रि के तीसरे पहर (या तीन पहर वाली रात) को 'त्रियामा' कहते हैं। आधी रात का समय 'निशीथ' और प्रथम पहर 'प्रदोष' कहलाता है।", "'त्रियामा' रात्रि का पर्यायवाची भी है और विशेष रूप से रात्रि के तीसरे पहर के लिए प्रयुक्त होता है।", "Triyama (त्रियामा) denotes the third watch of the night."],
+  ["'जिस स्त्री के कोई संतान न हो' — वाक्यांश के लिए सटीक एक शब्द क्या है?", ["अभागिन", "विधवा", "वंध्या (बाँझ)", "निपूती"], 2, "जिस स्त्री के कोई संतान न हो (जो संतान उत्पन्न करने में असमर्थ हो), उसे तत्सम रूप में 'वंध्या' और तद्भव रूप में 'बाँझ' कहा जाता है।", "तत्सम शब्दावली में 'वंध्या' को सर्वाधिक प्रामाणिक माना जाता है।", "Vandhya (वंध्या) means a childless or barren woman."],
+  ["'जो बात लोगों से सुनी गई हो' — इस वाक्यांश के लिए एक शब्द चुनिए:", ["अश्रुतपूर्व", "किंवदंती", "लोकोक्ति", "सर्वप्रिय"], 1, "जो बात परंपरा से लोगों से सुनी गई हो (जिसके कहने वाले का पता न हो), उसे 'किंवदंती' या 'जनश्रुति' कहते हैं।", "'किंवदंती' की शुद्ध वर्तनी भी ध्यान रखें— इसमें 'क' के ऊपर अनुस्वार (किं) और अंत में 'दंती' आता है।", "Kimvadanti (किंवदंती) or Janashruti means hearsay, rumor, or folklore."],
+
+  // BATCH 2 (26 - 50)
+  ["'गुरु के समीप रहकर अध्ययन करने वाला' — इस वाक्यांश के लिए एक शब्द है:", ["शिष्य", "आश्रमवासी", "विद्यार्थी", "अन्तेवासी"], 3, "गुरु के समीप (पास) रहकर शिक्षा ग्रहण करने वाले छात्र को 'अन्तेवासी' कहा जाता है।", "'अन्तेवासी' UPSSSC और UPPSC दोनों आयोगों का अत्यंत प्रिय और बार-बार रिपीट होने वाला प्रश्न है।", "Antevasi (अन्तेवासी) refers to a disciple who resides close to his Guru for study."],
+  ["'जिसके हृदय पर आघात हुआ हो' — वाक्यांश के लिए उपयुक्त एक शब्द क्या होगा?", ["मर्माहत", "आतंकित", "आक्रांत", "मर्मस्पर्शी"], 0, "जिसके हृदय (मर्म) पर आघात हुआ हो या चोट पहुँची हो, उसे 'मर्माहत' (मर्म + आहत) कहते हैं।", "संधि की दृष्टि से 'मर्माहत' में दीर्घ स्वर संधि (मर्म + आहत = मर्माहत) है।", "Marmahat (मर्माहत) means deeply wounded at heart or emotionally struck."],
+  ["'जो अपने पद से हटाया गया हो' — के लिए एक उपयुक्त शब्द चुनिए:", ["पदभ्रष्ट", "पदानवत", "पदच्युत", "पदारूढ़"], 2, "जिसे अपने पद से हटा दिया गया हो, उसके लिए सटीक शब्द 'पदच्युत' (पद से च्युत/अलग किया हुआ) है।", "व्याकरण की दृष्टि से 'पदच्युत' में अपादान तत्पुरुष समास (पद से अलग होना) होता है।", "Padachyut (पदच्युत) means dismissed or removed from office/post."],
+  ["'कनिष्ठिका और मध्यमा के बीच की उँगली' को क्या कहते हैं?", ["तर्जनी", "अनामिका", "अंगुष्ठ", "कनिष्ठा"], 1, "हाथ की सबसे छोटी उँगली (कनिष्ठिका) और बीच की उँगली (मध्यमा) के बीच की उँगली को 'अनामिका' (रिंग फिंगर) कहते हैं।", "पाँच उँगलियाँ: अंगुष्ठ (अँगूठा), तर्जनी, मध्यमा, अनामिका, कनिष्ठिका।", "Anamika (अनामिका) is the ring finger located between the little finger and middle finger."],
+  ["'जिसके पेट में माँ ने रस्सी (दाम) बाँध दी हो' — उसे क्या कहते हैं?", ["दामाद", "दामोदर", "लंबोदर", "सहोदर"], 1, "'दाम' का अर्थ रस्सी और 'उदर' का अर्थ पेट होता है। जिसके पेट में माँ ने रस्सी बाँध दी हो, उसे 'दामोदर' (श्रीकृष्ण) कहते हैं।", "'दामोदर' (दाम + उदर) में गुण स्वर संधि है और समास की दृष्टि से यह बहुव्रीहि समास है।", "Damodar (दामोदर) refers to Lord Krishna, whose waist/belly was tied with a rope (Daam) by Mother Yashoda."],
+  ["'पीछे-पीछे चलने वाला' — वाक्यांश के लिए एक शब्द है:", ["अनुचर", "अनुगामी", "अग्रगामी", "उपर्युक्त (A) और (B) दोनों"], 3, "पीछे-पीछे चलने वाले के लिए 'अनुचर' और 'अनुगामी' दोनों ही शब्द पूर्णतः शुद्ध और प्रमाणित हैं।", "UPSSSC की पूर्व परीक्षाओं में 'अनुचर' और 'अनुगामी' दोनों को आयोग द्वारा सही माना गया है।", "Both Anuchar (अनुचर) and Anugami (अनुगामी) mean a follower who walks behind."],
+  ["'जिसकी कोई कीमत न हो सके' — वाक्यांश के लिए एक शब्द क्या है?", ["कीमती", "अमूल्य", "बहुमूल्य", "अनमोल"], 1, "जिसकी कोई कीमत (मूल्य) न आँकी जा सके, उसे तत्सम रूप में 'अमूल्य' कहते हैं।", "तत्सम प्रधान वाक्यांश में 'अमूल्य' को 'अनमोल' (तद्भव) की तुलना में सदैव प्राथमिकता दी जाती है।", "Amulya (अमूल्य) means priceless or invaluable."],
+  ["'थोड़ा नपा-तुला भोजन करने वाला' — वाक्यांश के लिए उपयुक्त शब्द है:", ["मितव्ययी", "मितभोजी", "मिताहारी", "अल्पाहारी"], 2, "जो थोड़ा और नपा-तुला भोजन (आहार) करता हो, उसे 'मिताहारी' (मित + आहारी) कहते हैं।", "मितभाषी (कम बोलने वाला), मितव्ययी (कम खर्च करने वाला), मिताहारी (नपा-तुला खाने वाला)।", "Mitahari (मिताहारी) means a moderate or measured eater."],
+  ["'जिसके हृदय में ममता नहीं है' — के लिए उपयुक्त एक शब्द है:", ["मर्माहत", "क्रूर", "निर्मम", "निर्दय"], 2, "जिसके हृदय में ममता न हो, उसे 'निर्मम' कहते हैं। जिसके हृदय में दया न हो, उसे 'निर्दय' कहा जाता है।", "ममता रहित = निर्मम; दया रहित = निर्दय; भय रहित = निर्भय।", "Nirmam (निर्मम) means devoid of maternal affection/compassion; Nirday means merciless."],
+  ["'तिलक लगाने में प्रयुक्त होने वाला साबुत अन्न' — इसके लिए एक शब्द है:", ["गेहूँ", "अक्षत", "जौ", "उड़द"], 1, "पूजा या तिलक लगाने में प्रयुक्त होने वाले बिना टूटे हुए (साबुत) चावल के दानों को 'अक्षत' (अ + क्षत) कहा जाता है।", "'अक्षत' का शाब्दिक अर्थ 'अखंडित' (जो टूटा न हो) होता है।", "Akshat (अक्षत) refers to unbroken whole rice grains used in ritual Tilak and worship."],
+  ["'जिसका जन्म छोटी जाति (निचले वर्ण) में हुआ हो' — के लिए उपयुक्त शब्द है:", ["अंडज", "शूद्र", "अंत्यज", "अछूत"], 2, "जिसका जन्म अंतिम या निचले वर्ण में हुआ हो, उसके लिए व्याकरणिक एक शब्द 'अंत्यज' (अंत्य + ज) है।", "'अंत्यज' की वर्तनी भी परीक्षा में पूछी जाती है (अं + आधा त + य + ज)।", "Antyaj (अंत्यज) is the classical Sanskrit/Hindi term for one born in the lowest social stratum."],
+  ["'पति-पत्नी का जोड़ा' — इस वाक्यांश के लिए सटीक शब्द क्या है?", ["युगल", "दंपती", "जोड़ी", "सप्तपदी"], 1, "पति और पत्नी के विवाहित जोड़े को एक शब्द में 'दंपती' कहते हैं। किसी भी दो व्यक्तियों के सामान्य जोड़े को 'युगल' कहा जाता है।", "केंद्रीय हिंदी निदेशालय के अनुसार 'दंपती' (बड़ी ई की मात्रा) शुद्ध वर्तनी है।", "Dampati (दंपती) specifically denotes a married couple (husband and wife)."],
+  ["'जो एक स्थान पर टिक कर नहीं रहता' — वाक्य के लिए एक शब्द कौन-सा है?", ["अस्थिर", "अडिग", "यायावर", "गतिशील"], 2, "जो व्यक्ति हमेशा घूमता रहता हो और एक स्थान पर टिक कर न रहता हो, उसे 'यायावर' (घुमक्कड़) कहते हैं।", "'यायावर' का विलोम 'स्थावर' या 'स्थिर' माना जाता है।", "Yayavar (यायावर) means a nomad or wanderer who does not stay in one place."],
+  ["'दिशाएँ ही जिनका वस्त्र हैं' — उन्हें क्या कहा जाता है?", ["विशंभर", "दिगपाल", "दिगंबर", "पैगंबर"], 2, "दिशाएँ (दिक्) ही जिनका वस्त्र (अंबर) हैं, उन्हें 'दिगंबर' (दिक् + अंबर) कहा जाता है।", "'दिगंबर' (दिक् + अंबर) में व्यंजन संधि (क का ग होना) का नियम लागू होता है।", "Digambar (दिगंबर) literally means sky-clad (having the directions as garments)."],
+  ["'युद्ध की इच्छा रखने वाला' — वाक्यांश के लिए एक शब्द है:", ["योद्धा", "युद्धरत", "युद्धवीर", "युयुत्सु"], 3, "युद्ध करने की इच्छा रखने वाले व्यक्ति को 'युयुत्सु' कहते हैं, जबकि केवल 'युद्ध करने की इच्छा' को 'युयुत्सा' कहा जाता है।", "याद रखें— युयुत्सा = युद्ध की इच्छा; युयुत्सु = युद्ध का इच्छुक व्यक्ति।", "Yuyutsu (युयुत्सु) means one who is eager for battle/combat."],
+  ["'हवन में जलाने वाली लकड़ी' को एक शब्द में क्या कहते हैं?", ["हवनसामग्री", "वनकाष्ठ", "शुष्ककाष्ठ", "समिधा"], 3, "हवन या यज्ञ की वेदी में जलाने के लिए प्रयुक्त होने वाली पवित्र लकड़ी को एक शब्द में 'समिधा' कहा जाता है।", "'समिधा' केवल हवन की लकड़ी के लिए आरक्षित शब्द है।", "Samidha (समिधा) refers specifically to sacrificial firewood used in Havan/Yajna."],
+  ["'जिसका जन्म कन्या के गर्भ से हुआ हो' (अविवाहित कन्या का पुत्र) — के लिए एक शब्द है:", ["कन्यापुत्र", "कानीन", "अवैधपुत्र", "कुमारीसुत"], 1, "जिस पुत्र का जन्म अविवाहित कन्या के गर्भ से हुआ हो, उसे 'कानीन' कहते हैं। विवाहिता पत्नी से उत्पन्न पुत्र को 'औरस' कहा जाता है।", "पुत्र संबंधी 3 प्रमुख शब्द— औरस (विवाहिता पत्नी से), जारज (परपुरुष से), कानीन (अविवाहित कन्या से)।", "Kanin (कानीन) denotes a son born to an unmarried maiden (e.g., Karna in Mahabharata)."],
+  ["'अंकेक्षक' (Auditor) शब्द के लिए सही वाक्यांश क्या है?", ["आय-व्यय के आँकड़ों की जाँच करने वाला", "अंगरक्षकों का कर्म निर्धारित करने वाला", "अंकों के साथ खेलने वाला", "गणना करने वाला"], 0, "किसी संस्था या कार्यालय के आय-व्यय के आँकड़ों की आधिकारिक जाँच करने वाले अधिकारी को 'अंकेक्षक' कहते हैं।", "प्रशासनिक शब्दावली में Auditor के लिए 'अंकेक्षक' या 'लेखापरीक्षक' शब्द का ही प्रयोग होता है।", "Ankekshak (अंकेक्षक) is an auditor who examines financial accounts of income and expenditure."],
+  ["'जिसे किसी वस्तु की स्पृहा (इच्छा/लालसा) न हो' — के लिए उपयुक्त शब्द होगा:", ["निःस्पृह", "निष्काम", "निष्कलंक", "वीतराग"], 0, "जिसे किसी भी सांसारिक वस्तु की स्पृहा (चाह या कामना) न हो, उसे 'निःस्पृह' या 'निस्पृह' कहते हैं।", "ध्यान दें कि 'निःस्पृह' में 'स' और 'प' के साथ 'ऋ' (स्पृ) जुड़ा होता है।", "Nihspriha (निःस्पृह) means free from desire or covetousness."],
+  ["'जिसकी पूर्व से कोई आशा न हो' — वाक्यांश के लिए उपयुक्त एक शब्द है:", ["प्रत्याशित", "अप्रत्याशित", "अपरिमेय", "अनाहूत"], 1, "जिसकी पहले (पूर्व) से कोई आशा न की गई हो, उसे 'अप्रत्याशित' (अ + प्रति + आशित) कहते हैं।", "'अप्रत्याशित' में 'अ' और 'प्रति' दो उपसर्गों का प्रयोग हुआ है।", "Apratyashit (अप्रत्याशित) means unexpected or unforeseen."],
+  ["'मदिरा पीने का प्याला' — के लिए उपयुक्त एक शब्द क्या है?", ["चश्म", "चषक", "चसक", "चख"], 1, "मदिरा (शराब) पीने के प्याले को संस्कृतनिष्ठ हिंदी में 'चषक' (मूर्धन्य 'ष' वाला) कहा जाता है।", "विकल्पों में 'चसक' और 'चषक' दोनों दिए जाते हैं— हमेशा षट्कोण वाले 'ष' (चषक) को ही चुनें।", "Chashak (चषक) is the classical term for a goblet or wine cup."],
+  ["'जो स्त्री के वशीभूत है' (या जिसका स्वभाव स्त्रियों जैसा हो) — के लिए एक शब्द है:", ["स्त्रीप्रेमी", "स्त्रैण", "त्रियावशी", "पत्नीव्रता"], 1, "जो पुरुष स्त्री के वशीभूत रहता हो या जिसका आचरण स्त्रियों जैसा हो, उसे एक शब्द में 'स्त्रैण' कहा जाता है।", "'स्त्री' शब्द में प्रत्यय जुड़ने से 'स्त्रैण' शब्द बनता है।", "Strain (स्त्रैण) refers to a man who is dominated by women or effeminate in nature."],
+  ["'मरणासन्न अवस्था वाला' (जो मरने ही वाला हो) — के लिए एक शब्द क्या है?", ["मैमर्त्य", "मुमूर्षु", "मृतगामी", "निर्विकारी"], 1, "जो व्यक्ति मरणासन्न अवस्था में हो (मरने के करीब हो), उसे 'मुमूर्षु' कहते हैं, और इस अवस्था को 'मुमूर्षा' कहा जाता है।", "वर्तनी की दृष्टि से 'मुमूर्षु' में पहले 'म' में छोटा 'उ' (मु) और दूसरे 'म' में बड़ा 'ऊ' (मू) लगता है।", "Mumurshu (मुमूर्षु) means moribund or on the verge of death."],
+  ["'जिसे अपनी जगह से अलग कर दिया गया हो' — के लिए एक शब्द है:", ["विस्थापित", "अवस्थापित", "संस्थापित", "संस्थाजित"], 0, "जिसे अपने मूल स्थान या जगह से अलग कर (हटा) दिया गया हो, उसे 'विस्थापित' (Displaced) कहते हैं।", "'स्थापित' का विलोम शब्द 'विस्थापित' होता है।", "Visthapit (विस्थापित) means displaced or uprooted from one's original place."],
+  ["'बुरे उद्देश्य से की गई गुप्त मंत्रणा (साजिश)' के लिए एक शब्द क्या है?", ["दुरतिक्रम", "दुरधिगम", "दुरभिसंधि", "दुरभियोजन"], 2, "किसी को हानि पहुँचाने या बुरे उद्देश्य से की गई गुप्त मंत्रणा (षड्यंत्र) को 'दुरभिसंधि' कहते हैं।", "'दुरभिसंधि' में विसर्ग संधि (दुः + अभिसंधि) है।", "Durabhisandhi (दुरभिसंधि) means a malicious conspiracy or secret plot."],
+
+  // BATCH 3 (51 - 75) — With unique replacements for any overlapping concepts
+  ["'जिस पेड़ के पत्ते झड़ गए हों' — इस वाक्यांश के लिए उपयुक्त एक शब्द है:", ["प्रपर्ण", "अपर्णा", "पत्रहीन", "अपत"], 3, "जिस पेड़ के पत्ते झड़ गए हों, उसके लिए सटीक व्याकरणिक शब्द 'अपत' या 'निष्पत्र' होता है। 'अपर्णा' पार्वती जी का पर्यायवाची है।", "पेड़ के पत्ते झड़ने के लिए मानक आयोगों द्वारा 'अपत' को ही सर्वोच्च प्राथमिकता दी जाती है।", "Apat (अपत) refers to a tree that has shed all its leaves."],
+  ["'हाथी की पीठ पर रखा जाने वाला आसन' — इसके लिए शुद्ध एक शब्द क्या है?", ["जीन", "हौदा", "काठी", "बख्तर"], 1, "हाथी की पीठ पर रखे जाने वाले चौकीनुमा आसन को 'हौदा' कहते हैं। घोड़े की पीठ की गद्दी को 'जीन' कहा जाता है।", "पशुओं से जुड़े आसन— हौदा (हाथी का आसन), जीन/काठी (घोड़े की गद्दी), बख्तर (लोहे का कवच)।", "Hauda (हौदा / Howdah) is the seat or carriage placed on the back of an elephant."],
+  ["'जिसे प्रमाण द्वारा सिद्ध न किया जा सके' — उसके लिए सही एक शब्द है:", ["अप्रमाणित", "अनुपमेय", "अपरिमेय", "प्रमेय"], 2, "जिसे किसी प्रमाण या माप द्वारा सिद्ध न किया जा सके, उसे 'अपरिमेय' या 'अप्रमेय' कहते हैं।", "'प्रमेय' (सिद्ध करने योग्य) का विलोम 'अप्रमेय' या 'अपरिमेय' होता है।", "Aparimeya (अपरिमेय) or Aprameya means that which cannot be proved or measured."],
+  ["'उपनिवेश से संबंध हो जिसका' — उसके लिए एक शब्द क्या होगा?", ["उपनिवेशिक", "औपनिवेशिक", "औपन्यासिक", "उपनिवेशवाद"], 1, "जिसका संबंध उपनिवेश से हो, उसे 'औपनिवेशिक' (उपनिवेश + इक) कहा जाता है।", "जब किसी शब्द में 'इक' प्रत्यय जुड़ता है, तो प्रथम स्वर 'उ' का परिवर्तन 'औ' में हो जाता है।", "Aupaniveshik (औपनिवेशिक) means colonial (relating to a colony/Upanivesh)."],
+  ["'रनिवास में कड़े पर्दे में रहने वाली स्त्री' — इस वाक्यांश के लिए सटीक शब्द है:", ["असूर्यम्पश्या", "परकीया", "पतिव्रता", "कुलटा"], 0, "ऐसी स्त्री जो रनिवास (अंतःपुर) में इतने कड़े पर्दे में रहती हो कि सूर्य को भी न देख सके, उसे 'असूर्यम्पश्या' कहते हैं।", "'असूर्यम्पश्या' का शाब्दिक अर्थ है— 'जो सूर्य को भी न देख पाती हो'।", "Asuryampashya (असूर्यम्पश्या) refers to a royal lady living in such strict seclusion that she never sees the sun."],
+  ["'उत्तराधिकार में प्राप्त संपत्ति' — इस वाक्यांश के लिए एक शब्द है:", ["धरोहर", "वसीयत", "रिक्थ", "संदाय"], 2, "पूर्वजों से उत्तराधिकार (विरासत) में मिली हुई पैतृक संपत्ति के लिए मानक हिंदी शब्द 'रिक्थ' है।", "'रिक्थ' एक अत्यंत महत्वपूर्ण तत्सम शब्द है, जो 'उत्तराधिकार में मिली संपत्ति' के लिए प्रयुक्त होता है।", "Riktha (रिक्थ) is the exact Sanskrit/Hindi legal term for inherited property or legacy."],
+  ["'गिरा हुआ' के लिए एक शब्द क्या है?", ["पतित", "लुंठित", "धराशायी", "पातकी"], 0, "स्थान या नैतिक आचरण से 'गिरा हुआ' होने के लिए एक शब्द 'पतित' है। पृथ्वी पर गिरा हुआ 'धराशायी' कहलाता है।", "'पतित' का विलोम शब्द 'उत्थित' (उठा हुआ) होता है।", "Patit (पतित) means fallen (both literally and morally)."],
+  ["'अपनी इच्छा से दूसरों की सेवा करने वाला' — वाक्यांश के लिए एक शब्द है:", ["परोपकारी", "सेवक", "स्वयंसेवक", "निष्काम"], 2, "बिना किसी वेतन या दबाव के, अपनी इच्छा (स्वयं) से जनसेवा करने वाले को 'स्वयंसेवक' (Volunteer) कहते हैं।", "जो अपने आप उत्पन्न हुआ हो उसे 'स्वयंभू' कहते हैं, और जो स्वयं की इच्छा से सेवा करे वह 'स्वयंसेवक' है।", "Swayamsevak (स्वयंसेवक) means a volunteer who serves others of their own accord."],
+  ["'अपना उद्देश्य पूर्ण होने पर संतुष्ट' — ऐसे व्यक्ति के लिए एक शब्द है:", ["चिरप्रसन्न", "कृतज्ञ", "आभारी", "कृतार्थ"], 3, "अपना उद्देश्य या मनोरथ पूर्ण हो जाने पर संतुष्ट होने वाले व्यक्ति को 'कृतार्थ' (कृत + अर्थ) कहते हैं।", "'कृतार्थ' और 'कृतकार्य' समकक्ष शब्द हैं, जिनका मूल अर्थ 'सफल मनोरथ वाला' होता है।", "Kritarth (कृतार्थ) means fulfilled or satisfied upon achieving one's purpose."],
+  ["'नियमविरुद्ध या असामाजिक कार्य करने वालों की सूची' के लिए एक शब्द है:", ["अपराधसूची", "कालीसूची", "अवैधसूची", "श्वेतसूची"], 1, "नियमविरुद्ध, अनैतिक या असामाजिक कार्य करने वाले व्यक्तियों या संस्थाओं की आधिकारिक सूची को 'कालीसूची' (Blacklist) कहा जाता है।", "यह प्रश्न अंग्रेजी के प्रशासनिक शब्द 'Blacklist' के मानक हिंदी रूपांतरण के रूप में पूछा जाता है।", "Kalisuchi (कालीसूची) is the standard Hindi equivalent for Blacklist."],
+  ["'जो किए गए उपकारों को नहीं मानता है' — उसके लिए एक शब्द क्या है?", ["कृतज्ञ", "धोखेबाज", "कृतघ्न", "अपकारी"], 2, "जो किए गए उपकार को भूल जाता है या नहीं मानता है, उसे 'कृतघ्न' (उपकार को नष्ट करने वाला) कहते हैं।", "'उपकारी' का विलोम 'अपकारी' और 'कृतज्ञ' का विलोम 'कृतघ्न' होता है।", "Kritaghna (कृतघ्न) means ungrateful (one who does not acknowledge favors done to them)."],
+  ["'समुद्र में लगने वाली आग' के लिए शुद्ध एक शब्द क्या है?", ["दावाग्नि", "बड़वाग्नि", "जठराग्नि", "मंदाग्नि"], 1, "समुद्र (जल) में लगने वाली आग को 'बड़वाग्नि' या 'बड़वानल' कहते हैं। जंगल की आग को 'दावाग्नि' और पेट की आग को 'जठराग्नि' कहते हैं।", "'बड़वा' का एक अर्थ समुद्री घोड़ी या जल की ज्वाला होता है, जिससे 'बड़वाग्नि' शब्द बना है।", "Badavagni (बड़वाग्नि) or Badavanal refers to submarine fire (fire in the ocean)."],
+  ["'बच्चों को सुलाने के लिए गाया जाने वाला गीत' — इसके लिए एक शब्द है:", ["प्रभाती", "विहाग", "लोरी", "सोहर"], 2, "छोटे बच्चों को थपकी देकर सुलाने के लिए गाया जाने वाला मधुर गीत 'लोरी' कहलाता है। संतान के जन्म पर गाया जाने वाला लोकगीत 'सोहर' है।", "सुलाने का गीत = लोरी; प्रातःकाल जगाने का गीत = प्रभाती; पुत्र जन्म का गीत = सोहर।", "Lori (लोरी) means a lullaby sung to put children to sleep."],
+  ["'जो नभ में चलता है' — के लिए उपयुक्त शब्द क्या है?", ["खेचर", "खच्चर", "नभोत्पन्न", "नभचाली"], 0, "'ख' का अर्थ आकाश (नभ) और 'चर' का अर्थ चलने वाला होता है। अतः आकाश में विचरण करने वाले को 'खेचर' या 'नभचर' कहा जाता है।", "'खेचर' में अलुक् तत्पुरुष समास है, जिसमें प्रथम पद की विभक्ति का लोप नहीं होता।", "Khechar (खेचर) means moving in the sky (birds, planets, deities)."],
+  ["'व्याकरण के ज्ञाता' (जो व्याकरण अच्छी तरह जानता हो) के लिए एक शब्द है:", ["व्याकरणी", "व्याकर्ता", "वैयाकरण", "व्याकरणज्ञ"], 2, "व्याकरण शास्त्र के विद्वान या ज्ञाता को 'वैयाकरण' कहा जाता है, न कि व्याकरणज्ञ या व्याकरणी।", "अधिकांश अभ्यर्थी 'व्याकरणज्ञ' लगा देते हैं जो अशुद्ध है; सही शब्द 'वैयाकरण' है।", "Vaiyakaran (वैयाकरण) is the authentic Sanskrit/Hindi term for a grammarian."],
+  ["'बढ़ा-चढ़ा कर कहना' — इस वाक्यांश के लिए एक शब्द क्या होगा?", ["अतिवादी", "अतिशय", "अत्यंत", "अतिशयोक्ति"], 3, "किसी बात को लोक-सीमा से बहुत बढ़ा-चढ़ा कर कहने को 'अतिशयोक्ति' (अतिशय + उक्ति) कहा जाता है।", "वर्तनी शुद्धि में याद रखें— 'अतिशयोक्ति' में पूरा 'श' आता है और इसमें गुण संधि है।", "Atishayokti (अतिशयोक्ति) means hyperbole or exaggeration."],
+  ["'जीने की प्रबल इच्छा' — इस वाक्यांश के लिए एक शब्द है:", ["जिज्ञासा", "जिजीविषा", "पिपासा", "बुभुक्षा"], 1, "जीने (जीवित रहने) की प्रबल इच्छा को 'जिजीविषा' कहते हैं, और जीने की इच्छा रखने वाले को 'जिजीविषु' कहा जाता है।", "वर्तनी शुद्धि में 'जिजीविषा' (छोटी जि + बड़ी जी + छोटी वि + ष) अत्यंत महत्वपूर्ण है।", "Jijivisha (जिजीविषा) means the strong will or desire to live."],
+  ["'जो आशा से अधिक हो' (आशा से परे) — इस वाक्यांश के लिए सटीक शब्द है:", ["निराशा", "आशातीत", "अप्रत्याशित", "आशान्वित"], 1, "जो आशा (उम्मीद) से बहुत अधिक या परे हो, उसे 'आशातीत' (आशा से अतीत/परे) कहा जाता है।", "'अप्रत्याशित' (जिसकी आशा न की गई हो) और 'आशातीत' (आशा से बढ़कर) में करण/अपादान का अंतर है।", "Ashatit (आशातीत) means beyond expectations or exceeding hopes."],
+  ["'उपकृत' शब्द के लिए सही वाक्यांश क्या है?", ["जिससे उपकार हुआ हो", "जिसने उपकार किया हो", "जो उपकार न मानता हो", "जिस पर उपकार किया गया हो"], 3, "'जिस पर उपकार किया गया हो', उस व्यक्ति को एक शब्द में 'उपकृत' कहा जाता है। जिसने उपकार किया हो, वह 'उपकारी' कहलाता है।", "कर्ता और कर्म का भेद— उपकार करने वाला = उपकारी; जिस पर उपकार हुआ हो = उपकृत।", "Upakrit (उपकृत) refers to one who has been obliged or benefited by a favor."],
+  ["'युगों से चले आने वाले' के लिए एक उपयुक्त शब्द क्या होगा?", ["अर्वाचीन", "युगांतर", "युगांत", "सनातन"], 3, "जो परंपरा या भाव युगों (आदिकाल) से निरंतर चला आ रहा हो, उसे 'सनातन' या 'शाश्वत' कहते हैं।", "'सनातन' या 'प्राचीन' का विलोम शब्द 'अधुनातन' या 'अर्वाचीन' होता है।", "Sanatan (सनातन) means eternal, perennial, or existing through the ages."],
+  ["'जिसे बुढ़ापा न आए' — वाक्यांश के लिए एक तत्सम शब्द है:", ["निर्झर", "अजिर", "अजर", "अमर"], 2, "'जरा' का अर्थ बुढ़ापा होता है। अतः जिसे कभी बुढ़ापा न आए, उसे 'अजर' (अ + जर) कहते हैं। जिसकी मृत्यु न हो, वह 'अमर' है।", "'अजर' = जो बूढ़ा न हो; 'अजिर' = आँगन; 'निर्झर' = झरना।", "Ajar (अजर) means ageless (one who never grows old)."],
+  ["'जो व्याकरण द्वारा सिद्ध न हो' (व्याकरण के नियमों के विरुद्ध) — उसे क्या कहते हैं?", ["अपभ्रंश", "अपभ्रष्ट", "अनपढ़", "अमानक"], 1, "जो शब्द व्याकरण के नियमों से सिद्ध न हो या बिगड़ा हुआ हो, उसे शास्त्रीय भाषा में 'अपभ्रष्ट' या 'असाधु' शब्द कहा जाता है।", "पतंजलि ने अपने महाभाष्य में व्याकरण विरुद्ध शब्दों को 'अपशब्द' या 'अपभ्रष्ट' कहा है।", "Apabhrashta (अपभ्रष्ट) means grammatically unrefined or corrupted."],
+  ["'जो क्षमा करने योग्य नहीं है' — वाक्यांश के लिए एक शब्द है:", ["अदम्य", "अक्षम्य", "निर्गुण", "सक्षम"], 1, "जिस अपराध या गलती को क्षमा (माफ) न किया जा सके, उसे 'अक्षम्य' कहते हैं।", "क्षमा करने योग्य = क्षम्य; क्षमा न करने योग्य = अक्षम्य।", "Akshamya (अक्षम्य) means unforgivable or inexcusable."],
+  ["'पश्चिम और उत्तर दिशाओं के मध्यस्थ कोण' को क्या कहते हैं?", ["ईशान", "नैऋत्य", "वायव्य", "आग्नेय"], 2, "पश्चिम और उत्तर के बीच की दिशा (कोण) को 'वायव्य' कहते हैं। उत्तर-पूर्व को 'ईशान', दक्षिण-पूर्व को 'आग्नेय', तथा दक्षिण-पश्चिम को 'नैऋत्य' कहते हैं।", "चारों कोण: उत्तर-पूर्व = ईशान; दक्षिण-पूर्व = आग्नेय; दक्षिण-पश्चिम = नैऋत्य; उत्तर-पश्चिम = वायव्य।", "Vayavya (वायव्य) is the North-West cardinal corner."],
+  ["'उत्तर और पूर्व दिशाओं के मध्यस्थ कोण' को एक शब्द में क्या कहते हैं?", ["ईशान", "आग्नेय", "नैऋत्य", "वायव्य"], 0, "उत्तर और पूर्व दिशा के बीच के कोण को 'ईशान' (ईशान कोण) कहा जाता है, जिसे वास्तु में अत्यंत पवित्र माना जाता है।", "पूर्व और दक्षिण के बीच की दिशा 'आग्नेय' कहलाती है।", "Ishan (ईशान) is the North-East corner between North and East."],
+
+  // BATCH 4 (76 - 100)
+  ["'सिर से लेकर पैर (पाँव) तक' — इस वाक्यांश के लिए एक उपयुक्त शब्द है:", ["आद्योपांत", "आपादमस्तक", "सर्वांग", "नखशिख"], 1, "'पाद' का अर्थ पैर और 'मस्तक' का अर्थ सिर होता है। अतः पैर से लेकर सिर तक या सिर से लेकर पैर तक के लिए 'आपादमस्तक' प्रयुक्त होता है।", "'आपादमस्तक' में 'आ' उपसर्ग जुड़ा है, और समास की दृष्टि से यह अव्ययीभाव समास का उदाहरण है।", "Apadamastak (आपादमस्तक) means from head to toe (or foot to head)."],
+  ["'जिसकी भुजाएँ घुटनों तक लंबी हों' — उसके लिए एक शब्द क्या होगा?", ["आजानुबाहु", "दीर्घबाहु", "चतुरानन", "महाबाहु"], 0, "'जानु' का अर्थ घुटना और 'बाहु' का अर्थ भुजा होता है। जिसकी भुजाएँ घुटनों तक लंबी हों, उसे 'आजानुबाहु' कहा जाता है।", "भारतीय परंपरा में श्रीराम और महात्मा गांधी के लिए भी 'आजानुबाहु' विशेषण प्रयुक्त होता रहा है।", "Ajanubahu (आजानुबाहु) refers to one whose arms reach down to their knees."],
+  ["'नीले रंग का कमल' — इस वाक्यांश के लिए सटीक एक शब्द चुनिए:", ["पुंडरीक", "कोकनद", "इंदीवर", "पंकज"], 2, "नीले रंग के कमल को 'इंदीवर' या 'नीलोत्पल' कहते हैं। सफेद कमल को 'पुंडरीक' और लाल कमल को 'कोकनद' कहा जाता है।", "कमल के तीनों रंग: नीला कमल = इंदीवर; श्वेत कमल = पुंडरीक; लाल कमल = कोकनद।", "Indivar (इंदीवर) specifically means a blue lotus."],
+  ["'आधी रात का समय' — इसके लिए उपयुक्त एक शब्द क्या है?", ["शर्वरी", "विभावरी", "निशा", "निशीथ"], 3, "आधी रात (मध्यरात्रि) के समय को एक शब्द में 'निशीथ' कहते हैं। तारों भरी रात को 'विभावरी' और चाँदनी रात को 'शर्वरी' कहा जाता है।", "आधी रात = निशीथ; चाँदनी रात = शर्वरी; तारों भरी रात = विभावरी; रात्रि का प्रथम पहर = प्रदोष।", "Nishith (निशीथ) means exact midnight."],
+  ["'रंगमंच के पर्दे के पीछे का स्थान' क्या कहलाता है?", ["पृष्ठभूमि", "नेपथ्य", "मंचपृष्ठ", "गुह्यमंच"], 1, "रंगमंच (स्टेज) पर पर्दे के पीछे का वह स्थान जहाँ कलाकार वेशभूषा तैयार करते हैं, उसे 'नेपथ्य' कहा जाता है।", "नाटक में रंगमंच के पर्दे को 'यवनिका' और पर्दे के पीछे के स्थान को 'नेपथ्य' कहते हैं।", "Nepathya (नेपथ्य) refers to the backstage or green room behind the stage curtain."],
+  ["'फेंककर चलाया जाने वाला हथियार' — इस वाक्यांश के लिए एक शब्द है:", ["शस्त्र", "अस्त्र", "बाण", "गुलेल"], 1, "जिस हथियार को हाथ से फेंककर चलाया जाता है (जैसे- भाला, बाण), उसे 'अस्त्र' कहते हैं। जिसे हाथ में पकड़कर चलाया जाता है (जैसे- तलवार), उसे 'शस्त्र' कहते हैं।", "ट्रिक— 'अस्त्र' (Throw = फेंककर चलाना) और 'शस्त्र' (Hold = हाथ में थामकर चलाना)।", "Astra (अस्त्र) is a missile/weapon thrown at a target, whereas Shastra (शस्त्र) is held in hand."],
+  ["'जो धरती फोड़कर जन्मता हो' — उस वाक्यांश के लिए एक शब्द क्या है?", ["स्वयंभू", "जन्मजात", "जरायुज", "उद्भिज्ज"], 3, "जो बीज आदि धरती को फोड़कर जन्म लेते हैं (जैसे- पेड़-पौधे), उन्हें 'उद्भिज्ज' (उत् + भिद् + ज) कहते हैं।", "चार प्रकार के जीव— अंडज (अंडे से), स्वेदज (पसीने से), जरायुज (गर्भ से), उद्भिज्ज (धरती फोड़कर)।", "Udbhija (उद्भिज्ज) means sprouting by breaking through the earth (plants/vegetation)."],
+  ["'बाएँ हाथ से भी (दोनों हाथों से) सधा हुआ काम करने वाला' — के लिए एक शब्द है:", ["सव्यसाची", "वाममार्गी", "वीणापाणि", "वामहस्त"], 0, "जो व्यक्ति बाएँ हाथ से भी उतनी ही कुशलता से कार्य या धनुष-बाण चला लेता हो, उसे 'सव्यसाची' कहा जाता है।", "महाभारत में अर्जुन दोनों हाथों से बाण चलाने में निपुण थे, इसलिए 'सव्यसाची' अर्जुन का पर्यायवाची भी है।", "Savyasachi (सव्यसाची) means ambidextrous (skilled with the left hand as well as the right)."],
+  ["'जो तुरंत (तत्काल) कोई कविता बना सके' — उसके लिए एक शब्द है:", ["महाकवि", "आशुतोष", "आशुकवि", "राजकवि"], 2, "'आशु' का अर्थ शीघ्र या तत्काल होता है। जो किसी भी विषय पर तुरंत कविता रच दे, उसे 'आशुकवि' कहते हैं।", "आशुकवि (तुरंत कविता करने वाला), आशुतोष (शीघ्र प्रसन्न होने वाला), आशुलिपि (शीघ्र लिखी जाने वाली लिपि)।", "Ashukavi (आशुकवि) means an extempore poet who can compose verses instantly."],
+  ["'जिसका इंद्रियों से अनुमान न हो सके' (जो इंद्रियों की पहुँच से बाहर हो):", ["जितेंद्रिय", "अतींद्रिय", "कालजयी", "सर्वजयी"], 1, "जो इंद्रियों की पहुँच या ज्ञान से परे (बाहर) हो, उसे 'अतींद्रिय' या 'अगोचर' कहते हैं। जिसने इंद्रियों को जीत लिया हो, वह 'जितेंद्रिय' है।", "'अतींद्रिय' (अति + इंद्रिय = दीर्घ संधि) का अर्थ इंद्रियों से परे है।", "Atindriya (अतींद्रिय) means beyond sensory perception (transcendental)."],
+  ["'ऐसा रोग जो छूने मात्र से फैलता हो' — के लिए सटीक शब्द है:", ["संक्रामक", "चर्मरोग", "असाध्य", "घातक"], 0, "वह रोग जो स्पर्श (छूने) या संपर्क के माध्यम से एक व्यक्ति से दूसरे व्यक्ति में फैलता है, उसे 'संक्रामक' रोग कहते हैं।", "संपर्क से फैलने वाले रोगों के लिए 'संक्रामक' (सम + क्रामक) शब्द प्रयुक्त होता है।", "Sankramak (संक्रामक) means contagious or infectious disease."],
+  ["'जिस पुस्तक में आठ अध्याय हों' — इस वाक्यांश के लिए एक शब्द है:", ["अष्टभुज", "अष्टांग", "अष्टाध्यायी", "अष्टपदी"], 2, "जिस ग्रंथ या पुस्तक में आठ अध्याय हों, उसे 'अष्टाध्यायी' कहते हैं।", "महर्षि पाणिनि द्वारा रचित संस्कृत व्याकरण के प्रसिद्ध ग्रंथ का नाम 'अष्टाध्यायी' है।", "Ashtadhyayi (अष्टाध्यायी) denotes a book comprising eight chapters."],
+  ["'जो बात वर्णन से परे हो' (जिसका वर्णन न किया जा सके):", ["वर्णनीय", "अवर्णनीय", "गोपनीय", "अकथनीय"], 1, "जिस बात या दृश्य का शब्दों में वर्णन न किया जा सके, उसे 'अवर्णनीय' या 'वर्णनातीत' कहते हैं।", "जो कहने योग्य न हो वह 'अकथनीय' है, और जिसका वर्णन न हो सके वह 'अवर्णनीय' है।", "Avarnaniya (अवर्णनीय) means indescribable or beyond description."],
+  ["'पृथ्वी से संबद्ध या मिट्टी का बना हुआ' — वाक्यांश के लिए एक शब्द है:", ["पार्थिव", "लौकिक", "भूगोलीय", "सांसारिक"], 0, "जिसका संबंध पृथ्वी से हो या जो मिट्टी से बना हो, उसे 'पार्थिव' कहते हैं।", "'पृथ्वी' शब्द में 'अण्' प्रत्यय लगने से 'पार्थिव' शब्द की निष्पत्ति होती है।", "Parthiv (पार्थिव) means earthly, terrestrial, or made of clay/earth."],
+  ["'काँटों या बाधाओं से भरा हुआ' — इसके लिए उपयुक्त एक शब्द क्या होगा?", ["कंटक", "कंटकाकीर्ण", "विकीर्ण", "कुचैला"], 1, "जो मार्ग काँटों (कंटकों) या बाधाओं से पूरी तरह भरा हुआ हो, उसे 'कंटकाकीर्ण' (कंटक + आकीर्ण) कहते हैं।", "संधि की दृष्टि से 'कंटकाकीर्ण' (कंटक + आकीर्ण) में दीर्घ स्वर संधि है।", "Kantakakirna (कंटकाकीर्ण) means strewn with thorns or full of obstacles."],
+  ["'सफेद रंग का कमल' — इस वाक्यांश के लिए सटीक एक शब्द क्या है?", ["इंदीवर", "पुंडरीक", "कोकनद", "सरोज"], 1, "सफेद (श्वेत) रंग के कमल को एक शब्द में 'पुंडरीक' कहा जाता है। नीले कमल को 'इंदीवर' और लाल कमल को 'कोकनद' कहते हैं।", "UPSSSC PET में पुंडरीक (सफेद कमल) और इंदीवर (नीला कमल) बार-बार पूछे जाते हैं।", "Pundarik (पुंडरीक) specifically denotes a white lotus flower."],
+  ["'सख्य भाव मिश्रित अनुराग' को एक शब्द में क्या कहा जाता है?", ["प्रेम", "स्नेह", "प्रणय", "श्रद्धा"], 2, "मित्रता (सख्य भाव) से युक्त जो गहरा अनुराग या प्रेम होता है, उसे 'प्रणय' कहते हैं।", "सूक्ष्म शब्द-भेद: बड़ों के प्रति = श्रद्धा; छोटों के प्रति = वात्सल्य/स्नेह; सख्य भाव युक्त प्रेम = प्रणय।", "Pranay (प्रणय) refers to affectionate love blended with companionship."],
+  ["'जिसे किसी बात का पता न हो' — वाक्यांश के लिए सटीक शब्द क्या है?", ["अल्पज्ञ", "अनभिज्ञ", "अभिज्ञ", "सर्वज्ञ"], 1, "जिसे किसी बात की जानकारी या पता न हो, उसे 'अनभिज्ञ' या 'अज्ञ' कहते हैं। जो जानकार हो, उसे 'अभिज्ञ' कहा जाता है।", "'अभिज्ञ' का अर्थ 'जानने वाला' होता है, और 'अनभिज्ञ' का अर्थ 'न जानने वाला' (अनजान) होता है।", "Anabhigya (अनभिज्ञ) means unaware or ignorant of something; Abhigya means aware."],
+  ["'जो सदा दूसरों पर संदेह करता है' — के लिए उपयुक्त एक शब्द है:", ["झगड़ालू", "दयालु", "ईर्ष्यालु", "शंकालु"], 3, "जो व्यक्ति हमेशा दूसरों पर शक या संदेह (शंका) करता रहता हो, उसे 'शंकालु' कहते हैं।", "'शंका' मूल शब्द में 'आलु' प्रत्यय जुड़ने से 'शंकालु' विशेषण शब्द बनता है।", "Shankalu (शंकालु) means suspicious or distrustful by nature."],
+  ["'किसी विषय की पूरी छानबीन करना' — वाक्यांश के लिए एक शब्द है:", ["विवेचन", "विश्लेषण", "मीमांसा", "समीक्षा"], 0, "किसी विषय के सभी पक्षों की भली-भाँति पूरी छानबीन या तर्कपूर्ण परीक्षण करने को 'विवेचन' कहते हैं।", "आयोग की आधिकारिक उत्तर-कुंजी के अनुसार 'किसी विषय की पूरी छानबीन करना' के लिए 'विवेचन' सही उत्तर है।", "Vivechan (विवेचन) means thorough investigation, examination, or critical discussion."],
+  ["'जिसके पास घर न हो' — उस वाक्यांश के लिए एक शब्द क्या है?", ["गृही", "अनिकेत", "अभिषेक", "अकिंचन"], 1, "'निकेत' का अर्थ घर या निवास होता है। अतः जिसके पास रहने के लिए घर न हो, उसे 'अनिकेत' कहते हैं।", "'निकेत' या 'निकेतन' घर का पर्यायवाची है, और इसमें 'अ' लगने से 'अनिकेत' (बेघर) बनता है।", "Aniket (अनिकेत) means homeless (one without a residence)."],
+  ["'वह स्त्री जिसका पति परदेश (विदेश) से आने वाला हो' — के लिए एक शब्द है:", ["आगतपतिका", "प्रोषितपतिका", "प्रवत्स्यत्पतिका", "आगमिष्यत्पतिका"], 3, "जिस स्त्री का पति परदेश से आने वाला हो, उसे 'आगमिष्यत्पतिका' कहते हैं। जिसका पति लौट आया हो, वह 'आगतपतिका' है।", "पति विदेश गया हो = प्रोषितपतिका; जाने वाला हो = प्रवत्स्यत्पतिका; आने वाला हो = आगमिष्यत्पतिका; आ गया हो = आगतपतिका।", "Agamishyatpatika (आगमिष्यत्पतिका) is a woman whose husband is about to return from abroad."],
+  ["'जिसे जीता न जा सके' — इस वाक्यांश के लिए एक शब्द है:", ["अजेय", "अज्ञेय", "अपराजित", "दुर्जेय"], 0, "जिसे जीता न जा सके, उसे 'अजेय' कहते हैं। जिसे जाना न जा सके, उसे 'अज्ञेय' कहते हैं।", "'अजेय' (जिसे जीता न जा सके) और 'अज्ञेय' (जिसे जाना न जा सके)— वर्तनी और अर्थ दोनों का अंतर ध्यान रखें।", "Ajeya (अजेय) means invincible or unconquerable."],
+  ["'दो पर्वतों के बीच की भूमि' — इस वाक्यांश के लिए एक शब्द क्या है?", ["उपत्यका", "घाटी", "द्रोण", "बेसिन"], 1, "दो पर्वतों के बीच की संकरी या समतल भूमि को 'घाटी' (या द्रोणी) कहते हैं, जबकि पर्वत के नीचे की तलहटी की भूमि को 'उपत्यका' कहा जाता है।", "'दो पर्वतों के बीच की भूमि' के लिए 'घाटी' और 'पर्वत के नीचे की भूमि' के लिए 'उपत्यका' चुनें।", "Ghati (घाटी) means a valley situated between two mountains."],
+  ["'जो पहले कभी न हुआ हो' — इस वाक्यांश के लिए सटीक एक शब्द क्या है?", ["अद्भुत", "अभूतपूर्व", "अपूर्व", "अनुपम"], 1, "जो घटना या बात भूतकाल में पहले कभी न घटी हो (पहले कभी न हुआ हो), उसके लिए सटीक शब्द 'अभूतपूर्व' है।", "'अभूतपूर्व' का शाब्दिक विग्रह है— 'जो पूर्व (पहले) में भूत (घटित) न हुआ हो'।", "Abhutapurva (अभूतपूर्व) means unprecedented (never happened before)."]
+];
+
+// Build full state array for 100 questions
+const questions = rawQuestionData.map((item, idx) => ({
+  id: idx + 1,
+  stem: item[0],
+  options: [
+    item[1][0],
+    item[1][1],
+    item[1][2],
+    item[1][3],
+    "इनमें से कोई नहीं"
+  ],
+  correctIdx: item[2],
+  hindiExp: item[3],
+  keyFact: item[4],
+  engExp: item[5],
+  selectedIdx: null,
+  status: idx === 0 ? "UNANSWERED" : "NOT_VISITED", // NOT_VISITED, UNANSWERED, CORRECT, INCORRECT, SKIPPED, REVIEW
+  markedForReview: false
+}));
+
+let currentIndex = 0;
+
+function initSimulator() {
+  buildPaletteGrid();
+  renderQuestion(0);
+  updateStatsAndBadges();
+}
+
+function buildPaletteGrid() {
+  const grid = document.getElementById("paletteGrid");
+  grid.innerHTML = "";
+  questions.forEach((q, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "pal-btn st-notvisited";
+    btn.id = `palBtn_${idx}`;
+    btn.textContent = q.id;
+    btn.onclick = () => {
+      jumpToQuestion(idx);
+      togglePalette(false);
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function getStatusClass(q) {
+  if (q.markedForReview) return "st-review";
+  switch (q.status) {
+    case "CORRECT": return "st-correct";
+    case "INCORRECT": return "st-incorrect";
+    case "SKIPPED": return "st-skipped";
+    case "UNANSWERED": return "st-unanswered";
+    default: return "st-notvisited";
+  }
+}
+
+function getStatusLabel(q) {
+  if (q.markedForReview) return { text: "🟣 Marked for Review", bg: "rgba(168,85,247,0.2)", col: "#d8b4fe" };
+  switch (q.status) {
+    case "CORRECT": return { text: "🟢 Answered & Correct (+1.00)", bg: "rgba(16,185,129,0.2)", col: "#6ee7b7" };
+    case "INCORRECT": return { text: "🔴 Answered & Incorrect (-0.25)", bg: "rgba(239,68,68,0.2)", col: "#fca5a5" };
+    case "SKIPPED": return { text: "⚪ Skipped (0.00)", bg: "rgba(100,116,139,0.25)", col: "#cbd5e1" };
+    case "UNANSWERED": return { text: "🟠 Visited / Unanswered", bg: "rgba(249,115,22,0.2)", col: "#fdba74" };
+    default: return { text: "⚫ Not Visited", bg: "#2c3038", col: "#adb5bd" };
+  }
+}
+
+function renderQuestion(index) {
+  currentIndex = index;
+  const q = questions[index];
+
+  // Mark visited if first time landing
+  if (q.status === "NOT_VISITED") {
+    q.status = "UNANSWERED";
+  }
+
+  document.getElementById("topQCounter").textContent = `Question ${q.id} of 100`;
+  document.getElementById("qNumberDisplay").textContent = `प्रश्न ${q.id} / 100`;
+  document.getElementById("qStemText").textContent = `Q${q.id}. ${q.stem}`;
+
+  const stInfo = getStatusLabel(q);
+  const pill = document.getElementById("qStatusPill");
+  pill.textContent = stInfo.text;
+  pill.style.backgroundColor = stInfo.bg;
+  pill.style.color = stInfo.col;
+
+  // Render 5 options (A to E)
+  const optContainer = document.getElementById("optionsContainer");
+  optContainer.innerHTML = "";
+  const letters = ["A", "B", "C", "D", "E"];
+  const isLocked = q.selectedIdx !== null;
+
+  q.options.forEach((optText, optIdx) => {
+    const btn = document.createElement("button");
+    btn.className = "option-card" + (isLocked ? " locked" : "");
+
+    let feedbackTagHTML = "";
+    if (isLocked) {
+      if (optIdx === q.correctIdx) {
+        btn.classList.add("correct-choice");
+        feedbackTagHTML = `<span class="opt-feedback-tag" style="background:var(--st-correct);color:#06130e;">✓ सही उत्तर</span>`;
+      } else if (optIdx === q.selectedIdx && q.selectedIdx !== q.correctIdx) {
+        btn.classList.add("wrong-choice");
+        feedbackTagHTML = `<span class="opt-feedback-tag" style="background:var(--st-incorrect);color:#fff;">✗ आपका चयन</span>`;
+      }
+    }
+
+    btn.innerHTML = `
+      <span class="opt-letter">${letters[optIdx]}</span>
+      <span class="opt-text">${optText}</span>
+      ${feedbackTagHTML}
+    `;
+
+    if (!isLocked) {
+      btn.onclick = () => selectOption(optIdx);
+    }
+    optContainer.appendChild(btn);
+  });
+
+  // Render Explanation Card if locked
+  const expBox = document.getElementById("explanationBox");
+  if (isLocked) {
+    expBox.classList.add("visible");
+    const isCorrect = q.selectedIdx === q.correctIdx;
+    const banner = document.getElementById("expResultBanner");
+    banner.innerHTML = isCorrect
+      ? `<span style="color:var(--st-correct)">✅ सही उत्तर! (+1.00 अंक) — सही विकल्प: (${letters[q.correctIdx]})</span>`
+      : `<span style="color:var(--st-incorrect)">❌ गलत उत्तर! (-0.25 अंक) — सही विकल्प: (${letters[q.correctIdx]}) ${q.options[q.correctIdx]}</span>`;
+
+    document.getElementById("expHindiText").innerHTML = `<strong>व्याख्या (Hindi):</strong> ${q.hindiExp}`;
+    document.getElementById("expEnglishText").innerHTML = `<strong>Bilingual Breakdown (English):</strong> ${q.engExp}`;
+    document.getElementById("expFactText").innerHTML = `<strong>🎯 Key Exam Fact (UPSSSC PET):</strong> ${q.keyFact}`;
+  } else {
+    expBox.classList.remove("visible");
+  }
+
+  // Action buttons state
+  document.getElementById("prevQBtn").disabled = index === 0;
+  document.getElementById("nextQBtn").disabled = index === questions.length - 1;
+  document.getElementById("skipQBtn").disabled = isLocked;
+
+  const revBtn = document.getElementById("reviewQBtn");
+  if (q.markedForReview) {
+    revBtn.classList.add("active-review");
+    revBtn.textContent = "🟣 Marked for Review (हटाएँ)";
+  } else {
+    revBtn.classList.remove("active-review");
+    revBtn.textContent = "🟣 Mark for Review";
+  }
+
+  const skipBtn = document.getElementById("skipQBtn");
+  if (q.status === "SKIPPED") {
+    skipBtn.classList.add("active-skip");
+    skipBtn.textContent = "⚪ Skipped";
+  } else {
+    skipBtn.classList.remove("active-skip");
+    skipBtn.textContent = "⏭ Skip Question";
+  }
+
+  updateStatsAndBadges();
+}
+
+function selectOption(optIdx) {
+  const q = questions[currentIndex];
+  if (q.selectedIdx !== null) return; // Strict one-tap lock
+
+  q.selectedIdx = optIdx;
+  if (optIdx === q.correctIdx) {
+    q.status = "CORRECT";
+  } else {
+    q.status = "INCORRECT";
+  }
+  renderQuestion(currentIndex);
+}
+
+function markSkipped() {
+  const q = questions[currentIndex];
+  if (q.selectedIdx !== null) return;
+  q.status = "SKIPPED";
+  renderQuestion(currentIndex);
+}
+
+function toggleReview() {
+  const q = questions[currentIndex];
+  q.markedForReview = !q.markedForReview;
+  renderQuestion(currentIndex);
+}
+
+function navigateQuestion(delta) {
+  const target = currentIndex + delta;
+  if (target >= 0 && target < questions.length) {
+    renderQuestion(target);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function jumpToQuestion(index) {
+  if (index >= 0 && index < questions.length) {
+    renderQuestion(index);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function togglePalette(openState) {
+  const drawer = document.getElementById("paletteDrawer");
+  const backdrop = document.getElementById("paletteBackdrop");
+  if (openState) {
+    drawer.classList.add("open");
+    backdrop.classList.add("open");
+  } else {
+    drawer.classList.remove("open");
+    backdrop.classList.remove("open");
+  }
+}
+
+function calculateMetrics() {
+  let correct = 0;
+  let incorrect = 0;
+  let unanswered = 0;
+  let skipped = 0;
+  let review = 0;
+  let notVisited = 0;
+
+  questions.forEach((q, idx) => {
+    if (q.status === "CORRECT") correct++;
+    else if (q.status === "INCORRECT") incorrect++;
+    else if (q.status === "SKIPPED") skipped++;
+    else if (q.status === "UNANSWERED") unanswered++;
+    else if (q.status === "NOT_VISITED") notVisited++;
+
+    if (q.markedForReview) review++;
+
+    const palBtn = document.getElementById(`palBtn_${idx}`);
+    if (palBtn) {
+      palBtn.className = `pal-btn ${getStatusClass(q)}` + (idx === currentIndex ? " current-q" : "");
+    }
+  });
+
+  const netScore = (correct * 1.0) - (incorrect * 0.25);
+  return {
+    correct,
+    incorrect,
+    unanswered,
+    skipped,
+    review,
+    notVisited,
+    attempted: correct + incorrect,
+    netScore: netScore.toFixed(2)
+  };
+}
+
+function updateStatsAndBadges() {
+  const m = calculateMetrics();
+  document.getElementById("topScoreBadge").textContent = `Net Score: ${m.netScore}`;
+  document.getElementById("legCorrect").textContent = m.correct;
+  document.getElementById("legIncorrect").textContent = m.incorrect;
+  document.getElementById("legUnanswered").textContent = m.unanswered;
+  document.getElementById("legSkipped").textContent = m.skipped;
+  document.getElementById("legReview").textContent = m.review;
+  document.getElementById("legNotVisited").textContent = m.notVisited;
+}
+
+function showFinalReport() {
+  togglePalette(false);
+  const m = calculateMetrics();
+  document.getElementById("simulatorMainView").style.display = "none";
+  const repView = document.getElementById("finalReportView");
+  repView.classList.add("active");
+
+  document.getElementById("repNetScore").textContent = `${m.netScore} / 100.00`;
+  document.getElementById("repFormulaText").textContent = `Net Score = (${m.correct} × 1.00) - (${m.incorrect} × 0.25) = ${m.netScore}`;
+  document.getElementById("repCorrect").textContent = m.correct;
+  document.getElementById("repIncorrect").textContent = m.incorrect;
+  document.getElementById("repAttempted").textContent = m.attempted;
+  document.getElementById("repUnattempted").textContent = 100 - m.attempted;
+
+  const acc = m.attempted > 0 ? ((m.correct / m.attempted) * 100).toFixed(2) : "0.00";
+  document.getElementById("repAccuracy").textContent = `${acc}%`;
+
+  renderReviewMatrix("ALL");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function returnToSimulator() {
+  document.getElementById("finalReportView").classList.remove("active");
+  document.getElementById("simulatorMainView").style.display = "block";
+  renderQuestion(currentIndex);
+}
+
+function renderReviewMatrix(filter) {
+  const container = document.getElementById("reviewMatrixList");
+  container.innerHTML = "";
+  const letters = ["A", "B", "C", "D", "E"];
+
+  const filtered = questions.filter(q => {
+    if (filter === "CORRECT") return q.status === "CORRECT";
+    if (filter === "INCORRECT") return q.status === "INCORRECT";
+    if (filter === "UNATTEMPTED") return q.selectedIdx === null;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<p style="color:var(--text-secondary); padding:1rem;">इस श्रेणी में कोई प्रश्न नहीं है।</p>`;
+    return;
+  }
+
+  filtered.forEach(q => {
+    const item = document.createElement("div");
+    item.className = "review-item";
+    const userChoiceStr = q.selectedIdx !== null
+      ? `(${letters[q.selectedIdx]}) ${q.options[q.selectedIdx]}`
+      : "अनुत्तरित / छोड़ा गया (Not Attempted)";
+
+    const statusBadge = q.status === "CORRECT"
+      ? `<span style="color:var(--st-correct); font-weight:700;">🟢 सही (+1.00)</span>`
+      : q.status === "INCORRECT"
+      ? `<span style="color:var(--st-incorrect); font-weight:700;">🔴 गलत (-0.25)</span>`
+      : `<span style="color:var(--st-skipped); font-weight:700;">⚪ छोड़ा गया (0.00)</span>`;
+
+    item.innerHTML = `
+      <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; flex-wrap:wrap; gap:0.5rem;">
+        <strong style="color:var(--accent-blue);">प्रश्न ${q.id}</strong>
+        ${statusBadge}
+      </div>
+      <div style="font-weight:600; font-size:1.05rem; margin-bottom:0.65rem;">${q.stem}</div>
+      <div style="font-size:0.94rem; margin-bottom:0.35rem;">
+        <span style="color:var(--text-secondary);">आपका उत्तर:</span> <b>${userChoiceStr}</b>
+      </div>
+      <div style="font-size:0.94rem; margin-bottom:0.75rem; color:var(--st-correct);">
+        <span>सही उत्तर:</span> <b>(${letters[q.correctIdx]}) ${q.options[q.correctIdx]}</b>
+      </div>
+      <div style="font-size:0.92rem; color:#e2e8f0; border-top:1px solid var(--border-color); padding-top:0.65rem;">
+        <div><strong>व्याख्या (Hindi):</strong> ${q.hindiExp}</div>
+        <div style="margin-top:0.3rem;"><strong>English Breakdown:</strong> ${q.engExp}</div>
+        <div style="margin-top:0.35rem; color:#fde68a;"><strong>🎯 Key Exam Fact:</strong> ${q.keyFact}</div>
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function resetSimulator() {
+  if (!confirm("क्या आप वाकई पूरे टेस्ट को रीसेट करना चाहते हैं?")) return;
+  questions.forEach((q, idx) => {
+    q.selectedIdx = null;
+    q.status = idx === 0 ? "UNANSWERED" : "NOT_VISITED";
+    q.markedForReview = false;
+  });
+  returnToSimulator();
+  renderQuestion(0);
+}
+
+// Initialize on DOM load
+window.addEventListener("DOMContentLoaded", initSimulator);
+</script>
+</body>
+</html>

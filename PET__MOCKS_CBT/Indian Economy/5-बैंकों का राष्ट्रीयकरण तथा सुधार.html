@@ -1,0 +1,2582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSSSC PET CBT Simulator - Nationalization of Banks & Reforms (100 Questions)</title>
+<style>
+  :root {
+    --bg-main: #121316;
+    --bg-card: #1e2024;
+    --bg-elevated: #272a30;
+    --border-color: #32363e;
+    --text-primary: #f1f3f5;
+    --text-secondary: #adb5bd;
+    --accent-blue: #3b82f6;
+    --accent-blue-hover: #2563eb;
+    --status-correct: #10b981;
+    --status-correct-bg: rgba(16, 185, 129, 0.14);
+    --status-incorrect: #ef4444;
+    --status-incorrect-bg: rgba(239, 68, 68, 0.14);
+    --status-unanswered: #f97316;
+    --status-skipped: #64748b;
+    --status-review: #a855f7;
+    --status-notvisited: #374151;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top Navigation Bar */
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: rgba(30, 32, 36, 0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-area {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.2px;
+  }
+
+  .brand-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .top-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .q-counter-badge {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+  }
+
+  .score-badge {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(16, 185, 129, 0.18));
+    border: 1px solid rgba(59, 130, 246, 0.45);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #93c5fd;
+  }
+
+  .btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+  }
+
+  .btn-palette {
+    background-color: var(--accent-blue);
+    color: #fff;
+  }
+
+  .btn-palette:hover {
+    background-color: var(--accent-blue-hover);
+  }
+
+  .btn-finish {
+    background-color: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+  }
+
+  .btn-finish:hover {
+    background-color: rgba(16, 185, 129, 0.3);
+  }
+
+  /* Main Container */
+  .main-container {
+    width: 100%;
+    max-width: 920px;
+    margin: 24px auto;
+    padding: 0 16px 60px;
+    flex: 1;
+  }
+
+  /* Question Card */
+  .question-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .question-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .q-number-pill {
+    background-color: var(--accent-blue);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+
+  .marking-pill {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background-color: var(--bg-elevated);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+  }
+
+  .status-pill {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .stem-en {
+    font-size: 1.12rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .stem-hi {
+    font-size: 1.05rem;
+    color: #cbd5e1;
+    margin-bottom: 22px;
+    font-weight: 500;
+  }
+
+  /* Options List */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .option-card {
+    background-color: var(--bg-elevated);
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    padding: 13px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: all 0.16s ease;
+    text-align: left;
+    width: 100%;
+    color: var(--text-primary);
+  }
+
+  .option-card:hover:not(.locked) {
+    border-color: var(--accent-blue);
+    background-color: rgba(59, 130, 246, 0.08);
+  }
+
+  .option-card.locked {
+    cursor: default;
+  }
+
+  .option-letter {
+    min-width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .option-text {
+    font-size: 0.98rem;
+    line-height: 1.45;
+    padding-top: 3px;
+  }
+
+  /* Option Evaluation States */
+  .option-card.correct-choice {
+    background-color: var(--status-correct-bg);
+    border-color: var(--status-correct);
+  }
+
+  .option-card.correct-choice .option-letter {
+    background-color: var(--status-correct);
+    color: #06281e;
+    border-color: var(--status-correct);
+  }
+
+  .option-card.incorrect-choice {
+    background-color: var(--status-incorrect-bg);
+    border-color: var(--status-incorrect);
+  }
+
+  .option-card.incorrect-choice .option-letter {
+    background-color: var(--status-incorrect);
+    color: #fff;
+    border-color: var(--status-incorrect);
+  }
+
+  .option-card.highlight-correct {
+    border: 2px solid var(--status-correct);
+    background-color: rgba(16, 185, 129, 0.08);
+  }
+
+  .option-card.highlight-correct .option-letter {
+    border-color: var(--status-correct);
+    color: var(--status-correct);
+  }
+
+  /* Explanation Card */
+  .explanation-card {
+    display: none;
+    background-color: #181a1f;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--accent-blue);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .explanation-card.visible {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .exp-header {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .exp-block {
+    margin-bottom: 10px;
+    font-size: 0.93rem;
+    color: #d1d5db;
+  }
+
+  .exp-block strong {
+    color: #93c5fd;
+  }
+
+  .key-fact-box {
+    margin-top: 12px;
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    color: #fde68a;
+  }
+
+  /* Action Bar */
+  .action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .left-actions, .right-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-secondary {
+    background-color: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+  }
+
+  .btn-secondary:hover {
+    background-color: #32363e;
+  }
+
+  .btn-review {
+    background-color: rgba(168, 85, 247, 0.16);
+    color: #d8b4fe;
+    border: 1px solid rgba(168, 85, 247, 0.4);
+  }
+
+  .btn-review:hover {
+    background-color: rgba(168, 85, 247, 0.28);
+  }
+
+  .btn-skip {
+    background-color: rgba(100, 116, 139, 0.2);
+    color: #cbd5e1;
+    border: 1px solid rgba(100, 116, 139, 0.45);
+  }
+
+  .btn-skip:hover {
+    background-color: rgba(100, 116, 139, 0.35);
+  }
+
+  .btn-next {
+    background-color: var(--accent-blue);
+    color: #fff;
+    padding: 9px 20px;
+  }
+
+  .btn-next:hover {
+    background-color: var(--accent-blue-hover);
+  }
+
+  /* Slide-Over Question Palette Modal (Hidden by Default) */
+  .palette-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 200;
+    display: none;
+    justify-content: flex-end;
+    backdrop-filter: blur(3px);
+  }
+
+  .palette-backdrop.open {
+    display: flex;
+  }
+
+  .palette-drawer {
+    background-color: var(--bg-card);
+    width: 100%;
+    max-width: 440px;
+    height: 100%;
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.22s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  .palette-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .palette-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .btn-close-palette {
+    background-color: rgba(239, 68, 68, 0.16);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .btn-close-palette:hover {
+    background-color: rgba(239, 68, 68, 0.28);
+  }
+
+  .palette-legend {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    font-size: 0.8rem;
+    background-color: #181a1f;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .palette-grid-wrapper {
+    padding: 18px 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+
+  .p-btn {
+    height: 40px;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    color: #fff;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+  }
+
+  .p-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .p-btn.current-q {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  /* 6 Palette Colors */
+  .st-correct { background-color: var(--status-correct); color: #052e16; }
+  .st-incorrect { background-color: var(--status-incorrect); color: #fff; }
+  .st-unanswered { background-color: var(--status-unanswered); color: #fff; }
+  .st-skipped { background-color: var(--status-skipped); color: #fff; }
+  .st-review { background-color: var(--status-review); color: #fff; }
+  .st-notvisited { background-color: var(--status-notvisited); color: #9ca3af; }
+
+  /* Final Report Dashboard */
+  .report-section {
+    display: none;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 28px;
+    margin-top: 20px;
+  }
+
+  .report-section.visible {
+    display: block;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin: 20px 0 28px;
+  }
+
+  .stat-card {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+
+  .review-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .matrix-item {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 16px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="brand-area">
+      <div class="brand-title">UPSSSC PET CBT Simulator — Indian Economy</div>
+      <div class="brand-subtitle">बैंकों का राष्ट्रीयकरण तथा सुधार (Nationalization of Banks & Reforms)</div>
+    </div>
+    <div class="top-controls">
+      <div class="q-counter-badge" id="qCounterBadge">Question 1 of 100</div>
+      <div class="score-badge" id="liveScoreBadge">Net Score: 0.00</div>
+      <button class="btn btn-palette" id="openPaletteTopBtn">📋 Open Palette</button>
+      <button class="btn btn-finish" id="finishExamBtn">📊 Submit & Final Report</button>
+    </div>
+  </header>
+
+  <!-- Main Single-Column Content -->
+  <main class="main-container">
+    <section class="question-card" id="simulatorCard">
+      <div class="question-meta">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="q-number-pill" id="qNumberPill">Q1</span>
+          <span class="status-pill" id="qStatusPill">Not Attempted</span>
+        </div>
+        <span class="marking-pill">Correct: +1.00 | Incorrect: -0.25 | Skipped: 0.00</span>
+      </div>
+
+      <div class="stem-en" id="stemEn"></div>
+      <div class="stem-hi" id="stemHi"></div>
+
+      <div class="options-list" id="optionsContainer"></div>
+
+      <!-- Instant Bilingual Explanation Card -->
+      <div class="explanation-card" id="explanationCard">
+        <div class="exp-header" id="expHeader"></div>
+        <div class="exp-block" id="expEn"></div>
+        <div class="exp-block" id="expHi"></div>
+        <div class="key-fact-box" id="expKeyFact"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="action-bar">
+        <div class="left-actions">
+          <button class="btn btn-secondary" id="prevBtn">⬅ Previous</button>
+          <button class="btn btn-skip" id="skipBtn">⏭ Skip Question</button>
+          <button class="btn btn-review" id="reviewBtn">🟣 Mark for Review</button>
+          <button class="btn btn-palette" id="openPaletteBottomBtn">📋 Open Palette</button>
+        </div>
+        <div class="right-actions">
+          <button class="btn btn-next" id="nextBtn">Next Question ➔</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final Report Dashboard -->
+    <section class="report-section" id="reportDashboard">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <h2>📈 UPSSSC PET Final Scorecard & 100-Question Review Matrix</h2>
+        <button class="btn btn-palette" id="backToSimBtn">⬅ Return to Simulator</button>
+      </div>
+      <div class="stats-grid" id="statsGrid"></div>
+      <h3 style="margin-bottom: 12px;">Complete Bilingual Review Matrix (Q1 – Q100)</h3>
+      <div class="review-matrix" id="reviewMatrixContainer"></div>
+    </section>
+  </main>
+
+  <!-- Hidden Slide-Over Question Palette -->
+  <div class="palette-backdrop" id="paletteBackdrop">
+    <aside class="palette-drawer">
+      <div class="palette-header">
+        <span class="palette-title">📋 Question Palette (1–100)</span>
+        <button class="btn btn-close-palette" id="closePaletteBtn">✕ Close Palette</button>
+      </div>
+      <div class="palette-legend">
+        <div class="legend-item"><span class="legend-dot st-correct"></span>🟢 Correct (<span id="cntCorrect">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-incorrect"></span>🔴 Incorrect (<span id="cntIncorrect">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-unanswered"></span>🟠 Unanswered (<span id="cntUnanswered">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-skipped"></span>⚪ Skipped (<span id="cntSkipped">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-review"></span>🟣 Review (<span id="cntReview">0</span>)</div>
+        <div class="legend-item"><span class="legend-dot st-notvisited"></span>⚫ Not Visited (<span id="cntNotVisited">100</span>)</div>
+      </div>
+      <div class="palette-grid-wrapper">
+        <div class="palette-grid" id="paletteGrid"></div>
+      </div>
+    </aside>
+  </div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: 1,
+    en: "On which date were 14 major commercial banks nationalized in the first phase in India?",
+    hi: "भारत में प्रथम चरण के अंतर्गत 14 बड़े वाणिज्यिक बैंकों का राष्ट्रीयकरण किस तिथि को किया गया था?",
+    options: [
+      "19 July 1969 / 19 जुलाई 1969",
+      "15 April 1980 / 15 अप्रैल 1980",
+      "1 January 1949 / 1 जनवरी 1949",
+      "1 July 1955 / 1 जुलाई 1955",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "On 19 July 1969, the Government of India issued the Banking Companies (Acquisition and Transfer of Undertakings) Ordinance, nationalizing 14 major private commercial banks. On 15 April 1980, 6 more banks were nationalized. 1 January 1949 is the date of RBI's nationalization, and 1 July 1955 is the foundation day of SBI.",
+    expHi: "भारत सरकार द्वारा 19 जुलाई 1969 को एक अध्यादेश के माध्यम से देश के 14 बड़े निजी वाणिज्यिक बैंकों का राष्ट्रीयकरण किया गया था। 15 अप्रैल 1980 को दूसरे चरण में 6 अन्य बैंकों का राष्ट्रीयकरण हुआ, जबकि 1 जनवरी 1949 को भारतीय रिज़र्व बैंक (RBI) का राष्ट्रीयकरण हुआ था।",
+    fact: "During the 1969 nationalization, Indira Gandhi was the Prime Minister and the 4th Five-Year Plan (1969–1974) was in effect."
+  },
+  {
+    id: 2,
+    en: "What was the minimum deposit criterion for the 14 banks that were nationalized on 19 July 1969?",
+    hi: "19 जुलाई 1969 को राष्ट्रीयकृत किए गए 14 बैंकों के लिए न्यूनतम जमा पूंजी (Deposits) की सीमा क्या निर्धारित की गई थी?",
+    options: [
+      "₹50 Crore / ₹50 करोड़",
+      "₹100 Crore / ₹100 करोड़",
+      "₹200 Crore / ₹200 करोड़",
+      "₹500 Crore / ₹500 करोड़",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "In the first phase of bank nationalization (1969), only those 14 commercial banks were nationalized whose total demand and time deposits exceeded ₹50 crore as of June 1969. The ₹200 crore threshold was used in the second phase in 1980.",
+    expHi: "वर्ष 1969 के प्रथम राष्ट्रीयकरण चरण में केवल उन्हीं 14 वाणिज्यिक बैंकों को शामिल किया गया था, जिनकी कुल जमा राशि (Deposits) 50 करोड़ रुपये या उससे अधिक थी। 200 करोड़ रुपये की सीमा 1980 के द्वितीय चरण में रखी गई थी।",
+    fact: "The 14 banks nationalized in 1969 held approximately 85% of the total bank deposits in the country at that time."
+  },
+  {
+    id: 3,
+    en: "How many commercial banks were nationalized during the second phase on 15 April 1980?",
+    hi: "15 अप्रैल 1980 को बैंकों के राष्ट्रीयकरण के दूसरे चरण में कितने वाणिज्यिक बैंकों का राष्ट्रीयकरण किया गया था?",
+    options: [
+      "4 Banks / 4 बैंक",
+      "6 Banks / 6 बैंक",
+      "8 Banks / 8 बैंक",
+      "14 Banks / 14 बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "In the second phase of nationalization on 15 April 1980, the Government of India nationalized 6 private commercial banks: Punjab & Sind Bank, Vijaya Bank, Oriental Bank of Commerce, Corporation Bank, Andhra Bank, and New Bank of India.",
+    expHi: "राष्ट्रीयकरण के दूसरे चरण में 15 अप्रैल 1980 को कुल 6 निजी वाणिज्यिक बैंकों (पंजाब एंड सिंध बैंक, विजया बैंक, ओरिएंटल बैंक ऑफ कॉमर्स, कॉर्पोरेशन बैंक, आंध्रा बैंक तथा न्यू बैंक ऑफ इंडिया) का राष्ट्रीयकरण किया गया था।",
+    fact: "The minimum deposit threshold for the 6 banks nationalized in 1980 was ₹200 crore."
+  },
+  {
+    id: 4,
+    en: "What was the minimum paid-up capital/deposit requirement for the 6 banks nationalized in April 1980?",
+    hi: "अप्रैल 1980 में राष्ट्रीयकृत किए गए 6 बैंकों के लिए न्यूनतम जमा राशि की पात्रता क्या थी?",
+    options: [
+      "₹50 Crore / ₹50 करोड़",
+      "₹100 Crore / ₹100 करोड़",
+      "₹200 Crore / ₹200 करोड़",
+      "₹300 Crore / ₹300 करोड़",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "The 6 commercial banks nationalized on 15 April 1980 were those whose total demand and time liabilities (deposits) exceeded ₹200 crore.",
+    expHi: "15 अप्रैल 1980 को राष्ट्रीयकृत किए गए 6 बैंकों के लिए न्यूनतम जमा पूंजी की सीमा 200 करोड़ रुपये या उससे अधिक निर्धारित की गई थी।",
+    fact: "This second phase occurred at the beginning of the 6th Five-Year Plan (1980–1985)."
+  },
+  {
+    id: 5,
+    en: "In which year was the Reserve Bank of India (RBI) nationalized?",
+    hi: "भारतीय रिज़र्व बैंक (RBI) का राष्ट्रीयकरण किस वर्ष किया गया था?",
+    options: [
+      "1935",
+      "1947",
+      "1949",
+      "1955",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "The Reserve Bank of India was established on 1 April 1935 under the RBI Act, 1934 as a private shareholders' bank. It was nationalized on 1 January 1949 under the Reserve Bank (Transfer to Public Ownership) Act, 1948.",
+    expHi: "भारतीय रिज़र्व बैंक की स्थापना 1 अप्रैल 1935 को हुई थी, किंतु इसका राष्ट्रीयकरण 1 जनवरी 1949 को 'रिज़र्व बैंक (सार्वजनिक स्वामित्व में हस्तांतरण) अधिनियम, 1948' के तहत किया गया था।",
+    fact: "C.D. Deshmukh was the first Indian Governor of RBI and was serving when RBI was nationalized in 1949."
+  },
+  {
+    id: 6,
+    en: "On the recommendation of which committee was the Imperial Bank of India nationalized and renamed as the State Bank of India (SBI) in 1955?",
+    hi: "किस समिति की सिफारिश पर 1955 में 'इंपीरियल बैंक ऑफ इंडिया' का राष्ट्रीयकरण कर उसे 'भारतीय स्टेट बैंक' (SBI) नाम दिया गया?",
+    options: [
+      "Hilton Young Commission / हिल्टन यंग आयोग",
+      "A.D. Gorwala Committee / ए.डी. गोरवाला समिति",
+      "M. Narasimham Committee / एम. नरसिंहम समिति",
+      "B. Sivaraman Committee / बी. शिवरामन समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Based on the recommendations of the All India Rural Credit Survey Committee headed by A.D. Gorwala, the Imperial Bank of India was taken over by the Government on 1 July 1955 and transformed into the State Bank of India under the SBI Act, 1955.",
+    expHi: "ए.डी. गोरवाला की अध्यक्षता वाली 'अखिल भारतीय ग्रामीण साख सर्वेक्षण समिति' (All India Rural Credit Survey Committee) की सिफारिश पर 1 जुलाई 1955 को इंपीरियल बैंक ऑफ इंडिया का राष्ट्रीयकरण कर 'भारतीय स्टेट बैंक' (SBI) की स्थापना की गई।",
+    fact: "Imperial Bank of India was originally formed in 1921 by merging Bank of Bengal (1806), Bank of Bombay (1840), and Bank of Madras (1843)."
+  },
+  {
+    id: 7,
+    en: "Which nationalized bank was merged with Punjab National Bank (PNB) in the year 1993, marking the first ever merger between two nationalized banks in India?",
+    hi: "वर्ष 1993 में किस राष्ट्रीयकृत बैंक का विलय 'पंजाब नेशनल बैंक' (PNB) में किया गया था, जो भारत में दो राष्ट्रीयकृत बैंकों के बीच पहला विलय था?",
+    options: [
+      "New Bank of India / न्यू बैंक ऑफ इंडिया",
+      "Bank of Bihar / बैंक ऑफ बिहार",
+      "Oriental Bank of Commerce / ओरिएंटल बैंक ऑफ कॉमर्स",
+      "United Bank of India / यूनाइटेड बैंक ऑफ इंडिया",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "In September 1993, New Bank of India (which had been nationalized in 1980) suffered heavy losses and was merged with Punjab National Bank (PNB). Following this merger, the number of nationalized banks dropped from 20 to 19.",
+    expHi: "सितंबर 1993 में 'न्यू बैंक ऑफ इंडिया' (जिसका 1980 में राष्ट्रीयकरण हुआ था) का विलय पंजाब नेशनल बैंक (PNB) में कर दिया गया था। यह भारत में दो राष्ट्रीयकृत बैंकों के आपसी विलय की पहली घटना थी।",
+    fact: "After the 1993 merger of New Bank of India into PNB, the count of nationalized banks reduced from 20 to 19."
+  },
+  {
+    id: 8,
+    en: "Who was serving as the Governor of the Reserve Bank of India when the 14 banks were nationalized on 19 July 1969?",
+    hi: "19 जुलाई 1969 को जब 14 बैंकों का राष्ट्रीयकरण किया गया, उस समय भारतीय रिज़र्व बैंक (RBI) के गवर्नर कौन थे?",
+    options: [
+      "C.D. Deshmukh / सी.डी. देशमुख",
+      "L.K. Jha / एल.के. झा",
+      "I.G. Patel / आई.जी. पटेल",
+      "Manmohan Singh / मनमोहन सिंह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "L.K. Jha (Lakshmi Kant Jha) was the 8th Governor of the Reserve Bank of India (1 July 1967 to 3 May 1970) during the first phase of bank nationalization in July 1969. I.G. Patel was the RBI Governor during the second phase in April 1980.",
+    expHi: "19 जुलाई 1969 को प्रथम बैंक राष्ट्रीयकरण के समय भारतीय रिज़र्व बैंक (RBI) के गवर्नर एल.के. झा (लक्ष्मीकांत झा) थे। वहीं 1980 के दूसरे चरण के राष्ट्रीयकरण के समय डॉ. आई.जी. पटेल आरबीआई गवर्नर थे।",
+    fact: "L.K. Jha's signature also appeared on the ₹2, ₹5, ₹10, and ₹100 Mahatma Gandhi commemorative birth centenary notes issued in 1969."
+  },
+  {
+    id: 9,
+    en: "In which classic landmark case of 1970 did the Supreme Court of India strike down the initial Bank Nationalization Act of 1969?",
+    hi: "वर्ष 1970 के किस ऐतिहासिक मामले में सर्वोच्च न्यायालय ने 1969 के प्रारंभिक बैंक राष्ट्रीयकरण अधिनियम को असंवैधानिक घोषित कर रद्द कर दिया था?",
+    options: [
+      "Kesavananda Bharati Case / केशवानंद भारती वाद",
+      "R.C. Cooper vs. Union of India / आर.सी. कूपर बनाम भारत संघ",
+      "Golaknath vs. State of Punjab / गोलकनाथ बनाम पंजाब राज्य",
+      "Minerva Mills vs. Union of India / मिनर्वा मिल्स बनाम भारत संघ",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "In the famous R.C. Cooper vs. Union of India case (1970), popularly known as the Bank Nationalization Case, an 11-judge bench of the Supreme Court struck down the initial Act on grounds of hostile discrimination and inadequate compensation principles. The Government subsequently cured the defects via a new ordinance and Act in 1970.",
+    expHi: "'आर.सी. कूपर बनाम भारत संघ (1970)' वाद को 'बैंक राष्ट्रीयकरण मामला' भी कहा जाता है। इसमें सुप्रीम कोर्ट ने मुआवजे के सिद्धांत और भेदभाव के आधार पर 1969 के मूल अधिनियम को निरस्त कर दिया था, जिसके बाद सरकार ने संशोधन कर नया कानून पारित किया।",
+    fact: "Rustom Cavasjee Cooper held shares in Central Bank of India and Bank of Baroda when he filed the writ petition."
+  },
+  {
+    id: 10,
+    en: "Which famous committee was appointed in 1991 to recommend comprehensive reforms in the Indian financial and banking system?",
+    hi: "भारतीय वित्तीय एवं बैंकिंग प्रणाली में व्यापक सुधारों की सिफारिश करने के लिए वर्ष 1991 में किस प्रसिद्ध समिति का गठन किया गया था?",
+    options: [
+      "Chelliah Committee / चेलैया समिति",
+      "Narasimham Committee-I / नरसिंहम समिति-I",
+      "Kelkar Committee / केलकर समिति",
+      "Abid Hussain Committee / आबिद हुसैन समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Committee on the Financial System (CFS) was appointed in August 1991 by the Government of India under the chairmanship of former RBI Governor M. Narasimham. Chelliah Committee (1991) dealt with tax reforms, and Abid Hussain Committee dealt with small-scale industries.",
+    expHi: "वर्ष 1991 के आर्थिक सुधारों के तहत बैंकिंग एवं वित्तीय क्षेत्र में सुधार हेतु पूर्व आरबीआई गवर्नर एम. नरसिंहम की अध्यक्षता में 9-सदस्यीय 'वित्तीय प्रणाली समिति' (नरसिंहम समिति-I) का गठन किया गया था। राजा चेलैया समिति कर सुधारों से संबंधित थी।",
+    fact: "M. Narasimham is widely regarded as the 'Father of Banking Reforms in India' and served as the 13th Governor of RBI."
+  },
+  {
+    id: 11,
+    en: "Which of the following was NOT a recommendation of the Narasimham Committee-I (1991)?",
+    hi: "निम्नलिखित में से कौन-सी सिफारिश 'नरसिंहम समिति-I (1991)' द्वारा नहीं की गई थी?",
+    options: [
+      "Phased reduction of SLR and CRR / SLR और CRR में चरणबद्ध कटौती",
+      "4-tier banking structure in India / भारत में 4-स्तरीय बैंकिंग ढांचे का निर्माण",
+      "Deregulation of interest rates / ब्याज दरों का विनियमन (बाजार आधारित करना)",
+      "Nationalization of remaining private banks / शेष सभी निजी बैंकों का राष्ट्रीयकरण करना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "Narasimham Committee-I explicitly recommended that there should be NO further nationalization of banks and allowed the entry of new private sector banks. It also recommended reducing high SLR/CRR, deregulating interest rates, and creating a 4-tier banking structure.",
+    expHi: "नरसिंहम समिति-I (1991) ने स्पष्ट रूप से सिफारिश की थी कि भविष्य में अब किसी भी बैंक का राष्ट्रीयकरण न किया जाए और निजी क्षेत्र के नए बैंकों को लाइसेंस दिए जाएं। अतः विकल्प (D) गलत है।",
+    fact: "Following the 1991 Narasimham Committee report, RBI granted licenses to new private banks like HDFC Bank, ICICI Bank, and Axis Bank (then UTI Bank) in 1993-94."
+  },
+  {
+    id: 12,
+    en: "In which year was the second Narasimham Committee (Committee on Banking Sector Reforms) constituted?",
+    hi: "द्वितीय नरसिंहम समिति (बैंकिंग क्षेत्र सुधार समिति) का गठन किस वर्ष किया गया था?",
+    options: [
+      "1995",
+      "1998",
+      "2000",
+      "2002",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Committee on Banking Sector Reforms (Narasimham Committee-II) was constituted in December 1997 and submitted its landmark report in April 1998 to Finance Minister Yashwant Sinha. It focused on strengthening banks via higher Capital Adequacy Ratio (CAR), NPA reduction, and mergers of strong banks.",
+    expHi: "बैंकिंग क्षेत्र के सुधारों की समीक्षा और सुदृढ़ीकरण के लिए 'नरसिंहम समिति-II' ने अप्रैल 1998 में अपनी रिपोर्ट प्रस्तुत की थी। इस समिति ने मजबूत बैंकों के आपसी विलय, पूंजी पर्याप्तता अनुपात (CAR) बढ़ाने और NPA कम करने पर बल दिया था।",
+    fact: "The enactment of the SARFAESI Act, 2002 and setting up of Asset Reconstruction Companies (ARCs) stemmed directly from Narasimham Committee-II (1998)."
+  },
+  {
+    id: 13,
+    en: "The Lead Bank Scheme (अग्रणी बैंक योजना) was introduced by the Reserve Bank of India in December 1969 on the recommendation of which committee?",
+    hi: "भारतीय रिज़र्व बैंक द्वारा दिसंबर 1969 में किस समिति की सिफारिश पर 'लीड बैंक योजना' (अग्रणी बैंक योजना) शुरू की गई थी?",
+    options: [
+      "Gadgil Study Group and Nariman Committee / गाडगिल अध्ययन समूह एवं नरीमन समिति",
+      "Rangarajan Committee / रंगराजन समिति",
+      "Nachiket Mor Committee / नचिकेत मोर समिति",
+      "Chakravarty Committee / चक्रवर्ती समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Lead Bank Scheme was introduced by RBI in December 1969 based on the 'Area Approach' recommended by the Gadgil Study Group (headed by D.R. Gadgil) and the Banker's Committee headed by F.K.F. Nariman. Under this scheme, individual banks were assigned specific districts to spearhead credit development.",
+    expHi: "अक्टूबर 1969 में डी.आर. गाडगिल अध्ययन समूह तथा एफ.के.एफ. नरीमन समिति द्वारा सुझाए गए 'क्षेत्रीय दृष्टिकोण' (Area Approach) के आधार पर आरबीआई ने दिसंबर 1969 में 'लीड बैंक योजना' (अग्रणी बैंक योजना) प्रारंभ की थी।",
+    fact: "Under the Lead Bank Scheme, a single public or private bank is designated as the consortium leader for a specific district to coordinate credit planning."
+  },
+  {
+    id: 14,
+    en: "When was the first Regional Rural Bank (प्रथम क्षेत्रीय ग्रामीण बैंक) established in India?",
+    hi: "भारत में प्रथम क्षेत्रीय ग्रामीण बैंक (RRB) की स्थापना कब की गई थी?",
+    options: [
+      "19 July 1969 / 19 जुलाई 1969",
+      "2 October 1975 / 2 अक्टूबर 1975",
+      "12 July 1982 / 12 जुलाई 1982",
+      "1 April 1980 / 1 अप्रैल 1980",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Regional Rural Banks (RRBs) were established on 2 October 1975 (Gandhi Jayanti) through an ordinance (later replaced by the RRB Act, 1976) based on the recommendations of the M. Narasimham Working Group (1975).",
+    expHi: "एम. नरसिंहम कार्य समूह (1975) की सिफारिशों के आधार पर महात्मा गांधी की जयंती के अवसर पर 2 अक्टूबर 1975 को भारत में क्षेत्रीय ग्रामीण बैंकों (RRBs) की स्थापना की शुरुआत हुई थी।",
+    fact: "'Prathama Grameen Bank' (प्रथमा ग्रामीण बैंक), headquartered in Moradabad (Uttar Pradesh) and sponsored by Syndicate Bank, was the first RRB of India."
+  },
+  {
+    id: 15,
+    en: "What is the share capital contribution ratio among the Central Government, State Government, and Sponsor Bank respectively in a Regional Rural Bank (RRB)?",
+    hi: "क्षेत्रीय ग्रामीण बैंक (RRB) में केंद्र सरकार, राज्य सरकार और प्रवर्तक बैंक (Sponsor Bank) की पूंजी हिस्सेदारी का क्रमशः अनुपात क्या होता है?",
+    options: [
+      "50 : 35 : 15",
+      "50 : 15 : 35",
+      "60 : 20 : 20",
+      "35 : 50 : 15",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Every Regional Rural Bank (RRB) is jointly owned by the Government of India (Central Govt), the concerned State Government, and the Sponsor Bank in the strict equity proportion of 50% : 15% : 35% respectively.",
+    expHi: "प्रत्येक क्षेत्रीय ग्रामीण बैंक (RRB) में केंद्र सरकार की हिस्सेदारी 50%, संबंधित राज्य सरकार की हिस्सेदारी 15% तथा प्रवर्तक वाणिज्यिक बैंक (Sponsor Bank) की हिस्सेदारी 35% होती है (अर्थात् 50 : 15 : 35)।",
+    fact: "Exam options often swap 15% and 35% to confuse candidates—always verify the exact sequence asked in the question stem (Central : State : Sponsor = 50 : 15 : 35)."
+  },
+  {
+    id: 16,
+    en: "On what date was NABARD (National Bank for Agriculture and Rural Development) established?",
+    hi: "नाबार्ड (राष्ट्रीय कृषि और ग्रामीण विकास बैंक - NABARD) की स्थापना किस तिथि को हुई थी?",
+    options: [
+      "2 October 1975 / 2 अक्टूबर 1975",
+      "12 July 1982 / 12 जुलाई 1982",
+      "1 January 1982 / 1 जनवरी 1982",
+      "19 July 1980 / 19 जुलाई 1980",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "NABARD was established on 12 July 1982 under the NABARD Act, 1981 during the 6th Five-Year Plan, on the recommendations of the B. Sivaraman Committee (CRAFICARD).",
+    expHi: "बी. शिवरामन समिति (CRAFICARD) की सिफारिश पर छठी पंचवर्षीय योजना के दौरान 12 जुलाई 1982 को राष्ट्रीय कृषि और ग्रामीण विकास बैंक (NABARD) की स्थापना की गई थी।",
+    fact: "The headquarters of NABARD is located in Mumbai, and it is 100% owned by the Government of India."
+  },
+  {
+    id: 17,
+    en: "In which year were the 5 Associate Banks of SBI and Bharatiya Mahila Bank officially merged into the State Bank of India?",
+    hi: "भारतीय स्टेट बैंक (SBI) के 5 सहयोगी बैंकों और 'भारतीय महिला बैंक' का एसबीआई में आधिकारिक विलय किस वर्ष किया गया?",
+    options: [
+      "1 April 2015 / 1 अप्रैल 2015",
+      "1 April 2017 / 1 अप्रैल 2017",
+      "1 April 2019 / 1 अप्रैल 2019",
+      "1 April 2020 / 1 अप्रैल 2020",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "On 1 April 2017, the five remaining Associate Banks of SBI (State Bank of Bikaner & Jaipur, State Bank of Hyderabad, State Bank of Mysore, State Bank of Patiala, and State Bank of Travancore) along with Bharatiya Mahila Bank were merged with SBI.",
+    expHi: "1 अप्रैल 2017 को भारतीय स्टेट बैंक (SBI) के 5 सहयोगी बैंकों (बीकानेर एंड जयपुर, हैदराबाद, मैसूर, पटियाला और त्रावणकोर) तथा भारतीय महिला बैंक का एसबीआई में पूर्ण विलय कर दिया गया।",
+    fact: "Prior to this, State Bank of Saurashtra was merged with SBI in 2008 and State Bank of Indore in 2010."
+  },
+  {
+    id: 18,
+    en: "Which two public sector banks were merged with Bank of Baroda effective from 1 April 2019?",
+    hi: "1 अप्रैल 2019 से सार्वजनिक क्षेत्र के किन दो बैंकों का विलय 'बैंक ऑफ बड़ौदा' (Bank of Baroda) में किया गया?",
+    options: [
+      "Vijaya Bank and Dena Bank / विजया बैंक और देना बैंक",
+      "Andhra Bank and Corporation Bank / आंध्रा बैंक और कॉर्पोरेशन बैंक",
+      "Syndicate Bank and Allahabad Bank / सिंडिकेट बैंक और इलाहाबाद बैंक",
+      "Oriental Bank of Commerce and United Bank of India / ओरिएंटल बैंक ऑफ कॉमर्स और यूनाइटेड बैंक ऑफ इंडिया",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Effective 1 April 2019, Vijaya Bank and Dena Bank were amalgamated into Bank of Baroda (BoB) in India's first-ever three-way public sector bank consolidation.",
+    expHi: "1 अप्रैल 2019 से विजया बैंक और देना बैंक का विलय 'बैंक ऑफ बड़ौदा' में कर दिया गया। यह भारत के बैंकिंग इतिहास में पहला त्रिपक्षीय बैंक विलय था।",
+    fact: "This three-way merger followed the recommendation of the Alternative Mechanism panel headed by then Finance Minister Arun Jaitley."
+  },
+  {
+    id: 19,
+    en: "Under the Mega Bank Consolidation effective from 1 April 2020, Oriental Bank of Commerce (OBC) and United Bank of India were merged into which anchor bank?",
+    hi: "1 अप्रैल 2020 से प्रभावी 'मेगा बैंक विलय' के अंतर्गत ओरिएंटल बैंक ऑफ कॉमर्स (OBC) और यूनाइटेड बैंक ऑफ इंडिया का विलय किस बैंक में किया गया?",
+    options: [
+      "Canara Bank / केनरा बैंक",
+      "Union Bank of India / यूनियन बैंक ऑफ इंडिया",
+      "Punjab National Bank / पंजाब नेशनल बैंक",
+      "Indian Bank / इंडियन बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Under the Mega Merger of 10 PSBs into 4 large banks (effective 1 April 2020), Oriental Bank of Commerce (OBC) and United Bank of India were merged into Punjab National Bank (PNB), making PNB the second-largest Public Sector Bank after SBI.",
+    expHi: "1 अप्रैल 2020 से लागू महाविलय योजना के अंतर्गत ओरिएंटल बैंक ऑफ कॉमर्स (OBC) तथा यूनाइटेड बैंक ऑफ इंडिया का विलय पंजाब नेशनल बैंक (PNB) में किया गया।",
+    fact: "Other 1 April 2020 mergers: Syndicate Bank into Canara Bank; Andhra Bank & Corporation Bank into Union Bank of India; Allahabad Bank into Indian Bank."
+  },
+  {
+    id: 20,
+    en: "After all major bank mergers (up to 2020), how many Public Sector Banks (PSBs) currently operate in India?",
+    hi: "वर्ष 2020 तक के सभी प्रमुख बैंक विलयों के पश्चात वर्तमान में भारत में सार्वजनिक क्षेत्र के कुल कितने बैंक (PSBs) कार्यरत हैं?",
+    options: [
+      "10",
+      "12",
+      "14",
+      "19",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Following the mega consolidation effective 1 April 2020, the total number of Public Sector Banks (PSBs) in India stands at 12 (comprising State Bank of India + 11 Nationalized Banks). In 2017, there were 27 PSBs.",
+    expHi: "1 अप्रैल 2020 के महाविलय के पश्चात भारत में सार्वजनिक क्षेत्र के बैंकों (Public Sector Banks) की कुल संख्या 27 (वर्ष 2017 में) से घटकर 12 रह गई है (जिसमें 1 भारतीय स्टेट बैंक और 11 राष्ट्रीयकृत बैंक शामिल हैं)।",
+    fact: "In 2019, IDBI Bank was recategorized by RBI as a Private Sector Bank after LIC acquired a 51% controlling stake in it."
+  },
+  {
+    id: 21,
+    en: "In the context of banking sector reforms, what is the full form of the 'SARFAESI' Act enacted in 2002?",
+    hi: "बैंकिंग क्षेत्र के सुधारों के संदर्भ में, वर्ष 2002 में पारित 'SARFAESI' अधिनियम का पूर्ण रूप क्या है?",
+    options: [
+      "Securitisation and Reconstruction of Financial Assets and Enforcement of Security Interest Act / सिक्योरिटाइजेशन एंड रिकंस्ट्रक्शन ऑफ फाइनेंशियल एसेट्स एंड एनफोर्समेंट ऑफ सिक्योरिटी इंटरेस्ट एक्ट",
+      "Systemic Assessment and Recovery of Financial Assets and Economic Security Act / सिस्टमिक असेसमेंट एंड रिकवरी ऑफ फाइनेंशियल एसेट्स एंड इकोनॉमिक सिक्योरिटी एक्ट",
+      "Statutory Authority for Regulation of Financial Assets and Exchange Security Act / स्टैच्यूटरी अथॉरिटी फॉर रेगुलेशन ऑफ फाइनेंशियल एसेट्स एंड एक्सचेंज सिक्योरिटी एक्ट",
+      "Standard Accounting and Recovery of Non-Performing Financial Assets Act / स्टैंडर्ड अकाउंटिंग एंड रिकवरी ऑफ नॉन-परफॉर्मिंग फाइनेंशियल एसेट्स एक्ट",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The SARFAESI Act, 2002 stands for 'Securitisation and Reconstruction of Financial Assets and Enforcement of Security Interest Act'. It empowers banks and financial institutions to auction residential or commercial properties (except agricultural land) of defaulters to recover Non-Performing Assets (NPAs) without court intervention.",
+    expHi: "वर्ष 2002 में पारित SARFAESI अधिनियम का पूर्ण रूप 'Securitisation and Reconstruction of Financial Assets and Enforcement of Security Interest Act' है। यह कानून बैंकों को न्यायालय के हस्तक्षेप के बिना डिफॉल्टरों की गिरवी रखी संपत्ति (कृषि भूमि को छोड़कर) को जब्त कर नीलाम करने और NPA वसूलने का अधिकार देता है।",
+    fact: "Agricultural land is strictly exempted from attachment or auction under Section 31 of the SARFAESI Act, 2002."
+  },
+  {
+    id: 22,
+    en: "According to standard RBI norms, a bank loan asset is classified as a Non-Performing Asset (NPA) when the interest or principal installment remains overdue for a period of more than how many days?",
+    hi: "आरबीआई (RBI) के मानक नियमों के अनुसार, किसी बैंक ऋण को 'गैर-निष्पादित परिसंपत्ति' (NPA) तब घोषित किया जाता है जब उसका मूलधन या ब्याज कितने दिनों से अधिक समय तक बकाया (Overdue) रहता है?",
+    options: [
+      "30 Days / 30 दिन",
+      "60 Days / 60 दिन",
+      "90 Days / 90 दिन",
+      "180 Days / 180 दिन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Since 31 March 2004, RBI aligned Indian banking norms with international standards by adopting the 90-day overdue norm for classifying an asset as a Non-Performing Asset (NPA). For agricultural loans, the overdue criterion is linked to 2 crop seasons for short-duration crops and 1 crop season for long-duration crops.",
+    expHi: "भारतीय रिज़र्व बैंक के दिशानिर्देशों के अनुसार, यदि किसी ऋण का ब्याज या मूलधन की किस्त 90 दिनों से अधिक समय तक बकाया (Overdue) रहती है, तो उसे गैर-निष्पादित परिसंपत्ति (NPA) घोषित कर दिया जाता है।",
+    fact: "NPAs are further sub-classified into three categories based on time: Sub-standard Assets (up to 12 months), Doubtful Assets (more than 12 months), and Loss Assets."
+  },
+  {
+    id: 23,
+    en: "Which committee recommended the seven-pronged 'Indradhanush' framework (2015) and the establishment of the Bank Boards Bureau (BBB) for reforming Public Sector Banks?",
+    hi: "सार्वजनिक क्षेत्र के बैंकों में सुधार हेतु 'इंद्रधनुष योजना' (2015) तथा 'बैंक बोर्ड ब्यूरो' (BBB) की स्थापना की सिफारिश किस समिति ने की थी?",
+    options: [
+      "P.J. Nayak Committee / पी.जे. नायक समिति",
+      "Urjit Patel Committee / उर्जित पटेल समिति",
+      "Damodaran Committee / दामोदरन समिति",
+      "Bimal Jalan Committee / बिमल जालान समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "In 2014, the RBI constituted the 'Committee to Review Governance of Boards of Banks in India' under Dr. P.J. Nayak. Based on its recommendations, the Government launched the 'Mission Indradhanush' (7-point reform plan: A to G) in August 2015 and set up the Bank Boards Bureau (BBB) in 2016.",
+    expHi: "वर्ष 2014 में गठित पी.जे. नायक समिति (भारत में बैंकों के बोर्डों के अभिशासन की समीक्षा समिति) की सिफारिशों के आधार पर सरकार ने वर्ष 2015 में 'इंद्रधनुष मिशन' शुरू किया तथा 2016 में बैंक बोर्ड ब्यूरो (BBB) का गठन किया।",
+    fact: "In 2022, the Bank Boards Bureau (BBB) was replaced by the Financial Services Institutions Bureau (FSIB) headed by Bhanu Pratap Sharma."
+  },
+  {
+    id: 24,
+    en: "The 'Basel Norms' (Basel I, II, and III), frequently seen in banking reforms, are international banking regulations issued by the Basel Committee on Banking Supervision (BCBS) located in which country?",
+    hi: "बैंकिंग सुधारों में अक्सर चर्चा में रहने वाले 'बेसल मानक' (Basel I, II एवं III) किस देश के बेसल शहर में स्थित 'बैंकिंग पर्यवेक्षण पर बेसल समिति' (BCBS) द्वारा जारी किए जाते हैं?",
+    options: [
+      "United States of America / संयुक्त राज्य अमेरिका",
+      "Switzerland / स्विट्जरलैंड",
+      "United Kingdom / यूनाइटेड किंगडम",
+      "France / फ्रांस",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Basel Committee on Banking Supervision (BCBS) is headquartered at the Bank for International Settlements (BIS) in Basel, Switzerland. Basel norms prescribe international standards for Capital Adequacy Ratio (CAR), stress testing, and market liquidity risk for banks.",
+    expHi: "बेसल मानक (Basel Norms) स्विट्जरलैंड के बेसल शहर में स्थित 'बैंक फॉर इंटरनेशनल सेटलमेंट्स' (BIS) की समिति BCBS द्वारा जारी किए जाते हैं। इनका मुख्य उद्देश्य बैंकों की पूंजी पर्याप्तता (Capital Adequacy) और वित्तीय स्थिरता को मजबूत करना है।",
+    fact: "Under RBI's Basel-III guidelines in India, Scheduled Commercial Banks are required to maintain a higher minimum Capital to Risk-weighted Assets Ratio (CRAR) of 9% (compared to the international Basel-III norm of 8%)."
+  },
+  {
+    id: 25,
+    en: "On the recommendation of the Nachiket Mor Committee (2014), which two new categories of 'Differentiated Banks' (विभेदित बैंक) were licensed by the RBI to promote financial inclusion?",
+    hi: "नचिकेत मोर समिति (2014) की सिफारिश पर वित्तीय समावेशन को बढ़ावा देने के लिए आरबीआई द्वारा किन दो नए प्रकार के 'विभेदित बैंकों' (Differentiated Banks) को लाइसेंस दिए गए?",
+    options: [
+      "Payments Banks and Small Finance Banks / भुगतान बैंक (Payments Banks) और लघु वित्त बैंक (Small Finance Banks)",
+      "Cooperative Banks and Land Development Banks / सहकारी बैंक और भूमि विकास बैंक",
+      "EXIM Bank and MUDRA Bank / एक्जिम बैंक और मुद्रा बैंक",
+      "Local Area Banks and Industrial Banks / स्थानीय क्षेत्र बैंक और औद्योगिक बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Committee on Comprehensive Financial Services for Small Businesses and Low-Income Households, chaired by Dr. Nachiket Mor (2014), recommended the creation of specialized 'Differentiated Banks'—namely Payments Banks and Small Finance Banks (SFBs)—which were further vetted by the Usha Thorat (SFBs) and Nachiket Mor (Payments Banks) screening committees.",
+    expHi: "डॉ. नचिकेत मोर समिति (2014) की सिफारिश पर आरबीआई ने भारत में वित्तीय समावेशन के विस्तार हेतु दो नए प्रकार के 'विभेदित बैंकों'—भुगतान बैंक (Payments Banks) और लघु वित्त बैंक (Small Finance Banks)—की स्थापना को मंजूरी दी थी।",
+    fact: "Airtel Payments Bank (2017) was the first Payments Bank to go live in India, while Capital Small Finance Bank (2016, Jalandhar) was the first Small Finance Bank."
+  },
+  {
+    id: 26,
+    en: "On the recommendation of which Royal Commission was the Reserve Bank of India (RBI) established in 1935?",
+    hi: "वर्ष 1935 में किस रॉयल कमीशन (शाही आयोग) की सिफारिश पर भारतीय रिज़र्व बैंक (RBI) की स्थापना की गई थी?",
+    options: [
+      "Hilton Young Commission / हिल्टन यंग आयोग",
+      "Chamberlain Commission / चैंबरलेन आयोग",
+      "Simon Commission / साइमन आयोग",
+      "Whitley Commission / व्हिटले आयोग",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Reserve Bank of India was established on 1 April 1935 based on the recommendations of the Royal Commission on Indian Currency and Finance (1926), popularly known as the Hilton Young Commission.",
+    expHi: "भारतीय रिज़र्व बैंक की स्थापना 1 अप्रैल 1935 को 'रॉयल कमीशन ऑन इंडियन करेंसी एंड फाइनेंस' (1926), जिसे 'हिल्टन यंग आयोग' भी कहा जाता है, की सिफारिशों के आधार पर की गई थी।",
+    fact: "Dr. B.R. Ambedkar's book 'The Problem of the Rupee: Its Origin and Its Solution' presented before the Hilton Young Commission played a foundational role in the conceptualisation of RBI."
+  },
+  {
+    id: 27,
+    en: "Who served as the very first Governor of the Reserve Bank of India (1935–1937)?",
+    hi: "भारतीय रिज़र्व बैंक (RBI) के सबसे पहले गवर्नर (1935–1937) कौन थे?",
+    options: [
+      "Sir Osborne Smith / सर ऑस्बोर्न स्मिथ",
+      "Sir James Braid Taylor / सर जेम्स ब्रेड टेलर",
+      "Sir C.D. Deshmukh / सर सी.डी. देशमुख",
+      "Sir Benegal Rama Rau / सर बेनेगल रामा राव",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Sir Osborne Smith was the first Governor of the Reserve Bank of India from 1 April 1935 to 30 June 1937. Sir James Braid Taylor was the second Governor, and Sir C.D. Deshmukh was the first Indian Governor of RBI (1943–1949).",
+    expHi: "आरबीआई के प्रथम गवर्नर सर ऑस्बोर्न स्मिथ (1935–1937) थे। वहीं, आरबीआई के प्रथम भारतीय गवर्नर सर सी.डी. देशमुख (चिंतामण द्वारकानाथ देशमुख) थे।",
+    fact: "Sir Osborne Smith did not sign any Indian currency notes during his tenure; Sir James Braid Taylor was the first RBI Governor to sign currency notes."
+  },
+  {
+    id: 28,
+    en: "Where was the initial central office (headquarters) of the Reserve Bank of India located in 1935 before moving permanently to Mumbai in 1937?",
+    hi: "वर्ष 1937 में स्थायी रूप से मुंबई स्थानांतरित होने से पहले, 1935 में भारतीय रिज़र्व बैंक (RBI) का प्रारंभिक केंद्रीय कार्यालय (मुख्यालय) कहाँ स्थित था?",
+    options: [
+      "New Delhi / नई दिल्ली",
+      "Calcutta (Kolkata) / कलकत्ता (कोलकाता)",
+      "Madras (Chennai) / मद्रास (चेन्नई)",
+      "Allahabad (Prayagraj) / इलाहाबाद (प्रयागराज)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Central Office of the Reserve Bank of India was initially established in Calcutta (now Kolkata) in 1935, and was permanently moved to Bombay (now Mumbai) in 1937.",
+    expHi: "वर्ष 1935 में स्थापना के समय भारतीय रिज़र्व बैंक का केंद्रीय कार्यालय कलकत्ता (कोलकाता) में स्थापित किया गया था, जिसे वर्ष 1937 में स्थायी रूप से बंबई (मुंबई) स्थानांतरित कर दिया गया।",
+    fact: "The initial paid-up capital of the Reserve Bank of India in 1935 was ₹5 crore, divided into 5 lakh fully paid-up shares of ₹100 each."
+  },
+  {
+    id: 29,
+    en: "Which was the first bank in India managed entirely by Indians (with limited liability), established in 1881?",
+    hi: "वर्ष 1881 में स्थापित, भारतीयों द्वारा प्रबंधित (सीमित देयता वाला) भारत का पहला बैंक कौन-सा था?",
+    options: [
+      "Bank of Hindustan / बैंक ऑफ हिंदुस्तान",
+      "Oudh Commercial Bank / अवध कमर्शियल बैंक",
+      "Punjab National Bank / पंजाब नेशनल बैंक",
+      "Allahabad Bank / इलाहाबाद बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Oudh Commercial Bank, established in 1881 in Faizabad (now Ayodhya, UP), was the first bank with limited liability managed by an Indian board. However, Punjab National Bank (1894) was the first purely Indian bank (both funded and managed completely by Indians). Bank of Hindustan (1770) was the first bank established in India (by Europeans).",
+    expHi: "वर्ष 1881 में फैजाबाद (अयोध्या) में स्थापित 'अवध कमर्शियल बैंक' भारतीयों द्वारा प्रबंधित सीमित देयता वाला पहला बैंक था। जबकि पूर्ण रूप से भारतीय पूंजी और प्रबंधन वाला पहला बैंक 'पंजाब नेशनल बैंक' (1894) था।",
+    fact: "Freedom fighter Lala Lajpat Rai and Dyal Singh Majithia were among the key founders of Punjab National Bank in 1894 (Lahore)."
+  },
+  {
+    id: 30,
+    en: "During which Five-Year Plan were the 14 major commercial banks nationalized in July 1969?",
+    hi: "जुलाई 1969 में 14 बड़े वाणिज्यिक बैंकों का राष्ट्रीयकरण किस पंचवर्षीय योजना के दौरान किया गया था?",
+    options: [
+      "Second Five-Year Plan / द्वितीय पंचवर्षीय योजना",
+      "Third Five-Year Plan / तृतीय पंचवर्षीय योजना",
+      "Fourth Five-Year Plan / चतुर्थ पंचवर्षीय योजना",
+      "Fifth Five-Year Plan / पांचवीं पंचवर्षीय योजना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "The Fourth Five-Year Plan ran from 1 April 1969 to 31 March 1974. The nationalization of 14 major banks took place on 19 July 1969, right in the first year of the Fourth Five-Year Plan.",
+    expHi: "चतुर्थ पंचवर्षीय योजना की अवधि 1969 से 1974 तक थी। 19 जुलाई 1969 को 14 बड़े वाणिज्यिक बैंकों का राष्ट्रीयकरण इसी चौथी पंचवर्षीय योजना के दौरान किया गया था।",
+    fact: "Both the first phase of bank nationalization (1969) and the introduction of the Lead Bank Scheme (Dec 1969) occurred during the 4th Five-Year Plan."
+  },
+  {
+    id: 31,
+    en: "Who was serving as the Governor of the Reserve Bank of India during the second phase of bank nationalization on 15 April 1980?",
+    hi: "15 अप्रैल 1980 को बैंकों के राष्ट्रीयकरण के दूसरे चरण के समय भारतीय रिज़र्व बैंक (RBI) के गवर्नर कौन थे?",
+    options: [
+      "L.K. Jha / एल.के. झा",
+      "Dr. I.G. Patel / डॉ. आई.जी. पटेल",
+      "R.N. Malhotra / आर.एन. मल्होत्रा",
+      "S. Venkitaramanan / एस. वेंकिटरमणन",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Dr. I.G. Patel (Indraprasad Gordhanbhai Patel) was the 14th Governor of RBI from 1 December 1977 to 15 September 1982. Hence, he was the RBI Governor when 6 banks were nationalized on 15 April 1980 and when NABARD was formed in July 1982.",
+    expHi: "डॉ. आई.जी. पटेल 1 दिसंबर 1977 से 15 सितंबर 1982 तक आरबीआई के 14वें गवर्नर रहे। उन्हीं के कार्यकाल में 15 अप्रैल 1980 को 6 बैंकों का राष्ट्रीयकरण और 1982 में नाबार्ड (NABARD) की स्थापना हुई।",
+    fact: "The demonetization of high-denomination banknotes (₹1,000, ₹5,000, and ₹10,000) in January 1978 also occurred during Dr. I.G. Patel's tenure."
+  },
+  {
+    id: 32,
+    en: "Before 1969, the policy introduced in 1967-68 by Deputy Prime Minister and Finance Minister Morarji Desai to align banking credit with social priorities without full nationalization was known as:",
+    hi: "वर्ष 1969 के राष्ट्रीयकरण से पूर्व, 1967-68 में तत्कालीन उप-प्रधानमंत्री एवं वित्त मंत्री मोरारजी देसाई द्वारा पूर्ण राष्ट्रीयकरण किए बिना बैंकों की साख नीति को सामाजिक प्राथमिकताओं से जोड़ने की नीति को क्या कहा गया था?",
+    options: [
+      "Social Control over Banks / बैंकों पर सामाजिक नियंत्रण (Social Control)",
+      "Moral Suasion Policy / नैतिक दबाव नीति",
+      "Differential Rate of Interest Scheme / विभेदक ब्याज दर योजना",
+      "Service Area Approach / सेवा क्षेत्र दृष्टिकोण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Prior to outright nationalization in July 1969, Finance Minister Morarji Desai introduced the policy of 'Social Control over Banks' through the Banking Laws (Amendment) Act, 1968 to reconstitute bank boards and established the National Credit Council (NCC) to direct credit to agriculture and small industries.",
+    expHi: "1969 के राष्ट्रीयकरण से ठीक पहले, तत्कालीन वित्त मंत्री मोरारजी देसाई ने 1967-68 में 'बैंकों पर सामाजिक नियंत्रण' (Social Control over Banks) की नीति लागू की थी ताकि कृषि और लघु उद्योगों को ऋण मिल सके, किंतु इसे अपर्याप्त मानते हुए जुलाई 1969 में 14 बैंकों का राष्ट्रीयकरण कर दिया गया।",
+    fact: "Morarji Desai resigned as Finance Minister in July 1969 when Prime Minister Indira Gandhi took over the Finance portfolio right before promulgating the Bank Nationalization Ordinance."
+  },
+  {
+    id: 33,
+    en: "Which of the following banks was NOT among the 6 commercial banks nationalized in the second phase on 15 April 1980?",
+    hi: "निम्नलिखित में से कौन-सा बैंक 15 अप्रैल 1980 को दूसरे चरण में राष्ट्रीयकृत किए गए 6 वाणिज्यिक बैंकों में शामिल नहीं था?",
+    options: [
+      "Andhra Bank / आंध्रा बैंक",
+      "Corporation Bank / कॉर्पोरेशन बैंक",
+      "Punjab & Sind Bank / पंजाब एंड सिंध बैंक",
+      "Canara Bank / केनरा बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "Canara Bank was nationalized in the FIRST phase on 19 July 1969 (along with 13 other banks). The 6 banks nationalized in the second phase (15 April 1980) were: Andhra Bank, Corporation Bank, New Bank of India, Oriental Bank of Commerce, Punjab & Sind Bank, and Vijaya Bank.",
+    expHi: "केनरा बैंक का राष्ट्रीयकरण प्रथम चरण (19 जुलाई 1969) में ही हो चुका था। दूसरे चरण (15 अप्रैल 1980) में आंध्रा बैंक, कॉर्पोरेशन बैंक, न्यू बैंक ऑफ इंडिया, ओरिएंटल बैंक ऑफ कॉमर्स, पंजाब एंड सिंध बैंक तथा विजया बैंक का राष्ट्रीयकरण किया गया था।",
+    fact: "Out of the 6 banks nationalized in 1980, only Punjab & Sind Bank currently exists as an independent entity; the other 5 have been merged into larger Public Sector Banks."
+  },
+  {
+    id: 34,
+    en: "Under the Mega Bank Consolidation effective from 1 April 2020, Syndicate Bank was amalgamated into which anchor bank?",
+    hi: "1 अप्रैल 2020 से प्रभावी मेगा बैंक विलय के अंतर्गत 'सिंडिकेट बैंक' का विलय किस बैंक में कर दिया गया?",
+    options: [
+      "Indian Bank / इंडियन बैंक",
+      "Canara Bank / केनरा बैंक",
+      "Union Bank of India / यूनियन बैंक ऑफ इंडिया",
+      "Punjab National Bank / पंजाब नेशनल बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Effective 1 April 2020, Syndicate Bank was merged into Canara Bank (headquartered in Bengaluru).",
+    expHi: "1 अप्रैल 2020 को लागू हुए बैंकों के महाविलय में सिंडिकेट बैंक का विलय केनरा बैंक (मुख्यालय: बेंगलुरु) में किया गया।",
+    fact: "Syndicate Bank was originally established in 1925 in Udupi (Karnataka) and was famous for sponsoring India's first RRB, Prathama Grameen Bank."
+  },
+  {
+    id: 35,
+    en: "Under the Mega Bank Consolidation effective from 1 April 2020, Andhra Bank and Corporation Bank were merged into which Public Sector Bank?",
+    hi: "1 अप्रैल 2020 से प्रभावी मेगा बैंक विलय के तहत 'आंध्रा बैंक' और 'कॉर्पोरेशन बैंक' का विलय किस सार्वजनिक क्षेत्र के बैंक में किया गया?",
+    options: [
+      "Union Bank of India / यूनियन बैंक ऑफ इंडिया",
+      "Bank of India / बैंक ऑफ इंडिया",
+      "Central Bank of India / सेंट्रल बैंक ऑफ इंडिया",
+      "Canara Bank / केनरा बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "On 1 April 2020, Andhra Bank and Corporation Bank were merged into Union Bank of India (headquartered in Mumbai).",
+    expHi: "1 अप्रैल 2020 से आंध्रा बैंक और कॉर्पोरेशन बैंक का विलय 'यूनियन बैंक ऑफ इंडिया' (मुख्यालय: मुंबई) में कर दिया गया।",
+    fact: "The headquarters of Union Bank of India in Mumbai was inaugurated by Mahatma Gandhi in 1921."
+  },
+  {
+    id: 36,
+    en: "On 1 April 2020, Allahabad Bank (the oldest joint-stock bank in India, founded in 1865) was merged with which bank?",
+    hi: "1 अप्रैल 2020 को 'इलाहाबाद बैंक' (1865 में स्थापित भारत का सबसे पुराना संयुक्त स्टॉक बैंक) का विलय किस बैंक के साथ किया गया?",
+    options: [
+      "Bank of Baroda / बैंक ऑफ बड़ौदा",
+      "Indian Bank / इंडियन बैंक",
+      "Indian Overseas Bank / इंडियन ओवरसीज बैंक",
+      "UCO Bank / यूको बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Effective 1 April 2020, Allahabad Bank was merged into Indian Bank (headquartered in Chennai).",
+    expHi: "1 अप्रैल 2020 को इलाहाबाद बैंक का विलय 'इंडियन बैंक' (मुख्यालय: चेन्नई) में कर दिया गया।",
+    fact: "Quick memory trick for all 4 mergers of 1 April 2020: PNB + (OBC + United); Canara + (Syndicate); Union + (Andhra + Corporation); Indian + (Allahabad)."
+  },
+  {
+    id: 37,
+    en: "In January 2019, which bank was recategorized by the Reserve Bank of India as a 'Private Sector Bank' following the acquisition of 51% controlling stake by Life Insurance Corporation of India (LIC)?",
+    hi: "जनवरी 2019 में भारतीय जीवन बीमा निगम (LIC) द्वारा 51% नियंत्रक हिस्सेदारी का अधिग्रहण करने के पश्चात आरबीआई ने किस बैंक को 'निजी क्षेत्र के बैंक' (Private Sector Bank) के रूप में पुनः वर्गीकृत किया?",
+    options: [
+      "IDBI Bank / आईडीबीआई बैंक",
+      "Axis Bank / एक्सिस बैंक",
+      "Yes Bank / यस बैंक",
+      "ICICI Bank / आईसीआईसीआई बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "With effect from 21 January 2019, RBI recategorized IDBI Bank Ltd. as a Private Sector Bank for regulatory purposes after LIC acquired 51% of its total paid-up equity share capital.",
+    expHi: "भारतीय जीवन बीमा निगम (LIC) द्वारा आईडीबीआई बैंक (IDBI Bank) की 51% हिस्सेदारी खरीदने के बाद आरबीआई ने 21 जनवरी 2019 से IDBI बैंक को 'निजी क्षेत्र के बैंक' की श्रेणी में डाल दिया।",
+    fact: "IDBI (Industrial Development Bank of India) was originally established on 1 July 1964 as a Development Financial Institution (wholly owned subsidiary of RBI) before becoming a commercial bank in 2004."
+  },
+  {
+    id: 38,
+    en: "Under Priority Sector Lending (PSL) guidelines of the RBI, what percentage of Adjusted Net Bank Credit (ANBC) must Domestic Commercial Banks (excluding RRBs and SFBs) allocate to the overall Priority Sector?",
+    hi: "आरबीआई (RBI) के 'प्राथमिकता प्राप्त क्षेत्र ऋण' (Priority Sector Lending - PSL) दिशानिर्देशों के तहत, घरेलू वाणिज्यिक बैंकों (RRBs और SFBs को छोड़कर) को अपने समायोजित निवल बैंक ऋण (ANBC) का कुल कितना प्रतिशत प्राथमिकता प्राप्त क्षेत्र को देना अनिवार्य है?",
+    options: [
+      "25%",
+      "40%",
+      "50%",
+      "75%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Domestic Scheduled Commercial Banks (both public and private) and Foreign Banks with 20 or more branches must lend 40% of their Adjusted Net Bank Credit (ANBC) to the Priority Sector (which includes Agriculture, MSMEs, Education, Housing, Weakest Sections, etc.). Out of this 40%, 18% is earmarked specifically for Agriculture.",
+    expHi: "आरबीआई के नियमों के अनुसार, सभी घरेलू वाणिज्यिक बैंकों को अपने कुल ऋण (ANBC) का 40% हिस्सा 'प्राथमिकता प्राप्त क्षेत्र' (Priority Sector - कृषि, MSME, शिक्षा, आवास, कमजोर वर्ग आदि) को देना अनिवार्य है, जिसमें से 18% हिस्सा केवल कृषि क्षेत्र के लिए निर्धारित है।",
+    fact: "For Regional Rural Banks (RRBs) and Small Finance Banks (SFBs), the mandatory Priority Sector Lending (PSL) target is much higher at 75% of ANBC."
+  },
+  {
+    id: 39,
+    en: "What is the maximum loan limit that a Payments Bank (भुगतान बैंक) can grant to a customer?",
+    hi: "एक 'भुगतान बैंक' (Payments Bank) किसी ग्राहक को अधिकतम कितनी राशि तक का ऋण (Loan) दे सकता है?",
+    options: [
+      "₹1 Lakh / ₹1 लाख",
+      "₹2 Lakh / ₹2 लाख",
+      "₹5 Lakh / ₹5 लाख",
+      "Payments Banks cannot lend or issue credit cards / भुगतान बैंक कोई ऋण या क्रेडिट कार्ड जारी नहीं कर सकते",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "Under RBI guidelines, Payments Banks are strictly prohibited from undertaking any lending activities—they CANNOT grant loans or issue credit cards. They can only accept demand deposits (savings and current accounts) up to ₹2 lakh per individual customer and issue ATM/debit cards.",
+    expHi: "आरबीआई के नियमों के अनुसार, भुगतान बैंक (Payments Banks) किसी भी प्रकार का ऋण (Loan) या उधार नहीं दे सकते और न ही क्रेडिट कार्ड जारी कर सकते हैं। वे केवल प्रति ग्राहक अधिकतम 2 लाख रुपये तक की मांग जमा (बचत/चालू खाता) स्वीकार कर सकते हैं और डेबिट कार्ड जारी कर सकते हैं।",
+    fact: "In 2021, RBI increased the maximum end-of-day balance limit for Payments Banks from ₹1 lakh to ₹2 lakh per individual customer."
+  },
+  {
+    id: 40,
+    en: "Which regulatory mechanism was introduced by the RBI in December 2002 (and revised in 2017 and 2021) to intervene early and impose restrictions on banks whose financial health deteriorates (due to low capital, high NPAs, or negative return on assets)?",
+    hi: "कम पूंजी, उच्च NPA या लगातार घाटे के कारण जिन बैंकों की वित्तीय स्थिति खराब हो जाती है, उन पर समय रहते प्रतिबंध और सुधार लागू करने के लिए आरबीआई द्वारा कौन-सा नियामक तंत्र (Framework) लागू किया जाता है?",
+    options: [
+      "Prompt Corrective Action (PCA) / त्वरित सुधारात्मक कार्रवाई (PCA)",
+      "Market Stabilization Scheme (MSS) / बाजार स्थिरीकरण योजना (MSS)",
+      "Liquidity Adjustment Facility (LAF) / चलनिधि समायोजन सुविधा (LAF)",
+      "Marginal Standing Facility (MSF) / सीमांत स्थायी सुविधा (MSF)",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Prompt Corrective Action (PCA) is a supervisory framework of the RBI that monitors three key parameters of banks: Capital Adequacy Ratio (CRAR), Net Non-Performing Assets (Net NPA), and Return on Assets (RoA)/Leverage Ratio. When a bank breaches risk thresholds on these parameters, RBI places it under PCA, restricting dividend distribution, branch expansion, and risky lending.",
+    expHi: "'त्वरित सुधारात्मक कार्रवाई' (Prompt Corrective Action - PCA) आरबीआई का एक पर्यवेक्षी ढांचा है। जब किसी बैंक का पूंजी पर्याप्तता अनुपात (CAR) घटता है या शुद्ध NPA बढ़ता है, तो आरबीआई उसे PCA के अंतर्गत रखकर शाखा विस्तार, लाभांश वितरण और बड़े ऋण देने पर रोक लगा देता है।",
+    fact: "The three core monitoring indicators for triggering PCA in Scheduled Commercial Banks are: Capital (CRAR/CET1), Asset Quality (Net NPA ratio), and Leverage."
+  },
+  {
+    id: 41,
+    en: "Which modern legislation was enacted in May 2016 to create a consolidated, time-bound framework for resolving insolvency and bad loans of corporate debtors in India?",
+    hi: "भारत में कॉर्पोरेट कर्जदारों के दिवालियापन और डूबे कर्ज (Bad Loans/NPA) के समयबद्ध समाधान के लिए मई 2016 में कौन-सा प्रमुख कानून पारित किया गया?",
+    options: [
+      "Insolvency and Bankruptcy Code (IBC), 2016 / दिवाला और शोधन अक्षमता संहिता (IBC), 2016",
+      "Fiscal Responsibility and Budget Management (FRBM) Act / राजकोषीय उत्तरदायित्व और बजट प्रबंधन अधिनियम",
+      "Prevention of Money Laundering Act (PMLA) / धन शोधन निवारण अधिनियम",
+      "Banking Regulation Act / बैंकिंग विनियमन अधिनियम",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Insolvency and Bankruptcy Code (IBC), 2016 was enacted on the recommendations of the T.K. Viswanathan Committee (Bankruptcy Law Reforms Committee) to resolve corporate insolvency in a strict time-bound manner (originally 180 days, extendable by 90 days, with an overall cap of 330 days).",
+    expHi: "टी.के. विश्वनाथन समिति की सिफारिश पर वर्ष 2016 में 'दिवाला और शोधन अक्षमता संहिता' (Insolvency and Bankruptcy Code - IBC, 2016) पारित किया गया। यह बैंकों के बड़े NPA की समयबद्ध वसूली और कंपनियों के दिवालियापन के समाधान का सबसे बड़ा सुधार है।",
+    fact: "Under IBC 2016, corporate insolvency cases are adjudicated by the National Company Law Tribunal (NCLT), while individual/partnership cases go to the Debt Recovery Tribunal (DRT)."
+  },
+  {
+    id: 42,
+    en: "What is the name of the 'Bad Bank' (National Asset Reconstruction Company) incorporated in 2021 to take over and resolve large stressed/NPA accounts (above ₹500 crore) of Indian banks?",
+    hi: "भारतीय बैंकों के बड़े डूबे कर्जों/NPA खातों (₹500 करोड़ से अधिक) का अधिग्रहण और समाधान करने के लिए वर्ष 2021 में स्थापित 'बैड बैंक' (Bad Bank) का आधिकारिक नाम क्या है?",
+    options: [
+      "NARCL (National Asset Reconstruction Company Ltd.) / एनएआरसीएल (नेशनल एसेट रिकंस्ट्रक्शन कंपनी लिमिटेड)",
+      "NaBFID (National Bank for Financing Infrastructure and Development) / नैबफिड",
+      "CERSAI (Central Registry of Securitisation Asset Reconstruction) / सरसाई",
+      "DICGC (Deposit Insurance and Credit Guarantee Corporation) / डीआईसीजीसी",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Announced in the Union Budget 2021-22, the National Asset Reconstruction Company Limited (NARCL) was set up along with the India Debt Resolution Company Limited (IDRCL) as India's 'Bad Bank' structure. Public Sector Banks hold a 51% stake in NARCL, which acquires bad loans on a 15% cash and 85% Security Receipts (guaranteed by the Govt) model.",
+    expHi: "बजट 2021-22 की घोषणा के तहत बैंकों के ₹500 करोड़ से अधिक के NPA खातों को खरीदने और हल करने के लिए 'नेशनल एसेट रिकंस्ट्रक्शन कंपनी लिमिटेड' (NARCL) और 'इंडिया डेट रेजोल्यूशन कंपनी लिमिटेड' (IDRCL) का गठन भारत के 'बैड बैंक' (Bad Bank) के रूप में किया गया।",
+    fact: "In the dual Bad Bank structure, NARCL (51% PSB-owned) acquires the stressed assets, while IDRCL (51% private-owned) manages and sells the assets for value realization."
+  },
+  {
+    id: 43,
+    en: "In 2022, the Government of India replaced the Bank Boards Bureau (BBB) with which new body to select the chiefs (MDs/CEOs) of Public Sector Banks and Public Sector Financial/Insurance Institutions?",
+    hi: "वर्ष 2022 में भारत सरकार ने सार्वजनिक क्षेत्र के बैंकों और वित्तीय/बीमा संस्थानों के प्रमुखों (MD/CEO) के चयन हेतु 'बैंक बोर्ड ब्यूरो' (BBB) के स्थान पर किस नई संस्था का गठन किया?",
+    options: [
+      "Financial Services Institutions Bureau (FSIB) / वित्तीय सेवा संस्थान ब्यूरो (FSIB)",
+      "Financial Stability and Development Council (FSDC) / वित्तीय स्थिरता और विकास परिषद (FSDC)",
+      "Public Sector Bank Recruitment Board (PSBRB) / सार्वजनिक क्षेत्र बैंक भर्ती बोर्ड",
+      "National Financial Reporting Authority (NFRA) / राष्ट्रीय वित्तीय रिपोर्टिंग प्राधिकरण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "In July 2022, the Government transformed the Bank Boards Bureau (BBB) into the Financial Services Institutions Bureau (FSIB) after the Delhi High Court ruled that BBB lacked statutory authority to select heads of public sector general insurers. Bhanu Pratap Sharma became the first chairperson of FSIB.",
+    expHi: "जुलाई 2022 में भारत सरकार ने 'बैंक बोर्ड ब्यूरो' (BBB) के स्थान पर 'वित्तीय सेवा संस्थान ब्यूरो' (Financial Services Institutions Bureau - FSIB) का गठन किया, जो सरकारी बैंकों तथा सरकारी बीमा कंपनियों के शीर्ष अधिकारियों की नियुक्ति की सिफारिश करता है।",
+    fact: "FSIB operates under the Department of Financial Services (DFS), Ministry of Finance."
+  },
+  {
+    id: 44,
+    en: "Through the Finance Act, 2016, the Reserve Bank of India Act, 1934 was amended to create the statutory 6-member Monetary Policy Committee (MPC). Who is the ex-officio Chairperson of the MPC?",
+    hi: "वित्त अधिनियम, 2016 के माध्यम से आरबीआई अधिनियम, 1934 में संशोधन कर 6-सदस्यीय सांविधिक 'मौद्रिक नीति समिति' (MPC) का गठन किया गया। इस समिति (MPC) का पदेन अध्यक्ष (Ex-officio Chairperson) कौन होता है?",
+    options: [
+      "Union Finance Minister / केंद्रीय वित्त मंत्री",
+      "Governor of the Reserve Bank of India / भारतीय रिज़र्व बैंक के गवर्नर",
+      "Finance Secretary of India / भारत के वित्त सचिव",
+      "Chief Economic Adviser / मुख्य आर्थिक सलाहकार",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Based on the recommendations of the Urjit Patel Committee (2014), the 6-member Monetary Policy Committee (MPC) was constituted in September 2016 (3 members from RBI + 3 external members appointed by the Central Govt). The Governor of RBI is the ex-officio Chairperson of the MPC and holds a casting vote in case of a tie.",
+    expHi: "उर्जित पटेल समिति (2014) की सिफारिश पर वर्ष 2016 में गठित 6-सदस्यीय मौद्रिक नीति समिति (MPC) के पदेन अध्यक्ष 'भारतीय रिज़र्व बैंक के गवर्नर' होते हैं। इसमें 3 सदस्य RBI से तथा 3 सदस्य केंद्र सरकार द्वारा नियुक्त बाहरी विशेषज्ञ होते हैं।",
+    fact: "Under the flexible inflation targeting framework, the MPC is mandated to maintain CPI (Consumer Price Index) retail inflation at 4% with a tolerance band of +/- 2% (i.e., between 2% and 6%)."
+  },
+  {
+    id: 45,
+    en: "Under the Deposit Insurance and Credit Guarantee Corporation (DICGC) Act (a wholly-owned subsidiary of RBI), what is the maximum amount of bank deposits (principal + interest) insured per depositor per bank in case a bank fails?",
+    hi: "आरबीआई की पूर्ण स्वामित्व वाली सहायक संस्था 'निक्षेप बीमा और प्रत्यय गारंटी निगम' (DICGC) के अंतर्गत, किसी बैंक के डूबने या विफल होने की स्थिति में प्रति जमाकर्ता प्रति बैंक अधिकतम कितनी जमा राशि (मूलधन + ब्याज) बीमित (सुरक्षित) होती है?",
+    options: [
+      "₹1 Lakh / ₹1 लाख",
+      "₹2 Lakh / ₹2 लाख",
+      "₹5 Lakh / ₹5 लाख",
+      "₹10 Lakh / ₹10 लाख",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "With effect from 4 February 2020 (announced in Union Budget 2020-21), the deposit insurance coverage limit provided by DICGC was increased five-fold from ₹1 lakh to ₹5 lakh per depositor per bank (covering savings, fixed, current, and recurring deposits).",
+    expHi: "4 फरवरी 2020 से DICGC द्वारा बैंक जमाकर्ताओं को दी जाने वाली जमा बीमा सुरक्षा की सीमा को 1 लाख रुपये से बढ़ाकर 5 लाख रुपये (मूलधन एवं ब्याज सहित) प्रति जमाकर्ता प्रति बैंक कर दिया गया है।",
+    fact: "Following the 2021 amendment to the DICGC Act, depositors of distressed banks placed under RBI moratorium must receive their insured deposit amount (up to ₹5 lakh) within 90 days."
+  },
+  {
+    id: 46,
+    en: "In which year was the Banking Regulation Act (originally passed as the Banking Companies Act) enacted to empower the RBI to license, regulate, and supervise commercial banks in India?",
+    hi: "भारत में वाणिज्यिक बैंकों को लाइसेंस देने, विनियमित करने और पर्यवेक्षण करने हेतु आरबीआई को सशक्त बनाने वाला 'बैंकिंग विनियमन अधिनियम' (Banking Regulation Act) किस वर्ष पारित किया गया था?",
+    options: [
+      "1934",
+      "1949",
+      "1955",
+      "1969",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The Banking Regulation Act was enacted in 1949 (came into force on 16 March 1949 as the Banking Companies Act, 1949, and was renamed the Banking Regulation Act from 1 March 1966). Under Section 22 of this Act, RBI grants licenses to banks, and under Section 24, banks maintain the Statutory Liquidity Ratio (SLR).",
+    expHi: "बैंकों के नियमन और नियंत्रण के लिए वर्ष 1949 में 'बैंकिंग कंपनी अधिनियम, 1949' पारित किया गया था, जिसका नाम 1 मार्च 1966 से बदलकर 'बैंकिंग विनियमन अधिनियम, 1949' (Banking Regulation Act, 1949) कर दिया गया।",
+    fact: "CRR (Cash Reserve Ratio) is maintained under Section 42(1) of the RBI Act, 1934, whereas SLR (Statutory Liquidity Ratio) is maintained under Section 24 of the Banking Regulation Act, 1949."
+  },
+  {
+    id: 47,
+    en: "Which committee was constituted in 1982 to review the working of the Indian Monetary System and introduced the concept of 'Inflation Targeting' and 'Monetised Deficit' reforms?",
+    hi: "भारतीय मौद्रिक प्रणाली के कामकाज की समीक्षा करने के लिए वर्ष 1982 में किस प्रसिद्ध समिति का गठन किया गया था, जिसने राजकोषीय घाटे के मौद्रीकरण में सुधार की सिफारिश की थी?",
+    options: [
+      "Sukhamoy Chakravarty Committee / सुखमय चक्रवर्ती समिति",
+      "Vaghul Committee / वाघुल समिति",
+      "Goiporia Committee / गोइपोरिया समिति",
+      "Tarapore Committee / तारापोर समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Committee to Review the Working of the Monetary System was appointed by RBI in December 1982 under Prof. Sukhamoy Chakravarty (submitted report in 1985). It recommended restructuring Treasury Bills, moving away from automatic monetization of budget deficits, and adopting monetary targeting with feedback.",
+    expHi: "भारतीय मौद्रिक प्रणाली की व्यापक समीक्षा के लिए दिसंबर 1982 में प्रो. सुखमय चक्रवर्ती की अध्यक्षता में समिति गठित की गई थी (रिपोर्ट 1985)। वाघुल समिति (1987) मुद्रा बाजार से, गोइपोरिया समिति (1990) बैंक ग्राहक सेवा से तथा तारापोर समिति (1997) पूंजी खाता परिवर्तनीयता से संबंधित थी।",
+    fact: "Match-the-following favourite in UPSSSC exams: Chakravarty Committee = Monetary System; Goiporia Committee = Customer Service in Banks; Tarapore Committee = Capital Account Convertibility."
+  },
+  {
+    id: 48,
+    en: "What is the name of the annual reform index and agenda launched in January 2018 by the Government of India and Indian Banks' Association (IBA) to institutionalize clean and smart banking across all Public Sector Banks?",
+    hi: "सार्वजनिक क्षेत्र के सभी बैंकों में स्वच्छ एवं स्मार्ट बैंकिंग सुधारों को संस्थागत बनाने के लिए जनवरी 2018 में भारत सरकार और इंडियन बैंक्स एसोसिएशन (IBA) द्वारा शुरू किए गए वार्षिक सुधार एजेंडे और सूचकांक का नाम क्या है?",
+    options: [
+      "EASE (Enhanced Access and Service Excellence) / ईज़ (Enhanced Access and Service Excellence)",
+      "SASHAKT / सशक्त",
+      "UDAY / उदय",
+      "SWAMIH / स्वामिह",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "EASE (Enhanced Access and Service Excellence) is the common reform agenda for all Public Sector Banks (PSBs) launched in January 2018 based on recommendations from the PSB Manthan held in November 2017. It measures PSB performance across 6 themes including digital banking, responsible banking, credit off-take, and governance.",
+    expHi: "जनवरी 2018 में सार्वजनिक क्षेत्र के बैंकों (PSBs) के प्रदर्शन में सुधार और प्रतिस्पर्धा बढ़ाने के लिए 'EASE' (Enhanced Access and Service Excellence) सुधार एजेंडा शुरू किया गया। (उदय योजना बिजली वितरण कंपनियों के सुधार से संबंधित है)।",
+    fact: "Project 'Sashakt' (2018) was recommended by the Sunil Mehta Committee specifically for resolving stressed assets/NPAs through an Inter-Creditor Agreement (ICA)."
+  },
+  {
+    id: 49,
+    en: "When was the 'Reserve Bank - Integrated Ombudsman Scheme' (RB-IOS) launched on the theme of 'One Nation One Ombudsman' by merging three earlier ombudsman schemes?",
+    hi: "तीन पूर्व लोकपाल योजनाओं को मिलाकर 'एक राष्ट्र, एक लोकपाल' (One Nation One Ombudsman) की अवधारणा पर 'रिज़र्व बैंक - एकीकृत लोकपाल योजना' (RB-IOS) कब शुरू की गई?",
+    options: [
+      "November 2021 / नवंबर 2021",
+      "January 2019 / जनवरी 2019",
+      "April 2017 / अप्रैल 2017",
+      "August 2015 / अगस्त 2015",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "On 12 November 2021, Prime Minister Narendra Modi launched the Reserve Bank - Integrated Ombudsman Scheme (RB-IOS), 2021. It amalgamated three existing ombudsman schemes: (i) Banking Ombudsman Scheme, 2006; (ii) Ombudsman Scheme for NBFCs, 2018; and (iii) Ombudsman Scheme for Digital Transactions, 2019 into a single portal (cms.rbi.org.in).",
+    expHi: "12 नवंबर 2021 को बैंकिंग ग्राहक शिकायत निवारण में एक बड़ा सुधार करते हुए आरबीआई की तीन अलग-अलग लोकपाल योजनाओं (बैंकिंग, NBFC और डिजिटल लेनदेन) को मिलाकर 'रिज़र्व बैंक - एकीकृत लोकपाल योजना, 2021' (One Nation, One Ombudsman) लागू की गई।",
+    fact: "The Centralised Receipt and Processing Centre (CRPC) of the RBI Integrated Ombudsman Scheme is set up at RBI Chandigarh."
+  },
+  {
+    id: 50,
+    en: "Which institution was established in 2008 as the National Payments Corporation of India (NPCI) to operate retail payment and settlement systems in India (like UPI, RuPay, IMPS), and under which Act?",
+    hi: "भारत में खुदरा भुगतान और निपटान प्रणाली (जैसे UPI, RuPay, IMPS) के संचालन के लिए वर्ष 2008 में 'भारतीय राष्ट्रीय भुगतान निगम' (NPCI) की स्थापना किस अधिनियम के तहत की गई थी?",
+    options: [
+      "Payment and Settlement Systems Act, 2007 / भुगतान और निपटान प्रणाली अधिनियम, 2007",
+      "Negotiable Instruments Act, 1881 / परक्राम्य लिखत अधिनियम, 1881",
+      "FEMA, 1999 / फेमा अधिनियम, 1999",
+      "SEBI Act, 1992 / सेबी अधिनियम, 1992",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "National Payments Corporation of India (NPCI) is an umbrella organization for operating retail payments and settlement systems in India. It is an initiative of the RBI and the Indian Banks' Association (IBA) established in December 2008 under the provisions of the Payment and Settlement Systems Act, 2007. UPI (Unified Payments Interface) was launched by NPCI on 11 April 2016.",
+    expHi: "भारतीय राष्ट्रीय भुगतान निगम (NPCI) की स्थापना दिसंबर 2008 में आरबीआई और भारतीय बैंक संघ (IBA) द्वारा 'भुगतान और निपटान प्रणाली अधिनियम, 2007' (Payment and Settlement Systems Act, 2007) के प्रावधानों के तहत एक गैर-लाभकारी कंपनी (धारा 8 कंपनी) के रूप में की गई थी।",
+    fact: "NPCI launched RuPay in 2012 and UPI (Unified Payments Interface) on 11 April 2016 (piloted under then RBI Governor Dr. Raghuram Rajan)."
+  },
+  {
+    id: 51,
+    en: "Which was the very first bank established in India in the year 1770 at Calcutta under European management?",
+    hi: "वर्ष 1770 में यूरोपीय प्रबंधन के अधीन कलकत्ता में स्थापित भारत का सबसे पहला बैंक कौन-सा था?",
+    options: [
+      "Bank of Bengal / बैंक ऑफ बंगाल",
+      "Bank of Hindustan / बैंक ऑफ हिंदुस्तान",
+      "General Bank of India / जनरल बैंक ऑफ इंडिया",
+      "Allahabad Bank / इलाहाबाद बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Bank of Hindustan was the first modern bank established in India in 1770 at Calcutta by the agency house of Alexander and Company. It was liquidated during the commercial crisis of 1830–32.",
+    expHi: "भारत में आधुनिक बैंकिंग की शुरुआत वर्ष 1770 में 'अलेक्जेंडर एंड कंपनी' द्वारा कलकत्ता में स्थापित 'बैंक ऑफ हिंदुस्तान' से हुई थी। आर्थिक संकट के कारण यह बैंक 1832 में बंद हो गया था।",
+    fact: "The three Presidency Banks were Bank of Calcutta/Bengal (1806), Bank of Bombay (1840), and Bank of Madras (1843), which merged in 1921 to form the Imperial Bank of India."
+  },
+  {
+    id: 52,
+    en: "Which of the following was the first truly Swadeshi bank founded in 1894 solely with Indian capital and managed entirely by Indians?",
+    hi: "वर्ष 1894 में पूर्णतः भारतीय पूंजी और भारतीय प्रबंधन के साथ स्थापित होने वाला पहला पूर्ण स्वदेशी बैंक कौन-सा था?",
+    options: [
+      "Oudh Commercial Bank / अवध कमर्शियल बैंक",
+      "Punjab National Bank / पंजाब नेशनल बैंक",
+      "Central Bank of India / सेंट्रल बैंक ऑफ इंडिया",
+      "Bank of Baroda / बैंक ऑफ बड़ौदा",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Punjab National Bank (PNB), founded on 19 May 1894 in Lahore (mainly through the efforts of Dyal Singh Majithia and Lala Lajpat Rai), was the first bank purely managed by Indians with Indian capital that has survived to the present day. Central Bank of India (1911) was the first commercial bank completely owned and managed by Indians.",
+    expHi: "19 मई 1894 को लाहौर में लाला लाजपत राय और दयाल सिंह मजीठिया के प्रयासों से स्थापित 'पंजाब नेशनल बैंक' (PNB) पूर्णतः भारतीय पूंजी से संचालित प्रथम भारतीय बैंक था। वहीं 1911 में सोराबजी पोचखानवाला द्वारा स्थापित 'सेंट्रल बैंक ऑफ इंडिया' पूर्णतः भारतीय स्वामित्व वाला पहला स्वदेशी वाणिज्यिक बैंक कहलाता है।",
+    fact: "If both PNB (1894) and Oudh Commercial Bank (1881) appear in an exam: Oudh Commercial Bank = First bank with limited liability managed by Indians; PNB = First purely Indian bank (still operating)."
+  },
+  {
+    id: 53,
+    en: "Under the State Bank of India (Subsidiary Banks) Act passed in which year were 8 former princely state-associated banks made subsidiaries (Associate Banks) of SBI?",
+    hi: "किस वर्ष पारित 'भारतीय स्टेट बैंक (सहायक बैंक) अधिनियम' के तहत पूर्व रियासतों से जुड़े 8 बैंकों को एसबीआई (SBI) का सहयोगी बैंक (Associate Bank) बनाया गया था?",
+    options: [
+      "1955",
+      "1959",
+      "1965",
+      "1969",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "In 1959, the Government passed the State Bank of India (Subsidiary Banks) Act, converting 8 major state-associated banks (Bikaner, Jaipur, Hyderabad, Indore, Mysore, Patiala, Saurashtra, and Travancore) into Associate Banks of SBI. Later, State Bank of Bikaner and State Bank of Jaipur were merged in 1963 to form SBBJ.",
+    expHi: "वर्ष 1959 में 'भारतीय स्टेट बैंक (सहायक बैंक) अधिनियम, 1959' पारित किया गया, जिसके अंतर्गत रियासतों के 8 बैंकों को एसबीआई का सहयोगी बैंक बनाया गया। 1963 में बीकानेर और जयपुर बैंक को मिलाकर एक कर दिया गया जिससे इनकी संख्या 7 रह गई, और 1 अप्रैल 2017 को शेष सभी सहयोगी बैंकों का SBI में पूर्ण विलय हो गया।",
+    fact: "The State Bank of India (Subsidiary Banks) Act, 1959 was repealed in 2018 after all associate banks were merged into SBI in 2017."
+  },
+  {
+    id: 54,
+    en: "Which was the first Indian bank to open an overseas branch outside India (in London in 1946)?",
+    hi: "भारत के बाहर विदेश में (वर्ष 1946 में लंदन में) अपनी पहली शाखा खोलने वाला प्रथम भारतीय बैंक कौन-सा था?",
+    options: [
+      "State Bank of India / भारतीय स्टेट बैंक",
+      "Bank of India / बैंक ऑफ इंडिया",
+      "Bank of Baroda / बैंक ऑफ बड़ौदा",
+      "Canara Bank / केनरा बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Bank of India (founded on 7 September 1906 in Mumbai) became the first Indian bank to open a branch outside India when it established its London branch in 1946. It was also the first Indian bank to open a branch in continental Europe (Paris, 1974).",
+    expHi: "'बैंक ऑफ इंडिया' (स्थापना: 1906, मुख्यालय: मुंबई) वर्ष 1946 में लंदन में अपनी शाखा खोलकर विदेश में शाखा खोलने वाला पहला भारतीय बैंक बना था।",
+    fact: "Bank of Baroda is historically known as 'India's International Bank' due to its extensive global footprint, while SBI currently has the highest number of foreign branches among Indian banks."
+  },
+  {
+    id: 55,
+    en: "Who was the President of India (Acting) who signed the Banking Companies (Acquisition and Transfer of Undertakings) Ordinance on 19 July 1969 to nationalize 14 banks?",
+    hi: "19 जुलाई 1969 को 14 बैंकों के राष्ट्रीयकरण वाले अध्यादेश पर हस्ताक्षर करने वाले भारत के तत्कालीन (कार्यवाहक) राष्ट्रपति कौन थे?",
+    options: [
+      "Dr. Zakir Husain / डॉ. जाकिर हुसैन",
+      "V.V. Giri / वी.वी. गिरि",
+      "M. Hidayatullah / एम. हिदायतुल्लाह",
+      "Fakhruddin Ali Ahmed / फखरुद्दीन अली अहमद",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Following the death of President Dr. Zakir Husain in May 1969, Vice-President V.V. Giri was serving as the Acting President of India. On 19 July 1969, V.V. Giri signed the historic Bank Nationalization Ordinance just hours before his resignation as Acting President took effect on the morning of 20 July 1969 (after which Chief Justice M. Hidayatullah became Acting President).",
+    expHi: "मई 1969 में डॉ. जाकिर हुसैन के निधन के बाद उपराष्ट्रपति वी.वी. गिरि कार्यवाहक राष्ट्रपति बने। 19 जुलाई 1969 को कार्यवाहक राष्ट्रपति वी.वी. गिरि ने ही 14 बैंकों के राष्ट्रीयकरण अध्यादेश पर हस्ताक्षर किए थे (जिसके अगले दिन 20 जुलाई को उनके इस्तीफे के बाद मुख्य न्यायाधीश एम. हिदायतुल्लाह कार्यवाहक राष्ट्रपति बने)।",
+    fact: "When the ordinance was later converted into an Act by Parliament on 9 August 1969, Acting President Justice M. Hidayatullah gave his assent to the Bill."
+  },
+  {
+    id: 56,
+    en: "Which of the following banks was NOT among the 14 commercial banks nationalized in the first phase on 19 July 1969?",
+    hi: "निम्नलिखित में से कौन-सा बैंक 19 जुलाई 1969 को प्रथम चरण में राष्ट्रीयकृत किए गए 14 वाणिज्यिक बैंकों में शामिल नहीं था?",
+    options: [
+      "Central Bank of India / सेंट्रल बैंक ऑफ इंडिया",
+      "Dena Bank / देना बैंक",
+      "Oriental Bank of Commerce / ओरिएंटल बैंक ऑफ कॉमर्स",
+      "Syndicate Bank / सिंडिकेट बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Oriental Bank of Commerce (OBC) was nationalized in the SECOND phase on 15 April 1980 (along with Andhra Bank, Corporation Bank, New Bank of India, Punjab & Sind Bank, and Vijaya Bank). Central Bank of India, Dena Bank, and Syndicate Bank were all nationalized in the first phase on 19 July 1969.",
+    expHi: "'ओरिएंटल बैंक ऑफ कॉमर्स' (OBC) का राष्ट्रीयकरण प्रथम चरण (1969) में नहीं, बल्कि द्वितीय चरण (15 अप्रैल 1980) में किया गया था। सेंट्रल बैंक ऑफ इंडिया, देना बैंक और सिंडिकेट बैंक प्रथम चरण के 14 बैंकों में शामिल थे।",
+    fact: "Since memorizing 6 banks of 1980 is much easier than 14 banks of 1969, always use the 6 banks of 1980 (Andhra, Corporation, New Bank of India, OBC, Punjab & Sind, Vijaya) to eliminate options in UPSSSC exams!"
+  },
+  {
+    id: 57,
+    en: "Which of the following Public Sector Banks does NOT have its headquarters in Mumbai?",
+    hi: "निम्नलिखित में से किस सार्वजनिक क्षेत्र के बैंक (PSB) का मुख्यालय मुंबई में स्थित नहीं है?",
+    options: [
+      "State Bank of India (SBI) / भारतीय स्टेट बैंक",
+      "Union Bank of India / यूनियन बैंक ऑफ इंडिया",
+      "Central Bank of India / सेंट्रल बैंक ऑफ इंडिया",
+      "Indian Overseas Bank / इंडियन ओवरसीज बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "Indian Overseas Bank (IOB) and Indian Bank both have their headquarters in Chennai (Tamil Nadu). State Bank of India, Bank of India, Central Bank of India, and Union Bank of India are all headquartered in Mumbai.",
+    expHi: "'इंडियन ओवरसीज बैंक' (IOB) तथा 'इंडियन बैंक' दोनों का मुख्यालय चेन्नई (तमिलनाडु) में स्थित है। जबकि भारतीय स्टेट बैंक, यूनियन बैंक ऑफ इंडिया, बैंक ऑफ इंडिया और सेंट्रल बैंक ऑफ इंडिया का मुख्यालय मुंबई में है।",
+    fact: "Quick HQ Rule for PSBs: Banks starting with 'Indian' (Indian Bank, Indian Overseas Bank) = Chennai; Banks with 'Punjab' (PNB, Punjab & Sind Bank) = New Delhi; UCO Bank = Kolkata; Bank of Maharashtra = Pune; Bank of Baroda = Vadodara; Canara Bank = Bengaluru."
+  },
+  {
+    id: 58,
+    en: "According to the Second Schedule of the Reserve Bank of India Act, 1934, which banks are termed as 'Scheduled Banks' (अनुसूचित बैंक)?",
+    hi: "भारतीय रिज़र्व बैंक अधिनियम, 1934 की किस अनुसूची में शामिल बैंकों को 'अनुसूचित बैंक' (Scheduled Banks) कहा जाता है?",
+    options: [
+      "First Schedule / प्रथम अनुसूची",
+      "Second Schedule / द्वितीय अनुसूची",
+      "Third Schedule / तृतीय अनुसूची",
+      "Fourth Schedule / चतुर्थ अनुसूची",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Banks that are listed in the Second Schedule of the Reserve Bank of India Act, 1934 are known as Scheduled Banks. To qualify initially under Section 42(6)(a), a bank had to have paid-up capital and reserves of at least ₹5 lakh and satisfy RBI that its affairs are not conducted in a manner detrimental to depositors.",
+    expHi: "वे सभी बैंक जो 'भारतीय रिज़र्व बैंक अधिनियम, 1934' की 'द्वितीय अनुसूची' (Second Schedule) में सूचीबद्ध हैं, उन्हें अनुसूचित बैंक (Scheduled Banks) कहा जाता है। ये बैंक आरबीआई से बैंक दर/रेपो दर पर ऋण प्राप्त करने के पात्र होते हैं।",
+    fact: "All 12 Public Sector Banks, Regional Rural Banks, and major Private/Foreign banks in India are Scheduled Commercial Banks under the Second Schedule of the RBI Act, 1934."
+  },
+  {
+    id: 59,
+    en: "Which committee was set up in 1970 to recommend the Differential Rate of Interest (DRI) Scheme (1972), under which nationalized banks provide loans at a concessional 4% interest rate to the weakest sections of society?",
+    hi: "राष्ट्रीयकृत बैंकों द्वारा समाज के सबसे कमजोर वर्गों को 4% की रियायती ब्याज दर पर ऋण उपलब्ध कराने वाली 'विभेदक ब्याज दर योजना' (Differential Rate of Interest - DRI Scheme) किस समिति की सिफारिश पर 1972 में शुरू की गई थी?",
+    options: [
+      "B.K. Hazari Committee / बी.के. हजारी समिति",
+      "R.V. Gupta Committee / आर.वी. गुप्ता समिति",
+      "Raghuram Rajan Committee / रघुराम राजन समिति",
+      "K.V. Kamath Committee / के.वी. कामत समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Based on the recommendations of the Dr. B.K. Hazari Committee (1970), the Government of India formulated the Differential Rate of Interest (DRI) Scheme in March 1972. Under this post-nationalization welfare reform, public sector banks must lend at least 1% of their previous year's total advances to the poorest of the poor at a flat concessional interest rate of 4% per annum.",
+    expHi: "डॉ. बी.के. हजारी समिति की सिफारिश पर वर्ष 1972 में 'विभेदक ब्याज दर योजना' (DRI Scheme) शुरू की गई। इसके अंतर्गत सार्वजनिक क्षेत्र के बैंकों को अपने कुल ऋण का कम से कम 1% हिस्सा समाज के सबसे गरीब और कमजोर वर्गों को मात्र 4% वार्षिक ब्याज दर पर देना होता है।",
+    fact: "The uniform interest rate charged under the DRI Scheme across India is 4% per annum."
+  },
+  {
+    id: 60,
+    en: "In which year was the 'Kisan Credit Card' (KCC) scheme introduced by Indian banks to provide timely and adequate credit support to farmers, and on the recommendation of which committee?",
+    hi: "किसानों को समय पर और पर्याप्त ऋण सहायता प्रदान करने के लिए भारतीय बैंकों द्वारा 'किसान क्रेडिट कार्ड' (KCC) योजना किस वर्ष और किस समिति की सिफारिश पर शुरू की गई थी?",
+    options: [
+      "1998 – R.V. Gupta Committee / 1998 – आर.वी. गुप्ता समिति",
+      "1995 – Narasimham Committee / 1995 – नरसिंहम समिति",
+      "2004 – M.S. Swaminathan Committee / 2004 – एम.एस. स्वामीनाथन समिति",
+      "1982 – Sivaraman Committee / 1982 – शिवरामन समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Kisan Credit Card (KCC) scheme was introduced in August 1998 by Indian banks (model scheme prepared by NABARD) on the recommendations of the R.V. Gupta Committee to provide hassle-free short-term and term credit for agricultural needs.",
+    expHi: "आर.वी. गुप्ता समिति की सिफारिश पर नाबार्ड (NABARD) द्वारा तैयार मॉडल के आधार पर अगस्त 1998 में 'किसान क्रेडिट कार्ड' (KCC) योजना शुरू की गई थी (तत्कालीन वित्त मंत्री यशवंत सिन्हा के कार्यकाल में)।",
+    fact: "In Budget 2018-19, the Kisan Credit Card (KCC) facility was extended to farmers engaged in Animal Husbandry (पशुपालन) and Fisheries (मत्स्य पालन) as well."
+  },
+  {
+    id: 61,
+    en: "When was the Small Industries Development Bank of India (SIDBI) established as the principal financial institution for the promotion, financing, and development of the MSME sector, and where is its headquarters located?",
+    hi: "सूक्ष्म, लघु और मध्यम उद्यम (MSME) क्षेत्र के संवर्धन, वित्तपोषण और विकास हेतु शीर्ष वित्तीय संस्थान के रूप में 'भारतीय लघु उद्योग विकास बैंक' (SIDBI) की स्थापना कब हुई और इसका मुख्यालय कहाँ स्थित है?",
+    options: [
+      "2 April 1990 – Lucknow / 2 अप्रैल 1990 – लखनऊ",
+      "12 July 1982 – Mumbai / 12 जुलाई 1982 – मुंबई",
+      "1 July 1964 – New Delhi / 1 जुलाई 1964 – नई दिल्ली",
+      "1 January 1988 – Kolkata / 1 जनवरी 1988 – कोलकाता",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "SIDBI (Small Industries Development Bank of India) was established on 2 April 1990 under an Act of Parliament (SIDBI Act, 1989). Very importantly for Uttar Pradesh exams, SIDBI's headquarters is located in Lucknow, Uttar Pradesh.",
+    expHi: "भारतीय लघु उद्योग विकास बैंक (SIDBI) की स्थापना 2 अप्रैल 1990 को संसद के एक अधिनियम के तहत सूक्ष्म, लघु और मध्यम उद्यमों (MSME) के विकास के लिए की गई थी। इसका मुख्यालय उत्तर प्रदेश की राजधानी 'लखनऊ' में स्थित है।",
+    fact: "Because SIDBI is the only major all-India financial institution headquartered in Lucknow (UP), its establishment year (1990) and HQ (Lucknow) are repeatedly asked in UPSSSC exams."
+  },
+  {
+    id: 62,
+    en: "In which year was the Export-Import Bank of India (EXIM Bank) established to finance, facilitate, and promote India's foreign trade?",
+    hi: "भारत के विदेशी व्यापार (आयात-निर्यात) के वित्तपोषण और संवर्धन के लिए 'भारतीय निर्यात-आयात बैंक' (EXIM Bank) की स्थापना किस वर्ष की गई थी?",
+    options: [
+      "1969",
+      "1975",
+      "1982",
+      "1991",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Export-Import Bank of India (EXIM Bank) was established on 1 January 1982 under the Export-Import Bank of India Act, 1981 as a purveyor of export credit, mirroring global export credit agencies. Its headquarters is in Mumbai.",
+    expHi: "भारतीय निर्यात-आयात बैंक (EXIM Bank) की स्थापना 'एक्जिम बैंक अधिनियम, 1981' के अंतर्गत 1 जनवरी 1982 को मुंबई में की गई थी। (याद रखें: 1982 में ही EXIM बैंक और NABARD दोनों की स्थापना हुई थी)।",
+    fact: "Both EXIM Bank (1 January 1982) and NABARD (12 July 1982) were established in the year 1982 during the 6th Five-Year Plan."
+  },
+  {
+    id: 63,
+    en: "When was the National Housing Bank (NHB), the apex regulatory and refinancing body for housing finance institutions in India, established?",
+    hi: "भारत में आवास वित्त संस्थानों के शीर्ष निकाय के रूप में 'राष्ट्रीय आवास बैंक' (National Housing Bank - NHB) की स्थापना कब की गई थी?",
+    options: [
+      "9 July 1988 / 9 जुलाई 1988",
+      "2 April 1990 / 2 अप्रैल 1990",
+      "12 July 1982 / 12 जुलाई 1982",
+      "15 April 1980 / 15 अप्रैल 1980",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The National Housing Bank (NHB) was set up on 9 July 1988 under the National Housing Bank Act, 1987 (7th Five-Year Plan), headquartered in New Delhi. Originally a wholly-owned subsidiary of RBI, the Government of India acquired RBI's entire 100% stake in NHB in 2019.",
+    expHi: "राष्ट्रीय आवास बैंक (NHB) की स्थापना 'राष्ट्रीय आवास बैंक अधिनियम, 1987' के तहत 9 जुलाई 1988 को नई दिल्ली में की गई थी। वर्ष 2019 में भारत सरकार ने आरबीआई से इसकी 100% हिस्सेदारी खरीद ली, जिससे अब यह पूर्णतः भारत सरकार के स्वामित्व में है।",
+    fact: "'RESIDEX' (India's first official housing price index) was launched by the National Housing Bank (NHB) in 2007."
+  },
+  {
+    id: 64,
+    en: "In April 2015, MUDRA (Micro Units Development & Refinance Agency Ltd.) was launched under PMMY. What are the three classic categories of MUDRA loans?",
+    hi: "अप्रैल 2015 में शुरू की गई 'प्रधानमंत्री मुद्रा योजना' (PMMY) के अंतर्गत सूक्ष्म एवं लघु उद्यमों को दिए जाने वाले मुद्रा ऋणों (MUDRA Loans) की तीन मुख्य श्रेणियां कौन-सी हैं?",
+    options: [
+      "Pratham, Dwitiya, Tritiya / प्रथम, द्वितीय, तृतीय",
+      "Shishu, Kishore, Tarun / शिशु, किशोर, तरुण",
+      "Laghu, Madhyam, Brihad / लघु, मध्यम, वृहद",
+      "Gramin, Shahari, Rashtriya / ग्रामीण, शहरी, राष्ट्रीय",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Launched on 8 April 2015, Pradhan Mantri MUDRA Yojana (PMMY) classifies loans into three foundational stages of business growth: 'Shishu' (loans up to ₹50,000), 'Kishore' (loans above ₹50,000 and up to ₹5 lakh), and 'Tarun' (loans above ₹5 lakh and up to ₹10 lakh; with 'Tarun Plus' up to ₹20 lakh introduced in Budget 2024-25).",
+    expHi: "8 अप्रैल 2015 को प्रारंभ प्रधानमंत्री मुद्रा योजना (PMMY) के तहत ऋणों को तीन मुख्य श्रेणियों में बांटा गया है: 'शिशु' (₹50,000 तक), 'किशोर' (₹50,000 से ₹5 लाख तक) और 'तरुण' (₹5 लाख से ₹10 लाख तक; बजट 2024-25 में 'तरुण प्लस' के तहत सीमा ₹20 लाख)।",
+    fact: "MUDRA Ltd. was set up as a wholly-owned subsidiary of SIDBI to refinance last-mile micro-finance institutions and banks."
+  },
+  {
+    id: 65,
+    en: "On which date was the world's largest financial inclusion banking initiative, 'Pradhan Mantri Jan-Dhan Yojana' (PMJDY), officially launched across India?",
+    hi: "विश्व की सबसे बड़ी वित्तीय समावेशन बैंकिंग पहल, 'प्रधानमंत्री जन-धन योजना' (PMJDY) आधिकारिक तौर पर पूरे भारत में किस तिथि को शुरू की गई थी?",
+    options: [
+      "15 August 2014 / 15 अगस्त 2014",
+      "28 August 2014 / 28 अगस्त 2014",
+      "2 October 2014 / 2 अक्टूबर 2014",
+      "1 January 2015 / 1 जनवरी 2015",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Prime Minister Narendra Modi announced PMJDY from the Red Fort on 15 August 2014, and the scheme was officially launched nationwide on 28 August 2014 with the slogan 'Mera Khata, Bhagya Vidhata'. It provides zero-balance Basic Savings Bank Deposit (BSBD) accounts, RuPay debit cards with ₹2 lakh accident insurance cover, and an overdraft facility up to ₹10,000.",
+    expHi: "प्रधानमंत्री जन-धन योजना (PMJDY) की घोषणा 15 अगस्त 2014 को की गई थी तथा इसका आधिकारिक शुभारंभ 28 अगस्त 2014 को 'मेरा खाता - भाग्य विधाता' आदर्श वाक्य के साथ किया गया। इसके तहत जीरो बैलेंस बचत खाता, ₹2 लाख का दुर्घटना बीमा युक्त RuPay डेबिट कार्ड और ₹10,000 तक की ओवरड्राफ्ट (OD) सुविधा दी जाती है।",
+    fact: "Earlier in 2011, the Government had launched the 'Swabhimaan' campaign to provide banking services to villages with a population above 2,000, which was later replaced by the universal household approach of PMJDY (2014)."
+  },
+  {
+    id: 66,
+    en: "In the context of banking reforms for resolving large bad loans, what did the RBI's 'Twin Balance Sheet (TBS) Problem' (first highlighted in the Economic Survey 2015–16) refer to?",
+    hi: "बैंकिंग सुधारों और बड़े डूबे कर्जों (NPA) के संदर्भ में, आर्थिक सर्वेक्षण 2015-16 में चर्चित 'ट्विन बैलेंस शीट समस्या' (Twin Balance Sheet Problem) किन दो क्षेत्रों के वित्तीय संकट को दर्शाती है?",
+    options: [
+      "Fiscal Deficit and Current Account Deficit / राजकोषीय घाटा और चालू खाता घाटा",
+      "Over-leveraged Corporate Companies and NPA-burdened Banks / कर्ज में डूबी कॉर्पोरेट कंपनियां और NPA से ग्रस्त बैंक",
+      "Central Government Budget and State Government Budgets / केंद्र सरकार का बजट और राज्य सरकारों का बजट",
+      "RBI's Balance Sheet and Commercial Banks' Balance Sheet / आरबीआई का तुलन-पत्र और वाणिज्यिक बैंकों का तुलन-पत्र",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "The 'Twin Balance Sheet (TBS) problem' refers to the simultaneous stress on the balance sheets of two sectors: (1) Indian corporate firms (which took excessive debt during the 2000s investment boom and couldn't pay interest) and (2) Public Sector Banks (whose balance sheets were crippled by rising Non-Performing Assets from those unpaid corporate loans).",
+    expHi: "'ट्विन बैलेंस शीट (दोहरा तुलन-पत्र) समस्या' का अर्थ एक साथ दो क्षेत्रों के खाते खराब होना है: पहला—अत्यधिक कर्ज में डूबी भारतीय कॉर्पोरेट कंपनियां, और दूसरा—उन कंपनियों द्वारा कर्ज न चुकाने से उच्च NPA के बोझ तले दबे सार्वजनिक क्षेत्र के बैंक (PSBs)। (ध्यान दें: राजकोषीय घाटा और चालू खाता घाटा को 'ट्विन डेफिसिट' कहा जाता है)।",
+    fact: "To clean up the Twin Balance Sheet problem, RBI launched the Asset Quality Review (AQR) in 2015 under Governor Raghuram Rajan, followed by the 4R strategy (Recognition, Resolution, Recapitalisation, and Reforms)."
+  },
+  {
+    id: 67,
+    en: "Which committee was constituted by the RBI in 1990 specifically to examine and improve 'Customer Service in Banks'?",
+    hi: "बैंकों में 'ग्राहक सेवा' (Customer Service) में सुधार की जांच और सिफारिश करने के लिए आरबीआई द्वारा वर्ष 1990 में किस प्रसिद्ध समिति का गठन किया गया था?",
+    options: [
+      "M.N. Goiporia Committee / एम.एन. गोइपोरिया समिति",
+      "R.N. Malhotra Committee / आर.एन. मल्होत्रा समिति",
+      "Abid Hussain Committee / आबिद हुसैन समिति",
+      "Suresh Tendulkar Committee / सुरेश तेंदुलकर समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The M.N. Goiporia Committee (1990) and later the M. Damodaran Committee (2010) were specifically appointed by the RBI to improve Customer Service in Banks. R.N. Malhotra Committee (1993) was for Insurance Sector Reforms, and Suresh Tendulkar Committee (2009) was for Poverty Estimation.",
+    expHi: "बैंकों में ग्राहक सेवा (Customer Service in Banks) में सुधार के लिए वर्ष 1990 में 'एम.एन. गोइपोरिया समिति' (तथा बाद में 2010 में एम. दामोदरन समिति) का गठन किया गया था। आर.एन. मल्होत्रा समिति (1993) बीमा क्षेत्र में सुधारों से संबंधित थी।",
+    fact: "Both M.N. Goiporia Committee (1990) and M. Damodaran Committee (2010) are associated with Customer Service in Indian Banks."
+  },
+  {
+    id: 68,
+    en: "Which committee recommended the introduction of Electronic Fund Transfer (EFT), MICR cheques, and massive computerization of Indian banks in 1988?",
+    hi: "वर्ष 1988 में किस समिति ने भारतीय बैंकों के व्यापक कम्प्यूटरीकरण (Computerization), MICR चेक और इलेक्ट्रॉनिक फंड ट्रांसफर (EFT) शुरू करने की सिफारिश की थी?",
+    options: [
+      "Dr. C. Rangarajan Committee / डॉ. सी. रंगराजन समिति",
+      "Raja Chelliah Committee / राजा चेलैया समिति",
+      "Vijay Kelkar Committee / विजय केलकर समिति",
+      "Y.V. Reddy Committee / वाई.वी. रेड्डी समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Committees on Mechanisation and Computerisation in the Banking Industry (1984 and 1988), chaired by then RBI Deputy Governor Dr. C. Rangarajan, drew up the master plan for bank computerization, introduction of MICR (Magnetic Ink Character Recognition) clearing, and networking via BANKNET.",
+    expHi: "बैंकिंग उद्योग में मशीनीकरण और कम्प्यूटरीकरण के लिए डॉ. सी. रंगराजन की अध्यक्षता वाली समितियों (1984 एवं 1988) ने बैंकों के कम्प्यूटरीकरण, MICR चेक क्लीयरिंग और इलेक्ट्रॉनिक बैंकिंग की नींव रखी थी।",
+    fact: "Following Rangarajan Committee's report, the RBI established IDRBT (Institute for Development and Research in Banking Technology) in Hyderabad in 1996, which developed the INFINET network, NEFT, and RTGS in India."
+  },
+  {
+    id: 69,
+    en: "In the evolution of interest rate reforms in India, put the following benchmark lending rate systems introduced by the RBI in their correct chronological order (from oldest to newest): 1. Base Rate System | 2. Benchmark Prime Lending Rate (BPLR) | 3. Marginal Cost of Funds based Lending Rate (MCLR) | 4. External Benchmark Lending Rate (EBLR)",
+    hi: "भारत में ब्याज दर सुधारों के विकास क्रम में, आरबीआई द्वारा लागू की गई ऋण दर प्रणालियों (1. बेस रेट, 2. BPLR, 3. MCLR, 4. EBLR) को उनके सही कालानुक्रमिक क्रम (सबसे पुरानी से सबसे नई) में व्यवस्थित करें:",
+    options: [
+      "2 ➔ 1 ➔ 3 ➔ 4",
+      "1 ➔ 2 ➔ 3 ➔ 4",
+      "2 ➔ 3 ➔ 1 ➔ 4",
+      "3 ➔ 2 ➔ 1 ➔ 4",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "To make monetary policy transmission transparent after interest rate deregulation, RBI reformed how banks price loans in four chronological stages: (2) Benchmark Prime Lending Rate (BPLR) in 2003 ➔ (1) Base Rate in July 2010 (Deepak Mohanty Committee) ➔ (3) Marginal Cost of Funds based Lending Rate (MCLR) in April 2016 ➔ (4) External Benchmark Lending Rate (EBLR, linked to Repo Rate) in October 2019 (Janak Raj Committee).",
+    expHi: "आरबीआई द्वारा बैंकों की ऋण ब्याज दरों में पारदर्शिता लाने हेतु किए गए सुधारों का सही कालानुक्रम है: BPLR (2003) ➔ बेस रेट (जुलाई 2010) ➔ MCLR (अप्रैल 2016) ➔ बाहरी बेंचमार्क आधारित दर / EBLR (अक्टूबर 2019)।",
+    fact: "Under the External Benchmark Lending Rate (EBLR) system introduced in October 2019, retail (home, auto) and MSME floating-rate loans are directly linked to an external benchmark such as the RBI Repo Rate."
+  },
+  {
+    id: 70,
+    en: "Under Section 42(1) of the RBI Act, 1934, what is the specific share of a bank's Net Demand and Time Liabilities (NDTL) that every Scheduled Commercial Bank must keep with the RBI strictly in the form of liquid cash (on which RBI pays no interest)?",
+    hi: "आरबीआई अधिनियम, 1934 की धारा 42(1) के अंतर्गत, प्रत्येक अनुसूचित वाणिज्यिक बैंक को अपनी कुल जमा देयताओं (NDTL) का वह निश्चित हिस्सा जो केवल 'नकद' (Cash) के रूप में आरबीआई के पास रखना अनिवार्य होता है (जिस पर आरबीआई कोई ब्याज नहीं देता), क्या कहलाता है?",
+    options: [
+      "Statutory Liquidity Ratio (SLR) / सांविधिक तरलता अनुपात (SLR)",
+      "Cash Reserve Ratio (CRR) / नकद आरक्षित अनुपात (CRR)",
+      "Repo Rate / रेपो दर",
+      "Bank Rate / बैंक दर",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Cash Reserve Ratio (CRR) is the percentage of Net Demand and Time Liabilities (NDTL) that banks must maintain in cash balances with the RBI. Following the Narasimham Committee-I (1991) reforms and the 2006 amendment to the RBI Act, the statutory floor (3%) and ceiling (20%) limits on CRR were removed, giving RBI full flexibility.",
+    expHi: "'नकद आरक्षित अनुपात' (Cash Reserve Ratio - CRR) बैंकों की कुल जमाओं (NDTL) का वह प्रतिशत है जिसे बैंकों को अनिवार्य रूप से आरबीआई के पास 'नकद' (Cash) रूप में रखना पड़ता है। इसके विपरीत, SLR (सांविधिक तरलता अनुपात) बैंकों को अपने स्वयं के पास नकदी, स्वर्ण या सरकारी प्रतिभूतियों के रूप में रखना होता है।",
+    fact: "Through the 2006 banking reform amendments, the statutory minimum limits on both CRR (earlier 3%) and SLR (earlier 25%, maximum 40%) were removed."
+  },
+  {
+    id: 71,
+    en: "Which committee was constituted by the RBI in 1997 (and again in 2006) to lay down the roadmap for 'Capital Account Convertibility' (पूंजी खाता परिवर्तनीयता) of the Indian Rupee?",
+    hi: "भारतीय रुपये की 'पूंजी खाता परिवर्तनीयता' (Capital Account Convertibility) की रूपरेखा तैयार करने के लिए आरबीआई द्वारा वर्ष 1997 (तथा पुनः 2006) में किस समिति का गठन किया गया था?",
+    options: [
+      "S.S. Tarapore Committee / एस.एस. तारापोर समिति",
+      "Percy Mistry Committee / पर्सी मिस्त्री समिति",
+      "Raghuram Rajan Committee / रघुराम राजन समिति",
+      "Bimal Jalan Committee / बिमल जालान समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The RBI appointed the Committee on Capital Account Convertibility (CAC) under former RBI Deputy Governor S.S. Tarapore in 1997 (Tarapore Committee-I) and again in 2006 (Tarapore Committee-II) for 'Fuller Capital Account Convertibility'. Note that the Indian Rupee became fully convertible on the Current Account in August 1994, but remains only partially convertible on the Capital Account.",
+    expHi: "भारतीय रुपये की 'पूंजी खाता परिवर्तनीयता' (Capital Account Convertibility) पर सुझाव देने के लिए आरबीआई ने वर्ष 1997 (तथा 2006) में 'एस.एस. तारापोर समिति' का गठन किया था। ज्ञातव्य है कि भारतीय रुपया अगस्त 1994 से 'चालू खाते' (Current Account) पर पूर्णतः परिवर्तनीय है, किंतु पूंजी खाते पर अभी भी आंशिक रूप से ही परिवर्तनीय है।",
+    fact: "Current Account Convertibility in India (1994) = 100% (Full); Capital Account Convertibility in India = Partial (S.S. Tarapore Committee)."
+  },
+  {
+    id: 72,
+    en: "Under the 'Mission Indradhanush' (2015) 7-point reform plan for Public Sector Banks (A, B, C, D, E, F, G), what did the letter 'C' stand for?",
+    hi: "सार्वजनिक क्षेत्र के बैंकों के कायाकल्प हेतु वर्ष 2015 में शुरू की गई 'इंद्रधनुष योजना' के 7 सूत्रों (A, B, C, D, E, F, G) में अक्षर 'C' का क्या अर्थ था?",
+    options: [
+      "Capitalisation / कैपिटलाइजेशन (पूंजीकरण)",
+      "Consolidation / कंसोलिडेशन (विलय/एकीकरण)",
+      "Computerisation / कम्प्यूटरीकरण",
+      "Centralisation / केंद्रीकरण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The 7 elements (A to G) of the Mission Indradhanush (2015) for PSBs are: A = Appointments (separating posts of Chairman and MD/CEO); B = Bank Board Bureau; C = Capitalisation (infusing ₹70,000 crore capital into PSBs); D = De-stressing PSBs (resolving NPAs); E = Empowerment (autonomy in hiring/decisions); F = Framework of Accountability; G = Governance Reforms.",
+    expHi: "सार्वजनिक क्षेत्र के बैंकों में सुधार के लिए वर्ष 2015 में शुरू किए गए 'इंद्रधनुष मिशन' के 7 इंद्रधनुषी बिंदु (A से G) हैं: A = नियुक्तियां (Appointments), B = बैंक बोर्ड ब्यूरो, C = पूंजीकरण (Capitalisation), D = तनावमुक्त करना (De-stressing), E = सशक्तिकरण (Empowerment), F = जवाबदेही का ढांचा (Framework of Accountability), और G = शासन सुधार (Governance Reforms)।",
+    fact: "Mission Indradhanush (Banking, August 2015) is a 7-pronged PSB reform plan, whereas Mission Indradhanush (Health, December 2014) is a universal vaccination programme against vaccine-preventable diseases."
+  },
+  {
+    id: 73,
+    en: "Which of the following private sector banks was merged into the Singapore-based DBS Bank India Ltd. in November 2020 by the Reserve Bank of India in a landmark rescue amalgamation?",
+    hi: "नवंबर 2020 में भारतीय रिज़र्व बैंक (RBI) द्वारा वित्तीय संकट के कारण निजी क्षेत्र के किस भारतीय बैंक का सिंगापुर के 'डीबीएस बैंक इंडिया लिमिटेड' (DBS Bank India) में अनिवार्य विलय कर दिया गया?",
+    options: [
+      "Lakshmi Vilas Bank (LVB) / लक्ष्मी विलास बैंक",
+      "Global Trust Bank (GTB) / ग्लोबल ट्रस्ट बैंक",
+      "Centurion Bank of Punjab / सेंचुरियन बैंक ऑफ पंजाब",
+      "Bank of Rajasthan / बैंक ऑफ राजस्थान",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "On 27 November 2020, utilizing its powers under Section 45 of the Banking Regulation Act, 1949, the RBI amalgamated the crisis-hit 94-year-old private lender Lakshmi Vilas Bank (LVB) with DBS Bank India Ltd. Earlier historic mergers: Global Trust Bank was merged into Oriental Bank of Commerce (2004); Centurion Bank of Punjab (2008) and Bank of Rajasthan (2010) were merged into HDFC Bank and ICICI Bank respectively.",
+    expHi: "नवंबर 2020 में गंभीर वित्तीय संकट और बढ़ते NPA के कारण आरबीआई ने बैंकिंग विनियमन अधिनियम, 1949 की धारा 45 के तहत 'लक्ष्मी विलास बैंक' (LVB) का विलय 'डीबीएस बैंक इंडिया लिमिटेड' (DBS Bank India) में कर दिया।",
+    fact: "In another landmark financial sector merger taking effect on 1 July 2023, housing finance giant HDFC Ltd. was merged with HDFC Bank."
+  },
+  {
+    id: 74,
+    en: "On the recommendation of the Y.H. Malegam Committee (2010), which category of Non-Banking Financial Companies (NBFCs) was created by the RBI to regulate micro-loans given to low-income households?",
+    hi: "वाई.एच. मालेगाम समिति (2010) की सिफारिश पर कम आय वाले परिवारों को दिए जाने वाले सूक्ष्म ऋणों (Micro-credit) को विनियमित करने के लिए आरबीआई द्वारा किस विशेष श्रेणी की गैर-बैंकिंग वित्तीय कंपनी (NBFC) का सृजन किया गया?",
+    options: [
+      "NBFC-MFI (Micro Finance Institution) / एनबीएफसी-एमएफआई (सूक्ष्म वित्त संस्थान)",
+      "NBFC-IFC (Infrastructure Finance Company) / एनबीएफसी-आईएफसी",
+      "NBFC-P2P (Peer to Peer Lending) / एनबीएफसी-पी2पी",
+      "NBFC-AA (Account Aggregator) / एनबीएफसी-अकाउंट एग्रीगेटर",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Following the microfinance crisis in Andhra Pradesh in 2010, RBI constituted a sub-committee under Y.H. Malegam to study issues and concerns in the Micro Finance Institutions (MFI) sector. Based on the Malegam Committee report (2011), RBI introduced a separate regulatory category called 'NBFC-MFI' (Non-Banking Financial Company - Micro Finance Institution).",
+    expHi: "वर्ष 2010 में सूक्ष्म वित्त क्षेत्र (Microfinance Sector) की समस्याओं के अध्ययन के लिए आरबीआई द्वारा गठित 'वाई.एच. मालेगाम समिति' की सिफारिश पर 'NBFC-MFI' (गैर-बैंकिंग वित्तीय कंपनी - सूक्ष्म वित्त संस्थान) नामक नई नियामक श्रेणी बनाई गई और ब्याज दरों व वसूली के सख्त नियम तय किए गए।",
+    fact: "Under current RBI harmonized microfinance guidelines (2022), a 'microfinance loan' is defined as a collateral-free loan given to a household having an annual household income up to ₹3,00,000."
+  },
+  {
+    id: 75,
+    en: "Which new All-India Development Financial Institution (DFI) was established under an Act of Parliament in 2021 to support long-term infrastructure financing in India?",
+    hi: "भारत में दीर्घकालिक बुनियादी ढांचे (Infrastructure) के वित्तपोषण के लिए वर्ष 2021 में संसद के एक अधिनियम द्वारा किस नए अखिल भारतीय विकास वित्तीय संस्थान (DFI) की स्थापना की गई?",
+    options: [
+      "NaBFID (National Bank for Financing Infrastructure and Development) / नैबफिड (नेशनल बैंक फॉर फाइनेंसिंग इंफ्रास्ट्रक्चर एंड डेवलपमेंट)",
+      "IDFC (Infrastructure Development Finance Company) / आईडीएफसी",
+      "IFCI (Industrial Finance Corporation of India) / आईएफसीआई",
+      "ICICI (Industrial Credit and Investment Corporation of India) / आईसीआईसीआई",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The National Bank for Financing Infrastructure and Development (NaBFID) was established in 2021 under the NaBFID Act, 2021 as India's fifth All-India Financial Institution (AIFI) regulated by RBI (alongside NABARD, SIDBI, EXIM Bank, and NHB). Headquartered in Mumbai, K.V. Kamath was appointed its first Chairperson.",
+    expHi: "भारत में बुनियादी ढांचा परियोजनाओं को दीर्घकालिक ऋण उपलब्ध कराने के लिए वर्ष 2021 में 'नेशनल बैंक फॉर फाइनेंसिंग इंफ्रास्ट्रक्चर एंड डेवलपमेंट' (NaBFID) की स्थापना की गई। नाबार्ड, सिडबी, एक्जिम बैंक और राष्ट्रीय आवास बैंक (NHB) के बाद यह आरबीआई द्वारा विनियमित भारत का 5वां अखिल भारतीय वित्तीय संस्थान (AIFI) है।",
+    fact: "The 5 All-India Financial Institutions (AIFIs) currently regulated and supervised by the RBI are: EXIM Bank (1982), NABARD (1982), NHB (1988), SIDBI (1990), and NaBFID (2021)."
+  },
+  {
+    id: 76,
+    en: "Under the 'Service Area Approach' (SAA) introduced by the RBI in April 1989 to improve the quality of rural lending by nationalized banks, each rural and semi-urban bank branch was assigned to serve a cluster of how many villages?",
+    hi: "राष्ट्रीयकृत बैंकों द्वारा ग्रामीण ऋण की गुणवत्ता में सुधार के लिए अप्रैल 1989 में आरबीआई द्वारा शुरू किए गए 'सेवा क्षेत्र दृष्टिकोण' (Service Area Approach - SAA) के तहत, प्रत्येक ग्रामीण और अर्ध-शहरी बैंक शाखा को लगभग कितने गांवों के समूह की जिम्मेदारी सौंपी गई थी?",
+    options: [
+      "5 to 10 Villages / 5 से 10 गांव",
+      "15 to 25 Villages / 15 से 25 गांव",
+      "50 to 75 Villages / 50 से 75 गांव",
+      "100 to 150 Villages / 100 से 150 गांव",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 1,
+    expEn: "Based on the recommendations of the Dr. P.D. Ojha Committee (1988), the RBI introduced the Service Area Approach (SAA) on 1 April 1989 as an extension of the Lead Bank Scheme. Under SAA, every rural and semi-urban branch of commercial banks and RRBs was allocated a designated 'Service Area' of 15 to 25 villages for planned and monitored rural credit delivery.",
+    expHi: "डॉ. पी.डी. ओझा समिति की सिफारिश पर आरबीआई ने 1 अप्रैल 1989 से लीड बैंक योजना के विस्तार के रूप में 'सेवा क्षेत्र दृष्टिकोण' (Service Area Approach - SAA) लागू किया था। इसके अंतर्गत प्रत्येक ग्रामीण और अर्ध-शहरी बैंक शाखा को 15 से 25 गांवों के एक समूह के समग्र ऋण विकास का दायित्व दिया गया था।",
+    fact: "Lead Bank Scheme (1969) = District-level credit planning (Nariman/Gadgil Committee); Service Area Approach (1989) = Village-cluster level (15–25 villages) credit planning (P.D. Ojha Committee)."
+  },
+  {
+    id: 77,
+    en: "On the recommendation of which committee were 'Local Area Banks' (LABs) introduced in the private sector in August 1996 to mobilize rural savings and make them available for investments in local areas (covering up to 3 contiguous districts)?",
+    hi: "ग्रामीण बचत को जुटाने और स्थानीय क्षेत्रों (अधिकतम 3 सटे हुए जिलों) में ऋण उपलब्ध कराने के उद्देश्य से अगस्त 1996 में निजी क्षेत्र में 'स्थानीय क्षेत्र बैंक' (Local Area Banks - LABs) की स्थापना किस समिति की सिफारिश पर शुरू की गई थी?",
+    options: [
+      "Narasimham Committee / नरसिंहम समिति",
+      "Kelkar Committee / केलकर समिति",
+      "Tendulkar Committee / तेंदुलकर समिति",
+      "Chelliah Committee / चेलैया समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Announced in the Union Budget 1996-97 in pursuance of Narasimham Committee-I reforms on rural credit institutions, the RBI issued guidelines in August 1996 for setting up Local Area Banks (LABs) in the private sector with a minimum paid-up capital of ₹5 crore and an operational area comprising a maximum of 3 geographically contiguous districts.",
+    expHi: "नरसिंहम समिति के सुधारों के अनुसरण में अगस्त 1996 में निजी क्षेत्र में 'स्थानीय क्षेत्र बैंक' (Local Area Banks - LABs) स्थापित करने की योजना शुरू की गई। इनका कार्यक्षेत्र अधिकतम 3 परस्पर सटे हुए जिलों (Contiguous Districts) तक सीमित होता है।",
+    fact: "Coastal Local Area Bank (Vijayawada, Andhra Pradesh) and Krishna Bhima Samruddhi LAB are classic examples of operational Local Area Banks in India."
+  },
+  {
+    id: 78,
+    en: "Which committee was set up in 2004 on the restructuring of Regional Rural Banks (RRBs) and recommended the horizontal amalgamation of RRBs sponsored by the same bank within a State?",
+    hi: "वर्ष 2004 में क्षेत्रीय ग्रामीण बैंकों (RRBs) के पुनर्गठन पर किस समिति का गठन किया गया था, जिसने एक ही राज्य के भीतर एक ही प्रवर्तक बैंक द्वारा प्रायोजित RRBs के आपसी विलय (Amalgamation) की सिफारिश की थी?",
+    options: [
+      "Dr. V.S. Vyas Committee / डॉ. वी.एस. व्यास समिति",
+      "M.L. Dantwala Committee / एम.एल. दांतवाला समिति",
+      "A.M. Khusro Committee / ए.एम. खुसरो समिति",
+      "K.C. Chakrabarty Committee / के.सी. चक्रवर्ती समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "In 2004, the Advisory Committee on Flow of Credit to Agriculture and Related Activities under Prof. V.S. Vyas recommended consolidating RRBs sponsored by the same commercial bank within a state to make them financially viable. Consequently, beginning in September 2005, the number of RRBs was brought down sharply from 196 to 43.",
+    expHi: "वर्ष 2004 में प्रो. वी.एस. व्यास समिति की सिफारिश पर क्षेत्रीय ग्रामीण बैंकों (RRBs) को घाटे से उबारने और मजबूत बनाने के लिए सितंबर 2005 से उनके चरणबद्ध एकीकरण (विलय) की प्रक्रिया शुरू की गई, जिससे देश में RRBs की संख्या 196 से घटकर 43 के करीब आ गई।",
+    fact: "Other historic RRB committees frequently asked in exams: M.L. Dantwala Committee (1977), Kelkar Committee (1986), A.M. Khusro Committee (1989), M.C. Bhandari Committee (1994), and K.C. Chakrabarty Committee (2009 on RRB recapitalization)."
+  },
+  {
+    id: 79,
+    en: "Which pivotal committee was constituted in 2004 under the chairmanship of Prof. A. Vaidyanathan to recommend a revival package and structural reforms for the Short-Term Rural Cooperative Credit Structure (PACS, DCCBs, and StCBs)?",
+    hi: "अल्पकालिक ग्रामीण सहकारी साख संरचना (PACS, जिला सहकारी बैंक एवं राज्य सहकारी बैंक) के पुनरुद्धार पैकेज और सुधारों की सिफारिश करने के लिए वर्ष 2004 में किसकी अध्यक्षता में एक प्रसिद्ध कार्यबल गठित किया गया था?",
+    options: [
+      "Prof. A. Vaidyanathan Committee / प्रो. ए. वैद्यनाथन समिति",
+      "Prakash Tandon Committee / प्रकाश टंडन समिति",
+      "Chore Committee / चोरे समिति",
+      "Bimal Jalan Committee / बिमल जालान समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Task Force on Revival of Rural Cooperative Credit Institutions (2004) was chaired by Prof. A. Vaidyanathan. It examined the three-tier Short-Term Cooperative Credit Structure—State Cooperative Banks (StCBs) at the state apex level, District Central Cooperative Banks (DCCBs) at the district level, and Primary Agricultural Credit Societies (PACS) at the village level.",
+    expHi: "ग्रामीण सहकारी साख संस्थाओं (तीन-स्तरीय ढांचा: राज्य स्तर पर StCB, जिला स्तर पर DCCB और ग्राम स्तर पर PACS) के पुनरुद्धार एवं सुधार के लिए वर्ष 2004 में 'प्रो. ए. वैद्यनाथन समिति' का गठन किया गया था।",
+    fact: "Through the Banking Regulation (Amendment) Act, 2020, Urban Cooperative Banks (UCBs) and Multi-State Cooperative Banks were brought under the direct supervisory and regulatory powers of the RBI to protect depositors after the PMC Bank crisis."
+  },
+  {
+    id: 80,
+    en: "In India's banking reform history, which bank became the first institution set up as a new private sector bank in 1994 (following Narasimham Committee-I) into which its parent Development Financial Institution (DFI) reverse-merged in 2002?",
+    hi: "नरसिंहम समिति-I की सिफारिशों के पश्चात वर्ष 1994 में स्थापित होने वाले नए निजी बैंकों में से किस बैंक में वर्ष 2002 में उसकी मूल विकास वित्तीय संस्था (DFI) का 'रिवर्स मर्जर' (उल्टा विलय) हुआ था?",
+    options: [
+      "ICICI Bank / आईसीआईसीआई बैंक",
+      "Axis Bank (UTI Bank) / एक्सिस बैंक (यूटीआई बैंक)",
+      "IndusInd Bank / इंडसइंड बैंक",
+      "Kotak Mahindra Bank / कोटक महिंद्रा बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Following the 1993 RBI licensing guidelines based on Narasimham Committee-I, UTI Bank (now Axis Bank), HDFC Bank, IndusInd Bank, and ICICI Bank were established in 1994. In 2002, the parent development finance institution ICICI Ltd. (originally set up in 1955) reverse-merged into its commercial banking subsidiary ICICI Bank Ltd., becoming India's first universal bank via reverse merger.",
+    expHi: "वर्ष 1955 में स्थापित औद्योगिक साख एवं निवेश निगम (ICICI Ltd.) का वर्ष 2002 में अपनी ही बैंकिंग सहायक कंपनी 'आईसीआईसीआई बैंक' (ICICI Bank, स्थापना 1994) में 'रिवर्स मर्जर' (उल्टा विलय) हो गया था। वहीं वर्ष 2003 में 'कोटक महिंद्रा फाइनेंस' भारत में वाणिज्यिक बैंक में परिवर्तित होने वाली पहली गैर-बैंकिंग वित्तीय कंपनी (NBFC) बनी।",
+    fact: "UTI Bank (established in 1994 in Ahmedabad) was officially renamed as 'Axis Bank' on 30 July 2007."
+  },
+  {
+    id: 81,
+    en: "On the recommendation of the Bimal Jalan Committee (2013–14) for screening 'New Bank Licenses in the Private Sector', which two institutions were granted universal commercial bank licenses by the RBI in April 2014 (commencing operations in 2015)?",
+    hi: "निजी क्षेत्र में नए बैंक लाइसेंस आवेदनों की जांच हेतु गठित 'बिमल जालान समिति' (2013-14) की सिफारिश पर, आरबीआई ने अप्रैल 2014 में किन दो संस्थानों को पूर्ण वाणिज्यिक बैंक (Universal Bank) का लाइसेंस प्रदान किया था?",
+    options: [
+      "Bandhan Bank and IDFC Bank / बंधन बैंक और आईडीएफसी (IDFC) बैंक",
+      "Yes Bank and Kotak Mahindra Bank / यस बैंक और कोटक महिंद्रा बैंक",
+      "Airtel Bank and Paytm Bank / एयरटेल बैंक और पेटीएम बैंक",
+      "Federal Bank and South Indian Bank / फेडरल बैंक और साउथ इंडियन बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Based on the scrutiny by the High-Level Advisory Committee chaired by former RBI Governor Dr. Bimal Jalan, the RBI granted 'in-principle' approval in April 2014 to two applicants—Bandhan Financial Services (headquartered in Kolkata) and IDFC Ltd.—to set up universal banks in the private sector. Both began banking operations in 2015.",
+    expHi: "पूर्व आरबीआई गवर्नर डॉ. बिमल जालान की अध्यक्षता वाली उच्च स्तरीय समिति की सिफारिश पर आरबीआई ने वर्ष 2014 में दो संस्थानों—'बंधन बैंक' (मुख्यालय: कोलकाता) और 'आईडीएफसी बैंक' (IDFC Bank)—को नए सार्वभौमिक वाणिज्यिक बैंक (Universal Bank) का लाइसेंस दिया, जिन्होंने 2015 में कार्य प्रारंभ किया।",
+    fact: "Bandhan Bank (2015) became the first Microfinance Institution (MFI) in India to transform into a full-fledged Universal Commercial Bank."
+  },
+  {
+    id: 82,
+    en: "In November 2013, the 'Bharatiya Mahila Bank' (BMB) was inaugurated as India's first women-centric public sector bank (later merged with SBI on 1 April 2017). On the recommendation of which committee was Bharatiya Mahila Bank established, and who was its first CMD?",
+    hi: "नवंबर 2013 में महिलाओं के आर्थिक सशक्तिकरण हेतु स्थापित 'भारतीय महिला बैंक' (जिसका 1 अप्रैल 2017 को SBI में विलय हो गया) का गठन किस समिति की सिफारिश पर किया गया था और इसकी प्रथम अध्यक्ष (CMD) कौन थीं?",
+    options: [
+      "M.B.N. Rao Committee – Usha Ananthasubramanian / एम.बी.एन. राव समिति – उषा अनंतसुब्रमण्यम",
+      "Usha Thorat Committee – Arundhati Bhattacharya / उषा थोराट समिति – अरुंधति भट्टाचार्य",
+      "Nachiket Mor Committee – Chanda Kochhar / नचिकेत मोर समिति – चंदा कोचर",
+      "Shyamala Gopinath Committee – Shikha Sharma / श्यामला गोपीनाथ समिति – शिखा शर्मा",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Announced in the Union Budget 2013-14, the blueprint for Bharatiya Mahila Bank (BMB) was prepared by a high-level committee headed by former Canara Bank CMD M.B.N. Rao. Inaugurated on 19 November 2013 with headquarters in New Delhi, Usha Ananthasubramanian served as its first CMD before it merged into SBI on 1 April 2017.",
+    expHi: "'एम.बी.एन. राव समिति' की सिफारिश पर 19 नवंबर 2013 को 'भारतीय महिला बैंक' की स्थापना (मुख्यालय: नई दिल्ली) की गई थी तथा उषा अनंतसुब्रमण्यम इसकी पहली सीएमडी (CMD) बनीं। 1 अप्रैल 2017 को इसका भारतीय स्टेट बैंक (SBI) में विलय कर दिया गया। (अरुंधति भट्टाचार्य SBI की प्रथम महिला अध्यक्ष थीं)।",
+    fact: "Do not confuse: First woman CMD of Bharatiya Mahila Bank = Usha Ananthasubramanian; First woman Chairperson of State Bank of India (SBI) = Arundhati Bhattacharya."
+  },
+  {
+    id: 83,
+    en: "Which major banking reform scheme was launched on 1 September 2018 at Talkatora Stadium, New Delhi to leverage the massive network of over 1.55 lakh Post Offices and 3 lakh postmen ('Grameen Dak Sevaks') for providing doorstep paperless banking?",
+    hi: "देश के 1.55 लाख से अधिक डाकघरों और डाकियों (ग्रामीण डाक सेवकों) के माध्यम से घर-घर जाकर पेपरलेस बैंकिंग सेवाएं पहुंचाने के लिए 1 सितंबर 2018 को किस प्रमुख भुगतान बैंक का शुभारंभ किया गया?",
+    options: [
+      "India Post Payments Bank (IPPB) / इंडिया पोस्ट पेमेंट्स बैंक (IPPB)",
+      "Bharatiya Dak Commercial Bank / भारतीय डाक वाणिज्यिक बैंक",
+      "Gramin Dak Vikas Bank / ग्रामीण डाक विकास बैंक",
+      "Bharat Post Small Finance Bank / भारत पोस्ट लघु वित्त बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "India Post Payments Bank (IPPB) was launched nationwide on 1 September 2018 under the Department of Posts, Ministry of Communications, with 100% equity owned by the Government of India. Its tagline is 'Aapka Bank, Aapke Dwaar' (Your Bank at Your Doorstep).",
+    expHi: "1 सितंबर 2018 को भारत सरकार के संचार मंत्रालय (डाक विभाग) के अधीन 100% सरकारी स्वामित्व वाले 'इंडिया पोस्ट पेमेंट्स बैंक' (IPPB) का राष्ट्रव्यापी शुभारंभ किया गया। इसकी टैगलाइन 'आपका बैंक, आपके द्वार' है।",
+    fact: "Airtel Payments Bank (launched in January 2017) was the first Payments Bank in India, whereas India Post Payments Bank (IPPB) is a 100% Government-owned public sector Payments Bank."
+  },
+  {
+    id: 84,
+    en: "Under RBI's banking supervision reforms, which subset of banks in India is required to maintain additional Common Equity Tier-1 (CET-1) capital buffers because their failure would cause massive disruption to the entire financial system and economy ('Too Big To Fail')?",
+    hi: "आरबीआई के बैंकिंग पर्यवेक्षण सुधारों के तहत, भारत में किन बैंकों को 'Too Big To Fail' (इतने बड़े कि डूबने नहीं दिया जा सकता) की श्रेणी में रखकर अतिरिक्त पूंजी बफर (CET-1) बनाए रखना अनिवार्य किया गया है?",
+    options: [
+      "D-SIBs (Domestic Systemically Important Banks) / डी-सिब्स (घरेलू प्रणालीगत रूप से महत्वपूर्ण बैंक)",
+      "LABs (Local Area Banks) / स्थानीय क्षेत्र बैंक",
+      "RRBs (Regional Rural Banks) / क्षेत्रीय ग्रामीण बैंक",
+      "SFBs (Small Finance Banks) / लघु वित्त बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Since 2015, the RBI identifies Domestic Systemically Important Banks (D-SIBs) whose size, interconnectedness, and lack of substitutes make them 'Too Big To Fail' (TBTF). Currently, three banks in India are designated by RBI as D-SIBs: State Bank of India (SBI), HDFC Bank, and ICICI Bank.",
+    expHi: "आरबीआई वर्ष 2015 से ऐसे विशाल बैंकों को 'घरेलू प्रणालीगत रूप से महत्वपूर्ण बैंक' (Domestic Systemically Important Banks - D-SIBs) घोषित करता है, जिनका आकार भारतीय अर्थव्यवस्था के लिए इतना बड़ा है कि उनका विफल होना पूरे वित्तीय तंत्र को अस्थिर कर सकता है ('Too Big To Fail')। वर्तमान में भारत के तीन बैंक—SBI, HDFC Bank और ICICI Bank—D-SIBs की सूची में शामिल हैं।",
+    fact: "Remember the exact trio of India's D-SIBs ('Too Big To Fail' banks): 1 Public Sector Bank (SBI) + 2 Private Sector Banks (HDFC Bank and ICICI Bank)."
+  },
+  {
+    id: 85,
+    en: "What is the full form of 'CRAR' (also known as Capital Adequacy Ratio - CAR), a core pillar of Basel-I, II, and III banking reforms adopted in India after the Narasimham Committee?",
+    hi: "नरसिंहम समिति की सिफारिशों और बेसल मानकों (Basel Norms) के मुख्य स्तंभ के रूप में भारतीय बैंकिंग सुधारों में अपनाए गए 'CRAR' (पूंजी पर्याप्तता अनुपात) का पूर्ण रूप क्या है?",
+    options: [
+      "Capital to Risk-weighted Assets Ratio / कैपिटल टू रिस्क-वेटेड एसेट्स रेशियो (जोखिम-भारित परिसंपत्तियों से पूंजी का अनुपात)",
+      "Cash Reserve and Asset Ratio / कैश रिज़र्व एंड एसेट रेशियो",
+      "Credit to Rural Agriculture Ratio / क्रेडिट टू रूरल एग्रीकल्चर रेशियो",
+      "Current Recovery of Asset Ratio / करंट रिकवरी ऑफ एसेट रेशियो",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "CRAR stands for 'Capital to Risk-weighted Assets Ratio' (also called Capital Adequacy Ratio - CAR). Expressed as a percentage, CRAR = (Tier-1 Capital + Tier-2 Capital) / Risk-Weighted Assets. It ensures that banks hold enough cushion of their own capital to absorb unexpected loan losses and protect depositors' money.",
+    expHi: "बैंकिंग सुधारों में प्रयुक्त 'CRAR' का पूर्ण रूप 'Capital to Risk-weighted Assets Ratio' (जोखिम-भारित परिसंपत्तियों से पूंजी का अनुपात) है। यह बैंक की कुल पूंजी (Tier-1 + Tier-2 पूंजी) और उसकी जोखिम-भारित संपत्तियों का अनुपात होता है, जो बैंक को संभावित घाटे से सुरक्षित रखता है।",
+    fact: "Under Basel-III norms, the international minimum CRAR requirement is 8% (10.5% with Capital Conservation Buffer), whereas RBI mandates a stricter minimum CRAR of 9% (11.5% including 2.5% Capital Conservation Buffer) for Indian Scheduled Commercial Banks."
+  },
+  {
+    id: 86,
+    en: "In 1993, following the recommendations of the Narasimham Committee-I (1991) and Tiwari Committee (1981), the 'RDDBFI Act, 1993' was enacted to set up which specialized quasi-judicial bodies for speedy recovery of bank debts (now applicable for loans of ₹20 lakh and above)?",
+    hi: "तिवारी समिति (1981) और नरसिंहम समिति-I (1991) की सिफारिशों के आधार पर बैंकों के फंसे हुए ऋणों (वर्तमान में ₹20 लाख और उससे अधिक) की त्वरित वसूली के लिए वर्ष 1993 के अधिनियम के तहत किन विशेष अर्ध-न्यायिक न्यायाधिकरणों की स्थापना की गई?",
+    options: [
+      "Debt Recovery Tribunals (DRTs) / ऋण वसूली अधिकरण (DRTs)",
+      "Lok Adalats / लोक अदालतें",
+      "Consumer Disputes Redressal Commissions / उपभोक्ता विवाद निवारण आयोग",
+      "Securities Appellate Tribunals (SAT) / प्रतिभूति अपीलीय न्यायाधिकरण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "The Recovery of Debts Due to Banks and Financial Institutions (RDDBFI) Act, 1993 provided for the establishment of Debt Recovery Tribunals (DRTs) and Debt Recovery Appellate Tribunals (DRATs) for expeditious adjudication and recovery of debts due to banks without waiting years in regular civil courts.",
+    expHi: "सामान्य दीवानी न्यायालयों में लगने वाले लंबे समय से बचने और बैंकों के बकाया ऋणों की त्वरित वसूली के लिए 'RDDBFI अधिनियम, 1993' के तहत देश भर में 'ऋण वसूली अधिकरण' (Debt Recovery Tribunals - DRTs) और अपीलीय अधिकरण (DRATs) स्थापित किए गए।",
+    fact: "Under IBC 2016 and RDDBFI Act, DRTs handle debt recovery cases of ₹20 lakh and above and serve as the adjudicating authority for insolvency of individuals and partnership firms (while NCLT handles corporate companies)."
+  },
+  {
+    id: 87,
+    en: "On the recommendation of the Raghuram Rajan Committee on Financial Sector Reforms (2008), which apex super-regulatory council was constituted by the Government of India in December 2010 to maintain financial stability and promote inter-regulatory coordination among RBI, SEBI, IRDAI, and PFRDA?",
+    hi: "वित्तीय क्षेत्र के सुधारों पर गठित रघुराम राजन समिति (2008) की सिफारिश पर, आरबीआई, सेबी (SEBI), इरडा (IRDAI) और पीएफआरडीए (PFRDA) के बीच अंतर-नियामक समन्वय और वित्तीय स्थिरता बनाए रखने के लिए दिसंबर 2010 में किस शीर्ष परिषद का गठन किया गया?",
+    options: [
+      "Financial Stability and Development Council (FSDC) / वित्तीय स्थिरता और विकास परिषद (FSDC)",
+      "Monetary Policy Committee (MPC) / मौद्रिक नीति समिति (MPC)",
+      "National Development Council (NDC) / राष्ट्रीय विकास परिषद (NDC)",
+      "Economic Advisory Council (EAC) / आर्थिक सलाहकार परिषद",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Constituted in December 2010, the Financial Stability and Development Council (FSDC) is an apex-level non-statutory council chaired by the Union Finance Minister. Its members include the heads of all financial sector regulators (RBI Governor, Chairpersons of SEBI, IRDAI, PFRDA, IBBI, and IFSCA) along with top Finance Ministry secretaries.",
+    expHi: "दिसंबर 2010 में भारत सरकार द्वारा 'वित्तीय स्थिरता और विकास परिषद' (Financial Stability and Development Council - FSDC) का गठन किया गया। इसके अध्यक्ष 'केंद्रीय वित्त मंत्री' होते हैं तथा सभी वित्तीय नियामकों (RBI, SEBI, IRDAI, PFRDA, IBBI) के प्रमुख इसके सदस्य होते हैं।",
+    fact: "Contrast the Chairpersons carefully for exams: Chairperson of MPC (Monetary Policy Committee) = RBI Governor; Chairperson of FSDC (Financial Stability and Development Council) = Union Finance Minister; Chairperson of FSDC Sub-Committee = RBI Governor."
+  },
+  {
+    id: 88,
+    en: "In the context of banking asset classification reforms introduced by RBI in 2014, before a loan turns into an NPA at 90 days, banks must categorize accounts showing signs of incipient stress into three 'Special Mention Accounts' (SMA). Which of the following correctly defines 'SMA-2'?",
+    hi: "किसी ऋण खाते के 90 दिनों के बाद NPA बनने से पहले ही उस पर निगरानी रखने के लिए आरबीआई द्वारा 2014 में लागू किए गए 'स्पेशल मेंशन अकाउंट' (SMA-0, SMA-1, SMA-2) सुधार के अंतर्गत, 'SMA-2' की सही समय-सीमा क्या है?",
+    options: [
+      "Principal or interest overdue for 1 to 30 days / मूलधन या ब्याज 1 से 30 दिनों तक बकाया रहना",
+      "Principal or interest overdue for 31 to 60 days / मूलधन या ब्याज 31 से 60 दिनों तक बकाया रहना",
+      "Principal or interest overdue for 61 to 90 days / मूलधन या ब्याज 61 से 90 दिनों तक बकाया रहना",
+      "Principal or interest overdue for more than 90 days / मूलधन या ब्याज 90 दिनों से अधिक बकाया रहना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "To detect early warning signals of potential NPAs before the 90-day cliff, RBI introduced three sub-categories of Special Mention Accounts (SMA) in 2014: SMA-0 (overdue for 1 to 30 days), SMA-1 (overdue for 31 to 60 days), and SMA-2 (overdue for 61 to 90 days). Once overdue crosses 90 days, the account is officially classified as an NPA.",
+    expHi: "ऋण खाते को NPA बनने से पहले ही पहचानने के लिए आरबीआई ने 'स्पेशल मेंशन अकाउंट' (SMA) की तीन श्रेणियां बनाई हैं: SMA-0 (1 से 30 दिन बकाया), SMA-1 (31 से 60 दिन बकाया), और SMA-2 (61 से 90 दिन बकाया)। 90 दिन पार होते ही खाता NPA घोषित हो जाता है।",
+    fact: "To prevent big corporate borrowers (with exposure of ₹5 crore and above) from defaulting quietly, RBI also created a central database called CRILC (Central Repository of Information on Large Credits) in 2014 where banks must report all SMA-2 accounts."
+  },
+  {
+    id: 89,
+    en: "Under the Banking Companies (Acquisition and Transfer of Undertakings) Acts, what is the statutory minimum shareholding percentage that the Central Government must hold at all times in any Nationalized Bank?",
+    hi: "राष्ट्रीयकृत बैंकों के अधिनियम और बैंकिंग कानूनों के प्रावधानों के अनुसार, किसी भी 'राष्ट्रीयकृत बैंक' (Nationalized Bank) में केंद्र सरकार की न्यूनतम हिस्सेदारी (Shareholding) हर समय कम से कम कितने प्रतिशत रहना कानूनी रूप से अनिवार्य है?",
+    options: [
+      "26%",
+      "49%",
+      "51%",
+      "74%",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 2,
+    expEn: "Under Section 3(2B)(c) of the Banking Companies (Acquisition and Transfer of Undertakings) Acts of 1970 and 1980, Nationalized Banks are permitted to raise capital from the public stock market, subject to the strict statutory condition that the Central Government holds at least 51% of the paid-up capital in a Nationalized Bank (and 55% minimum under the SBI Act, 1955 for SBI).",
+    expHi: "वर्ष 1970 एवं 1980 के बैंक राष्ट्रीयकरण अधिनियमों के अनुसार, राष्ट्रीयकृत बैंक शेयर बाजार से पूंजी जुटा सकते हैं, किंतु उनमें केंद्र सरकार की हिस्सेदारी किसी भी समय 51% से कम नहीं हो सकती (और भारतीय स्टेट बैंक अधिनियम, 1955 के तहत SBI में न्यूनतम सरकारी हिस्सेदारी की सीमा 55% है)।",
+    fact: "Foreign Direct Investment (FDI) limit in Public Sector Banks is capped at 20% (under Government route), whereas in Private Sector Banks, the FDI limit is up to 74% (up to 49% under Automatic route, and 49% to 74% under Government route)."
+  },
+  {
+    id: 90,
+    en: "In 2000, the RBI established CIBIL (Credit Information Bureau India Limited) to maintain credit records and credit scores of borrowers to prevent fresh NPAs. Which RBI committee had recommended the setting up of CIBIL?",
+    hi: "ऋण लेने वालों के क्रेडिट रिकॉर्ड और 'सिबिल स्कोर' (CIBIL Score) का डेटाबेस तैयार कर बैंकों को नए NPA से बचाने के लिए वर्ष 2000 में स्थापित 'सिबिल' (CIBIL) का गठन आरबीआई की किस समिति की सिफारिश पर किया गया था?",
+    options: [
+      "Siddiqui Committee / सिद्दीकी समिति",
+      "K.V. Kamath Committee / के.वी. कामत समिति",
+      "Nachiket Mor Committee / नचिकेत मोर समिति",
+      "Tandon Committee / टंडन समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Based on the recommendations of the RBI Working Group headed by N.H. Siddiqui (1999) to explore the possibilities of setting up a credit information bureau in India, CIBIL (Credit Information Bureau (India) Limited, now TransUnion CIBIL) was incorporated in August 2000.",
+    expHi: "एन.एच. सिद्दीकी कार्य समूह (1999) की सिफारिशों के आधार पर अगस्त 2000 में भारत की पहली क्रेडिट सूचना कंपनी 'सिबिल' (CIBIL - Credit Information Bureau India Limited) की स्थापना की गई। बाद में संसद द्वारा 'क्रेडिट सूचना कंपनी (विनियमन) अधिनियम, 2005' पारित किया गया।",
+    fact: "A standard CIBIL Credit Score for an individual borrower ranges between 300 and 900 (a score above 750 is generally considered strong by banks)."
+  },
+  {
+    id: 91,
+    en: "In the post-nationalization era (1970s), three famous committees—the Dahejia Committee (1969), the Prakash Tandon Committee (1974), and the K.B. Chore Committee (1979)—were appointed by the RBI to reform which specific aspect of commercial banking?",
+    hi: "बैंकों के राष्ट्रीयकरण के बाद 1970 के दशक में आरबीआई द्वारा गठित तीन प्रसिद्ध समितियां—दहेजिया समिति (1969), प्रकाश टंडन समिति (1974) और के.बी. चोरे समिति (1979)—वाणिज्यिक बैंकिंग के किस विशिष्ट सुधार से संबंधित थीं?",
+    options: [
+      "Working Capital Finance and Cash Credit System / कार्यशील पूंजी वित्तपोषण और कैश क्रेडिट (ऋण) प्रणाली",
+      "Demonetization of Currency Notes / करेंसी नोटों का विमुद्रीकरण",
+      "Merger of Presidency Banks / प्रेसीडेंसी बैंकों का विलय",
+      "Establishment of Payments Banks / भुगतान बैंकों की स्थापना",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Right after the 1969 nationalization, large industrial houses were cornering excessive bank credit under the Cash Credit system. The Dahejia Committee (1969), Prakash Tandon Committee (1974), and K.B. Chore Committee (1979) reformed 'Working Capital Finance' by introducing 'Maximum Permissible Bank Finance' (MPBF) norms so credit could be freed up for priority sectors.",
+    expHi: "1969 के राष्ट्रीयकरण के पश्चात बड़े उद्योगों द्वारा बैंक साख के दुरुपयोग को रोकने और 'कार्यशील पूंजी वित्तपोषण' (Working Capital Finance / Cash Credit System) में अनुशासन लाने के लिए आरबीआई ने दहेजिया समिति (1969), प्रकाश टंडन समिति (1974) और के.बी. चोरे समिति (1979) का गठन किया था।",
+    fact: "Classic exam matching pair: Tandon Committee (1974) & Chore Committee (1979) = Working Capital Finance by Banks; P.R. Nayak Committee (1991) = Credit to Small Scale Industries (SSI); P.J. Nayak Committee (2014) = Governance of Boards of Banks (Indradhanush)."
+  },
+  {
+    id: 92,
+    en: "Which important banking reform tool was introduced by the RBI in June 2000 based on the recommendations of the Narasimham Committee-II (1998) to manage daily short-term liquidity mismatches in the banking system through Repo and Reverse Repo auctions?",
+    hi: "नरसिंहम समिति-II (1998) की सिफारिशों के आधार पर बैंकिंग प्रणाली में दैनिक अल्पकालिक तरलता (Liquidity) के प्रबंधन के लिए रेपो और रिवर्स रेपो नीलामी के माध्यम से जून 2000 में आरबीआई द्वारा कौन-सी सुविधा शुरू की गई थी?",
+    options: [
+      "Liquidity Adjustment Facility (LAF) / चलनिधि समायोजन सुविधा (LAF)",
+      "Statutory Liquidity Ratio (SLR) / सांविधिक तरलता अनुपात (SLR)",
+      "Selective Credit Control (SCC) / चयनात्मक साख नियंत्रण (SCC)",
+      "Priority Sector Lending Certificates (PSLC) / प्राथमिकता प्राप्त क्षेत्र ऋण प्रमाणपत्र",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Based on the recommendations of the Narasimham Committee-II on Banking Sector Reforms (1998), the RBI introduced the Liquidity Adjustment Facility (LAF) in June 2000. LAF operates primarily through daily Repo (injecting liquidity into banks) and Reverse Repo / Standing Deposit Facility - SDF (absorbing excess liquidity from banks) operations.",
+    expHi: "नरसिंहम समिति-II (1998) की सिफारिश पर आरबीआई ने जून 2000 में 'चलनिधि समायोजन सुविधा' (Liquidity Adjustment Facility - LAF) की शुरुआत की। इसके अंतर्गत रेपो (Repo) और रिवर्स रेपो (Reverse Repo) तथा स्थायी जमा सुविधा (SDF, 2022 में शुरू) के माध्यम से बैंकिंग तंत्र में दैनिक तरलता (नकदी) को नियंत्रित किया जाता है।",
+    fact: "In April 2022, RBI introduced the Standing Deposit Facility (SDF) as the floor of the LAF corridor, allowing RBI to absorb excess liquidity from banks without having to provide government securities as collateral."
+  },
+  {
+    id: 93,
+    en: "Which modern digital payment and banking reform was launched by the RBI on 1 December 2022 (following a pilot for wholesale in November 2022) as the sovereign digital form of Indian fiat currency (e₹)?",
+    hi: "दिसंबर 2022 में भारतीय रिज़र्व बैंक (RBI) द्वारा भारतीय कागजी मुद्रा के संप्रभु डिजिटल रूप (e₹) के रूप में किस डिजिटल मुद्रा की शुरुआत की गई?",
+    options: [
+      "CBDC (Central Bank Digital Currency / Digital Rupee - e₹) / सीबीडीसी (सेंट्रल बैंक डिजिटल करेंसी / डिजिटल रुपया - e₹)",
+      "Bharat Crypto Coin / भारत क्रिप्टो कॉइन",
+      "Sovereign Gold Bond (SGB) / सॉवरेन गोल्ड बॉन्ड",
+      "Electoral Bond / इलेक्टोरल बॉन्ड",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Following an amendment to the RBI Act, 1934 (Section 22) in the Finance Act, 2022, the RBI launched pilots for India's Central Bank Digital Currency (CBDC), known as the Digital Rupee (e₹)—in two segments: Digital Rupee-Wholesale (e₹-W) on 1 November 2022 and Digital Rupee-Retail (e₹-R) on 1 December 2022.",
+    expHi: "वित्त अधिनियम, 2022 के माध्यम से आरबीआई अधिनियम, 1934 में संशोधन कर नवंबर-दिसंबर 2022 में आरबीआई द्वारा 'सेंट्रल बैंक डिजिटल करेंसी' (CBDC) या 'डिजिटल रुपया' (e₹) को दो रूपों—थोक (e₹-W) और खुदरा (e₹-R)—में लॉन्च किया गया। यह भौतिक करेंसी नोटों के समान ही आरबीआई द्वारा जारी वैध मुद्रा (Legal Tender) है।",
+    fact: "Differentiate UPI vs. e₹ (CBDC): UPI is a payment interface that transfers money between two commercial bank accounts, whereas Digital Rupee (e₹) is digital cash itself (a direct liability of the RBI stored in a digital wallet)."
+  },
+  {
+    id: 94,
+    en: "Which of the following 12 existing Public Sector Banks (PSBs) in India is the ONLY one headquartered in Pune (Maharashtra)?",
+    hi: "वर्तमान में भारत में कार्यरत 12 सार्वजनिक क्षेत्र के बैंकों (PSBs) में से कौन-सा एकमात्र बैंक है जिसका मुख्यालय पुणे (महाराष्ट्र) में स्थित है?",
+    options: [
+      "Bank of Maharashtra / बैंक ऑफ महाराष्ट्र",
+      "Bank of India / बैंक ऑफ इंडिया",
+      "Central Bank of India / सेंट्रल बैंक ऑफ इंडिया",
+      "Union Bank of India / यूनियन बैंक ऑफ इंडिया",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Bank of Maharashtra (founded in 1935 and nationalized in the first phase on 19 July 1969) has its headquarters in Pune ('Lokmangal', Shivajinagar, Pune). Its tagline is 'One Family One Bank' (एक परिवार, एक बैंक). All other Maharashtra-based Public Sector Banks (SBI, Bank of India, Central Bank of India, and Union Bank of India) are headquartered in Mumbai.",
+    expHi: "'बैंक ऑफ महाराष्ट्र' (स्थापना: 1935, राष्ट्रीयकरण: 19 जुलाई 1969) देश के 12 सरकारी बैंकों में से एकमात्र ऐसा बैंक है जिसका मुख्यालय पुणे (महाराष्ट्र) में स्थित है। इसकी टैगलाइन 'एक परिवार, एक बैंक' (One Family One Bank) है।",
+    fact: "Complete HQ Checklist of all 12 PSBs: Mumbai (4): SBI, BoI, Central Bank, Union Bank; New Delhi (2): PNB, Punjab & Sind Bank; Chennai (2): Indian Bank, IOB; Kolkata (1): UCO Bank; Bengaluru (1): Canara Bank; Vadodara (1): Bank of Baroda; Pune (1): Bank of Maharashtra."
+  },
+  {
+    id: 95,
+    en: "Which of the following 12 existing Public Sector Banks in India is the ONLY one currently headquartered in Kolkata (West Bengal) after United Bank of India and Allahabad Bank were merged into other anchor banks on 1 April 2020?",
+    hi: "1 अप्रैल 2020 को यूनाइटेड बैंक ऑफ इंडिया (PNB में) और इलाहाबाद बैंक (इंडियन बैंक में) के विलय के पश्चात, वर्तमान के 12 सार्वजनिक क्षेत्र के बैंकों में से कोलकाता (पश्चिम बंगाल) में मुख्यालय वाला एकमात्र सरकारी बैंक कौन-सा बचा है?",
+    options: [
+      "UCO Bank / यूको बैंक (UCO Bank)",
+      "Canara Bank / केनरा बैंक",
+      "Punjab & Sind Bank / पंजाब एंड सिंध बैंक",
+      "Indian Overseas Bank / इंडियन ओवरसीज बैंक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Prior to 1 April 2020, three Public Sector Banks were headquartered in Kolkata: Allahabad Bank, United Bank of India, and UCO Bank. After Allahabad Bank merged into Indian Bank (Chennai) and United Bank of India merged into PNB (New Delhi), UCO Bank (founded in 1943 by G.D. Birla and nationalized on 19 July 1969) remains the sole Public Sector Bank headquartered in Kolkata.",
+    expHi: "1 अप्रैल 2020 से पहले कोलकाता में तीन सरकारी बैंकों (इलाहाबाद बैंक, यूनाइटेड बैंक ऑफ इंडिया और यूको बैंक) के मुख्यालय थे। इलाहाबाद बैंक और यूनाइटेड बैंक ऑफ इंडिया के विलय के बाद अब 'यूको बैंक' (UCO Bank - स्थापना 1943, संस्थापक जी.डी. बिड़ला) कोलकाता में मुख्यालय वाला एकमात्र सार्वजनिक क्षेत्र का बैंक है।",
+    fact: "Private sector lender Bandhan Bank (established as a universal bank in 2015) also has its headquarters in Kolkata."
+  },
+  {
+    id: 96,
+    en: "Under the 'Financial Inclusion' reforms initiated by the RBI in 2006 (based on the H.R. Khan Committee report), what are the retail agents engaged by banks to provide basic banking services at locations other than a bank branch/ATM called?",
+    hi: "एच.आर. खान समिति की सिफारिश पर वर्ष 2006 में आरबीआई द्वारा शुरू किए गए 'वित्तीय समावेशन' (Financial Inclusion) सुधारों के तहत, बैंक शाखा रहित गांवों में माइक्रो-एटीएम (AePS) के माध्यम से बुनियादी बैंकिंग सेवाएं देने वाले बैंक प्रतिनिधियों को आधिकारिक तौर पर क्या कहा जाता है?",
+    options: [
+      "Business Correspondents (BCs) / बिजनेस कॉरेस्पोंडेंट (बैंक मित्र / व्यवसाय प्रतिनिधि)",
+      "Authorised Dealers (ADs) / अधिकृत डीलर",
+      "Resolution Professionals (RPs) / समाधान पेशेवर",
+      "Actuaries / बीमांकक",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "Based on the recommendations of the Internal Group on Rural Credit and Microfinance chaired by H.R. Khan, the RBI introduced the 'Business Correspondent (BC) and Business Facilitator (BF) Model' in January 2006 for branchless banking. Under PMJDY, Business Correspondents working in villages are popularly known as 'Bank Mitras' or 'Bank Sakhis'.",
+    expHi: "एच.आर. खान समिति की सिफारिश पर आरबीआई ने जनवरी 2006 में शाखा-रहित बैंकिंग (Branchless Banking) के विस्तार के लिए 'बिजनेस कॉरेस्पोंडेंट' (Business Correspondents - BCs) मॉडल लागू किया, जिन्हें जन-धन योजना के अंतर्गत सामान्यतः 'बैंक मित्र' या 'बैंक सखी' कहा जाता है।",
+    fact: "AePS stands for 'Aadhaar Enabled Payment System' (developed by NPCI), which allows a customer to perform basic banking transactions at a Business Correspondent's Micro-ATM using just their Aadhaar number and biometric authentication."
+  },
+  {
+    id: 97,
+    en: "In the context of ATM reforms in India (introduced by RBI in 2012), what are ATMs that are set up, owned, and operated by Non-Bank Entities without bearing any specific bank's brand logo called?",
+    hi: "भारत में एटीएम (ATM) सुधारों के संदर्भ में, उन एटीएम को क्या कहा जाता है जिनका स्वामित्व और संचालन किसी बैंक के बजाय 'गैर-बैंकिंग संस्थाओं' (Non-Bank Entities) द्वारा किया जाता है और जिन पर किसी विशेष बैंक का लोगो नहीं होता?",
+    options: [
+      "White Label ATMs (WLAs) / व्हाइट लेबल एटीएम (White Label ATMs)",
+      "Brown Label ATMs (BLAs) / ब्राउन लेबल एटीएम",
+      "Green Label ATMs / ग्रीन लेबल एटीएम",
+      "Pink Label ATMs / पिंक लेबल एटीएम",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "ATMs set up, owned, and operated by non-bank entities are called 'White Label ATMs' (WLAs). RBI permitted WLAs in 2012 to boost ATM penetration in Tier-III to Tier-VI semi-urban and rural centres. India's first White Label ATM was 'Indicash', launched by Tata Communications Payment Solutions Ltd. (TCPSL) in 2013 at Chandrapada (Thane district, Maharashtra).",
+    expHi: "गैर-बैंकिंग कंपनियों (Non-Bank Entities) द्वारा स्थापित, स्वामित्व और संचालित किए जाने वाले एटीएम को 'व्हाइट लेबल एटीएम' (White Label ATMs - WLAs) कहा जाता है। टाटा कम्युनिकेशंस द्वारा वर्ष 2013 में महाराष्ट्र के ठाणे जिले में लॉन्च किया गया 'इंडिकैश' (Indicash) भारत का पहला व्हाइट लेबल एटीएम था।",
+    fact: "Color-coded ATM classification: White Label = Non-bank owned & operated; Brown Label = Hardware outsourced, carries sponsor bank's logo; Green Label = Agricultural transactions; Pink Label = Women banking; Yellow Label = E-commerce; Orange Label = Share transactions."
+  },
+  {
+    id: 98,
+    en: "During the COVID-19 pandemic in August 2020, the Reserve Bank of India constituted an Expert Committee under whose chairmanship to recommend financial parameters for the one-time resolution/restructuring of Covid-19-related stressed corporate loans across 26 sectors?",
+    hi: "अगस्त 2020 में कोविड-19 महामारी से प्रभावित 26 क्षेत्रों के कॉर्पोरेट ऋणों के एकमुश्त पुनर्गठन (One-time Loan Restructuring) हेतु वित्तीय मापदंड तय करने के लिए आरबीआई ने किसकी अध्यक्षता में एक विशेषज्ञ समिति का गठन किया था?",
+    options: [
+      "K.V. Kamath Committee / के.वी. कामत समिति",
+      "Urjit Patel Committee / उर्जित पटेल समिति",
+      "Usha Thorat Committee / उषा थोराट समिति",
+      "Bimal Jalan Committee / बिमल जालान समिति",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "In August 2020, the RBI constituted a five-member Expert Committee headed by veteran banker K.V. Kamath to recommend sector-specific financial parameters for the Resolution Framework for COVID-19-related Stress in loans above ₹1,500 crore across 26 affected sectors.",
+    expHi: "अगस्त 2020 में कोविड-19 महामारी से प्रभावित 26 व्यावसायिक क्षेत्रों के तनावग्रस्त ऋणों के पुनर्गठन (Resolution Framework) हेतु वित्तीय मानदंडों की सिफारिश करने के लिए आरबीआई ने दिग्गज बैंकर 'के.वी. कामत' की अध्यक्षता में समिति गठित की थी।",
+    fact: "Also remember: The Bimal Jalan Committee on Economic Capital Framework (ECF) of 2019 fixes the Contingent Risk Buffer (CRB) of the RBI between 5.5% and 6.5% of RBI's balance sheet before transferring surplus dividends to the Central Government."
+  },
+  {
+    id: 99,
+    en: "Which landmark banking reform did the Reserve Bank of India implement across all banks in the early 2000s that networked bank branches onto a centralized server so customers could conduct 'Anywhere, Anytime Banking'?",
+    hi: "2000 के दशक की शुरुआत में भारतीय बैंकों में लागू किए गए उस क्रांतिकारी तकनीकी सुधार को क्या कहा जाता है, जिसके तहत बैंक की सभी शाखाओं को एक केंद्रीकृत सर्वर (Centralized Server) से जोड़ दिया गया ताकि ग्राहक 'कहीं से भी, कभी भी बैंकिंग' कर सकें?",
+    options: [
+      "CBS (Core Banking Solution) / सीबीएस (कोर बैंकिंग सॉल्यूशन)",
+      "SWIFT (Society for Worldwide Interbank Financial Telecommunication) / स्विफ्ट प्रणाली",
+      "CTS (Cheque Truncation System) / चेक ट्रंकेशन सिस्टम",
+      "ECS (Electronic Clearing Service) / इलेक्ट्रॉनिक क्लीयरिंग सर्विस",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 0,
+    expEn: "CBS stands for 'Core Banking Solution', where 'CORE' is an acronym for 'Centralized Online Real-time Exchange'. Under CBS, all branches access a central data center in real time, enabling NEFT (2005), RTGS (2004), IMPS (2010), and instant inter-branch deposits/withdrawals.",
+    expHi: "'सीबीएस' (Core Banking Solution - CBS) में 'CORE' का अर्थ 'Centralized Online Real-time Exchange' होता है। इस तकनीकी सुधार ने बैंक की सभी शाखाओं को एक केंद्रीय सर्वर से जोड़ दिया, जिससे ग्राहक केवल 'एक शाखा का ग्राहक' न रहकर 'पूरे बैंक का ग्राहक' बन गया।",
+    fact: "Know the minimum transfer limits under CBS electronic fund transfer systems: RTGS (Real Time Gross Settlement, launched March 2004) has a minimum limit of ₹2,00,000, whereas NEFT (launched Nov 2005) has NO minimum or maximum limit. Both operate 24x7x365!"
+  },
+  {
+    id: 100,
+    en: "Which of the following pairs of 'Banking Reform Committee — Subject Area' is INCORRECTLY matched?",
+    hi: "निम्नलिखित में से 'बैंकिंग सुधार समिति — संबंधित विषय क्षेत्र' का कौन-सा युग्म सुमेलित (सही) नहीं है?",
+    options: [
+      "A.D. Gorwala Committee (1954) — Nationalization of Imperial Bank into SBI / ए.डी. गोरवाला समिति (1954) — इंपीरियल बैंक का राष्ट्रीयकरण कर SBI की स्थापना",
+      "B. Sivaraman Committee (1979) — Establishment of NABARD / बी. शिवरामन समिति (1979) — नाबार्ड (NABARD) की स्थापना",
+      "M. Narasimham Committee (1975) — Establishment of Regional Rural Banks (RRBs) / एम. नरसिंहम कार्य समूह (1975) — क्षेत्रीय ग्रामीण बैंकों (RRBs) की स्थापना",
+      "Nachiket Mor Committee (2014) — Nationalization of 6 Banks in 1980 / नचिकेत मोर समिति (2014) — 1980 में 6 बैंकों का राष्ट्रीयकरण",
+      "None of these / इनमें से कोई नहीं"
+    ],
+    ans: 3,
+    expEn: "Option (D) is incorrectly matched because the Nachiket Mor Committee (2014) was constituted for 'Comprehensive Financial Services for Small Businesses and Low-Income Households' and recommended Differentiated Banks (Payments Banks and Small Finance Banks). The nationalization of 6 commercial banks took place much earlier on 15 April 1980.",
+    expHi: "विकल्प (D) सुमेलित नहीं है क्योंकि 'नचिकेत मोर समिति' (2014) वित्तीय समावेशन तथा भुगतान बैंकों (Payments Banks) व लघु वित्त बैंकों (Small Finance Banks) की स्थापना से संबंधित थी, न कि 1980 के बैंक राष्ट्रीयकरण से। अन्य तीनों विकल्प पूर्णतः सत्य हैं।",
+    fact: "Notice that M. Narasimham chaired THREE landmark banking bodies in Indian history: (1) Working Group on Rural Banks (1975, which led to RRBs); (2) Committee on the Financial System (1991, Narasimham-I); and (3) Committee on Banking Sector Reforms (1998, Narasimham-II)."
+  }
+];
+
+// State Management for 100 Questions
+// status values: 'notvisited', 'unanswered', 'correct', 'incorrect', 'skipped', 'review'
+const state = {
+  currentIndex: 0,
+  items: QUESTIONS.map((_, idx) => ({
+    status: idx === 0 ? 'unanswered' : 'notvisited',
+    selectedOption: null,
+    markedReview: false
+  }))
+};
+
+const LETTERS = ['A', 'B', 'C', 'D', 'E'];
+
+// DOM Elements
+const qCounterBadge = document.getElementById('qCounterBadge');
+const liveScoreBadge = document.getElementById('liveScoreBadge');
+const qNumberPill = document.getElementById('qNumberPill');
+const qStatusPill = document.getElementById('qStatusPill');
+const stemEn = document.getElementById('stemEn');
+const stemHi = document.getElementById('stemHi');
+const optionsContainer = document.getElementById('optionsContainer');
+const explanationCard = document.getElementById('explanationCard');
+const expHeader = document.getElementById('expHeader');
+const expEn = document.getElementById('expEn');
+const expHi = document.getElementById('expHi');
+const expKeyFact = document.getElementById('expKeyFact');
+
+const prevBtn = document.getElementById('prevBtn');
+const skipBtn = document.getElementById('skipBtn');
+const reviewBtn = document.getElementById('reviewBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+const paletteBackdrop = document.getElementById('paletteBackdrop');
+const paletteGrid = document.getElementById('paletteGrid');
+const simulatorCard = document.getElementById('simulatorCard');
+const reportDashboard = document.getElementById('reportDashboard');
+
+function calculateScores() {
+  let correct = 0;
+  let incorrect = 0;
+  let unanswered = 0;
+  let skipped = 0;
+  let review = 0;
+  let notvisited = 0;
+
+  state.items.forEach(item => {
+    if (item.status === 'correct') correct++;
+    else if (item.status === 'incorrect') incorrect++;
+    else if (item.status === 'review') review++;
+    else if (item.status === 'skipped') skipped++;
+    else if (item.status === 'unanswered') unanswered++;
+    else notvisited++;
+  });
+
+  const netScore = (correct * 1.0) - (incorrect * 0.25);
+  return {
+    correct,
+    incorrect,
+    unanswered,
+    skipped,
+    review,
+    notvisited,
+    netScore: netScore.toFixed(2)
+  };
+}
+
+function updateTopBarAndPaletteCounts() {
+  const s = calculateScores();
+  qCounterBadge.textContent = `Question ${state.currentIndex + 1} of ${QUESTIONS.length}`;
+  liveScoreBadge.textContent = `Net Score: ${s.netScore} (+${s.correct} / -${s.incorrect})`;
+
+  document.getElementById('cntCorrect').textContent = s.correct;
+  document.getElementById('cntIncorrect').textContent = s.incorrect;
+  document.getElementById('cntUnanswered').textContent = s.unanswered;
+  document.getElementById('cntSkipped').textContent = s.skipped;
+  document.getElementById('cntReview').textContent = s.review;
+  document.getElementById('cntNotVisited').textContent = s.notvisited;
+}
+
+function renderStatusPill(item) {
+  const map = {
+    correct: { text: '🟢 Answered & Correct (+1.00)', bg: 'rgba(16, 185, 129, 0.18)', color: '#34d399' },
+    incorrect: { text: '🔴 Answered & Incorrect (-0.25)', bg: 'rgba(239, 68, 68, 0.18)', color: '#f87171' },
+    skipped: { text: '⚪ Skipped (0.00)', bg: 'rgba(100, 116, 139, 0.25)', color: '#cbd5e1' },
+    review: { text: '🟣 Marked for Review', bg: 'rgba(168, 85, 247, 0.22)', color: '#d8b4fe' },
+    unanswered: { text: '🟠 Visited / Unanswered', bg: 'rgba(249, 115, 22, 0.18)', color: '#fdba74' },
+    notvisited: { text: '⚫ Not Visited', bg: '#374151', color: '#9ca3af' }
+  };
+  const st = map[item.status] || map.unanswered;
+  qStatusPill.textContent = st.text;
+  qStatusPill.style.backgroundColor = st.bg;
+  qStatusPill.style.color = st.color;
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.currentIndex];
+  const item = state.items[state.currentIndex];
+
+  if (item.status === 'notvisited') {
+    item.status = 'unanswered';
+  }
+
+  qNumberPill.textContent = `Q${q.id}`;
+  stemEn.textContent = `Q${q.id}. ${q.en}`;
+  stemHi.textContent = q.hi;
+  renderStatusPill(item);
+
+  optionsContainer.innerHTML = '';
+  const isLocked = item.selectedOption !== null;
+
+  q.options.forEach((optText, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-card';
+    if (isLocked) {
+      btn.classList.add('locked');
+      if (idx === item.selectedOption && idx === q.ans) {
+        btn.classList.add('correct-choice');
+      } else if (idx === item.selectedOption && idx !== q.ans) {
+        btn.classList.add('incorrect-choice');
+      } else if (idx === q.ans) {
+        btn.classList.add('highlight-correct');
+      }
+    }
+
+    btn.innerHTML = `
+      <span class="option-letter">(${LETTERS[idx]})</span>
+      <span class="option-text">${optText}</span>
+    `;
+
+    if (!isLocked) {
+      btn.addEventListener('click', () => handleSelectOption(idx));
+    }
+    optionsContainer.appendChild(btn);
+  });
+
+  if (isLocked) {
+    const isCorrect = item.selectedOption === q.ans;
+    expHeader.innerHTML = isCorrect
+      ? `<span style="color:#10b981;">✔ Correct Answer! (+1.00 Mark) — Correct Option: (${LETTERS[q.ans]})</span>`
+      : `<span style="color:#ef4444;">✘ Incorrect Selection (-0.25 Mark) — Correct Option: (${LETTERS[q.ans]})</span>`;
+    expEn.innerHTML = `<strong>Explanation (English):</strong> ${q.expEn}`;
+    expHi.innerHTML = `<strong>व्याख्या (Hindi):</strong> ${q.expHi}`;
+    expKeyFact.innerHTML = `<strong>⚡ Key Exam Fact:</strong> ${q.fact}`;
+    explanationCard.classList.add('visible');
+  } else {
+    explanationCard.classList.remove('visible');
+  }
+
+  prevBtn.disabled = state.currentIndex === 0;
+  prevBtn.style.opacity = state.currentIndex === 0 ? '0.45' : '1';
+  nextBtn.textContent = state.currentIndex === QUESTIONS.length - 1 ? 'Finish & View Report ➔' : 'Next Question ➔';
+
+  updateTopBarAndPaletteCounts();
+  renderPaletteGrid();
+}
+
+function handleSelectOption(selectedIdx) {
+  const q = QUESTIONS[state.currentIndex];
+  const item = state.items[state.currentIndex];
+  if (item.selectedOption !== null) return; // Strict one-tap lock
+
+  item.selectedOption = selectedIdx;
+  item.status = (selectedIdx === q.ans) ? 'correct' : 'incorrect';
+  renderQuestion();
+}
+
+function handleSkipQuestion() {
+  const item = state.items[state.currentIndex];
+  if (item.selectedOption === null) {
+    item.status = 'skipped';
+    renderQuestion();
+  }
+}
+
+function handleMarkForReview() {
+  const item = state.items[state.currentIndex];
+  if (item.selectedOption === null) {
+    item.status = 'review';
+    renderQuestion();
+  }
+}
+
+function goToQuestion(index) {
+  state.currentIndex = index;
+  closePalette();
+  simulatorCard.style.display = 'block';
+  reportDashboard.classList.remove('visible');
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderPaletteGrid() {
+  paletteGrid.innerHTML = '';
+  state.items.forEach((item, idx) => {
+    const b = document.createElement('button');
+    b.className = `p-btn st-${item.status}`;
+    if (idx === state.currentIndex) b.classList.add('current-q');
+    b.textContent = idx + 1;
+    b.addEventListener('click', () => goToQuestion(idx));
+    paletteGrid.appendChild(b);
+  });
+}
+
+function openPalette() {
+  renderPaletteGrid();
+  paletteBackdrop.classList.add('open');
+}
+
+function closePalette() {
+  paletteBackdrop.classList.remove('open');
+}
+
+function showFinalReport() {
+  simulatorCard.style.display = 'none';
+  reportDashboard.classList.add('visible');
+  const s = calculateScores();
+  const attempted = s.correct + s.incorrect;
+  const accuracy = attempted > 0 ? ((s.correct / attempted) * 100).toFixed(2) : '0.00';
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-val" style="color:#60a5fa;">${s.netScore} / 100</div>
+      <div class="stat-label">Final Net Score</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#34d399;">${accuracy}%</div>
+      <div class="stat-label">Accuracy Rate</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#10b981;">${s.correct}</div>
+      <div class="stat-label">Correct (+1.00)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#ef4444;">${s.incorrect}</div>
+      <div class="stat-label">Incorrect (-0.25)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#94a3b8;">${s.skipped + s.unanswered + s.notvisited}</div>
+      <div class="stat-label">Skipped / Unattempted</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#c084fc;">${s.review}</div>
+      <div class="stat-label">Marked for Review</div>
+    </div>
+  `;
+
+  const matrixContainer = document.getElementById('reviewMatrixContainer');
+  matrixContainer.innerHTML = '';
+
+  QUESTIONS.forEach((q, idx) => {
+    const item = state.items[idx];
+    const userChoice = item.selectedOption !== null ? `(${LETTERS[item.selectedOption]}) ${q.options[item.selectedOption]}` : 'Not Attempted / Skipped';
+    const isCorr = item.selectedOption === q.ans;
+    const badgeColor = item.selectedOption === null ? '#94a3b8' : (isCorr ? '#10b981' : '#ef4444');
+
+    const div = document.createElement('div');
+    div.className = 'matrix-item';
+    div.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+        <strong style="color:#93c5fd;">Question ${q.id}</strong>
+        <span style="font-size:0.85rem; font-weight:700; color:${badgeColor};">
+          Your Answer: ${userChoice}
+        </span>
+      </div>
+      <div style="font-weight:600; margin-bottom:4px;">${q.en}</div>
+      <div style="color:#cbd5e1; margin-bottom:10px;">${q.hi}</div>
+      <div style="color:#34d399; font-weight:700; font-size:0.92rem; margin-bottom:8px;">
+        ✔ Correct Option: (${LETTERS[q.ans]}) ${q.options[q.ans]}
+      </div>
+      <div style="font-size:0.9rem; color:#d1d5db; margin-bottom:6px;"><strong>Explanation:</strong> ${q.expEn}</div>
+      <div style="font-size:0.9rem; color:#d1d5db; margin-bottom:8px;"><strong>व्याख्या:</strong> ${q.expHi}</div>
+      <div style="font-size:0.86rem; color:#fde68a; background:rgba(245,158,11,0.1); padding:8px 12px; border-radius:6px;">
+        <strong>Key Exam Fact:</strong> ${q.fact}
+      </div>
+    `;
+    matrixContainer.appendChild(div);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Event Listeners
+document.getElementById('openPaletteTopBtn').addEventListener('click', openPalette);
+document.getElementById('openPaletteBottomBtn').addEventListener('click', openPalette);
+document.getElementById('closePaletteBtn').addEventListener('click', closePalette);
+paletteBackdrop.addEventListener('click', (e) => {
+  if (e.target === paletteBackdrop) closePalette();
+});
+
+prevBtn.addEventListener('click', () => {
+  if (state.currentIndex > 0) {
+    state.currentIndex--;
+    renderQuestion();
+  }
+});
+
+nextBtn.addEventListener('click', () => {
+  if (state.currentIndex < QUESTIONS.length - 1) {
+    state.currentIndex++;
+    renderQuestion();
+  } else {
+    showFinalReport();
+  }
+});
+
+skipBtn.addEventListener('click', handleSkipQuestion);
+reviewBtn.addEventListener('click', handleMarkForReview);
+document.getElementById('finishExamBtn').addEventListener('click', showFinalReport);
+document.getElementById('backToSimBtn').addEventListener('click', () => {
+  reportDashboard.classList.remove('visible');
+  simulatorCard.style.display = 'block';
+  renderQuestion();
+});
+
+// Initialize Simulator
+renderQuestion();
+</script>
+</body>
+</html>
