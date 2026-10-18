@@ -1,215 +1,4 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UPSSSC PET Online CBT Portal</title>
-  <style>
-    :root {
-      --bg-dark: #0f1115;
-      --card-bg: #181b21;
-      --card-hover: #222630;
-      --border-color: #2b303c;
-      --accent-blue: #38bdf8;
-      --accent-green: #10b981;
-      --accent-purple: #a855f7;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      min-height: 100vh;
-      padding: 24px 16px 60px;
-    }
-
-    .container {
-      max-width: 820px;
-      margin: 0 auto;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 28px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 24px 18px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-
-    .badge-top {
-      display: inline-block;
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid var(--accent-blue);
-      color: var(--accent-blue);
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
-    }
-
-    header h1 {
-      font-size: 1.6rem;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-
-    header p {
-      font-size: 0.92rem;
-      color: var(--text-muted);
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 28px 0 14px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .section-header h2 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .section-pill {
-      font-size: 0.75rem;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-weight: 600;
-    }
-
-    .pill-pyq { background: rgba(56, 189, 248, 0.2); color: var(--accent-blue); }
-    .pill-eco { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
-    .pill-hindi { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); }
-
-    .test-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .test-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      transition: all 0.2s ease;
-    }
-
-    .test-card:hover {
-      background: var(--card-hover);
-      border-color: #3b4252;
-      transform: translateY(-1px);
-    }
-
-    .test-meta h3 {
-      font-size: 0.98rem;
-      font-weight: 600;
-      color: #f3f4f6;
-      margin-bottom: 4px;
-    }
-
-    .test-meta span {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .start-btn {
-      background: #2563eb;
-      color: #ffffff;
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: background 0.2s ease;
-    }
-
-    .start-btn:hover { background: #1d4ed8; }
-    .btn-eco { background: #059669; }
-    .btn-eco:hover { background: #047857; }
-    .btn-hindi { background: #7c3aed; }
-    .btn-hindi:hover { background: #6d28d9; }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-    
-    <header>
-      <span class="badge-top">UPSSSC PET EXAM PORTAL</span>
-      <h1>ऑनलाइन कंप्यूटर आधारित टेस्ट (CBT) सिम्युलेटर</h1>
-      <p>पूर्ण व्याख्या, तत्काल स्कोरिंग एवं नेगेटिव मार्किंग (-0.25) सहित परीक्षा प्रारूप</p>
-    </header>
-
-    <!-- SECTION 1: PREVIOUS YEAR PAPERS -->
-    <div class="section-header">
-      <h2>1. फुल मॉक टेस्ट व पिछले वर्षों के प्रश्न-पत्र</h2>
-      <span class="section-pill pill-pyq">5 पेपर्स</span>
-    </div>
-
-    <div class="test-list">
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>UPSSSC PET 7-SEP-2025 (1st Shift)</h3>
-          <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
-        </div>
-        <a class="start-btn" href="PET_MOCKS_CBT/Previous%20Year%20Papers/UPSSSC%20PET%207-SEP-2025%201st%20shift.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>UPSSSC PET 7-SEP-2025 (2nd Shift Paper)</h3>
-          <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
-        </div>
-        <a class="start-btn" href="PET_MOCKS_CBT/Previous%20Year%20Papers/UPSSSC%20PET%207-SEP-2025%202nd%20shift%20Paper.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>UPSSSC PET 6-SEP-2025 (1st Shift)</h3>
-          <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
-        </div>
-        <a class="start-btn" href="PET_MOCKS_CBT/Previous%20Year%20Papers/UPSSSC%20PET%206-SEP-2025%201st%20shift.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>UPSSSC PET 6-SEP-2025 (2nd Shift)</h3>
-          <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
-        </div>
-        <a class="start-btn" href="PET_MOCKS_CBT/Previous%20Year%20Papers/UPSSSC%20PET%206-SEP-2025%202nd%20shift.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>UPSSSC PET 29-OCT-2023 (2nd Shift)</h3>
-          <span>100 प्रश्न • संपूर्ण हल व विस्तृत व्याख्या</span>
-        </div>
-        <a class="start-btn" href="PET_MOCKS_CBT/Previous%20Year%20Papers/UPSSSC%20PET%2029-OCT-2023%202nd%20shift.html">टेस्ट शुरू करें ➔</a>
-      </div>
-    </div>
-
-    <!-- SECTION 2: INDIAN ECONOMY -->
+<!-- SECTION 2: INDIAN ECONOMY -->
     <div class="section-header">
       <h2>2. भारतीय अर्थव्यवस्था (Indian Economy - टॉपिक टेस्ट्स)</h2>
       <span class="section-pill pill-eco">13 टेस्ट्स</span>
@@ -221,7 +10,7 @@
           <h3>Economics All Topics Mock Test (संपूर्ण अर्थशास्त्र)</h3>
           <span>सभी अध्यायों का संयुक्त टेस्ट</span>
         </div>
-        <a class="start-btn btn-eco" href="PET__MOCKS_CBT/Indian Economy/Economics_All_Topics_Mock_Test.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/Economics_All_Topics_Mock_Test.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -229,7 +18,7 @@
           <h3>1. योजना आयोग तथा पंचवर्षीय योजनाएँ</h3>
           <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/1-%E0%A4%AF%E0%A5%8B%E0%A4%9C%E0%A4%A8%E0%A4%BE%20%E0%A4%86%E0%A4%AF%E0%A5%8B%E0%A4%97%20%E0%A4%A4%E0%A4%A5%E0%A4%BE%20%E0%A4%AA%E0%A4%82%E0%A4%9A%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%B7%E0%A5%80%E0%A4%AF%20%E0%A4%AF%E0%A5%8B%E0%A4%9C%E0%A4%A8%E0%A4%BE%E0%A4%8F%E0%A4%81.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/1-योजना आयोग तथा पंचवर्षीय योजनाएँ.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -237,7 +26,7 @@
           <h3>2. मिश्रित अर्थव्यवस्था का विकास: निजी एवं सार्वजनिक क्षेत्र</h3>
           <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/2-%20%E0%A4%AE%E0%A4%BF%E0%A4%B6%E0%A5%8D%E0%A4%B0%E0%A4%BF%E0%A4%A4%20%E0%A4%85%E0%A4%B0%E0%A5%8D%E0%A4%A5%E0%A4%B5%E0%A5%8D%E0%A4%AF%E0%A4%B5%E0%A4%B8%E0%A5%8D%E0%A4%A5%E0%A4%BE%20%E0%A4%95%E0%A4%BE%20%E0%A4%B5%E0%A4%BF%E0%A4%95%E0%A4%BE%E0%A4%B8%20%E0%A4%A8%E0%A4%BF%E0%A4%9C%E0%A5%80%20%E0%A4%8F%E0%A4%B5%E0%A4%82%20%E0%A4%B8%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%B5%E0%A4%9C%E0%A4%A8%E0%A4%BF%E0%A4%95%20%E0%A4%95%E0%A5%8D%E0%A4%B7%E0%A5%87%E0%A4%A4%E0%A5%8D%E0%A4%B0.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/02- मिश्रित अर्थव्यवस्था का विकास निजी एवं सार्वजनिक क्षेत्र.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -245,7 +34,7 @@
           <h3>3. हरित क्रांति (Green Revolution)</h3>
           <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/3-%E0%A4%B9%E0%A4%B0%E0%A4%BF%E0%A4%A4%20%E0%A4%95%E0%A5%8D%E0%A4%B0%E0%A4%BE%E0%A4%82%E0%A4%A4%E0%A4%BF.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/3-हरित क्रांति.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -253,7 +42,7 @@
           <h3>4. दुग्ध विकास एवं ऑपरेशन फ्लड (White Revolution)</h3>
           <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/4-%E0%A4%A6%E0%A5%81%E0%A4%97%E0%A5%8D%E0%A4%A7%20%E0%A4%B5%E0%A4%BF%E0%A4%95%E0%A4%BE%E0%A4%B8%20%E0%A4%8F%E0%A4%B5%E0%A4%82%20%E0%A4%91%E0%A4%AA%E0%A4%B0%E0%A5%87%E0%A4%B6%E0%A4%A8%20%E0%A4%AB%E0%A5%8D%E0%A4%B2%E0%A4%A1.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/4-दुग्ध विकास एवं ऑपरेशन फ्लड.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -261,7 +50,7 @@
           <h3>5. बैंकों का राष्ट्रीयकरण तथा सुधार</h3>
           <span>टॉपिक-वाइज प्रश्नोत्तरी</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/5-%E0%A4%AC%E0%A5%88ं%E0%A4%95%E0%A5%8Bं%20%E0%A4%95%E0%A4%BE%20%E0%A4%B0%E0%A4%BE%E0%A4%B7%E0%A5%8D%E0%A4%9F%E0%A5%8D%E0%A4%B0%E0%A5%80%E0%A4%AF%E0%A4%95%E0%A4%B0%E0%A4%A3%20%E0%A4%A4%E0%A4%A5%E0%A4%BE%20%E0%A4%B8%E0%A5%81%E0%A4%A7%E0%A4%BE%E0%A4%B0.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/5-बैंकों का राष्ट्रीयकरण तथा सुधार.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -269,7 +58,7 @@
           <h3>6. वर्ष 1991 में आर्थिक सुधार तथा उसके बाद की अर्थव्यवस्था</h3>
           <span>LPG सुधार नीति व आर्थिक विकास</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/6-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%B7%201991%20%E0%A4%AE%E0%A5%87ं%20%E0%A4%86%E0%A4%B0%E0%A5%8D%E0%A4%A5%E0%A4%BF%E0%A4%95%20%E0%A4%B8%E0%A5%81%E0%A4%A7%E0%A4%BE%E0%A4%B0%20%E0%A4%A4%E0%A4%A5%E0%A4%BE%20%E0%A4%89%E0%A4%B8%E0%A4%95%E0%A5%87%20%E0%A4%AC%E0%A4%BE%E0%A4%A6%20%E0%A4%95%E0%A5%80%20%E0%A4%85%E0%A4%B0%E0%A5%8D%E0%A4%A5%E0%A4%B5%E0%A5%8D%E0%A4%AF%E0%A4%B5%E0%A4%B8%E0%A5%8D%E0%A4%A5%E0%A4%BE.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/6-वर्ष 1991 में आर्थिक सुधार तथा उसके बाद की अर्थव्यवस्था.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -277,7 +66,7 @@
           <h3>7. वर्ष 2014 के पश्चात के कृषि सुधार</h3>
           <span>कृषि योजनाएं एवं सुधार</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/7-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%B7%202014%20%E0%A4%95%E0%A5%87%20%E0%A4%AA%E0%A4%B6%E0%A5%8D%E0%A4%9A%E0%A4%BE%E0%A4%A4%20%E0%A4%95%E0%A5%87%20%E0%A4%95%E0%A5%83%E0%A4%B7%E0%A4%BF%20%E0%A4%B8%E0%A5%81%E0%A4%A7%E0%A4%BE%E0%A4%B0.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/7-वर्ष 2014 के पश्चात के कृषि सुधार.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -285,7 +74,7 @@
           <h3>8. वर्ष 2014 के पश्चात के ढाँचागत सुधार</h3>
           <span>इन्फ्रास्ट्रक्चर सुधार</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/8-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%B7%202014%20%E0%A4%95%E0%A5%87%20%E0%A4%AA%E0%A4%B6%E0%A5%8D%E0%A4%9A%E0%A4%BE%E0%A4%A4%20%E0%A4%95%E0%A5%87%20%E0%A4%A2%E0%A4%BE%E0%A4%82%E0%A4%9A%E0%A4%BE%E0%A4%97%E0%A4%A4%20%E0%A4%B8%E0%A5%81%E0%A4%A7%E0%A4%BE%E0%A4%B0.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/8-वर्ष 2014 के पश्चात के ढांचागत सुधार.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -293,7 +82,7 @@
           <h3>9. वर्ष 2014 के पश्चात के श्रम-सुधार</h3>
           <span>लेबर कोड व श्रम नियम</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/9-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%B7%202014%20%E0%A4%95%E0%A5%87%20%E0%A4%AA%E0%A4%B6%E0%A5%8D%E0%A4%9A%E0%A4%BE%E0%A4%A4%20%E0%A4%95%E0%A5%87%20%E0%A4%B6%E0%A5%8D%E0%A4%B0%E0%A4%AE-%E0%A4%B8%E0%A5%81%E0%A4%A7%E0%A4%BE%E0%A4%B0.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/9-वर्ष 2014 के पश्चात के श्रम-सुधार.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -301,7 +90,7 @@
           <h3>10. वर्ष 2014 के पश्चात के आर्थिक सुधार</h3>
           <span>वित्तीय सुधार एवं नीतियां</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/10-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%B7%202014%20%E0%A4%95%E0%A5%87%20%E0%A4%AA%E0%A4%B6%E0%A5%8D%E0%A4%9A%E0%A4%BE%E0%A4%A4%20%E0%A4%95%E0%A5%87%20%E0%A4%86%E0%A4%B0%E0%A5%8D%E0%A4%A5%E0%A4%BF%E0%A4%95%20%E0%A4%B8%E0%A5%81%E0%A4%A7%E0%A4%BE%E0%A4%B0.html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/10-वर्ष 2014 के पश्चात के आर्थिक सुधार.html">टेस्ट शुरू करें ➔</a>
       </div>
 
       <div class="test-card">
@@ -309,91 +98,6 @@
           <h3>11. वर्ष 2014 के पश्चात के आर्थिक सुधार (जीएसटी GST)</h3>
           <span>GST एवं अप्रत्यक्ष कर सुधार</span>
         </div>
-        <a class="start-btn btn-eco" href="PET_MOCKS_CBT/Indian%20Economy/11-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%B7%202014%20%E0%A4%95%E0%A5%87%20%E0%A4%AA%E0%A4%B6%E0%A5%8D%E0%A4%9A%E0%A4%BE%E0%A4%A4%20%E0%A4%95%E0%A5%87%20%E0%A4%86%E0%A4%B0%E0%A5%8D%E0%A4%A5%E0%A4%BF%E0%A4%95%20%E0%A4%B8%E0%A5%81%E0%A4%A7%E0%A4%BE%E0%A4%B0%20(%E0%A4%9C%E0%A5%80%E0%A4%8F%E0%A4%B8%E0%A4%9F%E0%A5%80%20GST).html">टेस्ट शुरू करें ➔</a>
+        <a class="start-btn btn-eco" href="./PET_MOCKS_CBT/Indian Economy/11-वर्ष 2014 के पश्चात के आर्थिक सुधार (जीएसटी GST).html">टेस्ट शुरू करें ➔</a>
       </div>
     </div>
-
-    <!-- SECTION 3: GENERAL HINDI -->
-    <div class="section-header">
-      <h2>3. सामान्य हिन्दी (General Hindi - टॉपिक टेस्ट्स)</h2>
-      <span class="section-pill pill-hindi">9 टेस्ट्स</span>
-    </div>
-
-    <div class="test-list">
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>1. संधि</h3>
-          <span>स्वर, व्यंजन एवं विसर्ग संधि</span>
-        </div>
-        <a class="start-btn btn-hindi" href="PET_MOCKS_CBT/Hindi/1-%E0%A4%B8%E0%A4%82%E0%A4%A7%E0%A4%BF.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>2. विलोम शब्द</h3>
-          <span>100 महत्वपूर्ण विलोम शब्द</span>
-        </div>
-        <a class="start-btn btn-hindi" href="PET_MOCKS_CBT/Hindi/2-%E0%A4%B5%E0%A4%BF%E0%A4%B2%E0%A5%8B%E0%A4%AE%20%E0%A4%B6%E0%A4%AC%E0%A5%8D%E0%A4%A6.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>3. पर्यायवाची शब्द</h3>
-          <span>100 महत्वपूर्ण पर्यायवाची शब्द</span>
-        </div>
-        <a class="start-btn btn-hindi" href="PET_MOCKS_CBT/Hindi/3-%E0%A4%AA%E0%A4%B0%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%AF%E0%A4%B5%E0%A4%BE%E0%A4%9A%E0%A5%80%20%E0%A4%B6%E0%A4%AC%E0%A5%8D%E0%A4%A6.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>4. वाक्यांशों के लिए एक शब्द</h3>
-          <span>100 महत्वपूर्ण अनेक शब्दों के लिए एक शब्द</span>
-        </div>
-        <a class="start-btn btn-hindi" href="PET_MOCKS_CBT/Hindi/4-%E0%A4%B5%E0%A4%BE%E0%A4%95%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%82%E0%A4%B6%E0%A5%8B%E0%A4%82%20%E0%A4%95%E0%A5%87%20%E0%A4%B2%E0%A4%BF%E0%A4%8F%20%E0%A4%8F%E0%A4%95%20%E0%A4%B6%E0%A4%AC%E0%A5%8D%E0%A4%A6.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>5. लिंग</h3>
-          <span>100 महत्वपूर्ण प्रश्न</span>
-        </div>
-        <a class="start-btn btn-hindi" href="PET_MOCKS_CBT/Hindi/5-%E0%A4%B2%E0%A4%BF%E0%A4%82%E0%A4%97.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>6. समश्रुत भिन्नार्थक शब्द</h3>
-          <span>100 महत्वपूर्ण समरूपी भिन्नार्थक शब्द</span>
-        </div>
-        <a class="start-btn btn-hindi" href="PET_MOCKS_CBT/Hindi/6-%E0%A4%B8%E0%A4%AE%E0%A4%B6%E0%A5%8D%E0%A4%B0%E0%A5%81%E0%A4%A4%20%E0%A4%AD%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A8%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%A5%E0%A4%95%20%E0%A4%B6%E0%A4%AC%E0%A5%8D%E0%A4%A6.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>7. मुहावरे-लोकोक्तियाँ</h3>
-          <span>महत्वपूर्ण मुहावरे एवं कहावतें</span>
-        </div>
-        <a class="start-btn btn-hindi" href="PET_MOCKS_CBT/Hindi/7-%E0%A4%AE%E0%A5%81%E0%A4%B9%E0%A4%BE%E0%A4%B5%E0%A4%B0%E0%A5%87-%E0%A4%B2%E0%A5%8B%E0%A4%95%E0%A5%8B%E0%A4%95%E0%A5%8D%E0%A4%A4%E0%A4%BF%E0%A4%AF%E0%A4%BE%E0%A4%81.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>8. सामान्य अशुद्धियाँ</h3>
-          <span>वर्तनी व वाक्य शुद्धि अभ्यास</span>
-        </div>
-        <a class="start-btn btn-hindi" href="PET_MOCKS_CBT/Hindi/8-%E0%A4%B8%E0%A4%BE%E0%A4%AE%E0%A4%BE%E0%A4%A8%E0%A5%8D%E0%A4%AF%20%E0%A4%85%E0%A4%B6%E0%A5%81%E0%A4%A6%E0%A5%8D%E0%A4%A7%E0%A4%BF%E0%A4%AF%E0%A4%BE%E0%A4%81.html">टेस्ट शुरू करें ➔</a>
-      </div>
-
-      <div class="test-card">
-        <div class="test-meta">
-          <h3>9. लेखक और रचनाएँ (गद्य एवं पद्य)</h3>
-          <span>रचनाकार एवं उनकी प्रमुख कृतियाँ</span>
-        </div>
-        <a class="start-btn btn-hindi" href="PET_MOCKS_CBT/Hindi/9-%E0%A4%B2%E0%A5%87%E0%A4%96%E0%A4%95%20%E0%A4%94%E0%A4%B0%20%E0%A4%B0%E0%A4%9A%E0%A4%A8%E0%A4%BE%E0%A4%8F%E0%A4%81%20(%E0%A4%97%E0%A4%A6%E0%A5%8D%E0%A4%AF%20%E0%A4%8F%E0%A4%B5%E0%A4%82%20%E0%A4%AA%E0%A4%A6%E0%A5%8D%E0%A4%AF).html">टेस्ट शुरू करें ➔</a>
-      </div>
-    </div>
-
-  </div>
-
-</body>
-</html>
